@@ -81,6 +81,8 @@ project "Aldrioh"
         "ImGui",
     }
 
+    defines { "FMT_UNICODE=0" }
+
     filter "system:windows"
         systemversion "latest"
         defines { "PLATFORM_WINDOWS", "GLM_ENABLE_EXPERIMENTAL" }
