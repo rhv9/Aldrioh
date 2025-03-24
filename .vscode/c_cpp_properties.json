@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/Tetrifx/src",
+                "${workspaceFolder}/Tetrifx/vendor/GLFW/include",
+                "${workspaceFolder}/Tetrifx/vendor/spdlog/include",
+                "${workspaceFolder}/Tetrifx/vendor/Glad/include",
+                "${workspaceFolder}/Tetrifx/vendor/imgui/",
+                "${workspaceFolder}/Tetrifx/vendor/glm",
+                "${workspaceFolder}/Tetrifx/vendor/stb_image",
+                "${workspaceFolder}/Tetrifx/vendor/entt/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c23",
+            "cppStandard": "gnu++23",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

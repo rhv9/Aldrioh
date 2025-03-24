@@ -1,0 +1,21 @@
+# Directories
+.vs/
+#/.vscode  TODO: For now, I will include it, later, I should add a premake5 action to generate .vscode files automatically.
+**/bin/
+**/bin-int/
+/vendor/*
+/build/**
+**.log
+**.make
+
+Makefile
+
+# Visual studio 
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+#My
+**.h.gch
+**/imgui.ini
