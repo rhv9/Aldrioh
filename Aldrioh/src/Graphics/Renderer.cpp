@@ -13,12 +13,9 @@ struct RenderData
 
     VertexArray quadTexCoordVA;
     Ref<Shader> shaderTexCoordQuad;
-
-    VertexArray quadBasicVA;
-    Ref<Shader> shaderFlatColour;
 };
 
-struct RenderState
+static struct RenderState
 {
     bool renderDepth = false;
 };
@@ -36,12 +33,12 @@ void Renderer::Init()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glClearDepth(1);
-    glDepthMask(GL_FALSE);    
+    //glDepthMask(GL_FALSE);    
 
     //renderData.shaderTexQuad = CreateRef<Shader>("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
     renderData.shaderTexQuad = CreateRef<Shader>("assets/shaders/Texture.glsl");
     renderData.shaderTexCoordQuad = CreateRef<Shader>("assets/shaders/TextureTexCoord.glsl");
-    renderData.shaderFlatColour = CreateRef<Shader>("assets/shaders/FlatColour.glsl");
+
 
     // Normal Quad
     float vertices[] = {
@@ -81,23 +78,6 @@ void Renderer::Init()
 
     renderData.quadTexCoordVA = VertexArray::Create(vertexDatasTexCoord, verticesTexCoord, sizeof(verticesTexCoord) / sizeof(float), indicesTexCoord, sizeof(indicesTexCoord) / sizeof(unsigned int));
 
-    // FlatColour.glsl
-    float verticesFlatColour[] = {
-        -0.5f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-    };
-
-    unsigned int indicesFlatColour[] = {
-        0, 1, 2, 2, 3, 0 
-    };
-
-    VertexDataMap vertexDatasFlatColour = {
-        { "aPos", 3, VertexDataType::Float, VertexDataBool::False }
-    };   
-
-    renderData.quadBasicVA = VertexArray::Create(vertexDatasFlatColour, verticesFlatColour, sizeof(verticesFlatColour) / sizeof(float), indicesFlatColour, sizeof(indicesFlatColour) / sizeof(unsigned int)); 
 }
 
 static glm::mat4 viewProjection;
@@ -112,24 +92,11 @@ void Renderer::StartScene(const Camera& camera)
     renderData.shaderTexCoordQuad->Use();
     renderData.shaderTexCoordQuad->UniformInt("uRenderDepth", renderState.renderDepth);
     renderData.shaderTexCoordQuad->UniformMat4("u_ViewProjectionMatrix", camera.GetProjection());
-    
-    renderData.shaderFlatColour->UniformMat4("u_ViewProjectionMatrix", camera.GetProjection());
 
     //glClearColor(1.00f, 0.49f, 0.04f, 1.00f);
-    glClearColor(0.05f, 0.09f, 0.24f, 1.00f);
+    glClearColor(0.20f, 0.29f, 0.84f, 1.00f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
-
-void Renderer::DrawQuadFlatColour(const glm::vec3& position, const glm::vec4& colour, const glm::vec2& scale)
-{
-    glm::mat4 transform = glm::scale(glm::mat4(1.0f), {scale, 1.0f}) * glm::translate(glm::mat4(1.0f), position);
-
-    //renderData.shaderFlatColour->UniformMat4("u_Transform", transform);
-
-    renderData.quadBasicVA.Bind();
-    glDrawElements(GL_TRIANGLES, renderData.quadBasicVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
-}
-
 
 void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
 {
@@ -208,8 +175,6 @@ void Renderer::DrawQuadCustomShader(const Ref<Shader>& shader, const glm::vec3& 
     texture->Bind(0);
     glDrawElements(GL_TRIANGLES, renderData.quadTexCoordVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
 }
-
-
 
 void Renderer::SetRenderDepthOnly(bool val) { renderState.renderDepth = val; }
 

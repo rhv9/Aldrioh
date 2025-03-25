@@ -24,43 +24,77 @@
 #include "imgui.h"
 
 static entt::registry registry;
+static entt::entity player;
+
+static std::shared_ptr<Level> level;
+
+static Ref<Shader> collisionShader;
+
+static std::vector<entt::entity> entityRenderOrder;
 
 GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
 {
+    // Add event handlers
+    level = std::make_shared<Level>();
     SpriteCollection::init();
 
-    // camera
-    cameraController = std::make_shared<FreeRoamEntityCameraController>(1920.0f / 1080.0f, 70.0f);
-    cameraController->SetPosition({0, 0});
+    collisionShader = CreateRef<Shader>("assets/shaders/TextureCoordReplaceColour.glsl");
+    float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+    cameraController = std::make_shared<CameraController>(aspectRatio, 1.0f);
 
-    entt::entity player = registry.create();
-    registry.emplace<TransformComponent>(player);
-    registry.emplace<MoveComponent>(player);
-    
+    cameraController->SetPosition({ 0, 0 });
 
-    ((FreeRoamEntityCameraController*)cameraController.get())->SetEntity(&registry, player);
-    cameraController->SetZoomLevel(75);
+    player = registry.create();
+    TransformComponent& tc = registry.emplace<TransformComponent>(player);
+    tc.position.z = 0.4f;
+    tc.position.x = 0.0f;
+    tc.position.y = 0.0f;
+    registry.emplace<VisualComponent>(player, SpriteCollection::player_head);
+    registry.emplace<MoveComponent>(player, 32.0f);
+    registry.emplace<NameComponent>(player, "Player");
 }
 
 void GameLayer::OnUpdate(Timestep delta)
 {
-    // Update Entities
-    cameraController->OnUpdate(delta);
+    auto [playerTransform, playerMove] = registry.get<TransformComponent, MoveComponent>(player);
+    playerMove.zero();
+
+    if (Input::IsKeyPressed(Input::KEY_W))
+        playerMove.moveVec.y = 1.0f;
+    if (Input::IsKeyPressed(Input::KEY_S))
+        playerMove.moveVec.y = -1.0f;
+    if (Input::IsKeyPressed(Input::KEY_A))
+        playerMove.moveVec.x = -1.0f;
+    if (Input::IsKeyPressed(Input::KEY_D))
+        playerMove.moveVec.x = 1.0f;
+
+    playerTransform.position += glm::vec3{ playerMove.moveVec * playerMove.speed * (float)delta, 0.0f };
+
 
     // Rendering
     Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
 
-    Renderer::DrawQuad({0.0f, 0.0f, 1.0f}, SpriteCollection::get(SpriteCollection::slime) , {100, 100});
+    // Rendering visual components
 
-    Renderer::DrawQuadFlatColour(glm::vec3{0.0f, 0.0f, 1.0f}, glm::vec4{1.0f, 1.0f, 1.0f, 1.0f}, glm::vec2{32.0f, 32.0f});
+    {
+        auto view = registry.view<TransformComponent, VisualComponent>();
 
+        for (entt::entity e : view)
+        {
+            auto [transform, visual] = view.get(e);
+            Renderer::DrawQuad(transform.position + visual.localTransform, SpriteCollection::get(SpriteCollection::target), SpriteCollection::Tile_size);
+            Renderer::DrawQuad(transform.position + visual.localTransform, SpriteCollection::get(visual.spriteId), {1, 1});
+        }
+
+    }
     Renderer::EndScene();
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
 {
+
     Game& game = Game::Instance();
     ImGuiIO& io = ImGui::GetIO();
 
@@ -70,7 +104,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
     ImGui::SeparatorText("Game/Window");
     ImGui::Text("frame time: %.2f (%dfps)", delta.GetMilliSeconds(), game.gameStats.fps);
     ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
-    ImGui::Text("Blocking events: %s",ImGui::IsWindowFocused() ? "Yes" : "No");
+    ImGui::Text("Blocking events: %s", ImGui::IsWindowFocused() ? "Yes" : "No");
     //game.BlockEvents(ImGui::IsWindowFocused());
     bool vsync = game.GetWindow()->GetVsync();
     if (ImGui::Checkbox("vsync", &vsync))
@@ -78,12 +112,13 @@ void GameLayer::OnImGuiRender(Timestep delta)
     bool navActive = io.NavActive;
     ImGui::Checkbox("ImGui Nav Active", &navActive);
     bool wantCaptureKeyboard = io.WantCaptureKeyboard;
-    ImGui::Checkbox("ImGui capture keyboard", &wantCaptureKeyboard);  
+    ImGui::Checkbox("ImGui capture keyboard", &wantCaptureKeyboard);
     bool wantCaptureMouse = io.WantCaptureMouse;
     ImGui::Checkbox("ImGui capture mouse", &wantCaptureMouse);
 
     ImGui::SeparatorText("Camera");
-    ImGui::DragFloat2("pos##1", (float*)&cameraController->GetPosition());
+    if (ImGui::DragFloat2("pos##1", (float*)&cameraController->GetPosition()))
+        cameraController->SetPosition(cameraController->GetPosition());
     if (ImGui::DragFloat("zoom", (float*)&cameraController->GetZoomLevel()))
         cameraController->SetZoomLevel(cameraController->GetZoomLevel());
 
@@ -91,7 +126,11 @@ void GameLayer::OnImGuiRender(Timestep delta)
     bool renderDepth = Renderer::IsRenderDepth();
     if (ImGui::Checkbox("Render depth", &renderDepth))
         Renderer::SetRenderDepthOnly(renderDepth);
-    
+
+    ImGui::SeparatorText("Player");
+    ImGui::DragFloat3("pos##2", (float*)&registry.get<TransformComponent>(player).position);
+    ImGui::Text("moving: %s", registry.get<MoveComponent>(player).isMoving() ? "Yes" : "No");
+
     ImGui::End();
     ImGui::SetNextWindowBgAlpha(1.0f);
 

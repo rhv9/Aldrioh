@@ -88,6 +88,9 @@ void ImGuiLayer::OnBegin()
     ImGui_ImplGlfw_InstallEmscriptenCallbacks(window, "#canvas");
 #endif
     ImGui_ImplOpenGL3_Init("#version 430");
+
+    //ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 }
 
 void ImGuiLayer::OnUpdate(Timestep delta)

@@ -13,6 +13,10 @@ CameraController::CameraController(const float aspectRatio, const float zoomLeve
 	SetAspectRatio((float)Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight());
 }
 
+void CameraController::OnUpdate(Timestep delta)
+{
+}
+
 void CameraController::SetPosition(const glm::vec2& pos)
 {
 	m_Position = pos;

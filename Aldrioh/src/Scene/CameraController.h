@@ -20,7 +20,7 @@ public:
 	CameraController(const float aspectRatio, const float zoomLevel = 1.0f);
 
 	virtual ~CameraController() {}
-	virtual void OnUpdate(Timestep delta) = 0;
+	virtual void OnUpdate(Timestep delta);
 
 
 	void SetPosition(const glm::vec2& pos);

@@ -20,6 +20,7 @@
 #include "Graphics/Renderer.h"
 
 #include "Game/GameLayer.h"
+#include "Game/TestLayer.h"
 
 Game& Game::Instance()
 {
@@ -34,7 +35,7 @@ void Game::Init()
     
     Log::Init();
     
-    window = std::make_unique<WindowsWindow>(WindowProps { 800 , 600, "Aldrioh" });
+    window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
 
     window->KeyPressedEventHandler += [](KeyPressedEventArg& arg)
         {

@@ -96,3 +96,68 @@ project "Aldrioh"
         runtime "Release"
         symbols "on"
 
+
+project "DesktopIcons"
+    filter "system:windows"
+	    location "%{prj.name}"
+
+    filter {}
+
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++20"
+	staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    pchheader "pch.h"
+    pchsource "%{prj.name}/src/pch.cpp"
+
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/glm/glm/**.inl",
+        "%{prj.name}/vendor/glm/**.hpp",
+        "%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
+    }
+
+    includedirs
+    {
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.Spdlog}",
+        "%{IncludeDir.Emscripten}",
+        "%{IncludeDir.Glm}",
+        "%{IncludeDir.Stb_image}",
+        "%{IncludeDir.Entt}",
+        "%{IncludeDir.ImGui}",
+
+        "%{prj.name}/include",
+    }
+
+    links 
+    {
+        "GLFW",
+        "Glad",
+        "ImGui",
+    }
+
+    defines { "FMT_UNICODE=0" }
+
+    filter "system:windows"
+        systemversion "latest"
+        defines { "PLATFORM_WINDOWS", "GLM_ENABLE_EXPERIMENTAL" }
+
+    filter "configurations:Debug"
+        runtime "Debug"
+        defines "DEBUG"
+        symbols "on"
+
+    filter "configurations:Release"
+        runtime "Release"
+        symbols "on"
+

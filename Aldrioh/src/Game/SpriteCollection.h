@@ -7,6 +7,7 @@ namespace SpriteCollection {
 	void init();
 
 	constexpr glm::vec2 Tile_size { 16.0f, 16.0f };
+	extern std::shared_ptr<Texture> yesSheet;
 
 	// Subtextures
 
@@ -18,6 +19,7 @@ namespace SpriteCollection {
 
 	constexpr int player_head = 5;
 	constexpr int slime = 6;
+	constexpr int target = 7;
 
 	// Textures
 	extern Texture* squareTileTexture;

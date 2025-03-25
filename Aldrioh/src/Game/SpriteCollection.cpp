@@ -10,13 +10,17 @@ static std::shared_ptr<Texture> squareBox;
 static SubTexture* spriteMap;
 static constexpr uint32_t size = 256;
 
+std::shared_ptr<Texture> SpriteCollection::yesSheet;
+
 // direct use textures, why am I mixing so many different ways to access texture
 Texture* SpriteCollection::squareTileTexture;
 
 void SpriteCollection::init()
 {
+	
 	spriteMap = new SubTexture[size];
 	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
+	yesSheet = std::make_shared<Texture>("assets/textures/yes.png");
 
 	spriteMap[null] = { spritesheet, glm::vec2{ 1, 1 }, SpriteCollection::Tile_size };
 	spriteMap[sand_1] = { spritesheet, glm::vec2{ 0, 0 }, SpriteCollection::Tile_size };
@@ -26,6 +30,7 @@ void SpriteCollection::init()
 
 	spriteMap[player_head] = { spritesheet, glm::vec2{ 0, 2 }, SpriteCollection::Tile_size };
 	spriteMap[slime] = { spritesheet, glm::vec2{ 1, 2 }, SpriteCollection::Tile_size };
+	spriteMap[target] = { spritesheet, glm::vec2{ 2, 2 }, SpriteCollection::Tile_size };
 
 	// Textures
 	{
