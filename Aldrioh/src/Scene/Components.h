@@ -62,6 +62,15 @@ struct NameComponent
 	NameComponent(const std::string& name) : name(name + std::to_string(++entityCount)) {}
 };
 
+struct TimeLifeComponent
+{
+	float timeRemaining = 0.0f;
+
+	TimeLifeComponent() = default;
+	TimeLifeComponent(const TimeLifeComponent&) = default;
+	TimeLifeComponent(const float lifeSpan) : timeRemaining(lifeSpan) {}
+};
+
 
 
 

@@ -31,7 +31,7 @@ void CameraController::OnResize(uint32_t width, uint32_t height)
 void CameraController::CalculateView()
 {
 	bounds = { -aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel };
-	camera.SetProjectionMatrix(bounds.Left + 100, bounds.Right + 100, bounds.Bottom, bounds.Top);
+	camera.SetProjectionMatrix(bounds.Left, bounds.Right, bounds.Bottom, bounds.Top);
 }
 
 
