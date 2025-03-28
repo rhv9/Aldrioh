@@ -17,6 +17,9 @@ public:
 	virtual uint32_t GetWidth() const;
 	virtual uint32_t GetHeight() const;
 
+	virtual glm::vec2 GetPos() const override;
+	virtual void SetPos(int xpos, int ypos) override;
+
 	virtual void SetSize(uint32_t width, uint32_t height) override;
 
 	virtual void SetVsync(bool val) override;

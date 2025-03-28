@@ -102,6 +102,21 @@ void GameLayer::OnUpdate(Timestep delta)
 	if (Input::IsKeyPressed(Input::KEY_D))
 		playerMove.moveVec.x = 1.0f;
 
+	glm::vec2 windowPos = Game::Instance().GetWindow()->GetPos();
+	glm::vec2 windowMove{ 0.0f, 0.0f };
+
+	if (Input::IsKeyPressed(Input::KEY_I))
+		windowMove.y = -1.0f;
+	if (Input::IsKeyPressed(Input::KEY_K))
+		windowMove.y = 1.0f;
+	if (Input::IsKeyPressed(Input::KEY_J))
+		windowMove.x = -1.0f;
+	if (Input::IsKeyPressed(Input::KEY_L))
+		windowMove.x = 1.0f;
+
+	windowMove = windowPos + windowMove * 10.0f;
+	Game::Instance().GetWindow()->SetPos(windowMove.x, windowMove.y);
+
 
 	if (Input::IsKeyPressed(Input::KEY_SPACE))
 	{
@@ -226,6 +241,11 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 	ImGui::SeparatorText("Input");
 	ImGui::Text("Mouse Pos: (%.0f, %.0f)", Input::GetMouseX(), Input::GetMouseY());
+
+	ImGui::SeparatorText("Window");
+	
+	const glm::vec2& windowPos = Game::Instance().GetWindow()->GetPos();
+	ImGui::Text("Window Position: (%.0f, %.0f)", windowPos.x, windowPos.y);
 
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);

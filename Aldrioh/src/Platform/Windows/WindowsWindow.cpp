@@ -180,6 +180,18 @@ uint32_t WindowsWindow::GetHeight() const
 	return Data.Height;
 }
 
+glm::vec2 WindowsWindow::GetPos() const
+{
+	int xpos, ypos;
+	glfwGetWindowPos(this->m_Window, &xpos, &ypos);
+	return glm::vec2{ xpos, ypos };
+}
+
+void WindowsWindow::SetPos(int xpos, int ypos)
+{
+	glfwSetWindowPos(this->m_Window, xpos, ypos);
+}
+
 void WindowsWindow::SetSize(uint32_t width, uint32_t height)
 {
 	Data.Width = width;

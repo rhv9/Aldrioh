@@ -19,12 +19,16 @@ public:
 	virtual uint32_t GetWidth() const = 0;
 	virtual uint32_t GetHeight() const = 0;
 
+	virtual glm::vec2 GetPos() const = 0;
+	virtual void SetPos(int xpos, int ypos) = 0;
+
 	virtual void SetSize(uint32_t width, uint32_t height) = 0;
 
 	virtual void Shutdown() = 0;
 
 	virtual void SetVsync(bool val) = 0;
 	virtual bool GetVsync() const { return vsync; }
+
 
 	virtual void* GetNativeWindow() const = 0;
 
