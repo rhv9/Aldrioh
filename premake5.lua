@@ -85,7 +85,7 @@ project "Aldrioh"
 
     filter "system:windows"
         systemversion "latest"
-        defines { "PLATFORM_WINDOWS", "GLM_ENABLE_EXPERIMENTAL" }
+        defines { "PLATFORM_WINDOWS", "GLM_ENABLE_EXPERIMENTAL", "GLFW_INCLUDE_NONE" }
 
     filter "configurations:Debug"
         runtime "Debug"

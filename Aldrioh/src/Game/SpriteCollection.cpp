@@ -10,27 +10,27 @@ static std::shared_ptr<Texture> squareBox;
 static SubTexture* spriteMap;
 static constexpr uint32_t size = 256;
 
-std::shared_ptr<Texture> SpriteCollection::yesSheet;
+std::shared_ptr<Texture> Sprites::yesSheet;
 
 // direct use textures, why am I mixing so many different ways to access texture
-Texture* SpriteCollection::squareTileTexture;
+Texture* Sprites::squareTileTexture;
 
-void SpriteCollection::init()
+void Sprites::init()
 {
 	
 	spriteMap = new SubTexture[size];
 	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
 	yesSheet = std::make_shared<Texture>("assets/textures/yes.png");
 
-	spriteMap[null] = { spritesheet, glm::vec2{ 1, 1 }, SpriteCollection::Tile_size };
-	spriteMap[sand_1] = { spritesheet, glm::vec2{ 0, 0 }, SpriteCollection::Tile_size };
-	spriteMap[sand_rock] = { spritesheet, glm::vec2{ 1, 0 }, SpriteCollection::Tile_size };
-	spriteMap[sand_cactus] = { spritesheet, glm::vec2{ 2, 0 }, SpriteCollection::Tile_size };
-	spriteMap[fire] = { spritesheet, glm::vec2{ 0, 1 }, SpriteCollection::Tile_size };
+	spriteMap[null] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::Tile_size };
+	spriteMap[sand_1] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::Tile_size };
+	spriteMap[sand_rock] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::Tile_size };
+	spriteMap[sand_cactus] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::Tile_size };
+	spriteMap[fire] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::Tile_size };
 
-	spriteMap[player_head] = { spritesheet, glm::vec2{ 0, 2 }, SpriteCollection::Tile_size };
-	spriteMap[slime] = { spritesheet, glm::vec2{ 1, 2 }, SpriteCollection::Tile_size };
-	spriteMap[target] = { spritesheet, glm::vec2{ 2, 2 }, SpriteCollection::Tile_size };
+	spriteMap[player_head] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::Tile_size };
+	spriteMap[slime] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::Tile_size };
+	spriteMap[target] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::Tile_size };
 
 	// Textures
 	{
@@ -63,7 +63,7 @@ void SpriteCollection::init()
 	}
 }
 
-SubTexture* SpriteCollection::get(int index)
+SubTexture* Sprites::get(int index)
 {
 	return &spriteMap[index];
 }

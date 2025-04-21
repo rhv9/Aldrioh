@@ -1,8 +1,8 @@
 #pragma once
 #include "Core/Layer.h"
-#include "FreeCameraController.h"
 
 #include "Scene/Scene.h"
+class Level;
 
 class GameLayer : public Layer
 {
@@ -16,5 +16,5 @@ public:
 	virtual void OnRemove();
 
 private:
-	std::shared_ptr<CameraController> cameraController;
+	std::shared_ptr<Level> level;
 };

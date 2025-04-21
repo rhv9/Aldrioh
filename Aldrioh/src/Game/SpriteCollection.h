@@ -2,7 +2,7 @@
 
 #include "Graphics/SubTexture.h"
 
-namespace SpriteCollection {
+namespace Sprites {
 
 	void init();
 

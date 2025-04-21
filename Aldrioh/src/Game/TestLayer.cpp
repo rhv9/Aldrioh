@@ -40,7 +40,7 @@ void TestLayer::OnBegin()
 
 
     level = std::make_shared<Level>();
-    SpriteCollection::init();
+    Sprites::init();
 
     collisionShader = CreateRef<Shader>("assets/shaders/TextureCoordReplaceColour.glsl");
 
@@ -53,7 +53,7 @@ void TestLayer::OnBegin()
     player = registry.create();
     TransformComponent& tc = registry.emplace<TransformComponent>(player);
     tc.position.z = 0.4f;
-    registry.emplace<VisualComponent>(player, SpriteCollection::player_head);
+    registry.emplace<VisualComponent>(player, Sprites::player_head);
     registry.emplace<CollisionBox>(player, glm::vec3{ 0 }, glm::vec2{ 16.0f, 16.0f });
     registry.emplace<MoveComponent>(player, 32.0f * 3);
     registry.emplace<NameComponent>(player, "player");
@@ -65,7 +65,7 @@ void TestLayer::OnBegin()
         entt::entity entity = registry.create();
 
         registry.emplace<TransformComponent>(entity, glm::vec3{ Math::Random::linearInt(0, 16 * 10), Math::Random::linearInt(0, 16 * 10), 0.0f });
-        registry.emplace<VisualComponent>(entity, SpriteCollection::fire);
+        registry.emplace<VisualComponent>(entity, Sprites::fire);
         registry.emplace<NameComponent>(entity, "fire");
 
     }
@@ -88,7 +88,7 @@ void TestLayer::OnBegin()
         {
             entt::entity e = registry.create();
             registry.emplace<TransformComponent>(e, glm::vec3{ Math::Random::linearInt(0, 16 * 2), Math::Random::linearInt(0, 16 * 16) , 0.2f });
-            registry.emplace<VisualComponent>(e, SpriteCollection::slime);
+            registry.emplace<VisualComponent>(e, Sprites::slime);
             registry.emplace<RandomMovementComponent>(e, Math::Random::linearInt(6, 32));
             registry.emplace<NameComponent>(e, "slime");
             registry.emplace<CollisionBox>(e, glm::vec3{ 0 }, glm::vec2{ 16.0f, 16.0f });
@@ -136,7 +136,8 @@ void TestLayer::OnUpdate(Timestep delta)
     // Rendering
     Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
 
-    level->OnUpdate(delta);
+    level->OnTick(delta);
+    level->OnRender(delta);
 
     // Rendering visual components
     {
@@ -145,7 +146,7 @@ void TestLayer::OnUpdate(Timestep delta)
         for (entt::entity entity : view)
         {
             auto [transform, visual] = view.get(entity);
-            Renderer::DrawQuad(transform.position + visual.localTransform, SpriteCollection::get(visual.spriteId), SpriteCollection::Tile_size);
+            Renderer::DrawQuad(transform.position + visual.localTransform, Sprites::get(visual.spriteId), Sprites::Tile_size);
             entityRenderOrder.push_back(entity);
         }
     }
@@ -183,7 +184,7 @@ void TestLayer::OnUpdate(Timestep delta)
         else
             collisionShader->UniformFloat4("uChangeColWith", { 1, 0, 0, 1 });
 
-        Renderer::DrawQuadCustomShader(collisionShader, globalPosition, SpriteCollection::squareTileTexture, collisionBox.size);
+        Renderer::DrawQuadCustomShader(collisionShader, globalPosition, Sprites::squareTileTexture, collisionBox.size);
     }
 
     Renderer::EndScene();
