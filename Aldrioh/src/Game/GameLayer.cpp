@@ -32,14 +32,13 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	Game& game = Game::Instance();
 	ImGuiIO& io = ImGui::GetIO();
 
-	ImGui::SetNextWindowBgAlpha(0.4f);
+	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window");
 
 	ImGui::SeparatorText("Game/Window");
 	ImGui::Text("frame time: %.2f (%dfps)", delta.GetMilliSeconds(), game.gameStats.fps);
 	ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
 	ImGui::Text("Blocking events: %s", ImGui::IsWindowFocused() ? "Yes" : "No");
-	//game.BlockEvents(ImGui::IsWindowFocused());
 	bool vsync = game.GetWindow()->GetVsync();
 	if (ImGui::Checkbox("vsync", &vsync))
 		game.GetWindow()->SetVsync(vsync);
@@ -59,14 +58,17 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	ImGui::SeparatorText("Input");
 	ImGui::Text("Mouse Pos: (%.0f, %.0f)", Input::GetMouseX(), Input::GetMouseY());
 
-	ImGui::SeparatorText("Window");
-	
-	const glm::vec2& windowPos = Game::Instance().GetWindow()->GetPos();
-	ImGui::Text("Window Position: (%.0f, %.0f)", windowPos.x, windowPos.y);
 
+	if (ImGui::TreeNode("Window"))
+	{
+		const glm::vec2& windowPos = Game::Instance().GetWindow()->GetPos();
+		ImGui::Text("Size: (%d, %d)", game.GetWindow()->GetWidth(), game.GetWindow()->GetHeight());
+		ImGui::Text("Position: (%.0f, %.0f)", windowPos.x, windowPos.y);
+
+		ImGui::TreePop();
+	}
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
-
 	level->OnImGuiRender(delta);
 }
 

@@ -13,7 +13,7 @@
 
 Level::Level()
 {
-	width = 25;
+	width = 14;
 	height = 200;
 	world = new int[width * height];
 
@@ -155,15 +155,21 @@ void Level::OnRender(Timestep delta)
 {
 	Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
 
-	for (int y = 0; y < height; y++)
+	auto& bounds = cameraController->GetBounds();
+	const glm::vec2& cameraPos = cameraController->GetPosition();
+	int startX = (int)std::max(-bounds.Right + cameraPos.x, 0.0f);
+	int startY = (int)std::max(-bounds.Top + cameraPos.y, 0.0f);
+	int endX = (int)std::min(bounds.Right + cameraPos.x + 1, (float)width);
+	int endY = (int)std::min(bounds.Top + cameraPos.y + 1, (float)height);
+
+	for (int y = startY; y < endY; y++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int x = startX; x < endX; x++)
 		{
 			int tile = world[y * width + x];
 			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, 0.0f };
 			Renderer::DrawQuad(renderPos, Sprites::get(tile), { 1, 1 });
 		}
-
 	}
 
 	// entities
@@ -190,13 +196,17 @@ void Level::OnRender(Timestep delta)
 
 void Level::OnImGuiRender(Timestep delta)
 {
-	ImGui::SetNextWindowBgAlpha(0.4f);
+	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Level");
+
 	ImGui::SeparatorText("Camera");
 	if (ImGui::DragFloat2("pos##1", (float*)&cameraController->GetPosition()))
 		cameraController->SetPosition(cameraController->GetPosition());
 	if (ImGui::DragFloat("zoom", (float*)&cameraController->GetZoomLevel()))
 		cameraController->SetZoomLevel(cameraController->GetZoomLevel());
+
+	ImGui::Text("Bounds: (%.1f, %.1f)", cameraController->GetBounds().Right*2, cameraController->GetBounds().Top*2);
+
 	glm::vec2 mousePos = getMousePosInWorld(cameraController);
 	ImGui::Text("Mouse in world: (%.2f, %.2f)", mousePos.x, mousePos.y);
 
@@ -210,5 +220,4 @@ void Level::OnImGuiRender(Timestep delta)
 
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
-
 }
