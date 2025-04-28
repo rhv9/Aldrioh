@@ -3,34 +3,62 @@
 
 #include "Graphics/SubTexture.h"
 
+namespace Sprites {
+
+	int null;
+	int sand_1;
+	int sand_rock;
+	int sand_cactus;
+	int fire;
+
+	int player_head;
+	int slime;
+	int target;
+
+	std::vector<int> animPlayerUp;
+	std::vector<int> animPlayerUp;
+}
+
+std::vector<int> Sprites::animPlayerUp;
 
 static std::shared_ptr<Texture> spritesheet;
 static std::shared_ptr<Texture> squareBox;
 
 static SubTexture* spriteMap;
 static constexpr uint32_t size = 256;
-
-std::shared_ptr<Texture> Sprites::yesSheet;
+static int spriteCounter = 0;
 
 // direct use textures, why am I mixing so many different ways to access texture
 Texture* Sprites::squareTileTexture;
+
+std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int size)
+{
+	std::vector<int> sprites;
+
+	
+}
 
 void Sprites::init()
 {
 	
 	spriteMap = new SubTexture[size];
 	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
-	yesSheet = std::make_shared<Texture>("assets/textures/yes.png");
 
-	spriteMap[null] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::Tile_size };
-	spriteMap[sand_1] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::Tile_size };
-	spriteMap[sand_rock] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::Tile_size };
-	spriteMap[sand_cactus] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::Tile_size };
-	spriteMap[fire] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::Tile_size };
+	spriteMap[null = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::Tile_size };
+	spriteMap[sand_1 = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::Tile_size };
+	spriteMap[sand_rock = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::Tile_size };
+	spriteMap[sand_cactus = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::Tile_size };
+	spriteMap[fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::Tile_size };
 
-	spriteMap[player_head] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::Tile_size };
-	spriteMap[slime] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::Tile_size };
-	spriteMap[target] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::Tile_size };
+	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::Tile_size };
+	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::Tile_size };
+	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::Tile_size };
+
+
+	// Animated Sprites
+	animPlayerUp.reserve(4);
+	
+	
 
 	// Textures
 	{

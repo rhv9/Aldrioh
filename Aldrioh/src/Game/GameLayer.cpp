@@ -16,9 +16,8 @@ GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
 {
-	// Add event handlers
-	level = std::make_shared<Level>();
 	Sprites::init();
+	level = std::make_shared<Level>();
 }
 
 void GameLayer::OnUpdate(Timestep delta)

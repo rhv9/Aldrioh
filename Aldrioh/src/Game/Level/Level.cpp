@@ -13,6 +13,7 @@
 
 Level::Level()
 {
+	LOG_INFO("Sprite ID for this is {}", Sprites::target);
 	width = 14;
 	height = 200;
 	world = new int[width * height];

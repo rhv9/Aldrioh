@@ -28,6 +28,24 @@ struct VisualComponent
 	static constexpr glm::vec2 DEFAULT_SCALE { 1.0f, 1.0f };
 };
 
+
+// Requires entity to have a VisualComponent to function
+struct AnimateVisualComponent
+{
+	std::vector<int> spriteIds;
+
+	float ts = 0.0f;
+	float speed;
+	bool playing = false;
+
+	AnimateVisualComponent(const std::vector<int> spriteIds, float speed) : spriteIds(spriteIds), speed(speed) {}
+	AnimateVisualComponent() : AnimateVisualComponent({ 0 }, 1.0f) {}
+	AnimateVisualComponent(const AnimateVisualComponent&) = default;
+
+	void start() { playing = true; }
+	void stop() { playing = false; }
+};
+
 struct RandomMovementComponent
 {
 	float speed;

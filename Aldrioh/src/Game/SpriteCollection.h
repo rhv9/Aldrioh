@@ -7,19 +7,20 @@ namespace Sprites {
 	void init();
 
 	constexpr glm::vec2 Tile_size { 16.0f, 16.0f };
-	extern std::shared_ptr<Texture> yesSheet;
 
 	// Subtextures
+	extern int null;
+	extern int sand_1;
+	extern int sand_rock;
+	extern int sand_cactus;
+	extern int fire;
 
-	constexpr int null = 0;
-	constexpr int sand_1 = 1;
-	constexpr int sand_rock = 2;
-	constexpr int sand_cactus = 3;
-	constexpr int fire = 4;
-
-	constexpr int player_head = 5;
-	constexpr int slime = 6;
-	constexpr int target = 7;
+	extern int player_head;
+	extern int slime;
+	extern int target;
+	
+	extern std::vector<int> animPlayerUp;
+	extern std::vector<int> animPlayerUp;
 
 	// Textures
 	extern Texture* squareTileTexture;
