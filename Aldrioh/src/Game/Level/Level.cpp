@@ -11,6 +11,8 @@
 #include <Game.h>
 #include <imgui.h>
 
+#include "Core/Platform.h"
+
 Level::Level()
 {
 	LOG_INFO("Sprite ID for this is {}", Sprites::target);
@@ -188,9 +190,10 @@ void Level::OnRender(Timestep delta)
 	{
 		glm::vec2 mousePos = Input::GetMousePosition();
 		glm::vec2 cameraPos = cameraController->GetPosition();
-
-		Renderer::DrawQuad({ 0, 0, 0 }, Sprites::get(Sprites::null));
+		
+		Renderer::DrawQuad({ 0, 0, 0 }, Sprites::get(Sprites::animPlayerUp[((int)Platform::GetElapsedTime()) % 4]));
 	}
+
 
 	Renderer::EndScene();
 }

@@ -146,7 +146,7 @@ void TestLayer::OnUpdate(Timestep delta)
         for (entt::entity entity : view)
         {
             auto [transform, visual] = view.get(entity);
-            Renderer::DrawQuad(transform.position + visual.localTransform, Sprites::get(visual.spriteId), Sprites::Tile_size);
+            Renderer::DrawQuad(transform.position + visual.localTransform, Sprites::get(visual.spriteId), Sprites::TileSize);
             entityRenderOrder.push_back(entity);
         }
     }

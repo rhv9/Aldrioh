@@ -16,10 +16,8 @@ namespace Sprites {
 	int target;
 
 	std::vector<int> animPlayerUp;
-	std::vector<int> animPlayerUp;
+	std::vector<int> animPlayerDown;
 }
-
-std::vector<int> Sprites::animPlayerUp;
 
 static std::shared_ptr<Texture> spritesheet;
 static std::shared_ptr<Texture> squareBox;
@@ -31,11 +29,19 @@ static int spriteCounter = 0;
 // direct use textures, why am I mixing so many different ways to access texture
 Texture* Sprites::squareTileTexture;
 
-std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int size)
+std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int animationLength)
 {
 	std::vector<int> sprites;
+	sprites.reserve(animationLength);
 
-	
+	for (int i = 0; i < animationLength; ++i)
+	{
+		int spriteId = spriteCounter++;
+		spriteMap[spriteId] = {spriteSheet, pos + glm::vec2{i, 0.0f}, Sprites::TileSize};
+		sprites.push_back(spriteId);
+	}
+
+	return sprites;
 }
 
 void Sprites::init()
@@ -44,21 +50,24 @@ void Sprites::init()
 	spriteMap = new SubTexture[size];
 	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
 
-	spriteMap[null = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::Tile_size };
-	spriteMap[sand_1 = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::Tile_size };
-	spriteMap[sand_rock = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::Tile_size };
-	spriteMap[sand_cactus = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::Tile_size };
-	spriteMap[fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::Tile_size };
+	spriteMap[null = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::TileSize };
+	spriteMap[sand_1 = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
+	spriteMap[sand_rock = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
+	spriteMap[sand_cactus = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
+	spriteMap[fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::TileSize };
 
-	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::Tile_size };
-	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::Tile_size };
-	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::Tile_size };
+	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
+	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::TileSize };
+	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::TileSize };
 
-
+	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
 	// Animated Sprites
-	animPlayerUp.reserve(4);
-	
-	
+	animPlayerUp = CreateAnimSprites(spritesheet, glm::vec2{ 12, 3 }, 4);
+	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 11, 3 }, 4);
+
+	for (int i = 0; i < 4; i++)
+		LOG_CORE_INFO("Sprite id number {}: {}", i, Sprites::animPlayerUp[i]);
+
 
 	// Textures
 	{

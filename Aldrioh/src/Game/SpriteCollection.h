@@ -6,7 +6,7 @@ namespace Sprites {
 
 	void init();
 
-	constexpr glm::vec2 Tile_size { 16.0f, 16.0f };
+	constexpr glm::vec2 TileSize { 16.0f, 16.0f };
 
 	// Subtextures
 	extern int null;
@@ -20,7 +20,7 @@ namespace Sprites {
 	extern int target;
 	
 	extern std::vector<int> animPlayerUp;
-	extern std::vector<int> animPlayerUp;
+	extern std::vector<int> animPlayerDown;
 
 	// Textures
 	extern Texture* squareTileTexture;
