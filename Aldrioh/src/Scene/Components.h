@@ -28,22 +28,69 @@ struct VisualComponent
 	static constexpr glm::vec2 DEFAULT_SCALE { 1.0f, 1.0f };
 };
 
+enum MoveDir
+{
+	UP = 0,
+	DOWN,
+	LEFT,
+	RIGHT,
+	NONE
+};
 
-// Requires entity to have a VisualComponent to function
+struct MoveComponent
+{
+	float speed;
+	glm::vec2 moveVec{ 0.0f };
+	MoveDir dir;
+
+	MoveComponent(float speed) : speed(speed) {}
+	MoveComponent() : speed(16.0f) {}
+	MoveComponent(const MoveComponent&) = default;
+
+	bool isMoving() { return moveVec != ZERO_VEC; }
+	bool isMovingUp() { return moveVec.y > 0; }
+	bool isMovingDown() { return moveVec.y < 0; }
+	bool isMovingLeft() { return moveVec.x < 0; }
+	bool isMovingRight() { return moveVec.x > 0; }
+	MoveDir getMoveDir() { return dir; }
+	void updateMoveVec(const glm::vec2& newMoveVec);
+
+	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
+	void zero() { moveVec = ZERO_VEC; }
+};
+
+
 struct AnimateVisualComponent
 {
 	std::vector<int> spriteIds;
 
 	float ts = 0.0f;
 	float speed;
-	bool playing = false;
+	int frame = 0;
 
 	AnimateVisualComponent(const std::vector<int> spriteIds, float speed) : spriteIds(spriteIds), speed(speed) {}
 	AnimateVisualComponent() : AnimateVisualComponent({ 0 }, 1.0f) {}
 	AnimateVisualComponent(const AnimateVisualComponent&) = default;
 
-	void start() { playing = true; }
-	void stop() { playing = false; }
+	int getCurrentSprite() { return spriteIds[frame]; }
+	void reset() { ts = 0.0f; }
+};
+
+struct AnimatedMovementComponent
+{
+	std::vector<std::vector<int>> animations;
+	float ts = 0.0f;
+	float speed = 1.0f;
+	int frame = 0;
+	MoveDir currentDir = MoveDir::UP;
+	
+	AnimatedMovementComponent(std::vector<int>& up, std::vector<int>& down, std::vector<int>& left, std::vector<int>& right, float speed) : animations({up, down, left, right}), speed(speed) {}
+	AnimatedMovementComponent() = default;
+	AnimatedMovementComponent(const AnimatedMovementComponent&) = default;
+
+	void update(float delta);
+	int getCurrentSprite() { return animations[static_cast<int>(currentDir)][frame]; }
+	void reset() { ts = speed; frame = 0; }
 };
 
 struct RandomMovementComponent
@@ -54,20 +101,6 @@ struct RandomMovementComponent
 	RandomMovementComponent() : speed(16 * 2) {}
 };
 
-struct MoveComponent
-{
-	float speed;
-	glm::vec2 moveVec{ 0.0f };
-
-	MoveComponent(float speed) : speed(speed) {}
-	MoveComponent() : speed(16.0f) {}
-	MoveComponent(const MoveComponent&) = default;
-
-	bool isMoving() { return moveVec != ZERO_VEC; }
-
-	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
-	void zero() { moveVec = ZERO_VEC; }
-};
 
 struct NameComponent
 {

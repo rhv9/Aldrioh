@@ -10,6 +10,7 @@
 #include <Input/Input.h>
 #include <Game.h>
 #include <imgui.h>
+#include "Game/RenderDepth.h"
 
 #include "Core/Platform.h"
 
@@ -25,6 +26,8 @@ Level::Level()
 		world[i] = Sprites::sand_1;
 	}
 
+
+	// Create player
 	player = registry.create();
 	TransformComponent& tc = registry.emplace<TransformComponent>(player);
 	tc.position.z = 0.4f;
@@ -34,7 +37,10 @@ Level::Level()
 	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
 	registry.emplace<MoveComponent>(player, 6.0f);
 	registry.emplace<NameComponent>(player, "Player");
+	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 
+
+	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
 	cameraController = std::make_shared<FreeRoamEntityCameraController>(aspectRatio, 1.0f);
 	cameraController->SetZoomLevel(10);
@@ -80,33 +86,23 @@ glm::vec2 getMousePosInWorld(const std::shared_ptr<CameraController>& cameraCont
 
 void Level::OnTick(Timestep delta)
 {
-	auto [playerTransform, playerMove] = registry.get<TransformComponent, MoveComponent>(player);
-	playerMove.zero();
+	// Keyboard movement of player
+	{
+		auto [playerTransform, playerMove] = registry.get<TransformComponent, MoveComponent>(player);
+		playerMove.zero();
+		glm::vec2 move{ 0.0f };
 
-	if (Input::IsKeyPressed(Input::KEY_W))
-		playerMove.moveVec.y = 1.0f;
-	if (Input::IsKeyPressed(Input::KEY_S))
-		playerMove.moveVec.y = -1.0f;
-	if (Input::IsKeyPressed(Input::KEY_A))
-		playerMove.moveVec.x = -1.0f;
-	if (Input::IsKeyPressed(Input::KEY_D))
-		playerMove.moveVec.x = 1.0f;
+		if (Input::IsKeyPressed(Input::KEY_W))
+			move.y = 1.0f;
+		if (Input::IsKeyPressed(Input::KEY_S))
+			move.y = -1.0f;
+		if (Input::IsKeyPressed(Input::KEY_A))
+			move.x = -1.0f;
+		if (Input::IsKeyPressed(Input::KEY_D))
+			move.x = 1.0f;
 
-	glm::vec2 windowPos = Game::Instance().GetWindow()->GetPos();
-	glm::vec2 windowMove{ 0.0f, 0.0f };
-
-	if (Input::IsKeyPressed(Input::KEY_I))
-		windowMove.y = -1.0f;
-	if (Input::IsKeyPressed(Input::KEY_K))
-		windowMove.y = 1.0f;
-	if (Input::IsKeyPressed(Input::KEY_J))
-		windowMove.x = -1.0f;
-	if (Input::IsKeyPressed(Input::KEY_L))
-		windowMove.x = 1.0f;
-
-	windowMove = windowPos + windowMove * 10.0f;
-	Game::Instance().GetWindow()->SetPos(windowMove.x, windowMove.y);
-
+		playerMove.updateMoveVec(move);
+	}
 
 	if (Input::IsKeyPressed(Input::KEY_SPACE))
 	{
@@ -123,6 +119,7 @@ void Level::OnTick(Timestep delta)
 	else
 		shootTimer = 0.0f;
 
+	// Update positions based on move component
 	{
 		auto view = registry.view<TransformComponent, MoveComponent>();
 
@@ -146,10 +143,34 @@ void Level::OnTick(Timestep delta)
 		}
 	}
 
+	// AnimatedMovementComponent
+	{
+		auto view = registry.view<AnimatedMovementComponent, MoveComponent, VisualComponent>();
+
+		for (entt::entity e : view)
+		{
+			auto [amc, mc, vc] = view.get(e);
+
+			if (mc.dir == MoveDir::NONE)
+			{
+				amc.reset();
+				vc.spriteId = amc.getCurrentSprite();
+			}
+			else 
+			{
+				if (amc.currentDir != mc.dir)
+				{
+					amc.currentDir = mc.dir;
+					amc.reset();
+				}
+				amc.update(delta);
+				vc.spriteId = amc.getCurrentSprite();
+
+			}
+		}
+	}
+
 	cameraController->OnUpdate(delta);
-
-	// Rendering
-
 
 }
 
@@ -170,10 +191,21 @@ void Level::OnRender(Timestep delta)
 		for (int x = startX; x < endX; x++)
 		{
 			int tile = world[y * width + x];
-			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, 0.0f };
+			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, RenderDepth::TILE };
 			Renderer::DrawQuad(renderPos, Sprites::get(tile), { 1, 1 });
 		}
 	}
+
+	{
+		glm::vec2 mousePos = Input::GetMousePosition();
+		glm::vec2 cameraPos = cameraController->GetPosition();
+
+		Renderer::DrawQuad({ 0, 0, 0.5f }, Sprites::get(Sprites::animPlayerUp[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 1, 0, 0.5f }, Sprites::get(Sprites::animPlayerDown[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 2, 0, 0.5f }, Sprites::get(Sprites::animPlayerLeft[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 3, 0, 0.5f }, Sprites::get(Sprites::animPlayerRight[((int)Platform::GetElapsedTime()) % 4]));
+	}
+
 
 	// entities
 	{
@@ -182,17 +214,11 @@ void Level::OnRender(Timestep delta)
 		for (entt::entity e : view)
 		{
 			auto [transform, visual] = view.get(e);
-			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, 0.9f };
+			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
 			Renderer::DrawQuad(drawTransform, Sprites::get(visual.spriteId), { 1, 1 });
 		}
 	}
 
-	{
-		glm::vec2 mousePos = Input::GetMousePosition();
-		glm::vec2 cameraPos = cameraController->GetPosition();
-		
-		Renderer::DrawQuad({ 0, 0, 0 }, Sprites::get(Sprites::animPlayerUp[((int)Platform::GetElapsedTime()) % 4]));
-	}
 
 
 	Renderer::EndScene();
