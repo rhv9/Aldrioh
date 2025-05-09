@@ -15,8 +15,7 @@ namespace Sprites {
 	int slime;
 	int target;
 
-	std::vector<int> animPlayerUp;
-	std::vector<int> animPlayerDown;
+	std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
 }
 
 static std::shared_ptr<Texture> spritesheet;
@@ -63,7 +62,9 @@ void Sprites::init()
 	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
 	// Animated Sprites
 	animPlayerUp = CreateAnimSprites(spritesheet, glm::vec2{ 12, 3 }, 4);
-	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 11, 3 }, 4);
+	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 12, 2 }, 4);
+	animPlayerLeft = CreateAnimSprites(spritesheet, glm::vec2{ 12, 1 }, 4);
+	animPlayerRight = CreateAnimSprites(spritesheet, glm::vec2{ 12, 0 }, 4);
 
 	for (int i = 0; i < 4; i++)
 		LOG_CORE_INFO("Sprite id number {}: {}", i, Sprites::animPlayerUp[i]);

@@ -9,6 +9,7 @@
 
 #include "Game/Level/Level.h"
 #include "Game/SpriteCollection.h"
+#include "RenderDepth.h"
 
 #include <imgui.h>
 
@@ -53,6 +54,8 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	bool renderDepth = Renderer::IsRenderDepth();
 	if (ImGui::Checkbox("Render depth", &renderDepth))
 		Renderer::SetRenderDepthOnly(renderDepth);
+	ImGui::SliderFloat("Tile", &RenderDepth::TILE, 0.0f, 1.0f);
+	ImGui::SliderFloat("Entity", &RenderDepth::ENTITY, 0.0f, 1.0f);
 
 	ImGui::SeparatorText("Input");
 	ImGui::Text("Mouse Pos: (%.0f, %.0f)", Input::GetMouseX(), Input::GetMouseY());

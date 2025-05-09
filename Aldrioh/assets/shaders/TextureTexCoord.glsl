@@ -34,6 +34,9 @@ void main()
 {
 	vec4 texColour = texture(uTextureSampler, vTexCoord);
 
+	if (texColour.a == 0.0)
+		discard;
+
 	if (uRenderDepth)
 		FragColor = vec4(vZ, vZ, vZ, 1.0);
 	else

@@ -6,7 +6,7 @@ SubTexture::SubTexture(const std::shared_ptr<Texture>& texture, const glm::vec2&
 	textureId = texture->GetTextureId();
 	textureParent = texture;
 
-	glm::vec2 pixelCenterOffset{ 1.0f / texture->GetWidth(), 1.0f / texture->GetHeight() };
+	glm::vec2 pixelCenterOffset{ (1.0f / texture->GetWidth()) / 128.0f,(1.0f / texture->GetHeight()) / 128.0f };
 
 	const glm::vec2 bottomLeftCoords{
 		(coords.x * cellSize.x) / texture->GetWidth() + pixelCenterOffset.x,
