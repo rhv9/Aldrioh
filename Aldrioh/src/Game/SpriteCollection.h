@@ -20,6 +20,7 @@ namespace Sprites {
 	extern int target;
 	
 	extern std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
+	extern std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
 
 	// Textures
 	extern Texture* squareTileTexture;
