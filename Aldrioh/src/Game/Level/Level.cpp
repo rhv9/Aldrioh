@@ -11,8 +11,28 @@
 #include <Game.h>
 #include <imgui.h>
 #include "Game/RenderDepth.h"
+#include "Components/Collision.h"
 
 #include "Core/Platform.h"
+
+entt::entity CreateBoss(entt::registry& registry)
+{
+	// Create boss
+	entt::entity boss;
+	boss = registry.create();
+	TransformComponent& tc = registry.emplace<TransformComponent>(boss);
+	tc.position.z = 0.4f;
+	tc.position.x = 0.0f;
+	tc.position.y = 0.0f;
+	VisualComponent& pvc = registry.emplace<VisualComponent>(boss, Sprites::player_head);
+	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
+	registry.emplace<MoveComponent>(boss, 6.0f);
+	registry.emplace<NameComponent>(boss, "Boss");
+	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(boss, Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
+	registry.emplace<CollisionBox>(boss, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+
+	return boss;
+}
 
 Level::Level()
 {
@@ -38,7 +58,9 @@ Level::Level()
 	registry.emplace<MoveComponent>(player, 6.0f);
 	registry.emplace<NameComponent>(player, "Player");
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
+	registry.emplace<CollisionBox>(player, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 
+	CreateBoss(registry);
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -200,10 +222,10 @@ void Level::OnRender(Timestep delta)
 		glm::vec2 mousePos = Input::GetMousePosition();
 		glm::vec2 cameraPos = cameraController->GetPosition();
 
-		Renderer::DrawQuad({ 0, 0, 0.5f }, Sprites::get(Sprites::animPlayerUp[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 1, 0, 0.5f }, Sprites::get(Sprites::animPlayerDown[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 2, 0, 0.5f }, Sprites::get(Sprites::animPlayerLeft[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 3, 0, 0.5f }, Sprites::get(Sprites::animPlayerRight[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 0, 0, 0.5f }, Sprites::get(Sprites::animBossUp[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 1, 0, 0.5f }, Sprites::get(Sprites::animBossDown[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 2, 0, 0.5f }, Sprites::get(Sprites::animBossLeft[((int)Platform::GetElapsedTime()) % 4]));
+		Renderer::DrawQuad({ 3, 0, 0.5f }, Sprites::get(Sprites::animBossRight[((int)Platform::GetElapsedTime()) % 4]));
 	}
 
 

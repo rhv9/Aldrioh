@@ -16,6 +16,7 @@ namespace Sprites {
 	int target;
 
 	std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
+	std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
 }
 
 static std::shared_ptr<Texture> spritesheet;
@@ -65,6 +66,11 @@ void Sprites::init()
 	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 12, 2 }, 4);
 	animPlayerLeft = CreateAnimSprites(spritesheet, glm::vec2{ 12, 1 }, 4);
 	animPlayerRight = CreateAnimSprites(spritesheet, glm::vec2{ 12, 0 }, 4);
+
+	animBossUp = CreateAnimSprites(spritesheet, glm::vec2{ 8, 3 }, 4);
+	animBossDown = CreateAnimSprites(spritesheet, glm::vec2{ 8, 2 }, 4);
+	animBossLeft = CreateAnimSprites(spritesheet, glm::vec2{ 8, 1 }, 4);
+	animBossRight = CreateAnimSprites(spritesheet, glm::vec2{ 8, 0 }, 4);
 
 	for (int i = 0; i < 4; i++)
 		LOG_CORE_INFO("Sprite id number {}: {}", i, Sprites::animPlayerUp[i]);
