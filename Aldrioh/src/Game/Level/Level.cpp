@@ -22,15 +22,15 @@ entt::entity CreateBoss(entt::registry& registry)
 	boss = registry.create();
 	TransformComponent& tc = registry.emplace<TransformComponent>(boss);
 	tc.position.z = 0.4f;
-	tc.position.x = 0.0f;
-	tc.position.y = 0.0f;
+	tc.position.x = 5.0f;
+	tc.position.y = 5.0f;
 	VisualComponent& pvc = registry.emplace<VisualComponent>(boss, Sprites::player_head);
 	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
-	registry.emplace<MoveComponent>(boss, 6.0f);
+	registry.emplace<MoveComponent>(boss, 1.0f);
 	registry.emplace<NameComponent>(boss, "Boss");
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(boss, Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
 	registry.emplace<CollisionBox>(boss, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-
+	registry.emplace<DumbAIComponent>(boss);
 	return boss;
 }
 
@@ -108,10 +108,16 @@ glm::vec2 getMousePosInWorld(const std::shared_ptr<CameraController>& cameraCont
 
 void Level::OnTick(Timestep delta)
 {
+	{
+		auto view = registry.view<MoveComponent>();
+		
+		for (entt::entity e : view)
+			view.get<MoveComponent>(e).zero();
+	}
+
 	// Keyboard movement of player
 	{
 		auto [playerTransform, playerMove] = registry.get<TransformComponent, MoveComponent>(player);
-		playerMove.zero();
 		glm::vec2 move{ 0.0f };
 
 		if (Input::IsKeyPressed(Input::KEY_W))
@@ -141,16 +147,7 @@ void Level::OnTick(Timestep delta)
 	else
 		shootTimer = 0.0f;
 
-	// Update positions based on move component
-	{
-		auto view = registry.view<TransformComponent, MoveComponent>();
 
-		for (entt::entity e : view)
-		{
-			auto [transform, move] = view.get(e);
-			transform.position += glm::vec3{ move.moveVec * move.speed * (float)delta, 0.0f };
-		}
-	}
 
 	{
 		auto view = registry.view<TimeLifeComponent>();
@@ -189,6 +186,32 @@ void Level::OnTick(Timestep delta)
 				vc.spriteId = amc.getCurrentSprite();
 
 			}
+		}
+	}
+
+	// DumbAIComponent
+	{
+		auto view = registry.view<DumbAIComponent, TransformComponent, MoveComponent>();
+		auto player_mc = registry.get<TransformComponent>(player);
+		for (entt::entity e : view)
+		{
+			auto [tc, mc] = view.get<TransformComponent, MoveComponent>(e);
+
+			glm::vec2 diff{ -tc.position.x + player_mc.position.x, -tc.position.y + player_mc.position.y };
+			diff = glm::normalize(diff);
+
+			mc.updateMoveVec(diff);
+		}
+	}
+
+	// Update positions based on move component
+	{
+		auto view = registry.view<TransformComponent, MoveComponent>();
+
+		for (entt::entity e : view)
+		{
+			auto [transform, move] = view.get(e);
+			transform.position += glm::vec3{ move.moveVec * move.speed * (float)delta, 0.0f };
 		}
 	}
 

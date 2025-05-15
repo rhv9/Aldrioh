@@ -41,7 +41,7 @@ struct MoveComponent
 {
 	float speed;
 	glm::vec2 moveVec{ 0.0f };
-	MoveDir dir;
+	MoveDir dir = MoveDir::NONE;
 
 	MoveComponent(float speed) : speed(speed) {}
 	MoveComponent() : speed(16.0f) {}
@@ -121,6 +121,14 @@ struct TimeLifeComponent
 	TimeLifeComponent(const TimeLifeComponent&) = default;
 	TimeLifeComponent(const float lifeSpan) : timeRemaining(lifeSpan) {}
 };
+
+struct DumbAIComponent
+{
+	DumbAIComponent() = default;
+	DumbAIComponent(const DumbAIComponent&) = default;
+};
+
+
 
 
 

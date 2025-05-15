@@ -1,13 +1,15 @@
 #include "pch.h"
 #include "Components.h"
 
+int NameComponent::entityCount = 0;
+
 void AnimatedMovementComponent::update(float delta)
 {
 	ts += delta;
 	while (ts > speed)
 	{
 		ts -= speed;
-		frame = (frame + 1) % animations[static_cast<int>(currentDir)].size();
+		frame = (frame + 1) % animations[static_cast<int>(currentDir == MoveDir::NONE ? MoveDir::UP : currentDir)].size();
 	}
 }
 
