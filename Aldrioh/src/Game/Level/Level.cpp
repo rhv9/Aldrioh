@@ -59,6 +59,7 @@ Level::Level()
 	registry.emplace<NameComponent>(player, "Player");
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	registry.emplace<CollisionBox>(player, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	registry.emplace<JumpComponent>(player);
 
 	CreateBoss(registry);
 
@@ -132,7 +133,7 @@ void Level::OnTick(Timestep delta)
 		playerMove.updateMoveVec(move);
 	}
 
-	if (Input::IsKeyPressed(Input::KEY_SPACE))
+	if (Input::IsKeyPressed(Input::KEY_F))
 	{
 		if (shootTimer >= 1.0f || shootTimer == 0.0f)
 		{
@@ -148,6 +149,38 @@ void Level::OnTick(Timestep delta)
 		shootTimer = 0.0f;
 
 
+	if (Input::IsKeyPressed(Input::KEY_SPACE))
+	{
+		auto& jc = registry.get<JumpComponent>(player);
+
+		if (jc.z == 0)
+		{
+			//jc.acceleration = 0.05f;
+			jc.velocity = 0.2f;
+		}
+	}
+
+	// Jump component
+	{
+		auto view = registry.view<JumpComponent, VisualComponent>();
+
+		for (entt::entity e : view)
+		{
+			auto [jc, vc] = view.get<JumpComponent, VisualComponent>(e);
+
+			jc.velocity -= 0.8f * (float)delta;
+			//jc.acceleration -= 0.4f * (float)delta;
+			jc.z += jc.velocity;
+			if (jc.z <= 0)
+			{
+				jc.z = 0;
+				jc.velocity = 0;
+				jc.acceleration = 0;
+			}
+
+			vc.localTransform.z = jc.z;
+		}
+	}
 
 	{
 		auto view = registry.view<TimeLifeComponent>();
@@ -260,7 +293,8 @@ void Level::OnRender(Timestep delta)
 		{
 			auto [transform, visual] = view.get(e);
 			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
-			Renderer::DrawQuad(drawTransform, Sprites::get(visual.spriteId), { 1, 1 });
+			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, -0.4f, 0.0f}, Sprites::get(Sprites::shadow), {1, 1});
+			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, visual.localTransform.z, 0.0f}, Sprites::get(visual.spriteId), {1, 1});
 		}
 	}
 
@@ -287,6 +321,9 @@ void Level::OnImGuiRender(Timestep delta)
 
 	ImGui::SeparatorText("Player");
 	ImGui::DragFloat3("pos##2", (float*)&registry.get<TransformComponent>(player).position);
+	ImGui::DragFloat("z", &registry.get<JumpComponent>(player).z);
+	ImGui::DragFloat("velocity", &registry.get<JumpComponent>(player).velocity);
+	ImGui::DragFloat("acceleration", &registry.get<JumpComponent>(player).acceleration);
 	ImGui::Text("moving: %s", registry.get<MoveComponent>(player).isMoving() ? "Yes" : "No");
 	ImGui::Text("Shoot timer: %.2f", shootTimer);
 

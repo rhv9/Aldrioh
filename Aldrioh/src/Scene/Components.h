@@ -128,6 +128,16 @@ struct DumbAIComponent
 	DumbAIComponent(const DumbAIComponent&) = default;
 };
 
+struct JumpComponent
+{
+	float z;
+	float velocity;
+	float acceleration;
+
+	JumpComponent() = default;
+	JumpComponent(const JumpComponent&) = default;
+};
+
 
 
 

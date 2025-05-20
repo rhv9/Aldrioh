@@ -6,6 +6,7 @@
 namespace Sprites {
 
 	int null;
+	int shadow;
 	int sand_1;
 	int sand_rock;
 	int sand_cactus;
@@ -51,6 +52,7 @@ void Sprites::init()
 	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
 
 	spriteMap[null = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::TileSize };
+	spriteMap[shadow = spriteCounter++] = { spritesheet, glm::vec2{ 0, 3 }, Sprites::TileSize };
 	spriteMap[sand_1 = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
 	spriteMap[sand_rock = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
 	spriteMap[sand_cactus = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };

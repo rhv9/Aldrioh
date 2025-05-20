@@ -10,6 +10,7 @@ namespace Sprites {
 
 	// Subtextures
 	extern int null;
+	extern int shadow;
 	extern int sand_1;
 	extern int sand_rock;
 	extern int sand_cactus;
