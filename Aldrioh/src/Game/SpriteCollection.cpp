@@ -16,6 +16,8 @@ namespace Sprites {
 	int slime;
 	int target;
 
+	int redBox, greenBox;
+
 	std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
 	std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
 }
@@ -61,6 +63,10 @@ void Sprites::init()
 	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
 	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::TileSize };
 	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::TileSize };
+
+	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 2, 3 }, Sprites::TileSize };
+	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 3, 3 }, Sprites::TileSize };
+
 
 	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
 	// Animated Sprites

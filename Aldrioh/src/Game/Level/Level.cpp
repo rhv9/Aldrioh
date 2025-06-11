@@ -29,7 +29,7 @@ entt::entity CreateBoss(entt::registry& registry)
 	registry.emplace<MoveComponent>(boss, 1.0f);
 	registry.emplace<NameComponent>(boss, "Boss");
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(boss, Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
-	registry.emplace<CollisionBox>(boss, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	registry.emplace<CollisionBox>(boss, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	registry.emplace<DumbAIComponent>(boss);
 	return boss;
 }
@@ -58,7 +58,7 @@ Level::Level()
 	registry.emplace<MoveComponent>(player, 6.0f);
 	registry.emplace<NameComponent>(player, "Player");
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	registry.emplace<CollisionBox>(player, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	registry.emplace<CollisionBox>(player, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	registry.emplace<JumpComponent>(player);
 
 	CreateBoss(registry);
@@ -156,7 +156,7 @@ void Level::OnTick(Timestep delta)
 		if (jc.z == 0)
 		{
 			//jc.acceleration = 0.05f;
-			jc.velocity = 0.2f;
+			jc.velocity = 0.14f;
 		}
 	}
 
@@ -248,6 +248,17 @@ void Level::OnTick(Timestep delta)
 		}
 	}
 
+	// Check collisions
+	{
+		auto view = registry.view<TransformComponent, CollisionBox>();
+
+		for (entt::entity e : view)
+		{
+			auto [tc, cb] = view.get(e);
+
+		}
+	}
+
 	cameraController->OnUpdate(delta);
 
 }
@@ -295,6 +306,18 @@ void Level::OnRender(Timestep delta)
 			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
 			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, -0.4f, 0.0f}, Sprites::get(Sprites::shadow), {1, 1});
 			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, visual.localTransform.z, 0.0f}, Sprites::get(visual.spriteId), {1, 1});
+		}
+	}
+
+	// Render collision
+	{
+		auto view = registry.view<TransformComponent, CollisionBox>();
+
+		for (entt::entity e : view)
+		{
+			auto [tc, cb] = view.get<TransformComponent, CollisionBox>(e);
+			glm::vec3 offset = tc.position + cb.position;
+			Renderer::DrawQuad(offset, Sprites::get(Sprites::redBox), cb.size);
 		}
 	}
 

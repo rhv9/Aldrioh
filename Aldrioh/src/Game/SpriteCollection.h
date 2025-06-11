@@ -19,6 +19,8 @@ namespace Sprites {
 	extern int player_head;
 	extern int slime;
 	extern int target;
+
+	extern int redBox, greenBox;
 	
 	extern std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
 	extern std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
