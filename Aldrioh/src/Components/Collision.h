@@ -20,6 +20,8 @@ public:
 	CollisionBox(const glm::vec3& pos, const glm::vec2& size)
 		: position(pos), size(size) {}
 
+	CollisionBox OffsetNew(const glm::vec3& offset) { return CollisionBox(position + offset, size); }
+
 	virtual bool CollidesWith(CollisionShape* shape) override;
 	virtual CollisionManager* GetCollisionManager() override;
 };

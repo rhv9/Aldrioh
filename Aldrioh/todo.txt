@@ -1,0 +1,18 @@
+
+Ideas
+- Jumping to blocks
+- Wall jump
+- Grabbing the edge of blocks
+- Wall climbing sections
+- Infinite run mode
+
+
+14062025
+T-14
+Todo
+- Entity collisions.
+- Different collision causes different responses.
+- Tile objects
+- Basic stopping player movement with ahead check of tile
+
+Done

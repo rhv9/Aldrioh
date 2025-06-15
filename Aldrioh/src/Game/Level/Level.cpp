@@ -28,6 +28,7 @@ entt::entity CreateBoss(entt::registry& registry)
 	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
 	registry.emplace<MoveComponent>(boss, 1.0f);
 	registry.emplace<NameComponent>(boss, "Boss");
+	registry.emplace<EntityTypeComponent>(boss, EntityType::Enemy);
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(boss, Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
 	registry.emplace<CollisionBox>(boss, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	registry.emplace<DumbAIComponent>(boss);
@@ -46,6 +47,11 @@ Level::Level()
 		world[i] = Sprites::sand_1;
 	}
 
+	// collisionDispatcher
+	collisionDispatcher.AddCallback(EntityType::Player, EntityType::Enemy, [](entt::registry& registry, entt::entity e1, entt::entity e2) {
+		LOG_CORE_INFO("Player colliding with boss!");
+	});
+
 
 	// Create player
 	player = registry.create();
@@ -57,11 +63,13 @@ Level::Level()
 	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
 	registry.emplace<MoveComponent>(player, 6.0f);
 	registry.emplace<NameComponent>(player, "Player");
+	registry.emplace<EntityTypeComponent>(player, EntityType::Player);
 	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	registry.emplace<CollisionBox>(player, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	registry.emplace<JumpComponent>(player);
 
 	CreateBoss(registry);
+
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -71,6 +79,7 @@ Level::Level()
 
 	// set free roam entity
 	static_cast<FreeRoamEntityCameraController*>(cameraController.get())->SetEntity(&registry, player);
+
 }
 
 
@@ -252,10 +261,28 @@ void Level::OnTick(Timestep delta)
 	{
 		auto view = registry.view<TransformComponent, CollisionBox>();
 
-		for (entt::entity e : view)
+		for (auto iter = view.begin(); iter != view.end(); ++iter)
 		{
-			auto [tc, cb] = view.get(e);
+			auto copiedIter = iter;
+			copiedIter++;
+			for (auto innerIter = copiedIter; innerIter != view.end(); ++innerIter)
+			{
+				entt::entity e1 = *iter;
+				entt::entity e2 = *innerIter;
 
+				auto [tc1, cb1] = view.get(e1);
+				auto [tc2, cb2] = view.get(e2);
+
+				CollisionBox cb2Collision = cb2.OffsetNew(tc2.position);
+				bool collides = cb1.OffsetNew(tc1.position).CollidesWith(&cb2Collision);
+
+				if (collides)
+				{
+					collisionDispatcher.Dispatch(registry, e1, e2);
+				}
+								
+			}
+			
 		}
 	}
 

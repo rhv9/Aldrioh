@@ -1,5 +1,14 @@
 #pragma once
+#include <Game/Entity/EntityType.h>
 
+struct EntityTypeComponent
+{
+	EntityType type;
+
+	EntityTypeComponent() = default;
+	EntityTypeComponent(const EntityTypeComponent&) = default;
+	EntityTypeComponent(EntityType type) : type(type) {}
+};
 
 struct TransformComponent
 {

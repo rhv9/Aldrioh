@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/GameLayer.h"
 #include "FreeCameraController.h"
+#include <Components/CollisionDispatcher.h>
 
 class Level
 {
@@ -21,6 +22,8 @@ private:
 	std::shared_ptr<CameraController> cameraController;
 	entt::registry registry;
 	entt::entity player;
+
+	CollisionDispatcher collisionDispatcher;
 
 	float shootTimer = 0.0f;
 };
