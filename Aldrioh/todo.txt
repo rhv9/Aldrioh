@@ -7,12 +7,18 @@ Ideas
 - Infinite run mode
 
 
-14062025
+v0.15
 T-14
 Todo
 - Entity collisions.
 - Different collision causes different responses.
 - Tile objects
 - Basic stopping player movement with ahead check of tile
+- Wrap entity and scene
+- Clean up components
+- Clean up systems
+- Use wrapped entity and scene
 
 Done
+- Entity collisions
+- different collision causes different responses.

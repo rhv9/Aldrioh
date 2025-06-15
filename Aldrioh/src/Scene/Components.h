@@ -111,6 +111,8 @@ struct RandomMovementComponent
 };
 
 
+
+
 struct NameComponent
 {
 	static int entityCount;
