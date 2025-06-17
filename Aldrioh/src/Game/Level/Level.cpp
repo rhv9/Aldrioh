@@ -14,25 +14,20 @@
 #include "Components/Collision.h"
 
 #include "Core/Platform.h"
+#include <Scene/Entity.h>
 
-entt::entity CreateBoss(entt::registry& registry)
+void CreateBoss(std::shared_ptr<Scene>& scene)
 {
 	// Create boss
-	entt::entity boss;
-	boss = registry.create();
-	TransformComponent& tc = registry.emplace<TransformComponent>(boss);
-	tc.position.z = 0.4f;
-	tc.position.x = 5.0f;
-	tc.position.y = 5.0f;
-	VisualComponent& pvc = registry.emplace<VisualComponent>(boss, Sprites::player_head);
-	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
-	registry.emplace<MoveComponent>(boss, 1.0f);
-	registry.emplace<NameComponent>(boss, "Boss");
-	registry.emplace<EntityTypeComponent>(boss, EntityType::Enemy);
-	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(boss, Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
-	registry.emplace<CollisionBox>(boss, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	registry.emplace<DumbAIComponent>(boss);
-	return boss;
+	Entity boss = scene->CreateEntity();
+	boss.AddComponent<TransformComponent>(boss).position = { 5.0f, 5.0f, 0.4f };
+	boss.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
+	boss.AddComponent<MoveComponent>(1.0f);
+	boss.AddComponent<NameComponent>("Boss");
+	boss.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	boss.AddComponent<AnimatedMovementComponent>(Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
+	boss.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	boss.AddComponent<DumbAIComponent>();
 }
 
 Level::Level()
@@ -52,23 +47,19 @@ Level::Level()
 		LOG_CORE_INFO("Player colliding with boss!");
 	});
 
+	scene = std::make_shared<Scene>();
 
 	// Create player
-	player = registry.create();
-	TransformComponent& tc = registry.emplace<TransformComponent>(player);
-	tc.position.z = 0.4f;
-	tc.position.x = 0.0f;
-	tc.position.y = 0.0f;
-	VisualComponent& pvc = registry.emplace<VisualComponent>(player, Sprites::player_head);
-	pvc.localTransform = { -0.5f, -0.5f, 0.0f };
-	registry.emplace<MoveComponent>(player, 6.0f);
-	registry.emplace<NameComponent>(player, "Player");
-	registry.emplace<EntityTypeComponent>(player, EntityType::Player);
-	AnimatedMovementComponent& amc = registry.emplace<AnimatedMovementComponent>(player, Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	registry.emplace<CollisionBox>(player, glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	registry.emplace<JumpComponent>(player);
+	Entity player = scene->CreateEntity("Player");
+	player.GetComponent<TransformComponent>().position = { 0.0f, 0.0f, 0.4f };
+	player.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
+	player.AddComponent<MoveComponent>(6.0f);
+	player.AddComponent<EntityTypeComponent>(EntityType::Player);
+	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
+	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	player.AddComponent<JumpComponent>();
 
-	CreateBoss(registry);
+	CreateBoss(scene);
 
 
 	// Camera
@@ -78,7 +69,7 @@ Level::Level()
 	cameraController->SetPosition({ cameraController->GetZoomLevel() * 0.75, cameraController->GetZoomLevel() });
 
 	// set free roam entity
-	static_cast<FreeRoamEntityCameraController*>(cameraController.get())->SetEntity(&registry, player);
+	static_cast<FreeRoamEntityCameraController*>(cameraController.get())->SetEntity(player);
 
 }
 

@@ -2,6 +2,7 @@
 #include "Game/GameLayer.h"
 #include "FreeCameraController.h"
 #include <Components/CollisionDispatcher.h>
+#include <Scene/Scene.h>
 
 class Level
 {
@@ -20,7 +21,7 @@ private:
 	int width, height;
 
 	std::shared_ptr<CameraController> cameraController;
-	entt::registry registry;
+	std::shared_ptr<Scene> scene;
 	entt::entity player;
 
 	CollisionDispatcher collisionDispatcher;

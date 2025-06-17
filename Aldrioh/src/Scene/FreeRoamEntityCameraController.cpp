@@ -44,7 +44,8 @@ void FreeRoamEntityCameraController::OnUpdate(Timestep ts)
 		initialCameraPos += move;
 	}
 
-	auto [entityTransform, entityMove] = registry->get<TransformComponent, MoveComponent>(entity);
+	auto entityTransform = entity.GetComponent<TransformComponent>();
+	auto entityMove = entity.GetComponent<MoveComponent>();
 
 	if (entityMove.isMoving())
 	{
@@ -111,9 +112,8 @@ void FreeRoamEntityCameraController::OnWindowResizeCallback(WindowResizeEventArg
 }
 
 
-void FreeRoamEntityCameraController::SetEntity(entt::registry* registry, entt::entity entity)
+void FreeRoamEntityCameraController::SetEntity(Entity entity)
 {
 	this->entity = entity;
-	this->registry = registry;
 }
 
