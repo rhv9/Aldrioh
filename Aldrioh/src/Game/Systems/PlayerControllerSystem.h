@@ -1,4 +1,4 @@
 #pragma once
+#include <Scene/Entity.h>
 
-
-void SystemPlayerController(entt::registry& registry, )
+void SystemPlayerController(Entity e);

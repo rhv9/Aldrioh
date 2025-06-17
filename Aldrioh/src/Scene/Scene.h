@@ -1,6 +1,8 @@
 #pragma once
 #include <entt.hpp>
 
+class Entity;
+
 class Scene
 {
 public:
@@ -8,13 +10,15 @@ public:
 	~Scene();
 
 	// temp
-	entt::registry& Registry() { return m_Registry; }
+	entt::registry& Registry() { return registry; }
 
 	Entity CreateEntity(const std::string& name = std::string("Entity"));
 	void OnUpdate(Timestep ts);
 
+	Entity wrapEntityHandle(entt::entity entityHandle);
+
 private:
-	entt::registry m_Registry;
+	entt::registry registry;
 
 	friend class Entity;
 };

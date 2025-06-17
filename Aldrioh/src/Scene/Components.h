@@ -12,7 +12,7 @@ struct EntityTypeComponent
 
 struct TransformComponent
 {
-	glm::vec3 position;
+	glm::vec3 position { 0 };
 	
 	TransformComponent() = default;
 	TransformComponent(const TransformComponent&) = default;

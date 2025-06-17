@@ -1,4 +1,4 @@
-#include <Game/Entity/EntityType.h>
+#pragma once
 
 struct PlayerControllerComponent
 {

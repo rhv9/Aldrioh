@@ -9,13 +9,14 @@ public:
 	Entity() = default;
 	Entity(entt::entity handle, Scene* scene);
 	Entity(const Entity& other) = default;
+	~Entity();
 
 	template<typename T, typename... Args>
 	T& AddComponent(Args&&... args)
 	{
 		LOG_CORE_CRITICAL_IF(!HasComponent<T>(), "Entity already has component!");
 
-		return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+		return scene->registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
 	}
 
 	template<typename T>
@@ -23,13 +24,13 @@ public:
 	{
 		LOG_CORE_CRITICAL_IF(HasComponent<T>(), "Entity does not have component!");
 
-		return m_Scene->m_Registry.get<T>(m_EntityHandle);
+		return scene->registry.get<T>(entityHandle);
 	}
 
 	template<typename T>
 	bool HasComponent()
 	{
-		return m_Scene->m_Registry.all_of<T>(m_EntityHandle);
+		return scene->registry.all_of<T>(entityHandle);
 	}
 
 	template<typename T>
@@ -37,7 +38,7 @@ public:
 	{
 		LOG_CORE_CRITICAL_IF(HasComponent<T>(), "Entity does not have component!");
 
-		m_Scene->m_Registry.erase<T>(m_EntityHandle);
+		scene->registry.erase<T>(entityHandle);
 	}
 
 	operator bool() const { return entityHandle != entt::null; }

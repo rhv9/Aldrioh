@@ -6,3 +6,7 @@ Entity::Entity(entt::entity handle, Scene* scene)
 	this->entityHandle = handle;
 	this->scene = scene;
 }
+
+Entity::~Entity()
+{
+}

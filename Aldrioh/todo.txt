@@ -6,6 +6,9 @@ Ideas
 - Wall climbing sections
 - Infinite run mode
 
+Engine Improvements
+- Complete the callback system for inputs, so can remove callbacks.
+
 
 v0.15
 T-14
@@ -18,6 +21,7 @@ Todo
 - Clean up components
 - Clean up systems
 - Use wrapped entity and scene
+- collision dispatcher ordering entity for easier coding
 
 Done
 - Entity collisions
