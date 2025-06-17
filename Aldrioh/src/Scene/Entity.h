@@ -11,10 +11,12 @@ public:
 	Entity(const Entity& other) = default;
 	~Entity();
 
+	Scene* getScene() { return scene; }
+
 	template<typename T, typename... Args>
 	T& AddComponent(Args&&... args)
 	{
-		LOG_CORE_CRITICAL_IF(!HasComponent<T>(), "Entity already has component!");
+		CORE_ASSERT(!HasComponent<T>(), "AddComponent: Entity already has component!");
 
 		return scene->registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
 	}
@@ -22,7 +24,7 @@ public:
 	template<typename T>
 	T& GetComponent()
 	{
-		LOG_CORE_CRITICAL_IF(HasComponent<T>(), "Entity does not have component!");
+		CORE_ASSERT(HasComponent<T>(), "GetComponent: Entity does not have component!");
 
 		return scene->registry.get<T>(entityHandle);
 	}
@@ -36,7 +38,7 @@ public:
 	template<typename T>
 	void RemoveComponent()
 	{
-		LOG_CORE_CRITICAL_IF(HasComponent<T>(), "Entity does not have component!");
+		CORE_ASSERT(HasComponent<T>(), "RemoveComponent: Entity does not have component!");
 
 		scene->registry.erase<T>(entityHandle);
 	}

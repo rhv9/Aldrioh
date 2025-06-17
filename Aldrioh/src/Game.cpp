@@ -20,7 +20,6 @@
 #include "Graphics/Renderer.h"
 
 #include "Game/GameLayer.h"
-#include "Game/TestLayer.h"
 
 Game& Game::Instance()
 {

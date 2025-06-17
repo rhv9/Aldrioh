@@ -8,7 +8,7 @@ Ideas
 
 Engine Improvements
 - Complete the callback system for inputs, so can remove callbacks.
-
+- Scene can handle more than one camera.
 
 v0.15
 T-14
@@ -26,3 +26,6 @@ Todo
 Done
 - Entity collisions
 - different collision causes different responses.
+- Wrapped everything into entity
+- Wrapped into scene
+- Moved player controller to a player controller system

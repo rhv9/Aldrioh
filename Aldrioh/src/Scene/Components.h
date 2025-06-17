@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/Entity/EntityType.h>
+#include <Scene/CameraController.h>
 
 struct EntityTypeComponent
 {
@@ -106,10 +107,19 @@ struct RandomMovementComponent
 {
 	float speed;
 
-	RandomMovementComponent(float speed) : speed(speed) {}
 	RandomMovementComponent() : speed(16 * 2) {}
+	RandomMovementComponent(float speed) : speed(speed) {}
+	RandomMovementComponent(const RandomMovementComponent&) = default;
 };
 
+struct CameraComponent
+{
+	CameraController* cameraController;
+
+	CameraComponent();
+	CameraComponent(CameraController* cameraController) : cameraController(cameraController) {}
+	CameraComponent(const CameraComponent&) = default;
+};
 
 
 
@@ -135,7 +145,9 @@ struct TimeLifeComponent
 
 struct DumbAIComponent
 {
+	float val = 0.0f;
 	DumbAIComponent() = default;
+	DumbAIComponent(float val) : val(val) {}
 	DumbAIComponent(const DumbAIComponent&) = default;
 };
 

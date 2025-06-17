@@ -19,11 +19,10 @@
 void CreateBoss(std::shared_ptr<Scene>& scene)
 {
 	// Create boss
-	Entity boss = scene->CreateEntity();
-	boss.AddComponent<TransformComponent>(boss).position = { 5.0f, 5.0f, 0.4f };
+	Entity boss = scene->CreateEntity("Boss");
+	boss.GetComponent<TransformComponent>().position = { 5.0f, 5.0f, 0.4f };
 	boss.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
 	boss.AddComponent<MoveComponent>(1.0f);
-	boss.AddComponent<NameComponent>("Boss");
 	boss.AddComponent<EntityTypeComponent>(EntityType::Enemy);
 	boss.AddComponent<AnimatedMovementComponent>(Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
 	boss.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
@@ -32,25 +31,19 @@ void CreateBoss(std::shared_ptr<Scene>& scene)
 
 Level::Level()
 {
-	LOG_INFO("Sprite ID for this is {}", Sprites::target);
-	width = 14;
-	height = 200;
-	world = new int[width * height];
-
-	for (int i = 0; i < width * height; i++)
-	{
-		world[i] = Sprites::sand_1;
-	}
+	scene = std::make_shared<Scene>();
 
 	// collisionDispatcher
-	collisionDispatcher.AddCallback(EntityType::Player, EntityType::Enemy, [](entt::registry& registry, entt::entity e1, entt::entity e2) {
+	CollisionCallbackType callback = [](entt::registry& registry, entt::entity e1, entt::entity e2) {
 		LOG_CORE_INFO("Player colliding with boss!");
-	});
+		};
 
-	scene = std::make_shared<Scene>();
+	scene->GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
+
 
 	// Create player
 	Entity player = scene->CreateEntity("Player");
+	scene->SetPlayer(player);
 	player.GetComponent<TransformComponent>().position = { 0.0f, 0.0f, 0.4f };
 	player.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
 	player.AddComponent<MoveComponent>(6.0f);
@@ -64,288 +57,39 @@ Level::Level()
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	cameraController = std::make_shared<FreeRoamEntityCameraController>(aspectRatio, 1.0f);
+	CameraController* cameraController = new FreeRoamEntityCameraController(aspectRatio, 1.0f);
 	cameraController->SetZoomLevel(10);
 	cameraController->SetPosition({ cameraController->GetZoomLevel() * 0.75, cameraController->GetZoomLevel() });
 
 	// set free roam entity
-	static_cast<FreeRoamEntityCameraController*>(cameraController.get())->SetEntity(player);
+	static_cast<FreeRoamEntityCameraController*>(cameraController)->SetEntity(player);
 
+	// Add camera component
+	Entity cameraEntity = scene->CreateEntity("RoamAndEntityCamera");
+	cameraEntity.AddComponent<CameraComponent>(cameraController);
+	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 }
 
 
 Level::~Level()
 {
-	delete world;
-}
-
-void shoot(entt::registry& registry, const glm::vec2& origin, const glm::vec2& direction)
-{
-	// Create entity
-	entt::entity fireball = registry.create();
-	registry.emplace<TransformComponent>(fireball, glm::vec3{ origin , 0.5f });
-	registry.emplace<NameComponent>(fireball, "Fireball");
-	MoveComponent& mc = registry.emplace<MoveComponent>(fireball, 10.0f);
-	mc.moveVec = glm::normalize(direction - origin);
-	registry.emplace<VisualComponent>(fireball, Sprites::fire);
-	registry.emplace<TimeLifeComponent>(fireball, 1.0f);
-}
-
-
-glm::vec2 getMousePosInWorld(const std::shared_ptr<CameraController>& cameraController)
-{
-	glm::vec2 mousePos = Input::GetMousePosition();
-	glm::vec2 cameraPos = cameraController->GetPosition();
-	auto& bounds = cameraController->GetBounds();
-
-	glm::vec2 mousePosPercent = { mousePos.x / Game::Instance().GetWindow()->GetWidth(),
-						 mousePos.y / Game::Instance().GetWindow()->GetHeight() };
-
-
-	glm::vec2 zoomedDimensions{ bounds.Right, -bounds.Top };
-
-	return (glm::vec2{ mousePosPercent.x * zoomedDimensions.x - bounds.Right / 2.0f, mousePosPercent.y * zoomedDimensions.y + bounds.Top / 2.0f } *2.0f) + cameraController->GetPosition();
 }
 
 void Level::OnTick(Timestep delta)
 {
-	{
-		auto view = registry.view<MoveComponent>();
-		
-		for (entt::entity e : view)
-			view.get<MoveComponent>(e).zero();
-	}
-
-	// Keyboard movement of player
-	{
-		auto [playerTransform, playerMove] = registry.get<TransformComponent, MoveComponent>(player);
-		glm::vec2 move{ 0.0f };
-
-		if (Input::IsKeyPressed(Input::KEY_W))
-			move.y = 1.0f;
-		if (Input::IsKeyPressed(Input::KEY_S))
-			move.y = -1.0f;
-		if (Input::IsKeyPressed(Input::KEY_A))
-			move.x = -1.0f;
-		if (Input::IsKeyPressed(Input::KEY_D))
-			move.x = 1.0f;
-
-		playerMove.updateMoveVec(move);
-	}
-
-	if (Input::IsKeyPressed(Input::KEY_F))
-	{
-		if (shootTimer >= 1.0f || shootTimer == 0.0f)
-		{
-			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-			LOG_TRACE("Shooting!");
-			glm::vec3& playerPos = registry.get<TransformComponent>(player).position;
-
-			shoot(registry, playerPos, getMousePosInWorld(cameraController));
-		}
-		shootTimer += delta;
-	}
-	else
-		shootTimer = 0.0f;
-
-
-	if (Input::IsKeyPressed(Input::KEY_SPACE))
-	{
-		auto& jc = registry.get<JumpComponent>(player);
-
-		if (jc.z == 0)
-		{
-			//jc.acceleration = 0.05f;
-			jc.velocity = 0.14f;
-		}
-	}
-
-	// Jump component
-	{
-		auto view = registry.view<JumpComponent, VisualComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [jc, vc] = view.get<JumpComponent, VisualComponent>(e);
-
-			jc.velocity -= 0.8f * (float)delta;
-			//jc.acceleration -= 0.4f * (float)delta;
-			jc.z += jc.velocity;
-			if (jc.z <= 0)
-			{
-				jc.z = 0;
-				jc.velocity = 0;
-				jc.acceleration = 0;
-			}
-
-			vc.localTransform.z = jc.z;
-		}
-	}
-
-	{
-		auto view = registry.view<TimeLifeComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [tlc] = view.get(e);
-			if (tlc.timeRemaining <= 0.0f)
-				registry.destroy(e);
-			else
-				tlc.timeRemaining -= delta;
-		}
-	}
-
-	// AnimatedMovementComponent
-	{
-		auto view = registry.view<AnimatedMovementComponent, MoveComponent, VisualComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [amc, mc, vc] = view.get(e);
-
-			if (mc.dir == MoveDir::NONE)
-			{
-				amc.reset();
-				vc.spriteId = amc.getCurrentSprite();
-			}
-			else 
-			{
-				if (amc.currentDir != mc.dir)
-				{
-					amc.currentDir = mc.dir;
-					amc.reset();
-				}
-				amc.update(delta);
-				vc.spriteId = amc.getCurrentSprite();
-
-			}
-		}
-	}
-
-	// DumbAIComponent
-	{
-		auto view = registry.view<DumbAIComponent, TransformComponent, MoveComponent>();
-		auto player_mc = registry.get<TransformComponent>(player);
-		for (entt::entity e : view)
-		{
-			auto [tc, mc] = view.get<TransformComponent, MoveComponent>(e);
-
-			glm::vec2 diff{ -tc.position.x + player_mc.position.x, -tc.position.y + player_mc.position.y };
-			diff = glm::normalize(diff);
-
-			mc.updateMoveVec(diff);
-		}
-	}
-
-	// Update positions based on move component
-	{
-		auto view = registry.view<TransformComponent, MoveComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [transform, move] = view.get(e);
-			transform.position += glm::vec3{ move.moveVec * move.speed * (float)delta, 0.0f };
-		}
-	}
-
-	// Check collisions
-	{
-		auto view = registry.view<TransformComponent, CollisionBox>();
-
-		for (auto iter = view.begin(); iter != view.end(); ++iter)
-		{
-			auto copiedIter = iter;
-			copiedIter++;
-			for (auto innerIter = copiedIter; innerIter != view.end(); ++innerIter)
-			{
-				entt::entity e1 = *iter;
-				entt::entity e2 = *innerIter;
-
-				auto [tc1, cb1] = view.get(e1);
-				auto [tc2, cb2] = view.get(e2);
-
-				CollisionBox cb2Collision = cb2.OffsetNew(tc2.position);
-				bool collides = cb1.OffsetNew(tc1.position).CollidesWith(&cb2Collision);
-
-				if (collides)
-				{
-					collisionDispatcher.Dispatch(registry, e1, e2);
-				}
-								
-			}
-			
-		}
-	}
-
-	cameraController->OnUpdate(delta);
-
+	scene->OnUpdate(delta);
 }
 
 
 void Level::OnRender(Timestep delta)
 {
-	Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
-
-	auto& bounds = cameraController->GetBounds();
-	const glm::vec2& cameraPos = cameraController->GetPosition();
-	int startX = (int)std::max(-bounds.Right + cameraPos.x, 0.0f);
-	int startY = (int)std::max(-bounds.Top + cameraPos.y, 0.0f);
-	int endX = (int)std::min(bounds.Right + cameraPos.x + 1, (float)width);
-	int endY = (int)std::min(bounds.Top + cameraPos.y + 1, (float)height);
-
-	for (int y = startY; y < endY; y++)
-	{
-		for (int x = startX; x < endX; x++)
-		{
-			int tile = world[y * width + x];
-			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, RenderDepth::TILE };
-			Renderer::DrawQuad(renderPos, Sprites::get(tile), { 1, 1 });
-		}
-	}
-
-	{
-		glm::vec2 mousePos = Input::GetMousePosition();
-		glm::vec2 cameraPos = cameraController->GetPosition();
-
-		Renderer::DrawQuad({ 0, 0, 0.5f }, Sprites::get(Sprites::animBossUp[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 1, 0, 0.5f }, Sprites::get(Sprites::animBossDown[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 2, 0, 0.5f }, Sprites::get(Sprites::animBossLeft[((int)Platform::GetElapsedTime()) % 4]));
-		Renderer::DrawQuad({ 3, 0, 0.5f }, Sprites::get(Sprites::animBossRight[((int)Platform::GetElapsedTime()) % 4]));
-	}
-
-
-	// entities
-	{
-		auto view = registry.view<TransformComponent, VisualComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [transform, visual] = view.get(e);
-			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
-			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, -0.4f, 0.0f}, Sprites::get(Sprites::shadow), {1, 1});
-			Renderer::DrawQuad(drawTransform + glm::vec3{0.0f, visual.localTransform.z, 0.0f}, Sprites::get(visual.spriteId), {1, 1});
-		}
-	}
-
-	// Render collision
-	{
-		auto view = registry.view<TransformComponent, CollisionBox>();
-
-		for (entt::entity e : view)
-		{
-			auto [tc, cb] = view.get<TransformComponent, CollisionBox>(e);
-			glm::vec3 offset = tc.position + cb.position;
-			Renderer::DrawQuad(offset, Sprites::get(Sprites::redBox), cb.size);
-		}
-	}
-
-
-
-	Renderer::EndScene();
+	scene->OnRender(delta);
 }
 
 void Level::OnImGuiRender(Timestep delta)
 {
+	auto& cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
+
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Level");
 
@@ -357,19 +101,18 @@ void Level::OnImGuiRender(Timestep delta)
 
 	ImGui::Text("Bounds: (%.1f, %.1f)", cameraController->GetBounds().Right*2, cameraController->GetBounds().Top*2);
 
-	glm::vec2 mousePos = getMousePosInWorld(cameraController);
+	glm::vec2 mousePos = scene->GetMousePosInScene();
 	ImGui::Text("Mouse in world: (%.2f, %.2f)", mousePos.x, mousePos.y);
 
 	ImGui::SeparatorText("Player");
-	ImGui::DragFloat3("pos##2", (float*)&registry.get<TransformComponent>(player).position);
-	ImGui::DragFloat("z", &registry.get<JumpComponent>(player).z);
-	ImGui::DragFloat("velocity", &registry.get<JumpComponent>(player).velocity);
-	ImGui::DragFloat("acceleration", &registry.get<JumpComponent>(player).acceleration);
-	ImGui::Text("moving: %s", registry.get<MoveComponent>(player).isMoving() ? "Yes" : "No");
-	ImGui::Text("Shoot timer: %.2f", shootTimer);
+	ImGui::DragFloat3("pos##2", (float*)&scene->GetPlayer()->GetComponent<TransformComponent>().position);
+	ImGui::DragFloat("z", &scene->GetPlayer()->GetComponent<JumpComponent>().z);
+	ImGui::DragFloat("velocity", &scene->GetPlayer()->GetComponent<JumpComponent>().velocity);
+	ImGui::DragFloat("acceleration", &scene->GetPlayer()->GetComponent<JumpComponent>().acceleration);
+	ImGui::Text("moving: %s", scene->GetPlayer()->GetComponent<MoveComponent>().isMoving() ?"Yes" : "No");
 
 	ImGui::SeparatorText("Entity");
-	ImGui::Text("Entity count: %d", registry.view<TransformComponent>().size());
+	ImGui::Text("Entity count: %d", scene->Registry().view<TransformComponent>().size());
 
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Components.h"
+#include <Game.h>
 
 int NameComponent::entityCount = 0;
 
@@ -27,4 +28,10 @@ void MoveComponent::updateMoveVec(const glm::vec2& newMoveVec)
 		dir = MoveDir::DOWN;
 	else
 		dir = MoveDir::NONE;
+}
+
+CameraComponent::CameraComponent()
+{
+	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+	cameraController = new CameraController(aspectRatio, 5.0f);
 }
