@@ -16,5 +16,5 @@ public:
 	virtual void OnRemove();
 
 private:
-	std::shared_ptr<Level> level;
+	std::shared_ptr<Scene> scene;
 };
