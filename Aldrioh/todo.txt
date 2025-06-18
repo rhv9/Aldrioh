@@ -9,13 +9,15 @@ Ideas
 Engine Improvements
 - Complete the callback system for inputs, so can remove callbacks.
 - Scene can handle more than one camera.
-- Different collision causes different responses.
 - Tile objects
 - Basic stopping player movement with ahead check of tile
+- Decide on how cameraController should be stored in CameraComponent
+
+v0.16
+- collision dispatcher ordering entity for easier coding
 - Clean up components
 - Clean up systems
-- collision dispatcher ordering entity for easier coding
-- Decide on how cameraController should be stored in CameraComponent
+- Different collision causes different responses.
 
 v0.15
 Done

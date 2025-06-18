@@ -6,6 +6,7 @@ class Entity;
 
 class Scene
 {
+	using SystemFunction = std::function<void(Timestep, Scene&)>;
 public:
 	Scene();
 	~Scene();
@@ -17,6 +18,8 @@ public:
 
 	void SetPlayer(const Entity& e);
 	Entity* GetPlayer() { return player; }
+
+	void AddSystem(const SystemFunction& callback);
 	
 	// temp
 	entt::registry& Registry() { return registry; }
@@ -34,6 +37,8 @@ private:
 	Entity* player = nullptr;
 
 	CollisionDispatcher collisionDispatcher;
+	
+	std::vector<SystemFunction> systems;
 
 	friend class Entity;
 };

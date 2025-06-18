@@ -1,9 +1,10 @@
 #include <pch.h>
-#include "PlayerControllerSystem.h"
+#include "PlayerControllerSystems.h"
 #include <Input/Input.h>
 #include <Scene/Components.h>
 #include <Game/SpriteCollection.h>
 #include <Scene/Scene.h>
+#include <Scene/Entity.h>
 
 float shootTimer = 0.0f;
 
@@ -18,13 +19,16 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& direction)
 }
 
 
-void SystemPlayerController(Timestep ts, Entity e)
+
+void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
+	Entity& player = *scene.GetPlayer();
+
 	// Keyboard movement of player
 	{
-		auto& playerTransform = e.GetComponent<TransformComponent>();
-		auto& playerMove = e.GetComponent<MoveComponent>();
-	
+		auto& playerTransform = player.GetComponent<TransformComponent>();
+		auto& playerMove = player.GetComponent<MoveComponent>();
+
 		glm::vec2 move{ 0.0f };
 
 		if (Input::IsKeyPressed(Input::KEY_W))
@@ -45,9 +49,9 @@ void SystemPlayerController(Timestep ts, Entity e)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 			LOG_TRACE("Shooting!");
-			glm::vec3& playerPos = e.GetComponent<TransformComponent>().position;
+			glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
-			shoot(e, playerPos, e.getScene()->GetMousePosInScene());
+			shoot(player, playerPos, player.getScene()->GetMousePosInScene());
 		}
 		shootTimer += ts;
 	}
@@ -57,7 +61,7 @@ void SystemPlayerController(Timestep ts, Entity e)
 
 	if (Input::IsKeyPressed(Input::KEY_SPACE))
 	{
-		auto& jc = e.GetComponent<JumpComponent>();
+		auto& jc = player.GetComponent<JumpComponent>();
 
 		if (jc.z == 0)
 		{

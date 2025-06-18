@@ -1,0 +1,64 @@
+#include "pch.h"
+#include "MovementSystems.h"
+#include <Scene/Scene.h>
+#include <Scene/Entity.h>
+#include <Scene/Components.h>
+
+void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
+{
+	// Reset Move Component
+	auto view = scene.Registry().view<MoveComponent>();
+
+	for (entt::entity e : view)
+		view.get<MoveComponent>(e).zero();
+}
+
+void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
+{
+	auto view = scene.Registry().view<TransformComponent, MoveComponent>();
+
+	for (entt::entity e : view)
+	{
+		auto [transform, move] = view.get(e);
+		transform.position += glm::vec3{ move.moveVec * move.speed * (float)ts, 0.0f };
+	}
+}
+
+void EntitySystem::JumpSystem(Timestep ts, Scene& scene)
+{
+
+	// Jump component
+	auto view = scene.Registry().view<JumpComponent, VisualComponent>();
+
+	for (entt::entity e : view)
+	{
+		auto [jc, vc] = view.get<JumpComponent, VisualComponent>(e);
+
+		jc.velocity -= 0.8f * (float)ts;
+		//jc.acceleration -= 0.4f * (float)delta;
+		jc.z += jc.velocity;
+		if (jc.z <= 0)
+		{
+			jc.z = 0;
+			jc.velocity = 0;
+			jc.acceleration = 0;
+		}
+
+		vc.localTransform.z = jc.z;
+	}
+}
+
+void EntitySystem::LifeSystem(Timestep ts, Scene& scene)
+{
+
+	auto view = scene.Registry().view<TimeLifeComponent>();
+
+	for (entt::entity e : view)
+	{
+		auto [tlc] = view.get(e);
+		if (tlc.timeRemaining <= 0.0f)
+			scene.Registry().destroy(e);
+		else
+			tlc.timeRemaining -= ts;
+	}
+}

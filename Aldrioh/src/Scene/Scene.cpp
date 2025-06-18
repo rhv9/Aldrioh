@@ -15,7 +15,7 @@
 #include <Core/Platform.h>
 #include "Game/RenderDepth.h"
 
-#include <Game/Systems/PlayerControllerSystem.h>
+#include <Game/Systems/PlayerControllerSystems.h>
 
 Scene::Scene()
 {
@@ -49,135 +49,17 @@ void Scene::SetPlayer(const Entity& e)
 	player = new Entity(e);
 }
 
+void Scene::AddSystem(const SystemFunction& callback)
+{
+	systems.push_back(callback);
+}
+
 void Scene::OnUpdate(Timestep ts)
 {
-	// Reset Move Component
-	{
-		auto view = registry.view<MoveComponent>();
+	// Run each system
+	for (auto system : systems)
+		system(ts, *this);
 
-		for (entt::entity e : view)
-			view.get<MoveComponent>(e).zero();
-	}
-
-	SystemPlayerController(ts, *player);
-
-	// Jump component
-	{
-		auto view = registry.view<JumpComponent, VisualComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [jc, vc] = view.get<JumpComponent, VisualComponent>(e);
-
-			jc.velocity -= 0.8f * (float)ts;
-			//jc.acceleration -= 0.4f * (float)delta;
-			jc.z += jc.velocity;
-			if (jc.z <= 0)
-			{
-				jc.z = 0;
-				jc.velocity = 0;
-				jc.acceleration = 0;
-			}
-
-			vc.localTransform.z = jc.z;
-		}
-	}
-
-
-	{
-		auto view = registry.view<TimeLifeComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [tlc] = view.get(e);
-			if (tlc.timeRemaining <= 0.0f)
-				registry.destroy(e);
-			else
-				tlc.timeRemaining -= ts;
-		}
-	}
-
-	// AnimatedMovementComponent
-	{
-		auto view = registry.view<AnimatedMovementComponent, MoveComponent, VisualComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [amc, mc, vc] = view.get(e);
-
-			if (mc.dir == MoveDir::NONE)
-			{
-				amc.reset();
-				vc.spriteId = amc.getCurrentSprite();
-			}
-			else
-			{
-				if (amc.currentDir != mc.dir)
-				{
-					amc.currentDir = mc.dir;
-					amc.reset();
-				}
-				amc.update(ts);
-				vc.spriteId = amc.getCurrentSprite();
-
-			}
-		}
-	}
-
-	// DumbAIComponent
-	{
-		auto view = registry.view<DumbAIComponent, TransformComponent, MoveComponent>();
-		auto& player_mc = player->GetComponent<TransformComponent>();
-		for (entt::entity e : view)
-		{
-			auto [tc, mc] = view.get<TransformComponent, MoveComponent>(e);
-
-			glm::vec2 diff{ -tc.position.x + player_mc.position.x, -tc.position.y + player_mc.position.y };
-			diff = glm::normalize(diff);
-
-			mc.updateMoveVec(diff);
-		}
-	}
-
-	// Update positions based on move component
-	{
-		auto view = registry.view<TransformComponent, MoveComponent>();
-
-		for (entt::entity e : view)
-		{
-			auto [transform, move] = view.get(e);
-			transform.position += glm::vec3{ move.moveVec * move.speed * (float)ts, 0.0f };
-		}
-	}
-
-	// Check collisions
-	{
-		auto view = registry.view<TransformComponent, CollisionBox>();
-
-		for (auto iter = view.begin(); iter != view.end(); ++iter)
-		{
-			auto copiedIter = iter;
-			copiedIter++;
-			for (auto innerIter = copiedIter; innerIter != view.end(); ++innerIter)
-			{
-				entt::entity e1 = *iter;
-				entt::entity e2 = *innerIter;
-
-				auto [tc1, cb1] = view.get(e1);
-				auto [tc2, cb2] = view.get(e2);
-
-				CollisionBox cb2Collision = cb2.OffsetNew(tc2.position);
-				bool collides = cb1.OffsetNew(tc1.position).CollidesWith(&cb2Collision);
-
-				if (collides)
-				{
-					collisionDispatcher.Dispatch(registry, e1, e2);
-				}
-
-			}
-
-		}
-	}
 	auto cameraEntity = GetPrimaryCameraEntity();
 	cameraEntity.GetComponent<CameraComponent>().cameraController->OnUpdate(ts);
 

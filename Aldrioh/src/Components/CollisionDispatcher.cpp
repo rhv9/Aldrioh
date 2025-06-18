@@ -1,29 +1,32 @@
 #include <pch.h>
 #include "CollisionDispatcher.h"
 #include <Scene/Components.h>
+#include <Scene/Entity.h>
 
 CollisionDispatcher::CollisionDispatcher()
 {
-	CollisionCallbackType emptyCallback = [](entt::registry& registry, entt::entity e1, entt::entity e2) {
-		//LOG_CORE_INFO("POGGG");
+	CollisionCallbackFunction emptyCallback = [](Entity& e1, Entity& e2) {
 		};
 	for (int y = 0; y < SIZE; ++y)
 		for (int x = 0; x < SIZE; ++x)
-			map[y][x] = emptyCallback;
+			map[y][x] = { emptyCallback, false };
 }
 
-// TODO: This is dangerous. No map validation or anything
-void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, CollisionCallbackType& callback)
+void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction& callback)
 {
-	map[(uint32_t)type1][(uint32_t)type2] = callback;
-	map[(uint32_t)type2][(uint32_t)type1] = callback;
+	ASSERT(type1 <= SIZE && type2 <= SIZE, "Size is out of bounds of map");
+
+	map[type1][type2] = { callback, false };
+	map[type2][type1] = { callback, true };
 }
 
-bool CollisionDispatcher::Dispatch(entt::registry& registry, entt::entity e1, entt::entity e2)
+void CollisionDispatcher::Dispatch(Entity e1, Entity e2)
 {
-	EntityType type1 = registry.get<EntityTypeComponent>(e1).type;
-	EntityType type2 = registry.get<EntityTypeComponent>(e2).type;
+	EntityType type1 = e1.GetComponent<EntityTypeComponent>().type;
+	EntityType type2 = e2.GetComponent<EntityTypeComponent>().type;
 
-	map[type1][type2](registry, e1, e2);
-	return false;
+	if (map[type1][type2].reverseArguments)
+		map[type1][type2].callback(e2, e1);
+	else
+		map[type1][type2].callback(e1, e2);
 }

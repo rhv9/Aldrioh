@@ -18,6 +18,12 @@
 
 #include <Scene/Entity.h>
 
+#include <Game/Systems/CollisionSystems.h>
+#include <Game/Systems/AnimatedSystems.h>
+#include <Game/Systems/MovementSystems.h>
+#include <Game/Systems/EnemyAISystems.h>
+#include <Game/Systems/PlayerControllerSystems.h>
+
 GameLayer::GameLayer() {}
 
 void CreateBoss(std::shared_ptr<Scene>& scene)
@@ -41,8 +47,8 @@ void GameLayer::OnBegin()
 	scene = std::make_shared<Scene>();
 
 	// collisionDispatcher
-	CollisionCallbackType callback = [](entt::registry& registry, entt::entity e1, entt::entity e2) {
-		LOG_CORE_INFO("Player colliding with boss!");
+	CollisionCallbackFunction callback = [](Entity& e1, Entity& e2) {
+		LOG_CORE_INFO("{} collides {}", e1.GetComponent<NameComponent>().name, e2.GetComponent<NameComponent>().name);
 		};
 
 	scene->GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
@@ -76,6 +82,15 @@ void GameLayer::OnBegin()
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
+	// Systems
+	scene->AddSystem(&EntitySystem::ResetMovementSystem);
+	scene->AddSystem(&EntitySystem::PlayerControllerSystem);
+	scene->AddSystem(&EntitySystem::JumpSystem);
+	scene->AddSystem(&EntitySystem::LifeSystem);
+	scene->AddSystem(&EntitySystem::DumbAISystem);
+	scene->AddSystem(&EntitySystem::AnimatedMovementSystem);
+	scene->AddSystem(&EntitySystem::MovementSystem);
+	scene->AddSystem(&EntitySystem::CollisionSystem);
 }
 
 void GameLayer::OnUpdate(Timestep delta)
