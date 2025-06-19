@@ -12,6 +12,7 @@ Engine Improvements
 - Tile objects
 - Basic stopping player movement with ahead check of tile
 - Decide on how cameraController should be stored in CameraComponent
+- Put world into a component - into a level class
 
 v0.16
 - collision dispatcher ordering entity for easier coding

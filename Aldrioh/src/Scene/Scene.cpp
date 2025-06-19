@@ -19,15 +19,6 @@
 
 Scene::Scene()
 {
-	LOG_INFO("Sprite ID for this is {}", Sprites::target);
-	width = 14;
-	height = 200;
-	world = new int[width * height];
-
-	for (int i = 0; i < width * height; i++)
-	{
-		world[i] = Sprites::sand_1;
-	}
 }
 
 Scene::~Scene()

@@ -30,8 +30,6 @@ public:
 	Entity WrapEntityHandle(entt::entity entityHandle);
 
 private:
-	int* world;
-	int width, height;
 
 	entt::registry registry;
 	Entity* player = nullptr;
