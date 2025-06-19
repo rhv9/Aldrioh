@@ -7,7 +7,7 @@
 void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
 {
 	// Reset Move Component
-	auto view = scene.Registry().view<MoveComponent>();
+	auto view = scene.getRegistry().view<MoveComponent>();
 
 	for (entt::entity e : view)
 		view.get<MoveComponent>(e).zero();
@@ -15,7 +15,7 @@ void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 {
-	auto view = scene.Registry().view<TransformComponent, MoveComponent>();
+	auto view = scene.getRegistry().view<TransformComponent, MoveComponent>();
 
 	for (entt::entity e : view)
 	{
@@ -28,7 +28,7 @@ void EntitySystem::JumpSystem(Timestep ts, Scene& scene)
 {
 
 	// Jump component
-	auto view = scene.Registry().view<JumpComponent, VisualComponent>();
+	auto view = scene.getRegistry().view<JumpComponent, VisualComponent>();
 
 	for (entt::entity e : view)
 	{
@@ -51,13 +51,13 @@ void EntitySystem::JumpSystem(Timestep ts, Scene& scene)
 void EntitySystem::LifeSystem(Timestep ts, Scene& scene)
 {
 
-	auto view = scene.Registry().view<TimeLifeComponent>();
+	auto view = scene.getRegistry().view<TimeLifeComponent>();
 
 	for (entt::entity e : view)
 	{
 		auto [tlc] = view.get(e);
 		if (tlc.timeRemaining <= 0.0f)
-			scene.Registry().destroy(e);
+			scene.getRegistry().destroy(e);
 		else
 			tlc.timeRemaining -= ts;
 	}

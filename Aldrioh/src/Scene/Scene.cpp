@@ -40,15 +40,20 @@ void Scene::SetPlayer(const Entity& e)
 	player = new Entity(e);
 }
 
-void Scene::AddSystem(const SystemFunction& callback)
+void Scene::AddUpdateSystem(const SystemFunction& callback)
 {
-	systems.push_back(callback);
+	updateSystems.push_back(callback);
+}
+
+void Scene::AddRenderSystem(const SystemFunction& callback)
+{
+	renderSystems.push_back(callback);
 }
 
 void Scene::OnUpdate(Timestep ts)
 {
 	// Run each system
-	for (auto system : systems)
+	for (auto system : updateSystems)
 		system(ts, *this);
 
 	auto cameraEntity = GetPrimaryCameraEntity();
@@ -61,22 +66,8 @@ void Scene::OnRender(Timestep ts)
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
 
-	auto& bounds = cameraController->GetBounds();
-	const glm::vec2& cameraPos = cameraController->GetPosition();
-	int startX = (int)std::max(-bounds.Right + cameraPos.x, 0.0f);
-	int startY = (int)std::max(-bounds.Top + cameraPos.y, 0.0f);
-	int endX = (int)std::min(bounds.Right + cameraPos.x + 1, (float)width);
-	int endY = (int)std::min(bounds.Top + cameraPos.y + 1, (float)height);
-
-	for (int y = startY; y < endY; y++)
-	{
-		for (int x = startX; x < endX; x++)
-		{
-			int tile = world[y * width + x];
-			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, RenderDepth::TILE };
-			Renderer::DrawQuad(renderPos, Sprites::get(tile), { 1, 1 });
-		}
-	}
+	for (auto system : renderSystems)
+		system(ts, *this);
 
 	{
 		glm::vec2 mousePos = Input::GetMousePosition();
@@ -89,30 +80,8 @@ void Scene::OnRender(Timestep ts)
 	}
 
 
-	// entities
-	{
-		auto view = registry.view<TransformComponent, VisualComponent>();
 
-		for (entt::entity e : view)
-		{
-			auto [transform, visual] = view.get(e);
-			glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
-			Renderer::DrawQuad(drawTransform + glm::vec3{ 0.0f, -0.4f, 0.0f }, Sprites::get(Sprites::shadow), { 1, 1 });
-			Renderer::DrawQuad(drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, Sprites::get(visual.spriteId), { 1, 1 });
-		}
-	}
 
-	// Render collision
-	{
-		auto view = registry.view<TransformComponent, CollisionBox>();
-
-		for (entt::entity e : view)
-		{
-			auto [tc, cb] = view.get<TransformComponent, CollisionBox>(e);
-			glm::vec3 offset = tc.position + cb.position;
-			Renderer::DrawQuad(offset, Sprites::get(Sprites::redBox), cb.size);
-		}
-	}
 
 
 

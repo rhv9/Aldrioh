@@ -24,6 +24,12 @@
 #include <Game/Systems/EnemyAISystems.h>
 #include <Game/Systems/PlayerControllerSystems.h>
 
+#include <Game/Systems/LevelSystems.h>
+#include <Game/Systems/RenderSystems.h>
+
+#include <Game/Level/TestLevel.h>
+#include <Game/Components/LevelComponents.h>
+
 GameLayer::GameLayer() {}
 
 void CreateBoss(std::shared_ptr<Scene>& scene)
@@ -82,15 +88,26 @@ void GameLayer::OnBegin()
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
-	// Systems
-	scene->AddSystem(&EntitySystem::ResetMovementSystem);
-	scene->AddSystem(&EntitySystem::PlayerControllerSystem);
-	scene->AddSystem(&EntitySystem::JumpSystem);
-	scene->AddSystem(&EntitySystem::LifeSystem);
-	scene->AddSystem(&EntitySystem::DumbAISystem);
-	scene->AddSystem(&EntitySystem::AnimatedMovementSystem);
-	scene->AddSystem(&EntitySystem::MovementSystem);
-	scene->AddSystem(&EntitySystem::CollisionSystem);
+	// Level system
+	Entity levelEntity = scene->CreateEntity("Test Level");
+	levelEntity.AddComponent<LevelComponent>(new TestLevel(*scene));
+	levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
+
+	// On Update Systems
+	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
+	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
+	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
+	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
+	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
+	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
+	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
+	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
+	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
+
+	// On Render Systems
+	scene->AddRenderSystem(&EntitySystem::LevelRenderSystem);
+	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
+	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
 }
 
 void GameLayer::OnUpdate(Timestep delta)
@@ -170,7 +187,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	ImGui::Text("moving: %s", scene->GetPlayer()->GetComponent<MoveComponent>().isMoving() ? "Yes" : "No");
 
 	ImGui::SeparatorText("Entity");
-	ImGui::Text("Entity count: %d", scene->Registry().view<TransformComponent>().size());
+	ImGui::Text("Entity count: %d", scene->getRegistry().view<TransformComponent>().size());
 
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);

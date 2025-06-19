@@ -1,4 +1,5 @@
 #pragma once
+#include <Game/Level/TestLevel.h>
 
 struct LevelComponent
 {
@@ -6,4 +7,5 @@ struct LevelComponent
 
 	LevelComponent() = default;
 	LevelComponent(const LevelComponent&) = default;
+	LevelComponent(Level* level) : level(level) {}
 };

@@ -57,6 +57,8 @@ project "Aldrioh"
         "%{prj.name}/vendor/glm/**.hpp",
         "%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
+
+        "%{prj.name}/todo.txt",
     }
 
     includedirs

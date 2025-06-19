@@ -9,7 +9,7 @@ void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 {
 	// Check collisions
 	{
-		auto view = scene.Registry().view<TransformComponent, CollisionBox>();
+		auto view = scene.getRegistry().view<TransformComponent, CollisionBox>();
 
 		for (auto iter = view.begin(); iter != view.end(); ++iter)
 		{

@@ -19,10 +19,11 @@ public:
 	void SetPlayer(const Entity& e);
 	Entity* GetPlayer() { return player; }
 
-	void AddSystem(const SystemFunction& callback);
-	
+	void AddUpdateSystem(const SystemFunction& callback);
+	void AddRenderSystem(const SystemFunction& callback);
+
 	// temp
-	entt::registry& Registry() { return registry; }
+	entt::registry& getRegistry() { return registry; }
 	Entity GetPrimaryCameraEntity();
 	glm::vec2 GetMousePosInScene();
 	CollisionDispatcher& GetCollisionDispatcher();
@@ -36,7 +37,8 @@ private:
 
 	CollisionDispatcher collisionDispatcher;
 	
-	std::vector<SystemFunction> systems;
+	std::vector<SystemFunction> updateSystems;
+	std::vector<SystemFunction> renderSystems;
 
 	friend class Entity;
 };

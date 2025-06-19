@@ -8,7 +8,7 @@ void EntitySystem::AnimatedMovementSystem(Timestep ts, Scene& scene)
 {
 	// AnimatedMovementComponent
 	{
-		auto view = scene.Registry().view<AnimatedMovementComponent, MoveComponent, VisualComponent>();
+		auto view = scene.getRegistry().view<AnimatedMovementComponent, MoveComponent, VisualComponent>();
 
 		for (entt::entity e : view)
 		{
