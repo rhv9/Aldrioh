@@ -23,6 +23,7 @@
 #include <Game/Systems/MovementSystems.h>
 #include <Game/Systems/EnemyAISystems.h>
 #include <Game/Systems/PlayerControllerSystems.h>
+#include <Game/Systems/TestSystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -101,11 +102,13 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
+	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 
 	// On Render Systems
 	scene->AddRenderSystem(&EntitySystem::LevelRenderSystem);
+	scene->AddRenderSystem(&EntitySystem::TestRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
 }

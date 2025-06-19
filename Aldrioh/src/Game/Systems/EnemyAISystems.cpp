@@ -2,7 +2,7 @@
 #include "EnemyAISystems.h"
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
-#include <Scene/Components.h>
+#include "HeadersUpdateSystems.h"
 
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {

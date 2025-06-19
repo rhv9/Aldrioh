@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "AnimatedSystems.h"
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
-#include <Scene/Components.h>
+#include "HeadersUpdateSystems.h"
 
 void EntitySystem::AnimatedMovementSystem(Timestep ts, Scene& scene)
 {

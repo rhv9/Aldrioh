@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "LevelSystems.h"
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
-#include <Scene/Components.h>
+#include "HeadersUpdateSystems.h"
 #include <Game/Components/LevelComponents.h>
 
 void EntitySystem::LevelUpdateSystem(Timestep ts, Scene& scene)

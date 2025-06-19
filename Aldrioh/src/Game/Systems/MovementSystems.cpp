@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "MovementSystems.h"
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
-#include <Scene/Components.h>
+#include "HeadersUpdateSystems.h"
 
 void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
 {

@@ -1,12 +1,6 @@
 #include "pch.h"
 #include "RenderSystems.h"
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
-#include <Scene/Components.h>
-#include <Game/RenderDepth.h>
-#include <Game/SpriteCollection.h>
-
-#include <Graphics/Renderer.h>
+#include "HeadersRenderSystems.h"
 #include <Components/Collision.h>
 
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)

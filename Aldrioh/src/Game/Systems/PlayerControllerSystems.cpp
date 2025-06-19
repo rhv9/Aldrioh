@@ -1,10 +1,8 @@
 #include <pch.h>
 #include "PlayerControllerSystems.h"
+#include "HeadersUpdateSystems.h"
 #include <Input/Input.h>
-#include <Scene/Components.h>
 #include <Game/SpriteCollection.h>
-#include <Scene/Scene.h>
-#include <Scene/Entity.h>
 
 float shootTimer = 0.0f;
 
