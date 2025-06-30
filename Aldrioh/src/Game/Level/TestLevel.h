@@ -1,6 +1,7 @@
 #pragma once
 #include "Level.h"
 #include <Scene/Scene.h>
+#include <Game/Tiles/Tiles.h>
 
 class TestLevel : public Level
 {
@@ -14,6 +15,6 @@ public:
 private:
 	Scene& scene;
 
-	int* tiles;
+	Tiles** tiles;
 	int width, height;
 };

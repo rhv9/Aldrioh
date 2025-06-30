@@ -8,25 +8,34 @@
 #include <Graphics/Renderer.h>
 #include <Game/RenderDepth.h>
 
+#include <Game/Tiles/TexturedTiles.h>
+
 TestLevel::TestLevel(Scene& scene) : scene(scene)
 {
 	width = 14;
 	height = 200;
 
-	tiles = new int[width * height];
+	tiles = new Tiles * [width * height];
 
 	for (int y = 0; y < height; ++y)
 	{
 		for (int x = 0; x < width; ++x)
 		{
-			tiles[y * width + x] = Sprites::sand_1;
+			tiles[y * width + x] = new TexturedTiles(Sprites::sand_1);
 		}
 	}
 }
 
 TestLevel::~TestLevel()
 {
-	delete[] tiles;
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			delete tiles[y * width + x];
+		}
+	}
+	delete[]tiles;
 }
 
 void TestLevel::OnUpdate(Timestep ts)
@@ -48,9 +57,8 @@ void TestLevel::OnRender(Timestep ts)
 	{
 		for (int x = startX; x < endX; x++)
 		{
-			int tile = tiles[y * width + x];
-			glm::vec3 renderPos = { x * 1.0f, y * 1.0f, RenderDepth::TILE };
-			Renderer::DrawQuad(renderPos, Sprites::get(tile), { 1, 1 });
+			TileMetaData metadata{ {x, y}, this };
+			tiles[y * width + x]->OnRender(ts, metadata);
 		}
 	}
 }
