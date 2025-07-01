@@ -34,6 +34,12 @@ Entity Scene::CreateEntity(const std::string& name)
 	return e;
 }
 
+void Scene::DestroyEntity(Entity& e)
+{
+	registry.destroy(e.entityHandle);
+	e.entityHandle = entt::null;
+}
+
 void Scene::SetPlayer(const Entity& e)
 {
 	if (!player) delete player;

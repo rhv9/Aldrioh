@@ -1,18 +1,26 @@
 
-Ideas
+Ideas:
 - Jumping to blocks
 - Wall jump
 - Grabbing the edge of blocks
 - Wall climbing sections
 - Infinite run mode
 
-Engine Improvements
+Engine Improvements:
 - Complete the callback system for inputs, so can remove callbacks.
 - Scene can handle more than one camera.
-- Tile objects
 - Basic stopping player movement with ahead check of tile
 - Decide on how cameraController should be stored in CameraComponent
 - Scriptable components.
+
+Todo:
+
+
+v0.17
+- Fireball has collision box and one shots enemies
+- Enemies spawner tile that spawns enemies within 7 x 7 area
+- Tile objects
+
 
 v0.16
 - collision dispatcher ordering entity for easier coding

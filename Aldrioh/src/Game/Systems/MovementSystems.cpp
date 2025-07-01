@@ -8,7 +8,10 @@ void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
 	auto view = scene.getRegistry().view<MoveComponent>();
 
 	for (entt::entity e : view)
-		view.get<MoveComponent>(e).zero();
+	{
+		auto& mc = view.get<MoveComponent>(e);
+		if (!mc.locked) mc.zero();
+	}
 }
 
 void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
@@ -55,7 +58,10 @@ void EntitySystem::LifeSystem(Timestep ts, Scene& scene)
 	{
 		auto [tlc] = view.get(e);
 		if (tlc.timeRemaining <= 0.0f)
-			scene.getRegistry().destroy(e);
+		{
+			Entity entity = scene.WrapEntityHandle(e);
+			entity.Destroy();
+		}
 		else
 			tlc.timeRemaining -= ts;
 	}

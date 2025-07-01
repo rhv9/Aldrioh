@@ -12,6 +12,8 @@ public:
 	void virtual OnUpdate(Timestep ts) override;
 	void virtual OnRender(Timestep ts) override;
 
+	void CreateBoss(const glm::vec2& pos);
+
 private:
 	Scene& scene;
 

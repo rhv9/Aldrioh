@@ -9,6 +9,9 @@
 #include <Game/RenderDepth.h>
 
 #include <Game/Tiles/TexturedTiles.h>
+#include <Game/Tiles/SpawnerTile.h>
+
+#include <Components/Collision.h>
 
 TestLevel::TestLevel(Scene& scene) : scene(scene)
 {
@@ -24,6 +27,8 @@ TestLevel::TestLevel(Scene& scene) : scene(scene)
 			tiles[y * width + x] = new TexturedTiles(Sprites::sand_1);
 		}
 	}
+
+	tiles[15 * width + 7] = new SpawnerTile(Sprites::sand_1, EntityType::Enemy);
 }
 
 TestLevel::~TestLevel()
@@ -40,6 +45,23 @@ TestLevel::~TestLevel()
 
 void TestLevel::OnUpdate(Timestep ts)
 {
+	auto& cameraController = scene.GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
+
+	auto& bounds = cameraController->GetBounds();
+	const glm::vec2& cameraPos = cameraController->GetPosition();
+	int startX = (int)std::max(-bounds.Right + cameraPos.x, 0.0f);
+	int startY = (int)std::max(-bounds.Top + cameraPos.y, 0.0f);
+	int endX = (int)std::min(bounds.Right + cameraPos.x + 1, (float)width);
+	int endY = (int)std::min(bounds.Top + cameraPos.y + 1, (float)height);
+
+	for (int y = startY; y < endY; y++)
+	{
+		for (int x = startX; x < endX; x++)
+		{
+			TileMetaData metadata{ {x, y}, this };
+			tiles[y * width + x]->OnUpdate(ts, metadata);
+		}
+	}
 }
 
 void TestLevel::OnRender(Timestep ts)
@@ -62,3 +84,17 @@ void TestLevel::OnRender(Timestep ts)
 		}
 	}
 }
+
+void TestLevel::CreateBoss(const glm::vec2& pos)
+{
+	// Create boss
+	Entity boss = scene.CreateEntity("Boss");
+	boss.GetComponent<TransformComponent>().position = { pos.x, pos.y, 0.4f };
+	boss.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
+	boss.AddComponent<MoveComponent>(1.0f);
+	boss.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	boss.AddComponent<AnimatedMovementComponent>(Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
+	boss.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	boss.AddComponent<DumbAIComponent>();
+}
+

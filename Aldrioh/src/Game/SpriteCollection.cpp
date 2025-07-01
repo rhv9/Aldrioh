@@ -1,26 +1,9 @@
 #include "pch.h"
+
+#define SPRITES_CPP
 #include "SpriteCollection.h"
 
 #include "Graphics/SubTexture.h"
-
-namespace Sprites {
-
-	int null;
-	int shadow;
-	int sand_1;
-	int sand_rock;
-	int sand_cactus;
-	int fire;
-
-	int player_head;
-	int slime;
-	int target;
-
-	int redBox, greenBox;
-
-	std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
-	std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
-}
 
 static std::shared_ptr<Texture> spritesheet;
 static std::shared_ptr<Texture> squareBox;
@@ -28,9 +11,6 @@ static std::shared_ptr<Texture> squareBox;
 static SubTexture* spriteMap;
 static constexpr uint32_t size = 256;
 static int spriteCounter = 0;
-
-// direct use textures, why am I mixing so many different ways to access texture
-Texture* Sprites::squareTileTexture;
 
 std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int animationLength)
 {
@@ -63,6 +43,7 @@ void Sprites::init()
 	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
 	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::TileSize };
 	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::TileSize };
+	spriteMap[spawner = spriteCounter++] = { spritesheet, glm::vec2{ 3, 2 }, Sprites::TileSize };
 
 	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 2, 3 }, Sprites::TileSize };
 	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 3, 3 }, Sprites::TileSize };

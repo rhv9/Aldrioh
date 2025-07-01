@@ -38,6 +38,15 @@ struct VisualComponent
 	static constexpr glm::vec2 DEFAULT_SCALE { 1.0f, 1.0f };
 };
 
+struct DestroyEntityComponent
+{
+	float timeRemaining = 0.0f;
+
+	DestroyEntityComponent() = default;
+	DestroyEntityComponent(float timer) : timeRemaining(timer) {}
+	DestroyEntityComponent(DestroyEntityComponent&) = default;
+};
+
 enum MoveDir
 {
 	UP = 0,
@@ -52,6 +61,7 @@ struct MoveComponent
 	float speed;
 	glm::vec2 moveVec{ 0.0f };
 	MoveDir dir = MoveDir::NONE;
+	bool locked = false;
 
 	MoveComponent(float speed) : speed(speed) {}
 	MoveComponent() : speed(16.0f) {}
@@ -63,6 +73,7 @@ struct MoveComponent
 	bool isMovingLeft() { return moveVec.x < 0; }
 	bool isMovingRight() { return moveVec.x > 0; }
 	MoveDir getMoveDir() { return dir; }
+
 	void updateMoveVec(const glm::vec2& newMoveVec);
 
 	static constexpr glm::vec2 ZERO_VEC{ 0.0f };

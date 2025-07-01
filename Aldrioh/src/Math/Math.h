@@ -5,7 +5,7 @@ namespace Math {
 	namespace Random {
 
 		uint32_t linearInt(int min, int max);
-
+		float linearFloat(float min, float max);
 	}
 
 }

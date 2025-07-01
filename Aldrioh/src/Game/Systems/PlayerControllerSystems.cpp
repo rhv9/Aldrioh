@@ -4,16 +4,27 @@
 #include <Input/Input.h>
 #include <Game/SpriteCollection.h>
 
+#include <Components/Collision.h>
+#include <Game/Entity/EntityType.h>
+
 float shootTimer = 0.0f;
 
-void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& direction)
+void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dir)
 {
+	// Center the direction and origin 
+	glm::vec2 dirOffseted = dir;
+	glm::vec2 originOffseted = origin;
+
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	fireball.AddComponent<MoveComponent>(10.0f).moveVec = glm::normalize(direction - origin);
-	fireball.AddComponent<VisualComponent>(Sprites::fire);
+	fireball.GetComponent<TransformComponent>().position = glm::vec3{ originOffseted , 0.5f };
+	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
+	mc.moveVec = glm::normalize(dirOffseted - originOffseted);
+	mc.locked = true;
+	fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{-0.5f, -0.5f, 0.0f});
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
+	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
+	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 }
 
 
@@ -67,4 +78,6 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			jc.velocity = 0.14f;
 		}
 	}
+
+
 }

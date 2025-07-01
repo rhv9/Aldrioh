@@ -24,6 +24,7 @@
 #include <Game/Systems/EnemyAISystems.h>
 #include <Game/Systems/PlayerControllerSystems.h>
 #include <Game/Systems/TestSystems.h>
+#include <Game/Systems/CoreEntitySystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -33,18 +34,6 @@
 
 GameLayer::GameLayer() {}
 
-void CreateBoss(std::shared_ptr<Scene>& scene)
-{
-	// Create boss
-	Entity boss = scene->CreateEntity("Boss");
-	boss.GetComponent<TransformComponent>().position = { 5.0f, 5.0f, 0.4f };
-	boss.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
-	boss.AddComponent<MoveComponent>(1.0f);
-	boss.AddComponent<EntityTypeComponent>(EntityType::Enemy);
-	boss.AddComponent<AnimatedMovementComponent>(Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
-	boss.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	boss.AddComponent<DumbAIComponent>();
-}
 
 
 void GameLayer::OnBegin()
@@ -61,6 +50,14 @@ void GameLayer::OnBegin()
 	scene->GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
 
 
+	CollisionCallbackFunction callbackFireball = [](Entity& e1, Entity& e2) {
+		e1.Destroy();
+		e2.Destroy();
+		};
+
+	scene->GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
+
+
 	// Create player
 	Entity player = scene->CreateEntity("Player");
 	scene->SetPlayer(player);
@@ -71,8 +68,6 @@ void GameLayer::OnBegin()
 	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	player.AddComponent<JumpComponent>();
-
-	CreateBoss(scene);
 
 
 	// Camera
@@ -105,6 +100,8 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
+	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
+
 
 	// On Render Systems
 	scene->AddRenderSystem(&EntitySystem::LevelRenderSystem);

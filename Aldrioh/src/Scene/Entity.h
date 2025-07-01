@@ -43,9 +43,13 @@ public:
 		scene->registry.erase<T>(entityHandle);
 	}
 
+	void Destroy();
+
 	operator bool() const { return entityHandle != entt::null; }
 
 private:
+	friend Scene;
+
 	entt::entity entityHandle = entt::null;
 	Scene* scene = nullptr;
 };

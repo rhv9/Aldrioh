@@ -8,7 +8,6 @@ struct TileMetaData
 	Level* level;
 };
 
-
 class Tiles
 {
 public:

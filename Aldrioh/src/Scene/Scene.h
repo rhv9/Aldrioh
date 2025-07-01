@@ -12,6 +12,7 @@ public:
 	~Scene();
 
 	Entity CreateEntity(const std::string& name = std::string("Entity"));
+	void DestroyEntity(Entity& e);
 
 	void OnUpdate(Timestep ts);
 	void OnRender(Timestep ts);
