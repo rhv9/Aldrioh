@@ -5,3 +5,4 @@
 #include <Game/RenderDepth.h>
 #include <Game/SpriteCollection.h>
 #include <Graphics/Renderer.h>
+#include <Graphics/RenderQueue.h>

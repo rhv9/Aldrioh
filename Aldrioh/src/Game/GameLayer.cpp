@@ -34,8 +34,6 @@
 
 GameLayer::GameLayer() {}
 
-
-
 void GameLayer::OnBegin()
 {
 	Sprites::init();
@@ -46,15 +44,12 @@ void GameLayer::OnBegin()
 	CollisionCallbackFunction callback = [](Entity& e1, Entity& e2) {
 		LOG_CORE_INFO("{} collides {}", e1.GetComponent<NameComponent>().name, e2.GetComponent<NameComponent>().name);
 		};
-
 	scene->GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
-
 
 	CollisionCallbackFunction callbackFireball = [](Entity& e1, Entity& e2) {
 		e1.Destroy();
 		e2.Destroy();
 		};
-
 	scene->GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
 
 

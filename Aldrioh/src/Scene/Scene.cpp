@@ -11,6 +11,7 @@
 #include <Components/CollisionDispatcher.h>
 
 #include <Graphics/Renderer.h>
+#include <Graphics/RenderQueue.h>
 #include <Game/SpriteCollection.h>
 #include <Core/Platform.h>
 #include "Game/RenderDepth.h"
@@ -71,10 +72,12 @@ void Scene::OnRender(Timestep ts)
 {
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	Renderer::StartScene(cameraController->GetCamera().GetViewProjection());
+	RenderQueue::Reset();
 
 	for (auto system : renderSystems)
 		system(ts, *this);
-
+	
+	RenderQueue::FlushAndReset();
 	Renderer::EndScene();
 }
 

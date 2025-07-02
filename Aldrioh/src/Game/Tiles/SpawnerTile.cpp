@@ -2,7 +2,8 @@
 #include "SpawnerTile.h"
 #include <Game/SpriteCollection.h>
 
-#include <Graphics/Renderer.h>
+#include <Graphics/RenderQueue.h>
+
 #include <Game/RenderDepth.h>
 #include <Math/Math.h>
 
@@ -23,7 +24,7 @@ void SpawnerTile::OnUpdate(Timestep ts, const TileMetaData& metadata)
 {
 	if (remainingTime <= 0)
 	{
-		remainingTime = Math::Random::linearFloat(0.1f, 4);
+		remainingTime = Math::Random::linearFloat(0.1f, 0.2f);
 		glm::vec2 spawnPos{
 			Math::Random::linearFloat(-(spawnArea.x / 2.0f), spawnArea.x / 2.0f),
 			Math::Random::linearFloat(-(spawnArea.y / 2.0f), spawnArea.y / 2.0f)
@@ -40,6 +41,6 @@ void SpawnerTile::OnUpdate(Timestep ts, const TileMetaData& metadata)
 void SpawnerTile::OnRender(Timestep ts, const TileMetaData& metadata)
 {
 	glm::vec3 renderPos = { metadata.pos.x * 1.0f, metadata.pos.y * 1.0f, RenderDepth::TILE };
-	Renderer::DrawQuad(renderPos, Sprites::get(floorSpriteId), { 1, 1 });
-	Renderer::DrawQuad(renderPos, Sprites::get(spawnerSpriteId), { 1, 1 });
+	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, floorSpriteId, { 1, 1 });
+	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, spawnerSpriteId, { 1, 1 });
 }

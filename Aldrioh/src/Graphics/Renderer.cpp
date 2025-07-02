@@ -6,6 +6,8 @@
 #include "Texture.h"
 #include "SubTexture.h"
 
+#include "RenderQueue.h"
+
 struct RenderData
 {
     VertexArray quadVA;
@@ -181,4 +183,6 @@ void Renderer::SetRenderDepthOnly(bool val) { renderState.renderDepth = val; }
 bool Renderer::IsRenderDepth() { return renderState.renderDepth; }
 
 void Renderer::EndScene()
-{}
+{
+
+}

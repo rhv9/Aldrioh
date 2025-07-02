@@ -14,6 +14,11 @@ Engine Improvements:
 - Scriptable components.
 
 Todo:
+- Layered rendering system
+- Select layer to render
+- Render Queue system
+- Render flushing
+- Essentially we need a rendering system that supports some form of ordering, batching and using multiple shaders.
 
 
 v0.17

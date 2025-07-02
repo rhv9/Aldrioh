@@ -18,6 +18,7 @@
 #include "Input/Input.h"
 
 #include "Graphics/Renderer.h"
+#include "Graphics/RenderQueue.h"
 
 #include "Game/GameLayer.h"
 
@@ -44,6 +45,7 @@ void Game::Init()
     window->WindowCloseEventHandler += std::bind(&Game::OnWindowClose, this, std::placeholders::_1);
 
     Renderer::Init();
+    RenderQueue::Init();
 
     imGuiLayer = new ImGuiLayer();
     layerStack.PushLayer(new GameLayer());
