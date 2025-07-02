@@ -184,5 +184,4 @@ bool Renderer::IsRenderDepth() { return renderState.renderDepth; }
 
 void Renderer::EndScene()
 {
-
 }

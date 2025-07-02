@@ -77,7 +77,7 @@ void Scene::OnRender(Timestep ts)
 	for (auto system : renderSystems)
 		system(ts, *this);
 	
-	RenderQueue::FlushAndReset();
+	RenderQueue::Flush();
 	Renderer::EndScene();
 }
 

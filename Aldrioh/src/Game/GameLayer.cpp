@@ -28,9 +28,13 @@
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
+#include <Graphics/RenderQueue.h>
 
 #include <Game/Level/TestLevel.h>
 #include <Game/Components/LevelComponents.h>
+
+#include <Debug/GameDebugState.h>
+#include <Debug/Statistics.h>
 
 GameLayer::GameLayer() {}
 
@@ -122,27 +126,43 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	ImGui::SeparatorText("Game/Window");
 	ImGui::Text("frame time: %.2f (%dfps)", delta.GetMilliSeconds(), game.gameStats.fps);
 	ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
-	ImGui::Text("Blocking events: %s", ImGui::IsWindowFocused() ? "Yes" : "No");
-	bool vsync = game.GetWindow()->GetVsync();
-	if (ImGui::Checkbox("vsync", &vsync))
-		game.GetWindow()->SetVsync(vsync);
-	bool navActive = io.NavActive;
-	ImGui::Checkbox("ImGui Nav Active", &navActive);
-	bool wantCaptureKeyboard = io.WantCaptureKeyboard;
-	ImGui::Checkbox("ImGui capture keyboard", &wantCaptureKeyboard);
-	bool wantCaptureMouse = io.WantCaptureMouse;
-	ImGui::Checkbox("ImGui capture mouse", &wantCaptureMouse);
+
+	if (ImGui::TreeNode("ImGui"))
+	{
+		ImGui::Text("Blocking events: %s", ImGui::IsWindowFocused() ? "Yes" : "No");
+		bool vsync = game.GetWindow()->GetVsync();
+		if (ImGui::Checkbox("vsync", &vsync))
+			game.GetWindow()->SetVsync(vsync);
+		bool navActive = io.NavActive;
+		ImGui::Checkbox("ImGui Nav Active", &navActive);
+		bool wantCaptureKeyboard = io.WantCaptureKeyboard;
+		ImGui::Checkbox("ImGui capture keyboard", &wantCaptureKeyboard);
+		bool wantCaptureMouse = io.WantCaptureMouse;
+		ImGui::Checkbox("ImGui capture mouse", &wantCaptureMouse);
+
+		ImGui::TreePop();
+	}
 
 
 	ImGui::SeparatorText("Renderer");
 	bool renderDepth = Renderer::IsRenderDepth();
 	if (ImGui::Checkbox("Render depth", &renderDepth))
 		Renderer::SetRenderDepthOnly(renderDepth);
+	ImGui::Checkbox("Show Collision Box", &GameDebugState::showCollisionBox);
+
+	if (ImGui::TreeNode("RenderQueue"))
+	{
+		auto rqStats = Statistics::RenderQueueStats::GetStats();
+		ImGui::Text("Render Counts");
+		for (int i = 0; i < rqStats.layerRenderCounts.size(); ++i)
+			ImGui::Text("  Layer %d: %d", i, rqStats.layerRenderCounts[i]);
+		ImGui::Text("  Total: %d", rqStats.renderCount);
+		ImGui::TreePop();
+	}
+
 	ImGui::SliderFloat("Tile", &RenderDepth::TILE, 0.0f, 1.0f);
 	ImGui::SliderFloat("Entity", &RenderDepth::ENTITY, 0.0f, 1.0f);
 
-	ImGui::SeparatorText("Input");
-	ImGui::Text("Mouse Pos: (%.0f, %.0f)", Input::GetMouseX(), Input::GetMouseY());
 
 
 	if (ImGui::TreeNode("Window"))
@@ -151,6 +171,8 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		ImGui::Text("Size: (%d, %d)", game.GetWindow()->GetWidth(), game.GetWindow()->GetHeight());
 		ImGui::Text("Position: (%.0f, %.0f)", windowPos.x, windowPos.y);
 
+		ImGui::SeparatorText("Input");
+		ImGui::Text("Mouse Pos: (%.0f, %.0f)", Input::GetMouseX(), Input::GetMouseY());
 		ImGui::TreePop();
 	}
 	ImGui::End();

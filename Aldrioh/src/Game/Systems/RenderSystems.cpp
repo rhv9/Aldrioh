@@ -3,6 +3,7 @@
 #include "HeadersRenderSystems.h"
 #include <Components/Collision.h>
 
+#include <Debug/GameDebugState.h>
 
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 {
@@ -19,6 +20,9 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::CollisionRenderSystem(Timestep ts, Scene& scene)
 {
+	if (!GameDebugState::showCollisionBox)
+		return;
+
 	auto view = scene.getRegistry().view<TransformComponent, CollisionBox>();
 
 	for (entt::entity e : view)

@@ -2,26 +2,9 @@
 #include "RenderQueue.h"
 #include "Renderer.h"
 #include <Game/SpriteCollection.h>
+#include <Debug/Statistics.h>
 
-struct RenderLayerData
-{
-	SpriteRenderObject* basePtr = nullptr;
-	SpriteRenderObject* ptr = nullptr;
-	uint32_t count = 0;
-};
-
-struct RenderQueueData
-{
-	const static int MAX_RENDEROBJECTS = 5000;
-	const static int COUNT_RENDERLAYERS = 5;
-
-	uint32_t renderCount = 0;
-
-	std::array<RenderLayerData, COUNT_RENDERLAYERS> layers;
-};
-
-
-static RenderQueueData rqData;
+RenderQueue::RenderQueueData RenderQueue::rqData;
 
 void RenderQueue::Init()
 {
@@ -54,7 +37,7 @@ void RenderQueue::Reset()
 
 void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec2& scale)
 {
-	ASSERT(layer >= 0 && layer < RenderQueueData::COUNT_RENDERLAYERS, "Layer does not exist!");
+	ASSERT(layer >= 0 && layer < RenderQueue::COUNT_RENDERLAYERS, "Layer does not exist!");
 
 	if (rqData.layers[layer].count >= RenderQueueData::MAX_RENDEROBJECTS)
 	{
@@ -92,7 +75,7 @@ void RenderQueue::FlushAndReset()
 
 void RenderQueue::Shutdown()
 {
-	for (int i = 0; i < RenderQueueData::COUNT_RENDERLAYERS; ++i)
+	for (int i = 0; i < RenderQueue::COUNT_RENDERLAYERS; ++i)
 	{
 		delete[] rqData.layers[i].basePtr;
 	}
