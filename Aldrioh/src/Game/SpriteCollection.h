@@ -10,7 +10,7 @@
 
 namespace Sprites {
 
-	void init();
+	void Init();
 
 	constexpr glm::vec2 TileSize { 16.0f, 16.0f };
 

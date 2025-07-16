@@ -2,9 +2,9 @@
 
 namespace Statistics {
 
-	struct RenderQueueStats 
+	struct RenderQueueStats
 	{
-		static RenderQueueStats GetStats();
+		static const RenderQueueStats GetStats();
 
 		uint32_t renderCount;
 		std::array<uint32_t, 5> layerRenderCounts;
@@ -12,6 +12,10 @@ namespace Statistics {
 
 	struct EngineStats
 	{
+		static const EngineStats GetStats();
 
+		Timestep delta;
+		int fpsCounter = 0;
+		int fps = 0;
 	};
 }

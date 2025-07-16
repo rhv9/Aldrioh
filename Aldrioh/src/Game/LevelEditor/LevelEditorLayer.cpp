@@ -1,19 +1,21 @@
-#include "pch.h"
-#include "GameLayer.h"
+#include <pch.h>
+#include "LevelEditorLayer.h"
 
-#include "Game.h"
-#include "Core/Platform.h"
-#include "Input/Input.h"
-#include "Graphics/Renderer.h"
 
-#include "Game/SpriteCollection.h"
-#include "RenderDepth.h"
+#include <Game.h>
+#include <Core/Platform.h>
+#include <Input/Input.h>
+#include <Graphics/Renderer.h>
+
+#include <Game/SpriteCollection.h>
+#include <Game/RenderDepth.h>
 
 #include <imgui.h>
 
 #include "Math/Math.h"
 #include <Scene/Components.h>
 #include <Scene/FreeRoamEntityCameraController.h>
+#include <FreeCameraController.h>
 #include "Components/Collision.h"
 
 #include <Scene/Entity.h>
@@ -37,49 +39,24 @@
 #include <Debug/Statistics.h>
 
 #include <ImGui/ImGuiWindows.h>
+#include <Game/Tiles/TexturedTiles.h>
 
-GameLayer::GameLayer() {}
+LevelEditorLayer::LevelEditorLayer()
+{
+}
 
-void GameLayer::OnBegin()
+void LevelEditorLayer::OnBegin()
 {
 	scene = std::make_shared<Scene>();
 
-	// collisionDispatcher
-	CollisionCallbackFunction callback = [](Entity& e1, Entity& e2) {
-		LOG_CORE_INFO("{} collides {}", e1.GetComponent<NameComponent>().name, e2.GetComponent<NameComponent>().name);
-		};
-	scene->GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
-
-	CollisionCallbackFunction callbackFireball = [](Entity& e1, Entity& e2) {
-		e1.Destroy();
-		e2.Destroy();
-		};
-	scene->GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
-
-
-	// Create player
-	Entity player = scene->CreateEntity("Player");
-	scene->SetPlayer(player);
-	player.GetComponent<TransformComponent>().position = { 0.0f, 0.0f, 0.4f };
-	player.AddComponent<VisualComponent>(Sprites::player_head).localTransform = { -0.5f, -0.5f, 0.0f };
-	player.AddComponent<MoveComponent>(6.0f);
-	player.AddComponent<EntityTypeComponent>(EntityType::Player);
-	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	player.AddComponent<JumpComponent>();
-
-
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	CameraController* cameraController = new FreeRoamEntityCameraController(aspectRatio, 1.0f);
+	CameraController* cameraController = new FreeCameraController(aspectRatio, 1.0f);
 	cameraController->SetZoomLevel(10);
 	cameraController->SetPosition({ cameraController->GetZoomLevel() * 0.75, cameraController->GetZoomLevel() });
 
-	// set free roam entity
-	static_cast<FreeRoamEntityCameraController*>(cameraController)->SetEntity(player);
-
 	// Add camera component
-	Entity cameraEntity = scene->CreateEntity("RoamAndEntityCamera");
+	Entity cameraEntity = scene->CreateEntity("FreeCameraController");
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
@@ -89,34 +66,42 @@ void GameLayer::OnBegin()
 	levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	// On Update Systems
-	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
-	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
-	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
-	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
-	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
-	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
-	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
-	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
-	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 
 
 	// On Render Systems
 	scene->AddRenderSystem(&EntitySystem::LevelRenderSystem);
-	scene->AddRenderSystem(&EntitySystem::TestRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
-	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
+
+	Game::Instance().GetWindow()->MouseButtonPressedEventHandler += [&](MouseButtonPressedEventArg& arg)
+		{
+			auto view = scene->getRegistry().view<LevelComponent>();
+
+			for (auto e : view)
+			{
+				auto& lc = view.get<LevelComponent>(e);
+				TestLevel* level = (TestLevel*)lc.level;
+				LOG_CORE_INFO("Level width:{} height:{}", level->width, level->height);
+
+				glm::vec2 pos = scene->GetMousePosInScene();
+				
+				level->SetTile((int)pos.x, (int)pos.y, new TexturedTiles(Sprites::sand_cactus));
+			}
+		};
 }
 
-void GameLayer::OnUpdate(Timestep delta)
+void LevelEditorLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
 	scene->OnRender(delta);
 }
 
-void GameLayer::OnImGuiRender(Timestep delta)
+void LevelEditorLayer::OnImGuiRender(Timestep delta)
 {
+	Game& game = Game::Instance();
+	ImGuiIO& io = ImGui::GetIO();
+
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window");
 
@@ -150,16 +135,30 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("Level Editor"))
+		{
+
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Other"))
+		{
+			if (ImGui::Button("Switch to Game Layer"))
+			{
+			}
+			ImGui::EndTabItem();
+		}
 		ImGui::EndTabBar();
 	}
 
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 }
 
-void GameLayer::OnRemove()
+void LevelEditorLayer::OnRemove()
 {
+
 }

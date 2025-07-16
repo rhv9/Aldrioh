@@ -24,7 +24,7 @@ void SpawnerTile::OnUpdate(Timestep ts, const TileMetaData& metadata)
 {
 	if (remainingTime <= 0)
 	{
-		remainingTime = Math::Random::linearFloat(0.1f, 0.2f);
+		remainingTime = Math::Random::linearFloat(3.0f, 5.0f);
 		glm::vec2 spawnPos{
 			Math::Random::linearFloat(-(spawnArea.x / 2.0f), spawnArea.x / 2.0f),
 			Math::Random::linearFloat(-(spawnArea.y / 2.0f), spawnArea.y / 2.0f)

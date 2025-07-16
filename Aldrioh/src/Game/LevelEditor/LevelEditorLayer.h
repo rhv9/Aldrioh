@@ -1,17 +1,17 @@
 #pragma once
+
 #include <Core/Layer.h>
 #include <Scene/Scene.h>
 
-class Level;
-
-class GameLayer : public Layer
+class LevelEditorLayer : public Layer
 {
 public:
-	GameLayer();
+	LevelEditorLayer();
 
 	virtual void OnBegin();
+
 	virtual void OnUpdate(Timestep delta);
-	virtual void OnImGuiRender(Timestep delta) override;
+	virtual void OnImGuiRender(Timestep delta);
 
 	virtual void OnRemove();
 

@@ -12,11 +12,13 @@ public:
 	void virtual OnUpdate(Timestep ts) override;
 	void virtual OnRender(Timestep ts) override;
 
+	void SetTile(int x, int y, Tiles* tile);
+
 	void CreateBoss(const glm::vec2& pos);
 
-private:
 	Scene& scene;
 
 	Tiles** tiles;
 	int width, height;
+private:
 };

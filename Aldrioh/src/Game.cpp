@@ -21,6 +21,11 @@
 #include "Graphics/RenderQueue.h"
 
 #include "Game/GameLayer.h"
+#include "Game/LevelEditor/LevelEditorLayer.h"
+
+#include <Game/SpriteCollection.h>
+
+#include <Debug/Statistics.h>
 
 Game& Game::Instance()
 {
@@ -47,9 +52,11 @@ void Game::Init()
     Renderer::Init();
     RenderQueue::Init();
 
+    Sprites::Init();
+
     imGuiLayer = new ImGuiLayer();
-    layerStack.PushLayer(new GameLayer());
     layerStack.PushLayer(imGuiLayer);
+    layerStack.PushLayer(new LevelEditorLayer());
 
     running = true;
 }
@@ -101,7 +108,6 @@ bool Game::Iterate()
         i_gameStats.fpsCounter++;
     }
 
-
     for (Layer* layer : layerStack)
     {
         layer->OnUpdate(delta);
@@ -114,7 +120,6 @@ bool Game::Iterate()
         layer->OnImGuiRender(delta);
     }
     imGuiLayer->EndRender();
-
 
     window->OnUpdate();
 

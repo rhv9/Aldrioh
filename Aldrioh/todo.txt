@@ -6,19 +6,33 @@ Ideas:
 - Wall climbing sections
 - Infinite run mode
 
+Idea of what a Level consists of:
+- Regions, each region will have a way to finish them.
+- Types of regions: Objective based, Non objective based.
+- ^ I CAN'T THINK ON HOW TO IMPLEMENT THIS!
+
 Engine Improvements:
 - Complete the callback system for inputs, so can remove callbacks.
 - Scene can handle more than one camera.
 - Basic stopping player movement with ahead check of tile
 - Decide on how cameraController should be stored in CameraComponent
 - Scriptable components.
+- Batch rendering
 
-Todo:
+
+Todo: LEVEL EDITOR
+- Be able to switch back and forth between editor and game layer
+
+v0.21
+- Imgui dedicated to level
+- Switch over to a level editor level
+- Cleaned up imgui common windows.
+
+v0.20
 - Layered rendering system
 - Select layer to render
 - Render Queue system
 - Render flushing
-- Essentially we need a rendering system that supports some form of ordering, batching and using multiple shaders.
 
 
 v0.17

@@ -13,9 +13,24 @@
 
 #include <Components/Collision.h>
 
+class Region
+{
+
+};
+
+class StaticRegion : public Region
+{
+
+};
+
+class ObjectiveRegion : public Region
+{
+
+};
+
 TestLevel::TestLevel(Scene& scene) : scene(scene)
 {
-	width = 14;
+	width = 40;
 	height = 200;
 
 	tiles = new Tiles * [width * height];
@@ -83,6 +98,12 @@ void TestLevel::OnRender(Timestep ts)
 			tiles[y * width + x]->OnRender(ts, metadata);
 		}
 	}
+}
+
+void TestLevel::SetTile(int x, int y, Tiles* tile)
+{
+	delete tiles[y * width + x];
+	tiles[y * width + x] = tile;
 }
 
 void TestLevel::CreateBoss(const glm::vec2& pos)

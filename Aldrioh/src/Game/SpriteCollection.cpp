@@ -27,7 +27,7 @@ std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, 
 	return sprites;
 }
 
-void Sprites::init()
+void Sprites::Init()
 {
 	
 	spriteMap = new SubTexture[size];

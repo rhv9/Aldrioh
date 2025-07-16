@@ -4,6 +4,11 @@
 #include "Core/LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 
+
+namespace Statistics {
+	struct EngineStats;
+}
+
 struct GameStats
 {
 	int fpsCounter = 0;
@@ -25,6 +30,7 @@ public:
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);
 	bool isEventsBlocked() { return imGuiLayer->isEventsBlocked(); }
+	LayerStack& GetLayerStack() { return layerStack; }
 	
 	const GameStats& gameStats = i_gameStats;
 private:
@@ -42,5 +48,7 @@ private:
 	ImGuiLayer* imGuiLayer;
 
 	LayerStack layerStack;
+
+	friend Statistics::EngineStats;
 };
 
