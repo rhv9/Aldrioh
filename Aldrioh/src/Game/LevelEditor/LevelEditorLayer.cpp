@@ -138,6 +138,12 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 		if (ImGui::BeginTabItem("Level Editor"))
 		{
 
+			SubTexture* texture = Sprites::get(Sprites::animBossRight[1]);
+			glm::vec2 uv1 = texture->GetTexCoords().bottomLeft;
+			glm::vec2 uv0 = texture->GetTexCoords().topRight;
+
+			ImGui::Image(texture->GetTextureId(), { (float)256, (float)256 }, {uv0.x, uv0.y}, {uv1.x, uv1.y});
+
 			ImGui::EndTabItem();
 		}
 
@@ -154,7 +160,9 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
 
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
+
+	//ImGui::ShowMetricsWindow();
 
 }
 
