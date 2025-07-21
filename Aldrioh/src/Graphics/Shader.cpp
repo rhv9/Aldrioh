@@ -145,6 +145,20 @@ Shader::Shader(const std::string& path)
 }
 
 
+Shader& Shader::operator=(Shader& other)
+{
+    m_Program = other.m_Program;
+    other.m_Program = 0; // 0 is silently ignored by OpenGL
+    return *this;
+}
+
+Shader& Shader::operator=(Shader&& other) noexcept
+{
+    m_Program = other.m_Program;
+    other.m_Program = 0; // 0 is silently ignored by OpenGL
+    return *this;
+}
+
 void Shader::Use()
 {
 	glUseProgram(m_Program);
@@ -152,6 +166,8 @@ void Shader::Use()
 
 Shader::~Shader()
 {
+    LOG_CORE_INFO_IF(m_Program != 0, "Deleting shader id: {}", m_Program);
+
     glDeleteProgram(m_Program);
 }
 

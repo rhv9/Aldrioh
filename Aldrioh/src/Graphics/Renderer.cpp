@@ -8,13 +8,15 @@
 
 #include "RenderQueue.h"
 
+#include "ShaderManager.h"
+
 struct RenderData
 {
     VertexArray quadVA;
-    Ref<Shader> shaderTexQuad;
+    Shader* shaderTexQuad;
 
     VertexArray quadTexCoordVA;
-    Ref<Shader> shaderTexCoordQuad;
+    Shader* shaderTexCoordQuad;
 };
 
 static struct RenderState
@@ -38,8 +40,8 @@ void Renderer::Init()
     //glDepthMask(GL_FALSE);    
 
     //renderData.shaderTexQuad = CreateRef<Shader>("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
-    renderData.shaderTexQuad = CreateRef<Shader>("assets/shaders/Texture.glsl");
-    renderData.shaderTexCoordQuad = CreateRef<Shader>("assets/shaders/TextureTexCoord.glsl");
+    renderData.shaderTexQuad = &ShaderManager::Get().GetShader(ShaderName::OTHER_TEXTURE);
+    renderData.shaderTexCoordQuad = &ShaderManager::Get().GetShader(ShaderName::GENERAL_TEXTURE);
 
 
     // Normal Quad

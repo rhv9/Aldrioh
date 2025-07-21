@@ -19,6 +19,7 @@
 
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderQueue.h"
+#include <Graphics/ShaderManager.h>
 
 #include "Game/GameLayer.h"
 #include "Game/LevelEditor/LevelEditorLayer.h"
@@ -49,6 +50,7 @@ void Game::Init()
         };
     window->WindowCloseEventHandler += std::bind(&Game::OnWindowClose, this, std::placeholders::_1);
 
+    ShaderManager::Get().LoadShaders();
     Renderer::Init();
     RenderQueue::Init();
 

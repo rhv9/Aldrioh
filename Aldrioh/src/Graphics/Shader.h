@@ -7,6 +7,11 @@ public:
 	Shader(const std::string& vertexSourcePath, const std::string& fragmentSourcePath);
 	Shader(const std::string& path);
 
+	Shader() : m_Program(0) {}
+	Shader(const Shader& obj) : m_Program(obj.m_Program) {}
+	Shader& operator=(Shader& other);
+	Shader& operator=(Shader&& other) noexcept;
+
 	~Shader();
 
 	void UniformInt(const std::string& name, const int val) const;

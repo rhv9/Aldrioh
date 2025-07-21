@@ -23,6 +23,13 @@ Engine Improvements:
 Todo: LEVEL EDITOR
 - Be able to switch back and forth between editor and game layer
 
+v0.22
+- Shader Manager class
+Todo: 
+- Be able to use different shaders
+- Renderer supports passing in shaders and data to set uniform
+- RenderQueue draws each shader separately
+
 v0.21
 - Imgui dedicated to level
 - Switch over to a level editor level
