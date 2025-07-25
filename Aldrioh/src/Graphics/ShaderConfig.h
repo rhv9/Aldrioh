@@ -13,13 +13,3 @@ enum class ShaderUniformType : uint32_t
 	Mat4,
 };
 
-struct ShaderUniform
-{
-	ShaderUniformType
-};
-
-struct ShaderConfig
-{
-	Shader& shader;
-	std::vector<
-};

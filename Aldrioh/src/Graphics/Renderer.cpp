@@ -150,36 +150,6 @@ void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const
     glDrawElements(GL_TRIANGLES, renderData.quadTexCoordVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
 }
 
-void Renderer::DrawQuadCustomShader(const Ref<Shader>& shader, const glm::vec3& position, const Texture* texture, const glm::vec2& scale)
-{
-    shader->Use();
-
-    shader->UniformMat4("u_ViewProjectionMatrix", viewProjection);
-
-    glm::mat4 transform = glm::translate(glm::identity<glm::mat4>(), position) * glm::scale(glm::identity<glm::mat4>(), { scale, 1.0f });
-
-    shader->UniformMat4("u_Transform", transform);
-    shader->UniformInt("uTextureSampler", 0);
-
-    const TextureCoords& texCoords = texture->GetTexCoords();
-
-    float texCoordsArray[8] =
-    {
-        texCoords.bottomLeft.x, texCoords.topRight.y,
-        texCoords.bottomLeft.x, texCoords.bottomLeft.y,
-        texCoords.topRight.x, texCoords.bottomLeft.y,
-        texCoords.topRight.x, texCoords.topRight.y,
-    };
-    
-
-    shader->UniformFloatArray("uTexCoords", texCoordsArray, 8);
-
-    renderData.quadTexCoordVA.Bind();
-
-    texture->Bind(0);
-    glDrawElements(GL_TRIANGLES, renderData.quadTexCoordVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
-}
-
 void Renderer::SetRenderDepthOnly(bool val) { renderState.renderDepth = val; }
 
 bool Renderer::IsRenderDepth() { return renderState.renderDepth; }

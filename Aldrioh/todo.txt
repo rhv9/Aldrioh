@@ -25,10 +25,13 @@ Todo: LEVEL EDITOR
 
 v0.22
 - Shader Manager class
+- Main shader supports overwritting colour.
 Todo: 
 - Be able to use different shaders
-- Renderer supports passing in shaders and data to set uniform
 - RenderQueue draws each shader separately
+Removed:
+- Renderer supports passing in shaders and data to set uniform 
+	-> Cancel this, for now make a new render api for each shader
 
 v0.21
 - Imgui dedicated to level
