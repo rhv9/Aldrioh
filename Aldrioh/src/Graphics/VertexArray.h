@@ -1,42 +1,26 @@
 #pragma once
 
 #include <glad/glad.h>
-
-enum VertexDataType : int
-{
-	Float = GL_FLOAT,
-};
-
-enum VertexDataBool : int
-{
-	True = GL_TRUE,
-	False = GL_FALSE,
-};
-
-
-struct VertexData
-{
-	std::string name;
-	uint32_t size;
-	VertexDataType type;
-	VertexDataBool normalized;
-};
-
-using VertexDataMap = std::vector<VertexData>;
+#include "Buffer.h"
 
 class VertexArray
 {
 public:
-	VertexArray() {}
+	VertexArray();
+	~VertexArray();
 
 	void Bind() const;
 
-	int GetIndicesCount() const { return iboCount; }
+	void SetVertexBuffer(const std::shared_ptr<VertexBuffer> vertexBuffer);
+	void SetIndexBuffer(const std::shared_ptr<IndexBuffer> indexBuffer);
 
-	static VertexArray Create(VertexDataMap vertexDatas, float* vertices, uint32_t verticesCount, uint32_t* indices, uint32_t indicesCount);
+	const std::shared_ptr<VertexBuffer> GetVertexBuffer() const { return vertexBuffer; }
+	const std::shared_ptr<IndexBuffer> GetIndexBuffer() const { return indexBuffer; }
+
 
 private:
-	GLuint vao = -1, vbo = -1, ibo = -1;
-	int iboCount = 0;
+	GLuint vao = -1;
+	std::shared_ptr<VertexBuffer> vertexBuffer;
+	std::shared_ptr<IndexBuffer> indexBuffer;
 };
 

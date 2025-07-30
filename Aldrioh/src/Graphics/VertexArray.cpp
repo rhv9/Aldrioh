@@ -2,54 +2,51 @@
 #include "VertexArray.h"
 
 
-static int sizeofVertexDataType(VertexDataType vertexDataType)
+VertexArray::VertexArray()
 {
-    switch (vertexDataType)
-    {
-    case VertexDataType::Float: return sizeof(float);
-    }
-
-    ASSERT("Not implemented vertex data type");
-    return -1;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 }
 
-VertexArray VertexArray::Create(VertexDataMap vertexDatas, float* vertices, uint32_t verticesCount, uint32_t* indices, uint32_t indicesCount)
+VertexArray::~VertexArray()
 {
-    VertexArray vertexArray;
-
-    glGenVertexArrays(1, &vertexArray.vao);
-    glBindVertexArray(vertexArray.vao);
-
-    glGenBuffers(1, &vertexArray.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexArray.vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * verticesCount, vertices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &vertexArray.ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexArray.ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indicesCount, indices, GL_STATIC_DRAW);
-    vertexArray.iboCount = indicesCount;
-
-    // Calculate stride
-    int stride = 0;
-    for (const VertexData& vertexData : vertexDatas)
-    {
-        stride += sizeofVertexDataType(vertexData.type) * vertexData.size;
-    }
-
-    int pointer = 0;
-    for (int i = 0; i < vertexDatas.size(); ++i)
-    {
-        const VertexData& vertexData = vertexDatas[i];
-        glVertexAttribPointer(i, vertexData.size, vertexData.type, vertexData.normalized, stride, (void*)pointer);
-        glEnableVertexAttribArray(i);
-
-        pointer += sizeofVertexDataType(vertexData.type) * vertexData.size;
-    }
-
-    return vertexArray;
+    glDeleteVertexArrays(1, &vao);
 }
 
 void VertexArray::Bind() const
 {
     glBindVertexArray(vao);
+}
+
+void VertexArray::SetVertexBuffer(const std::shared_ptr<VertexBuffer> vertexBuffer)
+{
+    LOG_CORE_TRACE("Setting VBO to VAO id: {}", vao);
+
+    this->vertexBuffer = vertexBuffer;
+    Bind();
+    vertexBuffer->Bind();
+
+    const BufferLayout& layout = vertexBuffer->GetLayout();
+    int pointer = 0;
+    for (int i = 0; i < layout.elements.size(); ++i)
+    {
+        const BufferElement& element = layout.elements[i];
+        VertexAttribSize vertexAttribSize = GetVertexAttribSize(element.type);
+
+        LOG_CORE_TRACE("Vertex Attrib {}, {}, {}, {}, {}, {}, {}", element.name, i, vertexAttribSize.count, GetOpenGLVertexType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.stride, (void*)pointer);
+
+
+        glVertexAttribPointer(i, vertexAttribSize.count, GetOpenGLVertexType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.stride, (void*)pointer);
+        glEnableVertexAttribArray(i);
+
+        pointer += vertexAttribSize.byteSize * vertexAttribSize.count;
+    }
+
+}
+
+void VertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer> indexBuffer)
+{
+    this->indexBuffer = indexBuffer;
+    Bind();
+    indexBuffer->Bind();
 }

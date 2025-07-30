@@ -12,10 +12,10 @@
 
 struct RenderData
 {
-    VertexArray quadVA;
+    std::unique_ptr<VertexArray> quadVA;
     Shader* shaderTexQuad;
 
-    VertexArray quadTexCoordVA;
+    std::unique_ptr<VertexArray> quadTexCoordVA;
     Shader* shaderTexCoordQuad;
 };
 
@@ -43,25 +43,6 @@ void Renderer::Init()
     renderData.shaderTexQuad = &ShaderManager::Get().GetShader(ShaderName::OTHER_TEXTURE);
     renderData.shaderTexCoordQuad = &ShaderManager::Get().GetShader(ShaderName::GENERAL_TEXTURE);
 
-
-    // Normal Quad
-    float vertices[] = {
-        -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-         0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-    };
-
-    unsigned int indices[] = {
-        0, 1, 2, 2, 3, 0 
-    };
-
-    VertexDataMap vertexDatas = {
-        { "aPos", 3, VertexDataType::Float, VertexDataBool::False},
-        { "aTexCoord", 2, VertexDataType::Float, VertexDataBool::False},
-    };
-
-    renderData.quadVA = VertexArray::Create(vertexDatas, vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
     
     // TextureTexCoord.glsl
     float verticesTexCoord[] = {
@@ -75,13 +56,18 @@ void Renderer::Init()
         0, 1, 2, 2, 3, 0
     };
 
-    VertexDataMap vertexDatasTexCoord = {
-        { "aPos", 3, VertexDataType::Float, VertexDataBool::False},
-        { "aTexIndexCoords", 2, VertexDataType::Float, VertexDataBool::False},
+    renderData.quadTexCoordVA = std::make_unique<VertexArray>(); 
+
+    std::vector<BufferElement> bufferElements = {
+        { "aPos", VertexAttrib::Float3, false},
+        { "aTexIndexCoords", VertexAttrib::Float2, false},
     };
 
-    renderData.quadTexCoordVA = VertexArray::Create(vertexDatasTexCoord, verticesTexCoord, sizeof(verticesTexCoord) / sizeof(float), indicesTexCoord, sizeof(indicesTexCoord) / sizeof(unsigned int));
-
+    std::shared_ptr<VertexBuffer> vertexBuffer = std::make_shared<VertexBuffer>(verticesTexCoord, sizeof(verticesTexCoord) / sizeof(float));
+    vertexBuffer->SetLayout({ bufferElements });
+    renderData.quadTexCoordVA->SetVertexBuffer(vertexBuffer);
+    std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer>(indicesTexCoord, sizeof(indicesTexCoord) / sizeof(unsigned int));
+    renderData.quadTexCoordVA->SetIndexBuffer(indexBuffer);
 }
 
 static glm::mat4 viewProjection;
@@ -104,17 +90,7 @@ void Renderer::StartScene(const Camera& camera)
 
 void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
 {
-    renderData.shaderTexQuad->Use();
-
-    glm::mat4 transform = glm::scale(glm::identity<glm::mat4>(), { scale, 1.0f }) * glm::translate(glm::identity<glm::mat4>(), position);
-
-
-    renderData.shaderTexQuad->UniformMat4("u_Transform", transform);
-    renderData.shaderTexQuad->UniformInt("uTextureSampler", 0);
-
-    renderData.quadVA.Bind();
-
-	glDrawElements(GL_TRIANGLES, renderData.quadVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+    LOG_CORE_CRITICAL("NOT USING THIS FUNCTION RIGHT NOW!");
 }
 
 void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<Texture>& texture, const glm::vec2& scale)
@@ -144,10 +120,10 @@ void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const
 
     renderData.shaderTexCoordQuad->UniformFloatArray("uTexCoords", texCoordsArray, 8);
 
-    renderData.quadTexCoordVA.Bind();
+    renderData.quadTexCoordVA->Bind();
 
     texture->Bind(0);
-    glDrawElements(GL_TRIANGLES, renderData.quadTexCoordVA.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, renderData.quadTexCoordVA->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 }
 
 void Renderer::SetRenderDepthOnly(bool val) { renderState.renderDepth = val; }
