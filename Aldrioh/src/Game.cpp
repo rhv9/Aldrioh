@@ -76,6 +76,8 @@ void Game::Start()
     {
         Iterate();
     }
+
+    OnClosing();
 }
 
 void Game::Loop()
@@ -131,6 +133,11 @@ bool Game::Iterate()
 void Game::Shutdown()
 {
     running = false;
+}
+
+void Game::OnClosing()
+{
+    Renderer::Destroy();
 }
 
 void Game::BlockEvents(bool val)

@@ -4,7 +4,7 @@
 enum class ShaderName : uint32_t
 {
 	GENERAL_TEXTURE = 0,
-	OTHER_TEXTURE
+	BATCH_TEXTURE,
 };
 
 class ShaderManager

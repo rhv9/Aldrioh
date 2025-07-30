@@ -17,11 +17,14 @@ Engine Improvements:
 - Basic stopping player movement with ahead check of tile
 - Decide on how cameraController should be stored in CameraComponent
 - Scriptable components.
-- Batch rendering
 
 
 Todo: LEVEL EDITOR
 - Be able to switch back and forth between editor and game layer
+
+v0.23
+- Batch rendering
+- Separated vertex buffer and index buffer from vertex array
 
 v0.22
 - Shader Manager class

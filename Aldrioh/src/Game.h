@@ -26,6 +26,7 @@ public:
 	void Loop();
 	bool Iterate();
 	void Shutdown();
+	void OnClosing();
 
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);

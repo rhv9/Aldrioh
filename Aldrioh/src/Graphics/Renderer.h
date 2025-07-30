@@ -3,6 +3,12 @@
 #include "Texture.h"
 #include "Shader.h"
 
+struct BatchVertex
+{
+	glm::vec4 pos{ 0 };
+	glm::vec2 texCoord{ 0 };
+};
+
 class Renderer
 {
 public:
@@ -21,4 +27,11 @@ public:
 	static bool IsRenderDepth();
 
 	static void EndScene();
+	static void Destroy();
+
+	static void FlushBatch();
+	static void ResetBatch();
+
+private:
+	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords);
 };
