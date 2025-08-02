@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Game.h"
 
-
 //#define EMSCRIPTEN
 
 #ifdef EMSCRIPTEN
@@ -27,6 +26,8 @@
 #include <Game/SpriteCollection.h>
 
 #include <Debug/Statistics.h>
+
+#define DISPLAY_IMGUI_DEBUG
 
 Game& Game::Instance()
 {
@@ -56,8 +57,10 @@ void Game::Init()
 
     Sprites::Init();
 
+#ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer = new ImGuiLayer();
     layerStack.PushLayer(imGuiLayer);
+#endif
     layerStack.PushLayer(new LevelEditorLayer());
 
     running = true;
@@ -75,6 +78,8 @@ void Game::Start()
     while (running)
     {
         Iterate();
+
+        Statistics::ResetStats();
     }
 
     OnClosing();
@@ -117,14 +122,14 @@ bool Game::Iterate()
         layer->OnUpdate(delta);
     }
 
-
+#ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer->BeginRender();
     for (Layer* layer : layerStack)
     {
         layer->OnImGuiRender(delta);
     }
     imGuiLayer->EndRender();
-
+#endif
     window->OnUpdate();
 
     return true;

@@ -7,7 +7,6 @@ layout (location = 1) in vec2 aTexCoord;
 uniform mat4 u_ViewProjectionMatrix;
 
 out vec2 vTexCoord;
-out float vZ;
 
 void main()
 {
@@ -19,7 +18,6 @@ void main()
 #version 330 core
 
 in vec2 vTexCoord;
-in float vZ;
 
 out vec4 FragColor;
 

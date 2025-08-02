@@ -95,6 +95,12 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
 	scene->OnRender(delta);
+
+	//Renderer::StartScene(glm::mat4(1.0f));
+	//
+	//Renderer::DrawQuad({ 0.0f , 0.0f , 0.5f }, Sprites::get(Sprites::fire), {20.0f, 20.0f});
+	//
+	//Renderer::EndScene();
 }
 
 void LevelEditorLayer::OnImGuiRender(Timestep delta)
@@ -160,7 +166,7 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
 	//ImGui::ShowMetricsWindow();
 

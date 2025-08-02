@@ -27,13 +27,23 @@ void GameImGuiWindows::ShowRendererInfo()
 			Renderer::SetRenderDepthOnly(renderDepth);
 		ImGui::Checkbox("Show Collision Box", &GameDebugState::showCollisionBox);
 
+		if (ImGui::TreeNode("Main Renderer"))
+		{
+			auto& renderStats = Statistics::RendererStats::GetStats();
+			ImGui::Text("Draw Calls: %d", renderStats.drawCalls);
+			ImGui::Text("Draw Quads: %d", renderStats.batchQuads);
+			ImGui::Text("Draw Vertices: %d", renderStats.batchVertices);
+			ImGui::Text("Draw Indices: %d", renderStats.batchIndices);
+			ImGui::TreePop();
+		}
+
 		if (ImGui::TreeNode("RenderQueue"))
 		{
-			auto rqStats = Statistics::RenderQueueStats::GetStats();
+			auto rqStats = Statistics::RendererStats::GetStats();
 			ImGui::Text("Render Counts");
-			for (int i = 0; i < rqStats.layerRenderCounts.size(); ++i)
-				ImGui::Text("  Layer %d: %d", i, rqStats.layerRenderCounts[i]);
-			ImGui::Text("  Total: %d", rqStats.renderCount);
+			for (int i = 0; i < rqStats.renderQueueLayerRenderCounts.size(); ++i)
+				ImGui::Text("  Layer %d: %d", i, rqStats.renderQueueLayerRenderCounts[i]);
+			ImGui::Text("  Total: %d", rqStats.renderQueueCount);
 			ImGui::TreePop();
 		}
 	}

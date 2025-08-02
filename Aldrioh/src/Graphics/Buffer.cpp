@@ -6,20 +6,23 @@
 //
 
 VertexBuffer::VertexBuffer(uint32_t size)
-{
-	glGenBuffers(1, &vbo);
+{	
+	glCreateBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 }
 
 VertexBuffer::VertexBuffer(float* vertices, uint32_t count)
 {
-	glGenBuffers(1, &vbo);
+	glCreateBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * count, vertices, GL_DYNAMIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer()
 {
+	LOG_CORE_TRACE("VertexBuffer deleted id {}", vbo);
+
 	glDeleteBuffers(1, &vbo);
 }
 
@@ -45,7 +48,7 @@ void VertexBuffer::SetData(const void* data, uint32_t size)
 
 IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count)
 {
-	glGenBuffers(1, &ibo);
+	glCreateBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 
@@ -54,6 +57,7 @@ IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count)
 
 IndexBuffer::~IndexBuffer()
 {
+	LOG_CORE_TRACE("Deleting Index Buffer id: {}", ibo);
 	glDeleteBuffers(1, &ibo);
 }
 

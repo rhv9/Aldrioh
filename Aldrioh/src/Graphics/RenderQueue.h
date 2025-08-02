@@ -11,7 +11,7 @@ enum RenderLayer
 };
 
 namespace Statistics {
-	struct RenderQueueStats;
+	struct RendererStats;
 }
 
 class RenderQueue
@@ -48,6 +48,6 @@ private:
 
 	static RenderQueueData rqData;
 
-	friend Statistics::RenderQueueStats;
+	friend Statistics::RendererStats;
 
 };

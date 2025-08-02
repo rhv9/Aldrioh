@@ -11,6 +11,8 @@
 #include "ShaderManager.h"
 #include <Game/SpriteCollection.h>
 
+#include <Debug/Statistics.h>
+
 struct RenderData
 {
 	std::unique_ptr<VertexArray> batchTextureVA;
@@ -28,7 +30,6 @@ struct RenderData
 		{ 1.0f, 0.0f, 0.0f, 1.0f },
 		{ 1.0f, 1.0f, 0.0f, 1.0f }
 	};
-
 	BatchVertex* batchBasePtr = nullptr;
 	BatchVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
@@ -89,6 +90,8 @@ void Renderer::Init()
 		offset += 4;
 	}
 	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, RenderData::MAX_BATCH_INDICES);
+	renderData.batchTextureVA->SetIndexBuffer(batchIndexBuffer);
+
 	delete[] batchIndices;
 }
 
@@ -129,8 +132,6 @@ void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& po
 
 void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const glm::vec2& scale)
 {
-	//glm::mat4 transform = glm::translate(glm::identity<glm::mat4>(), position) * glm::scale(glm::identity<glm::mat4>(), { scale, 1.0f });
-
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), position), { scale, 1.0f });
 
 	const TextureCoords& texCoords = texture->GetTexCoords();
@@ -167,17 +168,25 @@ void Renderer::Destroy()
 
 void Renderer::FlushBatch()
 {
+	auto& renderStats = Statistics::RendererStats::GetUnderlyingStats();
+	renderStats.batchQuads += renderData.drawCount;
+	renderStats.batchVertices += renderData.drawCount * 4;
+	renderStats.batchIndices += renderData.drawCount * 6;
+	renderStats.drawCalls++;
+
 	if (renderData.drawCount == 0)
 		return;
 
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)renderData.batchPtr - (uint8_t*)renderData.batchBasePtr);
 
+	renderData.batchTextureVA->Bind();
 	renderData.batchTextureVA->GetVertexBuffer()->SetData(renderData.batchBasePtr, dataSize);
 
-	renderData.batchTextureVA->Bind();
 	Sprites::get(Sprites::fire)->Bind(0);
-	
+
 	glDrawElements(GL_TRIANGLES, renderData.drawCount * 6, GL_UNSIGNED_INT, 0);
+
+	ResetBatch();
 }
 
 void Renderer::ResetBatch()

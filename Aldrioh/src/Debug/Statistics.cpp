@@ -4,13 +4,24 @@
 
 #include <Game.h>
 
-const Statistics::RenderQueueStats Statistics::RenderQueueStats::GetStats()
+void Statistics::ResetStats()
 {
-	std::array<uint32_t, 5> arr;
+	RendererStats::Reset();
+}
+
+Statistics::RendererStats Statistics::RendererStats::stats;
+
+Statistics::RendererStats& Statistics::RendererStats::GetUnderlyingStats()
+{
 	for (int i = 0; i < 5; ++i)
-		arr[i] = RenderQueue::rqData.layers[i].count;
-	RenderQueueStats stats { RenderQueue::rqData.renderCount , arr };
+		stats.renderQueueLayerRenderCounts[i] = RenderQueue::rqData.layers[i].count;
+	stats.renderQueueCount = RenderQueue::rqData.renderCount;
 	return stats;
+}
+
+void Statistics::RendererStats::Reset()
+{
+	stats.drawCalls = stats.batchVertices = stats.batchQuads = stats.batchIndices = 0;
 }
 
 const Statistics::EngineStats Statistics::EngineStats::GetStats()
@@ -18,3 +29,4 @@ const Statistics::EngineStats Statistics::EngineStats::GetStats()
 	auto& gameStats = Game::Instance().gameStats;
 	return EngineStats(Game::Instance().delta, gameStats.fpsCounter, gameStats.fps);
 }
+
