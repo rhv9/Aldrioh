@@ -13,6 +13,12 @@
 
 #include <Debug/Statistics.h>
 
+struct BatchVertex
+{
+	glm::vec4 pos{ 0 };
+	glm::vec2 texCoord{ 0 };
+};
+
 struct RenderData
 {
 	std::unique_ptr<VertexArray> batchTextureVA;
@@ -35,13 +41,7 @@ struct RenderData
 	uint32_t drawCount = 0;
 };
 
-static struct RenderState
-{
-	bool renderDepth = false;
-};
-
 static RenderData renderData;
-static RenderState renderState;
 
 void Renderer::Init()
 {
@@ -50,7 +50,7 @@ void Renderer::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glClearDepth(1);
 	//glDepthMask(GL_FALSE);    
@@ -93,6 +93,8 @@ void Renderer::Init()
 	renderData.batchTextureVA->SetIndexBuffer(batchIndexBuffer);
 
 	delete[] batchIndices;
+
+	InitUIRenderer();
 }
 
 static glm::mat4 viewProjection;
@@ -123,6 +125,7 @@ void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<Texture
 	DrawQuad(position, texture.get(), scale);
 }
 
+
 void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords)
 {
 	ptr->pos = pos;
@@ -132,6 +135,9 @@ void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& po
 
 void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const glm::vec2& scale)
 {
+	if (renderData.drawCount >= RenderData::MAX_DRAWS)
+		FlushAndReset();
+
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), position), { scale, 1.0f });
 
 	const TextureCoords& texCoords = texture->GetTexCoords();
@@ -152,10 +158,6 @@ void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const
 	renderData.drawCount++;
 }
 
-void Renderer::SetRenderDepthOnly(bool val) { renderState.renderDepth = val; }
-
-bool Renderer::IsRenderDepth() { return renderState.renderDepth; }
-
 void Renderer::EndScene()
 {
 	FlushBatch();
@@ -164,6 +166,7 @@ void Renderer::EndScene()
 void Renderer::Destroy()
 {
 	delete[] renderData.batchBasePtr;
+	DestroyUIRenderer();
 }
 
 void Renderer::FlushBatch()
@@ -185,9 +188,14 @@ void Renderer::FlushBatch()
 	Sprites::get(Sprites::fire)->Bind(0);
 
 	glDrawElements(GL_TRIANGLES, renderData.drawCount * 6, GL_UNSIGNED_INT, 0);
+}
 
+void Renderer::FlushAndReset()
+{
+	FlushBatch();
 	ResetBatch();
 }
+
 
 void Renderer::ResetBatch()
 {
@@ -195,3 +203,49 @@ void Renderer::ResetBatch()
 	renderData.drawCount = 0;
 }
 
+
+//
+// UI 
+//
+
+struct UIVertex
+{
+	glm::vec4 pos;
+	glm::vec2 texCoords;
+	glm::vec4 colour;
+	uint8_t flags;
+};
+
+struct UIRenderData
+{
+	Shader* shader;
+	std::unique_ptr<VertexArray> vao;
+
+
+};
+
+static UIRenderData* uiRd;
+
+void Renderer::InitUIRenderer()
+{
+	LOG_CORE_INFO("Initializing UI Renderer");
+
+	uiRd = new UIRenderData();
+}
+
+void Renderer::DestroyUIRenderer()
+{
+	LOG_CORE_INFO("Destroying UI Renderer");
+
+	delete uiRd;
+}
+
+void Renderer::StartUIScene()
+{
+
+
+}
+
+void Renderer::EndUIScene()
+{
+}

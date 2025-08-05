@@ -90,6 +90,11 @@ void TestLevel::OnRender(Timestep ts)
 	int endX = (int)std::min(bounds.Right + cameraPos.x + 1, (float)width);
 	int endY = (int)std::min(bounds.Top + cameraPos.y + 1, (float)height);
 
+	startX++;
+	startY++;
+	endX--;
+	endY--;
+
 	for (int y = startY; y < endY; y++)
 	{
 		for (int x = startX; x < endX; x++)

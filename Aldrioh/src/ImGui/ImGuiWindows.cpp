@@ -22,9 +22,10 @@ void GameImGuiWindows::ShowRendererInfo()
 {
 	if (ImGui::CollapsingHeader("Renderer"))
 	{
-		bool renderDepth = Renderer::IsRenderDepth();
-		if (ImGui::Checkbox("Render depth", &renderDepth))
-			Renderer::SetRenderDepthOnly(renderDepth);
+		auto& game = Game::Instance();
+		bool vsync = game.GetWindow()->GetVsync();
+		if (ImGui::Checkbox("vsync", &vsync))
+			game.GetWindow()->SetVsync(vsync);
 		ImGui::Checkbox("Show Collision Box", &GameDebugState::showCollisionBox);
 
 		if (ImGui::TreeNode("Main Renderer"))
@@ -57,9 +58,6 @@ void GameImGuiWindows::ShowImGuiInfo()
 	if (ImGui::CollapsingHeader("ImGui"))
 	{
 		ImGui::Text("Blocking events: %s", ImGui::IsWindowFocused() ? "Yes" : "No");
-		bool vsync = game.GetWindow()->GetVsync();
-		if (ImGui::Checkbox("vsync", &vsync))
-			game.GetWindow()->SetVsync(vsync);
 		bool navActive = io.NavActive;
 		ImGui::Checkbox("ImGui Nav Active", &navActive);
 		bool wantCaptureKeyboard = io.WantCaptureKeyboard;

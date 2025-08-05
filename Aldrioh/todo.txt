@@ -22,6 +22,9 @@ Engine Improvements:
 Todo: LEVEL EDITOR
 - Be able to switch back and forth between editor and game layer
 
+v0.24
+
+
 v0.23
 - Batch rendering
 - Separated vertex buffer and index buffer from vertex array
