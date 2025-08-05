@@ -30,7 +30,14 @@ public:
 
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);
-	bool isEventsBlocked() { return imGuiLayer->isEventsBlocked(); }
+	bool isEventsBlocked() {
+		// TODO: Fix this
+#ifdef DISPLAY_IMGUI_DEBUG
+		return imGuiLayer->isEventsBlocked(); 
+#else
+		return false;
+#endif
+	}
 	LayerStack& GetLayerStack() { return layerStack; }
 	
 	const GameStats& gameStats = i_gameStats;

@@ -50,7 +50,7 @@ void Renderer::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	//glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glClearDepth(1);
 	//glDepthMask(GL_FALSE);    
@@ -78,7 +78,7 @@ void Renderer::Init()
 
 	// Indices
 	int offset = 0;
-	for (int i = 0; i < RenderData::MAX_DRAWS; i += 6)
+	for (int i = 0; i < RenderData::MAX_BATCH_INDICES; i += 6)
 	{
 		batchIndices[i + 0] = offset + 0;
 		batchIndices[i + 1] = offset + 1;
@@ -181,6 +181,9 @@ void Renderer::FlushBatch()
 		return;
 
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)renderData.batchPtr - (uint8_t*)renderData.batchBasePtr);
+	//uint32_t dataSize = (renderData.drawCount) * 4 * sizeof(BatchVertex);
+
+	LOG_CORE_INFO("Data size {}", dataSize);
 
 	renderData.batchTextureVA->Bind();
 	renderData.batchTextureVA->GetVertexBuffer()->SetData(renderData.batchBasePtr, dataSize);

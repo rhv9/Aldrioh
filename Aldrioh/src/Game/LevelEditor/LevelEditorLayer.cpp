@@ -52,7 +52,7 @@ void LevelEditorLayer::OnBegin()
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
 	CameraController* cameraController = new FreeCameraController(aspectRatio, 1.0f);
-	cameraController->SetZoomLevel(10);
+	cameraController->SetZoomLevel(3);
 	cameraController->SetPosition({ cameraController->GetZoomLevel() * 0.75, cameraController->GetZoomLevel() });
 
 	// Add camera component
