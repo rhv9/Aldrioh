@@ -95,6 +95,13 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
 	scene->OnRender(delta);
+
+	Renderer::StartUIScene();
+
+
+
+	Renderer::EndUIScene();
+
 }
 
 void LevelEditorLayer::OnImGuiRender(Timestep delta)

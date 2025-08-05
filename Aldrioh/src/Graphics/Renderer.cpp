@@ -216,7 +216,7 @@ struct UIVertex
 	glm::vec4 pos;
 	glm::vec2 texCoords;
 	glm::vec4 colour;
-	uint8_t flags;
+	uint32_t flags;
 };
 
 struct UIRenderData
@@ -228,6 +228,7 @@ struct UIRenderData
 };
 
 static UIRenderData* uiRd;
+
 
 void Renderer::InitUIRenderer()
 {
@@ -250,5 +251,9 @@ void Renderer::StartUIScene()
 }
 
 void Renderer::EndUIScene()
+{
+}
+
+void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size)
 {
 }

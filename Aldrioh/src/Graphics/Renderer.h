@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Shader.h"
+#include <UI/Font.h>
 
 struct BatchVertex;
 
@@ -33,7 +34,7 @@ public:
 
 	static void UIDrawRectangle();
 	static void UIDrawText(const std::string& text);
-	static void DrawCharacter(const char c);
+	static void UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size);
 
 private:
 	static void InitUIRenderer();

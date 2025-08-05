@@ -9,4 +9,5 @@ void ShaderManager::LoadShaders()
 
 	shaders[static_cast<uint32_t>(ShaderName::GENERAL_TEXTURE)] = { "assets/shaders/TextureTexCoord.glsl" };
 	shaders[static_cast<uint32_t>(ShaderName::BATCH_TEXTURE)] = { "assets/shaders/BatchTexture.glsl" };
+	shaders[static_cast<uint32_t>(ShaderName::UI_SHADER)] = { "assets/shaders/UIShader.glsl" };
 }
