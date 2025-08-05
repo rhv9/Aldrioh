@@ -107,6 +107,9 @@ void TestLevel::OnRender(Timestep ts)
 
 void TestLevel::SetTile(int x, int y, Tiles* tile)
 {
+	if (x < 0 || x >= width || y < 0 || y >= height)
+		return;
+
 	delete tiles[y * width + x];
 	tiles[y * width + x] = tile;
 }

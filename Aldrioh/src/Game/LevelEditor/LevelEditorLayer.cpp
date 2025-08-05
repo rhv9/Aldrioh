@@ -41,9 +41,13 @@
 #include <ImGui/ImGuiWindows.h>
 #include <Game/Tiles/TexturedTiles.h>
 
+#include <UI/Font.h>
+
 LevelEditorLayer::LevelEditorLayer()
 {
 }
+
+static Font* font;
 
 void LevelEditorLayer::OnBegin()
 {
@@ -89,7 +93,10 @@ void LevelEditorLayer::OnBegin()
 				level->SetTile((int)pos.x, (int)pos.y, new TexturedTiles(Sprites::sand_cactus));
 			}
 		};
+
+	font = new Font("assets/textures/free_font/all_16x16.png", { 16, 16 });
 }
+static int val = '!';
 
 void LevelEditorLayer::OnUpdate(Timestep delta)
 {
@@ -98,7 +105,7 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 
 	Renderer::StartUIScene();
 
-
+	Renderer::UIDrawChar(font, val, { 0, 0 }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f, 1.0f });
 
 	Renderer::EndUIScene();
 
@@ -111,6 +118,9 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window");
+
+	ImGui::SliderInt("Adjust CHAR", &val, '!', '~');
+	ImGui::Text("%c", char(val));
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
 	{

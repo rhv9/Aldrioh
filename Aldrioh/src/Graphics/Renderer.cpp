@@ -109,6 +109,7 @@ void Renderer::StartScene(const Camera& camera)
 	renderData.shaderBatchTexture->UniformInt("uTextureSampler", 0);
 
 	//glClearColor(1.00f, 0.49f, 0.04f, 1.00f);
+	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.20f, 0.29f, 0.84f, 1.00f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -183,8 +184,6 @@ void Renderer::FlushBatch()
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)renderData.batchPtr - (uint8_t*)renderData.batchBasePtr);
 	//uint32_t dataSize = (renderData.drawCount) * 4 * sizeof(BatchVertex);
 
-	LOG_CORE_INFO("Data size {}", dataSize);
-
 	renderData.batchTextureVA->Bind();
 	renderData.batchTextureVA->GetVertexBuffer()->SetData(renderData.batchBasePtr, dataSize);
 
@@ -216,25 +215,81 @@ struct UIVertex
 	glm::vec4 pos;
 	glm::vec2 texCoords;
 	glm::vec4 colour;
-	uint32_t flags;
+	float flags;
 };
 
 struct UIRenderData
 {
-	Shader* shader;
+	Shader* shader = nullptr;
 	std::unique_ptr<VertexArray> vao;
 
+	// Batching Textures
+	static const uint32_t MAX_DRAWS = 1000;
+	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
+	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
 
+	static constexpr float VERTEX_DEPTH_VALUE = 0.9f;
+
+	const glm::vec4 BatchQuadVertices[4] =
+	{
+		{ 0.0f, 1.0f, 0.0f, 1.0f },
+		{ 0.0f, 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 0.0f, 0.0f, 1.0f },
+		{ 1.0f, 1.0f, 0.0f, 1.0f }
+	};
+	UIVertex* batchBasePtr = nullptr;
+	UIVertex* batchPtr = nullptr;
+	uint32_t drawCount = 0;
 };
 
 static UIRenderData* uiRd;
-
 
 void Renderer::InitUIRenderer()
 {
 	LOG_CORE_INFO("Initializing UI Renderer");
 
 	uiRd = new UIRenderData();
+	uiRd->shader = &ShaderManager::Get().GetShader(ShaderName::UI_SHADER);
+
+
+	// Batching
+	uiRd->vao = std::make_unique<VertexArray>();
+	uiRd->vao->Bind();
+
+	uiRd->batchBasePtr = new UIVertex[UIRenderData::MAX_BATCH_VERTICES];
+	uiRd->batchPtr = uiRd->batchBasePtr;
+	uiRd->drawCount = 0;
+
+	uint32_t* batchIndices = new uint32_t[UIRenderData::MAX_BATCH_INDICES];
+
+	// Buffer
+	std::vector<BufferElement> batchBufferElements = {
+	{ "aPos", VertexAttrib::Float4, false},
+	{ "aTexCoord", VertexAttrib::Float2, false},
+	{ "aColour", VertexAttrib::Float4, false},
+	{ "aFlags", VertexAttrib::Float, false},
+	};
+	std::shared_ptr<VertexBuffer> batchVertexBuffer = std::make_shared<VertexBuffer>(sizeof(UIVertex) * UIRenderData::MAX_BATCH_VERTICES);
+	batchVertexBuffer->SetLayout({ batchBufferElements });
+	uiRd->vao->SetVertexBuffer(batchVertexBuffer);
+
+	// Indices
+	int offset = 0;
+	for (int i = 0; i < UIRenderData::MAX_BATCH_INDICES; i += 6)
+	{
+		batchIndices[i + 0] = offset + 0;
+		batchIndices[i + 1] = offset + 1;
+		batchIndices[i + 2] = offset + 2;
+		batchIndices[i + 3] = offset + 2;
+		batchIndices[i + 4] = offset + 3;
+		batchIndices[i + 5] = offset + 0;
+
+		offset += 4;
+	}
+	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, RenderData::MAX_BATCH_INDICES);
+	uiRd->vao->SetIndexBuffer(batchIndexBuffer);
+
+	delete[] batchIndices;
 }
 
 void Renderer::DestroyUIRenderer()
@@ -246,14 +301,90 @@ void Renderer::DestroyUIRenderer()
 
 void Renderer::StartUIScene()
 {
+	glDisable(GL_DEPTH_TEST);
 
+	uiRd->vao->Bind();
+	uiRd->shader->UniformMat4("u_ViewProjectionMatrix", glm::mat4(1.0f));
+	uiRd->shader->UniformInt("uTextureSampler", 1);
 
+	UIResetBatch();
 }
 
 void Renderer::EndUIScene()
 {
+	UIFlushBatch();
 }
 
-void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size)
+static Font* removeThis_globalFont;
+
+void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
 {
+	removeThis_globalFont = font;
+
+	if (uiRd->drawCount > UIRenderData::MAX_DRAWS)
+		UIFlushAndReset();
+
+	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), {size, 1.0f});
+
+	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
+	const TextureCoords& texCoords = charSubTexture->GetTexCoords();
+#if 1
+	const glm::vec2 texCoordsArray[4] =
+	{
+		{ texCoords.bottomLeft.x, texCoords.topRight.y   },
+		{ texCoords.bottomLeft.x, texCoords.bottomLeft.y },
+		{ texCoords.topRight.x,   texCoords.bottomLeft.y },
+		{ texCoords.topRight.x,   texCoords.topRight.y   },
+	};
+#else
+	const glm::vec2 texCoordsArray[4] =
+	{
+		{ 0, 1   },
+		{ 0, 0 },
+		{ 1,   0 },
+		{ 1,   1   },
+	};
+#endif
+	for (int i = 0; i < 4; ++i)
+	{
+		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, 0);
+		++uiRd->batchPtr;
+	}
+
+	uiRd->drawCount++;
+}
+
+void Renderer::UIFlushBatch()
+{
+	if (uiRd->drawCount == 0)
+		return;
+
+	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)uiRd->batchPtr - (uint8_t*)uiRd->batchBasePtr);
+
+	uiRd->vao->Bind();
+	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
+
+	removeThis_globalFont->GetTexture()->Bind(1);
+	
+	glDrawElements(GL_TRIANGLES, uiRd->drawCount * 6, GL_UNSIGNED_INT, 0);
+}
+
+void Renderer::UIResetBatch()
+{
+	uiRd->batchPtr = uiRd->batchBasePtr;
+	uiRd->drawCount = 0;
+}
+
+void Renderer::UIFlushAndReset()
+{
+	UIFlushBatch();
+	UIFlushAndReset();
+}
+
+inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const float flags)
+{
+	ptr->pos = pos;
+	ptr->texCoords = texCoords;
+	ptr->colour = colour;
+	ptr->flags = flags;
 }

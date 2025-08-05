@@ -5,6 +5,7 @@
 #include <UI/Font.h>
 
 struct BatchVertex;
+struct UIVertex;
 
 class Renderer
 {
@@ -27,19 +28,27 @@ public:
 
 	static void FlushAndReset();
 
-	// UI related
+private:
+	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords);
 
+public:
+	// UI related
 	static void StartUIScene();
 	static void EndUIScene();
 
 	static void UIDrawRectangle();
 	static void UIDrawText(const std::string& text);
-	static void UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size);
+	static void UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
+
+	static void UIFlushBatch();
+	static void UIResetBatch();
+
+	static void UIFlushAndReset();
 
 private:
 	static void InitUIRenderer();
 	static void DestroyUIRenderer();
 
-private:
-	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords);
+	static inline void SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const float flags);
+
 };
