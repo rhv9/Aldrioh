@@ -286,7 +286,7 @@ void Renderer::InitUIRenderer()
 
 		offset += 4;
 	}
-	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, RenderData::MAX_BATCH_INDICES);
+	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, UIRenderData::MAX_BATCH_INDICES);
 	uiRd->vao->SetIndexBuffer(batchIndexBuffer);
 
 	delete[] batchIndices;
@@ -304,6 +304,7 @@ void Renderer::StartUIScene()
 	glDisable(GL_DEPTH_TEST);
 
 	uiRd->vao->Bind();
+	uiRd->shader->Use();
 	uiRd->shader->UniformMat4("u_ViewProjectionMatrix", glm::mat4(1.0f));
 	uiRd->shader->UniformInt("uTextureSampler", 1);
 
@@ -328,7 +329,6 @@ void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const 
 
 	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
 	const TextureCoords& texCoords = charSubTexture->GetTexCoords();
-#if 1
 	const glm::vec2 texCoordsArray[4] =
 	{
 		{ texCoords.bottomLeft.x, texCoords.topRight.y   },
@@ -336,15 +336,7 @@ void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const 
 		{ texCoords.topRight.x,   texCoords.bottomLeft.y },
 		{ texCoords.topRight.x,   texCoords.topRight.y   },
 	};
-#else
-	const glm::vec2 texCoordsArray[4] =
-	{
-		{ 0, 1   },
-		{ 0, 0 },
-		{ 1,   0 },
-		{ 1,   1   },
-	};
-#endif
+
 	for (int i = 0; i < 4; ++i)
 	{
 		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, 0);
@@ -354,6 +346,22 @@ void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const 
 	uiRd->drawCount++;
 }
 
+void Renderer::UIDrawText(Font* font, const std::string& text, const glm::vec2& pos, const glm::vec2& charSize, const glm::vec4& colour, float charSpacingPercent)
+{
+	float xOffset = pos.x;
+	for (char c : text)
+	{
+		if (c != ' ')
+		{
+			glm::vec2 charPos{ xOffset, pos.y };
+			Renderer::UIDrawChar(font, c, charPos, charSize, colour);
+		}
+		xOffset += charSpacingPercent * charSize.x;
+	}
+
+}
+
+
 void Renderer::UIFlushBatch()
 {
 	if (uiRd->drawCount == 0)
@@ -361,8 +369,10 @@ void Renderer::UIFlushBatch()
 
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)uiRd->batchPtr - (uint8_t*)uiRd->batchBasePtr);
 
+	uiRd->shader->Use();
 	uiRd->vao->Bind();
 	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
+
 
 	removeThis_globalFont->GetTexture()->Bind(1);
 	

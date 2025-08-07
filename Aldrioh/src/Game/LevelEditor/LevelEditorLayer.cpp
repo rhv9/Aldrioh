@@ -105,8 +105,7 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 
 	Renderer::StartUIScene();
 
-	Renderer::UIDrawChar(font, val, { 0, 0 }, { 0.5f, 0.5f }, { 1.0f, 0.0f, 0.0f, 1.0f });
-
+	Renderer::UIDrawText(font, "Hello There!!", { -1.0f, 0.0f }, { 0.1f, 0.1f }, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
 	Renderer::EndUIScene();
 
 }

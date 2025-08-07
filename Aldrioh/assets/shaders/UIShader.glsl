@@ -36,13 +36,13 @@ uniform sampler2D uTextureSampler;
 void main()
 {
 	vec4 colour;
-	if (fFlags == 0)
-		colour = texture(uTextureSampler, fTexCoord);
-	else
-		colour = fColour;
+	vec4 texColour = texture(uTextureSampler, fTexCoord);
 
-	if (colour.a == 0.0)
+	if (fFlags == 1.0)
+	{
+	}
+	else if (texColour.a == 0.0)
 		discard;
 
-	FragColor = colour;
+	FragColor = fColour;
 }

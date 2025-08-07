@@ -37,7 +37,7 @@ public:
 	static void EndUIScene();
 
 	static void UIDrawRectangle();
-	static void UIDrawText(const std::string& text);
+	static void UIDrawText(Font* font, const std::string& text, const glm::vec2& pos, const glm::vec2& charSize, const glm::vec4& colour, float charSpacingPercent = 0.85f);
 	static void UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
 
 	static void UIFlushBatch();

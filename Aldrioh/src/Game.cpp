@@ -27,7 +27,7 @@
 
 #include <Debug/Statistics.h>
 
-#define DISPLAY_IMGUI_DEBUG
+//#define DISPLAY_IMGUI_DEBUG
 
 Game& Game::Instance()
 {
