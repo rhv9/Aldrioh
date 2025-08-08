@@ -24,10 +24,11 @@
 #include "Game/LevelEditor/LevelEditorLayer.h"
 
 #include <Game/SpriteCollection.h>
+#include <UI/Font.h>
 
 #include <Debug/Statistics.h>
 
-//#define DISPLAY_IMGUI_DEBUG
+#define DISPLAY_IMGUI_DEBUG
 
 Game& Game::Instance()
 {
@@ -39,7 +40,6 @@ Game::Game() {}
 
 void Game::Init()
 {
-    
     Log::Init();
     
     window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
@@ -54,8 +54,10 @@ void Game::Init()
     ShaderManager::Get().LoadShaders();
     Renderer::Init();
     RenderQueue::Init();
-
+    Font::InitGlobalFonts();
     Sprites::Init();
+
+    window->WindowResizeEventHandler += Renderer::OnResize;
 
 #ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer = new ImGuiLayer();
@@ -142,6 +144,7 @@ void Game::Shutdown()
 
 void Game::OnClosing()
 {
+    Font::DestroyGlobalFonts();
     Renderer::Destroy();
 }
 

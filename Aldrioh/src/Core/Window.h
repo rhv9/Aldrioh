@@ -19,6 +19,8 @@ public:
 	virtual uint32_t GetWidth() const = 0;
 	virtual uint32_t GetHeight() const = 0;
 
+	float GetAspectRatio() const { return (float)GetWidth() / (float)GetHeight(); }
+
 	virtual glm::vec2 GetPos() const = 0;
 	virtual void SetPos(int xpos, int ypos) = 0;
 

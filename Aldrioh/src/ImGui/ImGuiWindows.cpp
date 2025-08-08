@@ -67,3 +67,14 @@ void GameImGuiWindows::ShowImGuiInfo()
 	}
 }
 
+void GameImGuiWindows::ShowWindowInfo()
+{
+	auto& window = Game::Instance().GetWindow();
+	if (ImGui::CollapsingHeader("Window"))
+	{
+		ImGui::Text("Size: (%d, %d)", window->GetWidth(), window->GetHeight());
+		ImGui::Text("Pos: (%.2f, %.2f)", window->GetPos().x, window->GetPos().y);
+		ImGui::Text("Aspect Ratio: %.4f", window->GetAspectRatio());
+	}
+}
+

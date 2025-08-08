@@ -8,4 +8,6 @@ namespace Math {
 		float linearFloat(float min, float max);
 	}
 
+	float inline sinf(float val);
+
 }

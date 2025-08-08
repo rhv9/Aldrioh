@@ -12,6 +12,12 @@
 #include <Game/SpriteCollection.h>
 
 #include <Debug/Statistics.h>
+#include <Core/Platform.h>
+
+#include <Game.h>
+#include <Scene/CameraController.h>
+
+#include <imgui.h>
 
 struct BatchVertex
 {
@@ -114,6 +120,11 @@ void Renderer::StartScene(const Camera& camera)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ResetBatch();
+}
+
+void Renderer::OnResize(WindowResizeEventArg& e)
+{
+	UIOnResize(e);
 }
 
 void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
@@ -223,6 +234,8 @@ struct UIRenderData
 	Shader* shader = nullptr;
 	std::unique_ptr<VertexArray> vao;
 
+	CameraController* cameraController;
+
 	// Batching Textures
 	static const uint32_t MAX_DRAWS = 1000;
 	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
@@ -249,6 +262,8 @@ void Renderer::InitUIRenderer()
 	LOG_CORE_INFO("Initializing UI Renderer");
 
 	uiRd = new UIRenderData();
+	float aspectRatio = Game::Instance().GetWindow()->GetAspectRatio();
+	uiRd->cameraController = new CameraController(aspectRatio, 1);
 	uiRd->shader = &ShaderManager::Get().GetShader(ShaderName::UI_SHADER);
 
 
@@ -296,16 +311,32 @@ void Renderer::DestroyUIRenderer()
 {
 	LOG_CORE_INFO("Destroying UI Renderer");
 
+	delete uiRd->cameraController;
 	delete uiRd;
+}
+
+static glm::vec2 cameraPos{ 0 };
+static float cameraZoom = 1;
+
+void Renderer::UIOnResize(WindowResizeEventArg& e)
+{
+	uiRd->cameraController->OnResize(e.Width, e.Height);
+	cameraZoom = e.Height / 2.0f;
+	cameraPos.x = uiRd->cameraController->GetAspectRatio() * cameraZoom;
+	cameraPos.y = cameraZoom;
 }
 
 void Renderer::StartUIScene()
 {
+	
 	glDisable(GL_DEPTH_TEST);
+
+	uiRd->cameraController->SetZoomLevel(cameraZoom);
+	uiRd->cameraController->SetPosition(cameraPos);
 
 	uiRd->vao->Bind();
 	uiRd->shader->Use();
-	uiRd->shader->UniformMat4("u_ViewProjectionMatrix", glm::mat4(1.0f));
+	uiRd->shader->UniformMat4("u_ViewProjectionMatrix", uiRd->cameraController->GetCamera().GetViewProjection());
 	uiRd->shader->UniformInt("uTextureSampler", 1);
 
 	UIResetBatch();
@@ -316,19 +347,14 @@ void Renderer::EndUIScene()
 	UIFlushBatch();
 }
 
-static Font* removeThis_globalFont;
-
-void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
+void Renderer::UIDrawTexture(const Texture* texture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag)
 {
-	removeThis_globalFont = font;
-
-	if (uiRd->drawCount > UIRenderData::MAX_DRAWS)
+	if (uiRd->drawCount >= UIRenderData::MAX_DRAWS)
 		UIFlushAndReset();
 
-	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), {size, 1.0f});
+	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{ pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), { size, 1.0f });
 
-	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
-	const TextureCoords& texCoords = charSubTexture->GetTexCoords();
+	const TextureCoords& texCoords = texture->GetTexCoords();
 	const glm::vec2 texCoordsArray[4] =
 	{
 		{ texCoords.bottomLeft.x, texCoords.topRight.y   },
@@ -339,11 +365,23 @@ void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const 
 
 	for (int i = 0; i < 4; ++i)
 	{
-		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, 0);
+		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, flag);
 		++uiRd->batchPtr;
 	}
 
 	uiRd->drawCount++;
+}
+
+void Renderer::UIDrawRectangle(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
+{
+	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), pos, size, colour, 1);
+}
+
+
+void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
+{
+	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
+	UIDrawTexture(charSubTexture, pos, size, colour, 1);
 }
 
 void Renderer::UIDrawText(Font* font, const std::string& text, const glm::vec2& pos, const glm::vec2& charSize, const glm::vec4& colour, float charSpacingPercent)
@@ -373,8 +411,9 @@ void Renderer::UIFlushBatch()
 	uiRd->vao->Bind();
 	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
 
+	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
 
-	removeThis_globalFont->GetTexture()->Bind(1);
+	Font::DEFAULT->GetTexture()->Bind(1);
 	
 	glDrawElements(GL_TRIANGLES, uiRd->drawCount * 6, GL_UNSIGNED_INT, 0);
 }
@@ -397,4 +436,11 @@ inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const
 	ptr->texCoords = texCoords;
 	ptr->colour = colour;
 	ptr->flags = flags;
+}
+
+
+void Renderer::ImGuiDebug()
+{
+	ImGui::DragFloat2("Camera pos", (float*)&cameraPos);
+	ImGui::DragFloat("Camera zoom", &cameraZoom);
 }

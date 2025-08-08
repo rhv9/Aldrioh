@@ -32,17 +32,17 @@ in float fFlags;
 out vec4 FragColor;
 
 uniform sampler2D uTextureSampler;
+uniform float uTime;
 
 void main()
 {
 	vec4 colour;
 	vec4 texColour = texture(uTextureSampler, fTexCoord);
 
-	if (fFlags == 1.0)
+	if (texColour.a == 0.0)
 	{
-	}
-	else if (texColour.a == 0.0)
 		discard;
+	}
 
 	FragColor = fColour;
 }

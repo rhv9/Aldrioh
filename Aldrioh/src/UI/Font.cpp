@@ -3,6 +3,16 @@
 
 static constexpr int SHEET_LENGTH = 10;
 
+void Font::InitGlobalFonts()
+{
+	DEFAULT = new Font("assets/textures/free_font/all_16x16.png", { 16, 16 });
+}
+
+void Font::DestroyGlobalFonts()
+{
+	delete Font::DEFAULT;
+}
+
 Font::Font(const std::string& fontSheetPath, const glm::vec2& charSize)
 {
 	fontTexture = std::make_shared<Texture>(fontSheetPath);
@@ -31,4 +41,9 @@ const SubTexture* Font::GetCharSubTexture(const char c)
 
 	// + 1 as first subtexture is blank on png
 	return &charSubTextures[ascii - int('!') + 1];
+}
+
+const SubTexture* Font::GetBlockSubTexture()
+{
+	return &charSubTextures['c'];
 }

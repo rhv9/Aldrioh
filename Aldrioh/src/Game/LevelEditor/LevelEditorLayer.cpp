@@ -47,8 +47,6 @@ LevelEditorLayer::LevelEditorLayer()
 {
 }
 
-static Font* font;
-
 void LevelEditorLayer::OnBegin()
 {
 	scene = std::make_shared<Scene>();
@@ -94,9 +92,9 @@ void LevelEditorLayer::OnBegin()
 			}
 		};
 
-	font = new Font("assets/textures/free_font/all_16x16.png", { 16, 16 });
 }
-static int val = '!';
+
+static glm::vec2 pos{ 0 }, size{ 900, 100 };
 
 void LevelEditorLayer::OnUpdate(Timestep delta)
 {
@@ -105,9 +103,10 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 
 	Renderer::StartUIScene();
 
-	Renderer::UIDrawText(font, "Hello There!!", { -1.0f, 0.0f }, { 0.1f, 0.1f }, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
+	//Renderer::UIDrawRectangle({ -1.0f, 0 }, { 1, 1 }, glm::vec4(1, 1, 0, 1));
+	Renderer::UIDrawRectangle(pos, size, glm::vec4(1));
+	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { 0.0f, 0.0f }, { 50, 50 }, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
 	Renderer::EndUIScene();
-
 }
 
 void LevelEditorLayer::OnImGuiRender(Timestep delta)
@@ -118,13 +117,16 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window");
 
-	ImGui::SliderInt("Adjust CHAR", &val, '!', '~');
-	ImGui::Text("%c", char(val));
+	ImGui::DragFloat2("Rectangle Pos: ", (float*)&pos);
+	ImGui::DragFloat2("Rectangle Size: ", (float*)&size);
+
+	Renderer::ImGuiDebug();
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
 	{
 		if (ImGui::BeginTabItem("Game"))
 		{
+			GameImGuiWindows::ShowWindowInfo();
 			GameImGuiWindows::ShowGameInfo();
 			GameImGuiWindows::ShowImGuiInfo();
 			GameImGuiWindows::ShowRendererInfo();

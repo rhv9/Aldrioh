@@ -33,6 +33,7 @@ public:
 	const glm::vec2& GetPosition() const { return m_Position; }
 	OrthographicCamera& GetCamera() { return camera; }
 	const float& GetZoomLevel() { return zoomLevel;}
+	const float GetAspectRatio() { return aspectRatio; }
 
 	const OrthographicCameraBounds& GetBounds() const { return bounds; }
 
@@ -42,7 +43,7 @@ private:
 
 protected:
 	glm::vec2 m_Position = { 0.0f, 0.0f };
-	float zoomLevel, aspectRatio;
+	float zoomLevel = 1, aspectRatio = 1;
 	float rotation = 0.0f;
 	float cameraSpeed = 1.0f, rotationSpeed = 360.0f;
 
