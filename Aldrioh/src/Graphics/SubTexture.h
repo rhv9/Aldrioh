@@ -5,6 +5,7 @@ class SubTexture : public Texture
 {
 public:
 	SubTexture() = default;
+	virtual ~SubTexture() override;
 
 	SubTexture& operator=(const SubTexture& other) = delete;
 	SubTexture& operator=(SubTexture&& other);

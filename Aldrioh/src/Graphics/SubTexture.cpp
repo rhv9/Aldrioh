@@ -24,6 +24,11 @@ SubTexture::SubTexture(const std::shared_ptr<Texture>& texture, const glm::vec2&
 	textureCoords = { bottomLeftCoords, topRightCoords };
 }
 
+SubTexture::~SubTexture()
+{
+	LOG_CORE_INFO("YEPIE SBUTEXUTER");
+}
+
 SubTexture& SubTexture::operator=(SubTexture&& other)
 {
 	this->dataFormat = other.dataFormat;

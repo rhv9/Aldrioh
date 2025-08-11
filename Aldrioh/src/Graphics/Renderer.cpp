@@ -377,6 +377,30 @@ void Renderer::UIDrawRectangle(const glm::vec2& pos, const glm::vec2& size, cons
 	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), pos, size, colour, 1);
 }
 
+float inline GetAbsoluteUIFloat(const UIFloat uiFloat, const float contextualSize)
+{
+	switch (uiFloat.type)
+	{
+	case UIData::PERCENTAGE:
+		return uiFloat.val * contextualSize;
+	case UIData::PIXEL:
+		return uiFloat.val;
+	case UIData::UNIT:
+	default:
+		return 0;
+	}
+	return 0;
+}
+
+glm::vec2 inline GetAbsoluteUIVector(const UIVector& uiVector, const glm::vec2& contextualSize)
+{
+
+}
+
+void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour)
+{
+}
+
 
 void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
 {

@@ -42,6 +42,8 @@ Texture::Texture(const std::string& path)
 	glTextureSubImage2D(textureId, 0, 0, 0, this->width, this->height, dataFormat, GL_UNSIGNED_BYTE, (void*) data);
 
 	stbi_image_free(data);
+
+	LOG_CORE_TRACE("Successfully created Texture id: {}", textureId);
 }
 
 Texture::Texture(uint32_t* pixelData, uint32_t width, uint32_t height, uint32_t channels)
