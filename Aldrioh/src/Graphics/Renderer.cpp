@@ -132,9 +132,9 @@ void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
 	LOG_CORE_CRITICAL("NOT USING THIS FUNCTION RIGHT NOW!");
 }
 
-void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<Texture>& texture, const glm::vec2& scale)
+void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale)
 {
-	DrawQuad(position, texture.get(), scale);
+	DrawQuad(position, subTexture.get(), scale);
 }
 
 
@@ -145,14 +145,14 @@ void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& po
 }
 
 
-void Renderer::DrawQuad(const glm::vec3& position, const Texture* texture, const glm::vec2& scale)
+void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale)
 {
 	if (renderData.drawCount >= RenderData::MAX_DRAWS)
 		FlushAndReset();
 
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), position), { scale, 1.0f });
 
-	const TextureCoords& texCoords = texture->GetTexCoords();
+	const TextureCoords& texCoords = subTexture->textureCoords;
 	const glm::vec2 texCoordsArray[4] =
 	{
 		{ texCoords.bottomLeft.x, texCoords.topRight.y   },
@@ -198,7 +198,7 @@ void Renderer::FlushBatch()
 	renderData.batchTextureVA->Bind();
 	renderData.batchTextureVA->GetVertexBuffer()->SetData(renderData.batchBasePtr, dataSize);
 
-	Sprites::get(Sprites::fire)->Bind(0);
+	Sprites::get(Sprites::fire)->textureParent->Bind(0);
 
 	glDrawElements(GL_TRIANGLES, renderData.drawCount * 6, GL_UNSIGNED_INT, 0);
 }
@@ -347,14 +347,14 @@ void Renderer::EndUIScene()
 	UIFlushBatch();
 }
 
-void Renderer::UIDrawTexture(const Texture* texture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag)
+void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag)
 {
 	if (uiRd->drawCount >= UIRenderData::MAX_DRAWS)
 		UIFlushAndReset();
 
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{ pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), { size, 1.0f });
 
-	const TextureCoords& texCoords = texture->GetTexCoords();
+	const TextureCoords& texCoords = subTexture->textureCoords;
 	const glm::vec2 texCoordsArray[4] =
 	{
 		{ texCoords.bottomLeft.x, texCoords.topRight.y   },

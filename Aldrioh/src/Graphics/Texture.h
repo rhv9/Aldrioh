@@ -1,5 +1,7 @@
 #pragma once
 
+class SubTexture;
+
 struct TextureCoords
 {
 	glm::vec2 bottomLeft;
@@ -17,14 +19,16 @@ class Texture
 public:
 	Texture(const std::string& path);
 	Texture(uint32_t* pixelData, uint32_t width, uint32_t height, uint32_t channels);
-	virtual ~Texture();
+	~Texture();
 
 	void Bind(uint32_t slot = 0) const;
 	
 	uint32_t GetWidth() const { return width; }
 	uint32_t GetHeight() const { return height; }
+	glm::vec2 GetSize() const { return glm::vec2{ width, height }; }
+	
 	uint32_t GetTextureId() const { return textureId; }
-	const TextureCoords& GetTexCoords() const { return textureCoords; }
+	SubTexture GetAsSubTexture();
 
 	Texture() {}
 protected:
@@ -33,8 +37,6 @@ protected:
 protected:
 	uint32_t textureId;
 	uint32_t width, height;
-
-	TextureCoords textureCoords;
 
 	int internalFormat, dataFormat;
 };

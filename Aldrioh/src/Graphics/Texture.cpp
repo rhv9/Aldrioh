@@ -4,6 +4,8 @@
 #include "glad/glad.h"
 #include <stb_image.h>
 
+#include "SubTexture.h"
+
 
 Texture::Texture(const std::string& path)
 {
@@ -87,6 +89,16 @@ void Texture::Bind(uint32_t slot) const
 {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTextureUnit(slot, textureId);
+}
+
+SubTexture Texture::GetAsSubTexture()
+{
+	SubTexture subTexture{};
+	subTexture.width = GetWidth();
+	subTexture.height = GetHeight();
+	subTexture.textureParent = this;
+
+	return subTexture;
 }
 
 void Texture::SetNullTextureId()

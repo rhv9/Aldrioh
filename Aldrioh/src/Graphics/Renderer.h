@@ -47,8 +47,8 @@ public:
 	static void EndScene();
 
 	static void DrawQuad(const glm::vec3& position, const glm::vec2& scale = { 1.0f, 1.0f });
-	static void DrawQuad(const glm::vec3& position, const std::shared_ptr<Texture>& texture, const glm::vec2& scale = { 1.0f, 1.0f });
-	static void DrawQuad(const glm::vec3& position, const Texture* texture, const glm::vec2& scale = { 1.0f, 1.0f });
+	static void DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale = { 1.0f, 1.0f });
+	static void DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale = { 1.0f, 1.0f });
 
 	static void FlushBatch();
 	static void ResetBatch();
@@ -63,7 +63,7 @@ public:
 	static void StartUIScene();
 	static void EndUIScene();
 
-	static void UIDrawTexture(const Texture* texture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag);
+	static void UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag);
 
 	static void UIDrawRectangle(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
 	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour);
