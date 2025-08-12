@@ -30,7 +30,9 @@ void CameraController::OnResize(uint32_t width, uint32_t height)
 
 void CameraController::CalculateView()
 {
-	bounds = { -aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel };
+	float flipY = flipOnYAxis ? -1 : 1;
+	bounds = { -aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel * flipY, zoomLevel * flipY};
+
 	camera.SetProjectionMatrix(bounds.Left, bounds.Right, bounds.Bottom, bounds.Top);
 }
 

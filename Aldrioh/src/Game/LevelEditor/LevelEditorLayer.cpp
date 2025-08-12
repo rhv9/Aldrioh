@@ -43,9 +43,14 @@
 
 #include <UI/Font.h>
 
+#include <UI/UIManager.h>
+#include <UI/UIObject.h>
+
 LevelEditorLayer::LevelEditorLayer()
 {
 }
+
+static UIManager* uiManager = nullptr;
 
 void LevelEditorLayer::OnBegin()
 {
@@ -87,11 +92,19 @@ void LevelEditorLayer::OnBegin()
 				LOG_CORE_INFO("Level width:{} height:{}", level->width, level->height);
 
 				glm::vec2 pos = scene->GetMousePosInScene();
-				
+
 				level->SetTile((int)pos.x, (int)pos.y, new TexturedTiles(Sprites::sand_cactus));
 			}
 		};
 
+	uiManager = new UIManager();
+	UIObject* rectangle = new UIObject({ 20, 20 }, { 200, 100 });
+	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+	uiManager->AddUIObject(rectangle);
+
+	UIObject* rectangle2 = new UIObject({ 20, 20 }, { 20, 20 });
+	rectangle2->SetBackgroundColour({ 1.0f, 1.0f, 0.0f, 1.0f });
+	rectangle->AddChild(rectangle2);
 }
 
 static glm::vec2 pos{ 0 }, size{ 900, 100 };
@@ -104,8 +117,17 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 	Renderer::StartUIScene();
 
 	//Renderer::UIDrawRectangle({ -1.0f, 0 }, { 1, 1 }, glm::vec4(1, 1, 0, 1));
-	Renderer::UIDrawRectangle(pos, size, glm::vec4(1));
-	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { 0.0f, 0.0f }, { 50, 50 }, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
+	//Renderer::UIDrawRectangle(pos, size, glm::vec4(1));
+	
+	//UIVector posUI{ UIData::PIXEL, glm::vec2{10.0f, 100.25f} };
+	//UIVector sizeUI{ UIData::PIXEL, glm::vec2{400.0f, 400.3f } };
+
+	//Renderer::UIDrawRectangle(posUI, sizeUI, glm::vec4(1));
+
+	uiManager->OnUpdate(delta);
+	uiManager->OnRender();
+	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 10.0f, 100.0f }, 50, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
+
 	Renderer::EndUIScene();
 }
 
@@ -160,7 +182,7 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 			glm::vec2 uv1 = subTexture->textureCoords.bottomLeft;
 			glm::vec2 uv0 = subTexture->textureCoords.topRight;
 
-			ImGui::Image(subTexture->textureParent->GetTextureId(), {(float)256, (float)256}, {uv0.x, uv0.y}, {uv1.x, uv1.y});
+			ImGui::Image(subTexture->textureParent->GetTextureId(), { (float)256, (float)256 }, { uv0.x, uv0.y }, { uv1.x, uv1.y });
 
 			ImGui::EndTabItem();
 		}

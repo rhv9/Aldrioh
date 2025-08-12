@@ -30,7 +30,6 @@ public:
 	uint32_t GetTextureId() const { return textureId; }
 	SubTexture GetAsSubTexture();
 
-	Texture() {}
 protected:
 	void SetNullTextureId();
 

@@ -37,6 +37,7 @@ public:
 
 	const OrthographicCameraBounds& GetBounds() const { return bounds; }
 
+	void SetFlipOnYAxis(bool flip) { this->flipOnYAxis = flip; }
 
 private:
 	void CalculateView();
@@ -54,4 +55,6 @@ protected:
 
 	OrthographicCameraBounds bounds;
 	OrthographicCamera camera;
+
+	bool flipOnYAxis = false;
 };

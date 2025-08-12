@@ -15,7 +15,9 @@ enum UIData
 	PIXEL,
 	UNIT
 };
-struct UIVector {
+struct UIVector 
+{
+public:
 	UIData type;
 	union {
 		glm::vec2 val;
@@ -24,12 +26,45 @@ struct UIVector {
 			float y;
 		};
 	};
+
+	UIVector(UIData type, float x, float y) : type(type), x(x), y(y) {}
+	UIVector(UIData type, const glm::vec2& val) : type(type), val(val) {}
+
+	glm::vec2 GetAbsolute(const glm::vec2& contextualSize) const
+	{
+		switch (type)
+		{
+		case UIData::PERCENTAGE:
+			return val * contextualSize;
+		case UIData::PIXEL:
+			return val;
+		case UIData::UNIT:
+		default:
+			return glm::vec2{ 0 };
+		}
+		return glm::vec2{ 0 };
+	}
 };
 
 struct UIFloat
 {
 	UIData type;
 	float val;
+
+	float GetAbsolute(const float contextualSize) const
+	{
+		switch (type)
+		{
+		case UIData::PERCENTAGE:
+			return val * contextualSize;
+		case UIData::PIXEL:
+			return val;
+		case UIData::UNIT:
+		default:
+			return 0;
+		}
+		return 0;
+	}
 };
 
 class Renderer
@@ -65,11 +100,10 @@ public:
 
 	static void UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag);
 
-	static void UIDrawRectangle(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
 	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour);
 
-	static void UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
-	static void UIDrawText(Font* font, const std::string& text, const glm::vec2& pos, const glm::vec2& charSize, const glm::vec4& colour, float charSpacingPercent = 0.85f);
+	static void UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour);
+	static void UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent = 0.85f);
 
 	static void UIFlushBatch();
 	static void UIResetBatch();
@@ -80,6 +114,7 @@ private:
 	static void DestroyUIRenderer();
 
 	static void UIOnResize(WindowResizeEventArg& e);
+	static void inline UIResize(uint32_t width, uint32_t height);
 
 	static inline void SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const float flags);
 

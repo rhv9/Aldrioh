@@ -235,6 +235,9 @@ struct UIRenderData
 	std::unique_ptr<VertexArray> vao;
 
 	CameraController* cameraController;
+	float cameraZoom = 1080/2;
+	glm::vec2 cameraPos{ 0 };
+	glm::vec2 WindowSize{ 0 };
 
 	// Batching Textures
 	static const uint32_t MAX_DRAWS = 1000;
@@ -304,6 +307,8 @@ void Renderer::InitUIRenderer()
 	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, UIRenderData::MAX_BATCH_INDICES);
 	uiRd->vao->SetIndexBuffer(batchIndexBuffer);
 
+	UIResize(Game::Instance().GetWindow()->GetWidth(), Game::Instance().GetWindow()->GetHeight());
+
 	delete[] batchIndices;
 }
 
@@ -315,24 +320,25 @@ void Renderer::DestroyUIRenderer()
 	delete uiRd;
 }
 
-static glm::vec2 cameraPos{ 0 };
-static float cameraZoom = 1;
-
 void Renderer::UIOnResize(WindowResizeEventArg& e)
 {
-	uiRd->cameraController->OnResize(e.Width, e.Height);
-	cameraZoom = e.Height / 2.0f;
-	cameraPos.x = uiRd->cameraController->GetAspectRatio() * cameraZoom;
-	cameraPos.y = cameraZoom;
+	UIResize(e.Width, e.Height);
+}
+
+void inline Renderer::UIResize(uint32_t width, uint32_t height)
+{
+	uiRd->cameraController->OnResize(width, height);
+	uiRd->cameraPos.x = uiRd->cameraController->GetAspectRatio() * uiRd->cameraZoom;
+	uiRd->cameraPos.y = uiRd->cameraZoom;
+	uiRd->WindowSize = { width, height };
 }
 
 void Renderer::StartUIScene()
 {
-	
 	glDisable(GL_DEPTH_TEST);
 
-	uiRd->cameraController->SetZoomLevel(cameraZoom);
-	uiRd->cameraController->SetPosition(cameraPos);
+	uiRd->cameraController->SetZoomLevel(uiRd->cameraZoom);
+	uiRd->cameraController->SetPosition(uiRd->cameraPos);
 
 	uiRd->vao->Bind();
 	uiRd->shader->Use();
@@ -372,10 +378,6 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 	uiRd->drawCount++;
 }
 
-void Renderer::UIDrawRectangle(const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
-{
-	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), pos, size, colour, 1);
-}
 
 float inline GetAbsoluteUIFloat(const UIFloat uiFloat, const float contextualSize)
 {
@@ -394,35 +396,45 @@ float inline GetAbsoluteUIFloat(const UIFloat uiFloat, const float contextualSiz
 
 glm::vec2 inline GetAbsoluteUIVector(const UIVector& uiVector, const glm::vec2& contextualSize)
 {
-
+	switch (uiVector.type)
+	{
+	case UIData::PERCENTAGE:
+		return uiVector.val * contextualSize;
+	case UIData::PIXEL:
+		return uiVector.val;
+	case UIData::UNIT:
+	default:
+		return glm::vec2{ 0 };
+	}
+	return glm::vec2{ 0 };
 }
 
 void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour)
 {
+	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), GetAbsoluteUIVector(pos, uiRd->WindowSize), GetAbsoluteUIVector(size, uiRd->WindowSize), colour, 1);
 }
 
-
-void Renderer::UIDrawChar(Font* font, const char c, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
+void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour)
 {
 	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
-	UIDrawTexture(charSubTexture, pos, size, colour, 1);
+	UIDrawTexture(charSubTexture, GetAbsoluteUIVector(pos, uiRd->WindowSize), GetAbsoluteUIVector(size, uiRd->WindowSize), colour, 1);
 }
 
-void Renderer::UIDrawText(Font* font, const std::string& text, const glm::vec2& pos, const glm::vec2& charSize, const glm::vec4& colour, float charSpacingPercent)
+void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent)
 {
-	float xOffset = pos.x;
+	glm::vec2 contextualPos = pos.GetAbsolute(uiRd->WindowSize);
+	float xOffset = fontSize;
 	for (char c : text)
 	{
 		if (c != ' ')
 		{
-			glm::vec2 charPos{ xOffset, pos.y };
-			Renderer::UIDrawChar(font, c, charPos, charSize, colour);
+			UIVector charPos{ UIData::PIXEL, xOffset, contextualPos.y };
+			Renderer::UIDrawChar(font, c, charPos, {UIData::PIXEL, glm::vec2(1, 1) * fontSize}, colour);
 		}
-		xOffset += charSpacingPercent * charSize.x;
+		xOffset += charSpacingPercent * fontSize;
 	}
 
 }
-
 
 void Renderer::UIFlushBatch()
 {
@@ -465,6 +477,9 @@ inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const
 
 void Renderer::ImGuiDebug()
 {
-	ImGui::DragFloat2("Camera pos", (float*)&cameraPos);
-	ImGui::DragFloat("Camera zoom", &cameraZoom);
+	ImGui::DragFloat2("Camera pos", (float*)&uiRd->cameraPos);
+	if (ImGui::DragFloat("Camera zoom", &uiRd->cameraZoom))
+	{
+		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
+	}
 }
