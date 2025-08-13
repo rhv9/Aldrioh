@@ -376,72 +376,27 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 	uiRd->drawCount++;
 }
 
-glm::vec2 convertAnchorPointToPos(AnchorPoint ap, const glm::vec2& pos, const glm::vec2& size, CameraController* cameraController)
-{
-	glm::vec2 result = pos;
-	switch (ap)
-	{
-	case AnchorPoint::LEFT_BOTTOM:
-		return result;
-	case AnchorPoint::LEFT_CENTER:
-		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
-		return result;
-	case AnchorPoint::LEFT_TOP:
-		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
-		return result;
-
-	case AnchorPoint::CENTER_BOTTOM:
-		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
-		return result;
-	case AnchorPoint::CENTER_TOP:
-		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
-		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
-		return result;
-	case AnchorPoint::CENTER:
-		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
-		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
-		return result;
-
-	case AnchorPoint::RIGHT_BOTTOM:
-		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
-		return result;
-	case AnchorPoint::RIGHT_CENTER:
-		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
-		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
-		return result;
-	case AnchorPoint::RIGHT_TOP:
-		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
-		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
-		return result;
-
-	default:
-		return result;
-	}
-
-	return result;
-}
-
-
 bool flipY = false;
 int anchorPoint = 0;
+UIAnchorPoint uiAnchorPoint = UIAnchorPoint::LEFT_BOTTOM;
 
-void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
+void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap)
 {
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
 
-	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, absoluteSize, uiRd->cameraController);
+	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
 
 	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), absolutePos, absoluteSize, colour, 1);
 }
 
-void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
+void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap)
 {
 	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
 
-	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, absoluteSize, uiRd->cameraController);
+	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
 
 	UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
 }
@@ -451,14 +406,14 @@ float GetTextWidth(const std::string& text, float fontSize, float charSpacingPer
 	return text.size() * fontSize * charSpacingPercent;
 }
 
-void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, AnchorPoint ap)
+void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, UIAnchorPoint ap)
 {
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = glm::vec2(fontSize, fontSize);
 
 	float textWidth = GetTextWidth(text, fontSize, charSpacingPercent);
 
-	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, { textWidth, fontSize }, uiRd->cameraController);
+	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, { textWidth, fontSize }, uiRd->cameraController->GetBounds().GetSize());
 
 	for (char c : text)
 	{
@@ -519,5 +474,8 @@ void Renderer::ImGuiDebug()
 		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
 	}
 	ImGui::Checkbox("Flip UI on Y", &flipY);
-	ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8);
+	if(ImGui::SliderInt("UIAnchorPoint ", &anchorPoint, 0, 8))
+	{
+		uiAnchorPoint = (UIAnchorPoint::Value)anchorPoint;
+	}
 }

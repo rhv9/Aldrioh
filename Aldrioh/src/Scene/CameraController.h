@@ -10,6 +10,7 @@ struct OrthographicCameraBounds
 
 	float GetWidth() const { return Right - Left; }
 	float GetHeight() const { return Top - Bottom; }
+	glm::vec2 GetSize() const { return glm::vec2(GetWidth(), GetHeight()); }
 };
 
 

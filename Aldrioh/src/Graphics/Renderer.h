@@ -5,6 +5,7 @@
 #include <UI/Font.h>
 
 #include <Core/Window.h>
+#include <UI/AnchorPoint.h>
 
 struct BatchVertex;
 struct UIVertex;
@@ -67,20 +68,6 @@ struct UIFloat
 	}
 };
 
-enum AnchorPoint
-{
-	LEFT_BOTTOM = 0,
-	LEFT_CENTER,
-	LEFT_TOP,
-	CENTER_BOTTOM,
-	CENTER,
-	CENTER_TOP,
-	RIGHT_BOTTOM,
-	RIGHT_CENTER,
-	RIGHT_TOP,
-};
-
-
 class Renderer
 {
 public:
@@ -114,10 +101,11 @@ public:
 
 	static void UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag);
 
-	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
+	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap = UIAnchorPoint::LEFT_BOTTOM);
 
-	static void UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
-	static void UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent = 0.85f, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
+	static void UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap = UIAnchorPoint::LEFT_BOTTOM);
+
+	static void UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent = 0.85f, UIAnchorPoint ap = UIAnchorPoint::LEFT_BOTTOM);
 
 	static void UIFlushBatch();
 	static void UIResetBatch();
