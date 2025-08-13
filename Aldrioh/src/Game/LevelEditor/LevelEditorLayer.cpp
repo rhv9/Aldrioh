@@ -98,7 +98,7 @@ void LevelEditorLayer::OnBegin()
 		};
 
 	uiManager = new UIManager();
-	UIObject* rectangle = new UIObject({ 20, 20 }, { 200, 100 });
+	UIObject* rectangle = new UIObject({ 0, 20 }, { 200, 100 });
 	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 	uiManager->AddUIObject(rectangle);
 
@@ -131,6 +131,7 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 	Renderer::EndUIScene();
 }
 
+
 void LevelEditorLayer::OnImGuiRender(Timestep delta)
 {
 	Game& game = Game::Instance();
@@ -138,9 +139,6 @@ void LevelEditorLayer::OnImGuiRender(Timestep delta)
 
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window");
-
-	ImGui::DragFloat2("Rectangle Pos: ", (float*)&pos);
-	ImGui::DragFloat2("Rectangle Size: ", (float*)&size);
 
 	Renderer::ImGuiDebug();
 

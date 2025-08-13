@@ -8,8 +8,8 @@ struct OrthographicCameraBounds
 	float Left, Right;
 	float Bottom, Top;
 
-	float GetWidth() { return Right - Left; }
-	float GetHeight() { return Top - Bottom; }
+	float GetWidth() const { return Right - Left; }
+	float GetHeight() const { return Top - Bottom; }
 };
 
 

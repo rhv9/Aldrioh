@@ -137,13 +137,11 @@ void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<SubText
 	DrawQuad(position, subTexture.get(), scale);
 }
 
-
 void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords)
 {
 	ptr->pos = pos;
 	ptr->texCoord = texCoords;
 }
-
 
 void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale)
 {
@@ -235,7 +233,7 @@ struct UIRenderData
 	std::unique_ptr<VertexArray> vao;
 
 	CameraController* cameraController;
-	float cameraZoom = 1080/2;
+	float cameraZoom = 1080 / 2;
 	glm::vec2 cameraPos{ 0 };
 	glm::vec2 WindowSize{ 0 };
 
@@ -378,60 +376,98 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 	uiRd->drawCount++;
 }
 
-
-float inline GetAbsoluteUIFloat(const UIFloat uiFloat, const float contextualSize)
+glm::vec2 convertAnchorPointToPos(AnchorPoint ap, const glm::vec2& pos, const glm::vec2& size, CameraController* cameraController)
 {
-	switch (uiFloat.type)
+	glm::vec2 result = pos;
+	switch (ap)
 	{
-	case UIData::PERCENTAGE:
-		return uiFloat.val * contextualSize;
-	case UIData::PIXEL:
-		return uiFloat.val;
-	case UIData::UNIT:
+	case AnchorPoint::LEFT_BOTTOM:
+		return result;
+	case AnchorPoint::LEFT_CENTER:
+		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
+		return result;
+	case AnchorPoint::LEFT_TOP:
+		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
+		return result;
+
+	case AnchorPoint::CENTER_BOTTOM:
+		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
+		return result;
+	case AnchorPoint::CENTER_TOP:
+		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
+		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
+		return result;
+	case AnchorPoint::CENTER:
+		result.x = pos.x + (cameraController->GetBounds().GetWidth() - size.x) / 2.0f;
+		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
+		return result;
+
+	case AnchorPoint::RIGHT_BOTTOM:
+		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
+		return result;
+	case AnchorPoint::RIGHT_CENTER:
+		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
+		result.y = pos.y + (cameraController->GetBounds().GetHeight() - size.y) / 2.0f;
+		return result;
+	case AnchorPoint::RIGHT_TOP:
+		result.x = uiRd->cameraController->GetBounds().GetWidth() - pos.x - size.x;
+		result.y = (cameraController->GetBounds().GetHeight()) - pos.y - size.y;
+		return result;
+
 	default:
-		return 0;
+		return result;
 	}
-	return 0;
+
+	return result;
 }
 
-glm::vec2 inline GetAbsoluteUIVector(const UIVector& uiVector, const glm::vec2& contextualSize)
+
+bool flipY = false;
+int anchorPoint = 0;
+
+void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
 {
-	switch (uiVector.type)
-	{
-	case UIData::PERCENTAGE:
-		return uiVector.val * contextualSize;
-	case UIData::PIXEL:
-		return uiVector.val;
-	case UIData::UNIT:
-	default:
-		return glm::vec2{ 0 };
-	}
-	return glm::vec2{ 0 };
+	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
+	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
+
+	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, absoluteSize, uiRd->cameraController);
+
+	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), absolutePos, absoluteSize, colour, 1);
 }
 
-void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour)
-{
-	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), GetAbsoluteUIVector(pos, uiRd->WindowSize), GetAbsoluteUIVector(size, uiRd->WindowSize), colour, 1);
-}
-
-void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour)
+void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
 {
 	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
-	UIDrawTexture(charSubTexture, GetAbsoluteUIVector(pos, uiRd->WindowSize), GetAbsoluteUIVector(size, uiRd->WindowSize), colour, 1);
+	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
+	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
+
+	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, absoluteSize, uiRd->cameraController);
+
+	UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
 }
 
-void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent)
+float GetTextWidth(const std::string& text, float fontSize, float charSpacingPercent)
 {
-	glm::vec2 contextualPos = pos.GetAbsolute(uiRd->WindowSize);
-	float xOffset = fontSize;
+	return text.size() * fontSize * charSpacingPercent;
+}
+
+void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, AnchorPoint ap)
+{
+	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
+	glm::vec2 absoluteSize = glm::vec2(fontSize, fontSize);
+
+	float textWidth = GetTextWidth(text, fontSize, charSpacingPercent);
+
+	absolutePos = convertAnchorPointToPos((AnchorPoint)anchorPoint, absolutePos, { textWidth, fontSize }, uiRd->cameraController);
+
 	for (char c : text)
 	{
 		if (c != ' ')
 		{
-			UIVector charPos{ UIData::PIXEL, xOffset, contextualPos.y };
-			Renderer::UIDrawChar(font, c, charPos, {UIData::PIXEL, glm::vec2(1, 1) * fontSize}, colour);
+			const SubTexture* charSubTexture = font->GetCharSubTexture(c);
+			UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
 		}
-		xOffset += charSpacingPercent * fontSize;
+		absolutePos.x += charSpacingPercent * fontSize;
 	}
 
 }
@@ -450,7 +486,7 @@ void Renderer::UIFlushBatch()
 	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
 
 	Font::DEFAULT->GetTexture()->Bind(1);
-	
+
 	glDrawElements(GL_TRIANGLES, uiRd->drawCount * 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -482,4 +518,6 @@ void Renderer::ImGuiDebug()
 	{
 		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
 	}
+	ImGui::Checkbox("Flip UI on Y", &flipY);
+	ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8);
 }
