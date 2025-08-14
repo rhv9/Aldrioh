@@ -31,19 +31,22 @@ void UIManager::OnRender()
 	for (UIObject* obj : uiObjects)
 	{
 		if (obj->IsEnabled())
-			obj->OnRender(glm::vec2{0, 0});
+			obj->OnRender();
 	}
 }
 
 void UIManager::AddUIObject(UIObject* object)
 {
-	object->uiManager = this;
+	object->SetUIManager(this);
 	uiObjects.push_back(object);
 }
 
 void UIManager::OnWindowResize(WindowResizeEventArg& e)
 {
 	uiArea = Renderer::UIGetWindowSize();
+
+	for (UIObject* obj : uiObjects)
+		obj->RecalculateRenderPos();
 }
 
 

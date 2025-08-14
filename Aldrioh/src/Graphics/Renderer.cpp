@@ -476,7 +476,7 @@ inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const
 
 void Renderer::ImGuiDebug()
 {
-	ImGui::DragFloat2("Camera pos", (float*)&uiRd->cameraPos);
+	ImGui::DragFloat2("Camera relativePos", (float*)&uiRd->cameraPos);
 	if (ImGui::DragFloat("Camera zoom", &uiRd->cameraZoom))
 	{
 		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);

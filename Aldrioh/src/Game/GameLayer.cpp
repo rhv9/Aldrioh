@@ -134,7 +134,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 				auto& cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 
 				ImGui::SeparatorText("Camera");
-				if (ImGui::DragFloat2("pos##1", (float*)&cameraController->GetPosition()))
+				if (ImGui::DragFloat2("relativePos##1", (float*)&cameraController->GetPosition()))
 					cameraController->SetPosition(cameraController->GetPosition());
 				if (ImGui::DragFloat("zoom", (float*)&cameraController->GetZoomLevel()))
 					cameraController->SetZoomLevel(cameraController->GetZoomLevel());

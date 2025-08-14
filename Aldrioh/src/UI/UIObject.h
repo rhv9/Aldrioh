@@ -6,11 +6,11 @@ class UIManager;
 class UIObject
 {
 public:
-	UIObject(const glm::vec2& pos, const glm::vec2& size);
+	UIObject(const glm::vec2& relativePos, const glm::vec2& size);
 	~UIObject();
 
 	virtual void OnUpdate(Timestep ts);
-	virtual void OnRender(const glm::vec2& offset);
+	virtual void OnRender();
 
 	void AddChild(UIObject* object);
 
@@ -23,6 +23,13 @@ public:
 	float GetHeight() const { return size.y; }
 	const glm::vec2& GetSize() const { return size; }
 
+	void SetRelativePos(const glm::vec2& newRelativePos) { relativePos = newRelativePos; RecalculateRenderPos(); }
+	const glm::vec2& GetRelativePos() const { return relativePos; }
+	float GetRelativePosX() const { return relativePos.x; }
+	float GetRelativePosY() const { return relativePos.y; }
+
+	const glm::vec2& GetRenderPos() const { return renderPos; }
+
 	const glm::vec4& GetBackgroundColour() const { return backgroundColour; }
 	void SetBackgroundColour(const glm::vec4& colour) { backgroundColour = colour; }
 
@@ -30,18 +37,22 @@ public:
 	void SetParent(UIObject* parent) { this->parent = parent; }
 
 	AnchorPoint GetAnchorPoint() { return anchorPoint; }
-	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; }
-
+	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateRenderPos(); }
 
 private:
-	glm::vec2 pos{ 0 };
-	glm::vec2 size{ 0 };
+	void RecalculateRenderPos();
+	void SetUIManager(UIManager* uiManager);
 
+private:
+	glm::vec2 relativePos{ 0 };
+	glm::vec2 size{ 0 };
+	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
 	glm::vec4 backgroundColour{ 0 };
 
-	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
+	glm::vec2 renderPos{ 0 };
 
 	std::vector<UIObject*> children;
+
 	bool enabled = true;
 
 	UIObject* parent = nullptr;
