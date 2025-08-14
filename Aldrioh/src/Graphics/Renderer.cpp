@@ -265,6 +265,9 @@ void Renderer::InitUIRenderer()
 	uiRd = new UIRenderData();
 	float aspectRatio = Game::Instance().GetWindow()->GetAspectRatio();
 	uiRd->cameraController = new CameraController(aspectRatio, 1);
+	uiRd->cameraController->SetZoomLevel(uiRd->cameraZoom);
+	uiRd->cameraController->SetPosition(uiRd->cameraPos);
+
 	uiRd->shader = &ShaderManager::Get().GetShader(ShaderName::UI_SHADER);
 
 
@@ -331,6 +334,11 @@ void inline Renderer::UIResize(uint32_t width, uint32_t height)
 	uiRd->WindowSize = { width, height };
 }
 
+glm::vec2 Renderer::UIGetWindowSize()
+{
+	return uiRd->cameraController->GetBounds().GetSize();
+}
+
 void Renderer::StartUIScene()
 {
 	glDisable(GL_DEPTH_TEST);
@@ -378,25 +386,25 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 
 bool flipY = false;
 int anchorPoint = 0;
-UIAnchorPoint uiAnchorPoint = UIAnchorPoint::LEFT_BOTTOM;
+AnchorPoint uiAnchorPoint = AnchorPoint::LEFT_BOTTOM;
 
-void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap)
+void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
 {
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
 
-	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
+	absolutePos = ap.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
 
 	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), absolutePos, absoluteSize, colour, 1);
 }
 
-void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, UIAnchorPoint ap)
+void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
 {
 	const SubTexture* charSubTexture = font->GetCharSubTexture(c);
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
 
-	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
+	absolutePos = ap.ConvertPos(absolutePos, absoluteSize, uiRd->cameraController->GetBounds().GetSize());
 
 	UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
 }
@@ -406,14 +414,14 @@ float GetTextWidth(const std::string& text, float fontSize, float charSpacingPer
 	return text.size() * fontSize * charSpacingPercent;
 }
 
-void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, UIAnchorPoint ap)
+void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, AnchorPoint ap)
 {
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absoluteSize = glm::vec2(fontSize, fontSize);
 
 	float textWidth = GetTextWidth(text, fontSize, charSpacingPercent);
 
-	absolutePos = uiAnchorPoint.ConvertPos(absolutePos, { textWidth, fontSize }, uiRd->cameraController->GetBounds().GetSize());
+	absolutePos = ap.ConvertPos(absolutePos, { textWidth, fontSize }, uiRd->cameraController->GetBounds().GetSize());
 
 	for (char c : text)
 	{
@@ -474,8 +482,8 @@ void Renderer::ImGuiDebug()
 		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
 	}
 	ImGui::Checkbox("Flip UI on Y", &flipY);
-	if(ImGui::SliderInt("UIAnchorPoint ", &anchorPoint, 0, 8))
+	if(ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8))
 	{
-		uiAnchorPoint = (UIAnchorPoint::Value)anchorPoint;
+		uiAnchorPoint = (AnchorPoint::Value)anchorPoint;
 	}
 }

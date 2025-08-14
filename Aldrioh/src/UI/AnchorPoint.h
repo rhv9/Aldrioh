@@ -1,6 +1,6 @@
 #pragma once
 
-class UIAnchorPoint
+class AnchorPoint
 {
 public:
 	enum Value : uint8_t
@@ -16,15 +16,15 @@ public:
 		RIGHT_TOP,
 	};
 
-	UIAnchorPoint() = default;
-	constexpr UIAnchorPoint(Value aAnchorPoint) : value(aAnchorPoint) {}
+	AnchorPoint() = default;
+	constexpr AnchorPoint(Value anchorPoint) : value(anchorPoint) {}
 
 	// Allow switch and comparisons.
 	constexpr operator Value() const { return value; }
 
 	explicit operator bool() const = delete;
-	constexpr bool operator==(UIAnchorPoint a) const { return value == a.value; }
-	constexpr bool operator!=(UIAnchorPoint a) const { return value != a.value; }
+	constexpr bool operator==(AnchorPoint a) const { return value == a.value; }
+	constexpr bool operator!=(AnchorPoint a) const { return value != a.value; }
 
 	glm::vec2 ConvertPos(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& containerSize);
 

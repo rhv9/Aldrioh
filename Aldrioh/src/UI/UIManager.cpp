@@ -1,8 +1,14 @@
 #include <pch.h>
 #include "UIManager.h"
+#include <Core/Window.h>
+#include <Graphics/Renderer.h>
+#include <Game.h>
 
 UIManager::UIManager()
 {
+	Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnWindowResize);
+
+	uiArea = Renderer::UIGetWindowSize();
 }
 
 UIManager::~UIManager()
@@ -31,7 +37,13 @@ void UIManager::OnRender()
 
 void UIManager::AddUIObject(UIObject* object)
 {
+	object->uiManager = this;
 	uiObjects.push_back(object);
+}
+
+void UIManager::OnWindowResize(WindowResizeEventArg& e)
+{
+	uiArea = Renderer::UIGetWindowSize();
 }
 
 

@@ -98,13 +98,23 @@ void LevelEditorLayer::OnBegin()
 		};
 
 	uiManager = new UIManager();
-	UIObject* rectangle = new UIObject({ 0, 20 }, { 200, 100 });
+	UIObject* rectangle = new UIObject({ 20, 20 }, { 200, 300 });
 	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 	uiManager->AddUIObject(rectangle);
 
-	UIObject* rectangle2 = new UIObject({ 20, 20 }, { 20, 20 });
+
+	UIObject* rectangle2 = new UIObject({ 0, 0 }, { 50, 50 });
 	rectangle2->SetBackgroundColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 	rectangle->AddChild(rectangle2);
+
+	UIObject* rectangle3 = new UIObject({ 1, 1 }, { 20, 20 });
+	rectangle3->SetBackgroundColour({ 0.0f, 0.0f, 1.0f, 1.0f });
+	rectangle2->AddChild(rectangle3);
+
+
+	rectangle->SetAnchorPoint(AnchorPoint::CENTER);
+	rectangle2->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
+	rectangle3->SetAnchorPoint(AnchorPoint::CENTER);
 }
 
 static glm::vec2 pos{ 0 }, size{ 900, 100 };
@@ -116,17 +126,11 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 
 	Renderer::StartUIScene();
 
-	//Renderer::UIDrawRectangle({ -1.0f, 0 }, { 1, 1 }, glm::vec4(1, 1, 0, 1));
-	//Renderer::UIDrawRectangle(pos, size, glm::vec4(1));
-	
-	//UIVector posUI{ UIData::PIXEL, glm::vec2{10.0f, 100.25f} };
-	//UIVector sizeUI{ UIData::PIXEL, glm::vec2{400.0f, 400.3f } };
-
-	//Renderer::UIDrawRectangle(posUI, sizeUI, glm::vec4(1));
-
 	uiManager->OnUpdate(delta);
 	uiManager->OnRender();
-	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 10.0f, 100.0f }, 50, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
+
+
+	//Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 10.0f, 100.0f }, 50, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
 
 	Renderer::EndUIScene();
 }

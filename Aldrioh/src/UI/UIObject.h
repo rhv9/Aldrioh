@@ -1,4 +1,7 @@
 #pragma once
+#include "AnchorPoint.h"
+
+class UIManager;
 
 class UIObject
 {
@@ -16,14 +19,19 @@ public:
 	void Enable() { enabled = true; }
 	bool IsEnabled() const { return enabled; }
 
-	uint32_t GetWidth() const { return size.x; }
-	uint32_t GetHeight() const { return size.y; }
+	float GetWidth() const { return size.x; }
+	float GetHeight() const { return size.y; }
+	const glm::vec2& GetSize() const { return size; }
 
 	const glm::vec4& GetBackgroundColour() const { return backgroundColour; }
 	void SetBackgroundColour(const glm::vec4& colour) { backgroundColour = colour; }
 
-	void SetParent(UIObject* parent) { this->parent = parent; }
 	UIObject* GetParent() const { return parent; }
+	void SetParent(UIObject* parent) { this->parent = parent; }
+
+	AnchorPoint GetAnchorPoint() { return anchorPoint; }
+	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; }
+
 
 private:
 	glm::vec2 pos{ 0 };
@@ -31,8 +39,13 @@ private:
 
 	glm::vec4 backgroundColour{ 0 };
 
+	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
+
 	std::vector<UIObject*> children;
 	bool enabled = true;
 
 	UIObject* parent = nullptr;
+	UIManager* uiManager = nullptr;
+
+	friend class UIManager;
 };

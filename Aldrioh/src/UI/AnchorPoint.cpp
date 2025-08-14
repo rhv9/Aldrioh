@@ -1,40 +1,40 @@
 #include <pch.h>
 #include "AnchorPoint.h"
 
-glm::vec2 UIAnchorPoint::ConvertPos(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& containerSize)
+glm::vec2 AnchorPoint::ConvertPos(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& containerSize)
 {
 	glm::vec2 result = pos;
 	switch (this->value)
 	{
-	case UIAnchorPoint::LEFT_BOTTOM:
+	case AnchorPoint::LEFT_BOTTOM:
 		return result;
-	case UIAnchorPoint::LEFT_CENTER:
+	case AnchorPoint::LEFT_CENTER:
 		result.y = pos.y + (containerSize.y - size.y) / 2.0f;
 		return result;
-	case UIAnchorPoint::LEFT_TOP:
+	case AnchorPoint::LEFT_TOP:
 		result.y = (containerSize.y) - pos.y - size.y;
 		return result;
 
-	case UIAnchorPoint::CENTER_BOTTOM:
+	case AnchorPoint::CENTER_BOTTOM:
 		result.x = pos.x + (containerSize.x - size.x) / 2.0f;
 		return result;
-	case UIAnchorPoint::CENTER_TOP:
+	case AnchorPoint::CENTER_TOP:
 		result.x = pos.x + (containerSize.x - size.x) / 2.0f;
 		result.y = (containerSize.y) - pos.y - size.y;
 		return result;
-	case UIAnchorPoint::CENTER:
+	case AnchorPoint::CENTER:
 		result.x = pos.x + (containerSize.x - size.x) / 2.0f;
 		result.y = pos.y + (containerSize.y - size.y) / 2.0f;
 		return result;
 
-	case UIAnchorPoint::RIGHT_BOTTOM:
+	case AnchorPoint::RIGHT_BOTTOM:
 		result.x = containerSize.x - pos.x - size.x;
 		return result;
-	case UIAnchorPoint::RIGHT_CENTER:
+	case AnchorPoint::RIGHT_CENTER:
 		result.x = containerSize.x - pos.x - size.x;
 		result.y = pos.y + (containerSize.y - size.y) / 2.0f;
 		return result;
-	case UIAnchorPoint::RIGHT_TOP:
+	case AnchorPoint::RIGHT_TOP:
 		result.x = containerSize.x - pos.x - size.x;
 		result.y = (containerSize.y) - pos.y - size.y;
 		return result;
