@@ -31,7 +31,7 @@ struct RenderData
 	Shader* shaderBatchTexture = nullptr;
 
 	// Batching Textures
-	static const uint32_t MAX_DRAWS = 5000;
+	static const uint32_t MAX_DRAWS = 1;
 	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
 	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
 
@@ -189,6 +189,7 @@ void Renderer::FlushBatch()
 
 	if (renderData.drawCount == 0)
 		return;
+
 
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)renderData.batchPtr - (uint8_t*)renderData.batchBasePtr);
 	//uint32_t dataSize = (renderData.drawCount) * 4 * sizeof(BatchVertex);

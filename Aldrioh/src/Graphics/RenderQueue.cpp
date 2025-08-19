@@ -42,7 +42,6 @@ void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId,
 	if (rqData.layers[layer].count >= RenderQueueData::MAX_RENDEROBJECTS)
 	{
 		FlushAndReset();
-		return;
 	}
 
 	rqData.layers[layer].ptr->pos = pos;

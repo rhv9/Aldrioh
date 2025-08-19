@@ -12,6 +12,7 @@
 #include <Game/Tiles/SpawnerTile.h>
 
 #include <Components/Collision.h>
+#include <Input/Input.h>
 
 class Region
 {
@@ -77,6 +78,7 @@ void TestLevel::OnUpdate(Timestep ts)
 			tiles[y * width + x]->OnUpdate(ts, metadata);
 		}
 	}
+
 }
 
 void TestLevel::OnRender(Timestep ts)

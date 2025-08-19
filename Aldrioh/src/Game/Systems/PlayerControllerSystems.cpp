@@ -68,7 +68,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		shootTimer = 0.0f;
 
 
-	if (Input::IsKeyPressed(Input::KEY_SPACE))
+	if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
 	{
 		auto& jc = player.GetComponent<JumpComponent>();
 

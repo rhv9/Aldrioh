@@ -4,7 +4,7 @@
 
 namespace Input {
 
-	constexpr uint32_t KEY_SPACE              = 32;
+	constexpr uint32_t KEY_SPACEBAR              = 32;
 	constexpr uint32_t KEY_APOSTROPHE         = 39;/* ' */
 	constexpr uint32_t KEY_COMMA              = 44;/* , */
 	constexpr uint32_t KEY_MINUS              = 45;/* - */
