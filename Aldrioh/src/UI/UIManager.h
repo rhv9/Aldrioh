@@ -10,7 +10,7 @@ public:
 	~UIManager();
 
 	void OnUpdate(Timestep ts);
-	void OnRender();
+	void OnRender(Timestep ts);
 
 	void AddUIObject(UIObject* object);
 

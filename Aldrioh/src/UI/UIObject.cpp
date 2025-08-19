@@ -4,8 +4,8 @@
 #include <Graphics/Renderer.h>
 #include "UIManager.h"	
 
-UIObject::UIObject(const glm::vec2& relativePos, const glm::vec2& size)
-	: relativePos(relativePos), size(size)
+UIObject::UIObject(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size)
+	: name(name), relativePos(relativePos), size(size)
 {
 }
 
@@ -24,30 +24,44 @@ void UIObject::OnUpdate(Timestep ts)
 	}
 }
 
-void UIObject::OnRender()
+void UIObject::OnRender(Timestep ts)
 {
 	if (backgroundColour != glm::vec4(0))
 	{
 		Renderer::UIDrawRectangle({ UIData::PIXEL, renderPos }, { UIData::PIXEL, size }, backgroundColour);
 	}
+}
 
+void UIObject::AddChild(UIObject* child)
+{
+	child->SetParent(this);
+	children.push_back(child);
+	child->RecalculateRenderPos();
+}
+
+UIManager* UIObject::GetUIManager()
+{
+	if (uiManager == nullptr && parent != nullptr)
+		return uiManager = parent->GetUIManager();
+	return nullptr;
+}
+
+void UIObject::RenderChildren(Timestep ts)
+{
 	for (UIObject* obj : children)
 	{
 		if (obj->IsEnabled())
-			obj->OnRender();
+		{
+			obj->OnRender(ts);
+			obj->RenderChildren(ts);
+		}
 	}
-}
-
-void UIObject::AddChild(UIObject* component)
-{
-	component->SetParent(this);
-	children.push_back(component);
 }
 
 void UIObject::RecalculateRenderPos()
 {
 	glm::vec2 offset = parent != nullptr ? parent->GetRenderPos() : glm::vec2(0);
-	glm::vec2 containerSize = parent != nullptr ? parent->size : uiManager->GetUIArea();
+	glm::vec2 containerSize = parent != nullptr ? parent->size : (uiManager != nullptr ? uiManager->GetUIArea() : glm::vec2(1));
 
 	glm::vec2 anchorPos = anchorPoint.ConvertPos(relativePos, size, containerSize);
 	renderPos = offset + anchorPos;

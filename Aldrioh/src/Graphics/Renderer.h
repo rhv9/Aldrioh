@@ -18,7 +18,6 @@ enum UIData
 };
 struct UIVector 
 {
-public:
 	UIData type;
 	union {
 		glm::vec2 val;
@@ -97,14 +96,13 @@ public:
 
 	
 	// UI related
-	static glm::vec2 UIGetWindowSize();
-
 	static void StartUIScene();
 	static void EndUIScene();
 
 	static void UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour, float flag);
 
-	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
+	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour);
+	static void UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap);
 
 	static void UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
 
@@ -113,6 +111,9 @@ public:
 	static void UIFlushBatch();
 	static void UIResetBatch();
 	static void UIFlushAndReset();
+
+	static glm::vec2 UIGetWindowSize();
+	static void SetUIPixelHeight(float height);
 
 private:
 	static void InitUIRenderer();

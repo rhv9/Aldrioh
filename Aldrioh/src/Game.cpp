@@ -42,7 +42,8 @@ void Game::Init()
 {
     Log::Init();
     
-    window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
+    //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
+    window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
 
     window->KeyPressedEventHandler += [](KeyPressedEventArg& arg)
         {

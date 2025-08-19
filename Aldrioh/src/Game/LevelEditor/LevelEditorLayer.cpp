@@ -45,6 +45,7 @@
 
 #include <UI/UIManager.h>
 #include <UI/UIObject.h>
+#include <UI/UIText.h>
 
 LevelEditorLayer::LevelEditorLayer()
 {
@@ -97,24 +98,34 @@ void LevelEditorLayer::OnBegin()
 			}
 		};
 
+	// UI Related
+	Renderer::SetUIPixelHeight(100);
+
 	uiManager = new UIManager();
-	UIObject* rectangle = new UIObject({ 20, 20 }, { 200, 300 });
+	UIObject* rectangle = new UIObject("Red box", { 0, 0 }, {20, 80});
 	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 	uiManager->AddUIObject(rectangle);
 
 
-	UIObject* rectangle2 = new UIObject({ 0, 0 }, { 50, 50 });
+	UIObject* rectangle2 = new UIObject("Yellow box", { 0, 0 }, {10, 10});
 	rectangle2->SetBackgroundColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 	rectangle->AddChild(rectangle2);
 
-	UIObject* rectangle3 = new UIObject({ 1, 1 }, { 20, 20 });
+	UIObject* rectangle3 = new UIObject("Blue box", { 0, 0 }, {2, 2});
 	rectangle3->SetBackgroundColour({ 0.0f, 0.0f, 1.0f, 1.0f });
 	rectangle2->AddChild(rectangle3);
 
-
+	UIText* uiText = new UIText("Some label", { 0, 0 }, { 20, 20 });
+	uiText->SetText("Hello World!");
+	uiText->SetBackgroundColour({ 0.0f, 0.0f, 0.0f, 0.25f });
+	uiText->SetFontSize(4);
+	rectangle->AddChild(uiText);
+	
 	rectangle->SetAnchorPoint(AnchorPoint::CENTER);
 	rectangle2->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
 	rectangle3->SetAnchorPoint(AnchorPoint::CENTER);
+	uiText->SetAnchorPoint(AnchorPoint::CENTER);
+	
 }
 
 static glm::vec2 pos{ 0 }, size{ 900, 100 };
@@ -127,7 +138,7 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 	Renderer::StartUIScene();
 
 	uiManager->OnUpdate(delta);
-	uiManager->OnRender();
+	uiManager->OnRender(delta);
 
 
 	//Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 10.0f, 100.0f }, 50, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });

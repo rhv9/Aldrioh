@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Graphics/SubTexture.h>
+#include "Colour.h"
 
 class Font
 {
@@ -20,4 +21,14 @@ public:
 private:
 	std::shared_ptr<Texture> fontTexture;
 	SubTexture* charSubTextures;
+};
+
+struct FontStyle
+{
+	Font* font = Font::DEFAULT;
+	float size = 10.0f;
+	float charSpacingPercent = 0.8f;
+	glm::vec4 colour = Colour::BLACK;
+
+	float CalculateTextWidth(const std::string& text);
 };

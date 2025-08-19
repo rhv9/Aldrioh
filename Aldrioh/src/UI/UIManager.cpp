@@ -26,12 +26,15 @@ void UIManager::OnUpdate(Timestep ts)
 	}
 }
 
-void UIManager::OnRender()
+void UIManager::OnRender(Timestep ts)
 {
 	for (UIObject* obj : uiObjects)
 	{
 		if (obj->IsEnabled())
-			obj->OnRender();
+		{
+			obj->OnRender(ts);
+			obj->RenderChildren(ts);
+		}
 	}
 }
 

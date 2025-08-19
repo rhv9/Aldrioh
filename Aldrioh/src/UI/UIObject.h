@@ -1,18 +1,26 @@
 #pragma once
 #include "AnchorPoint.h"
 
+enum UIType
+{
+	Object,
+	Text,
+};
+
 class UIManager;
 
 class UIObject
 {
 public:
-	UIObject(const glm::vec2& relativePos, const glm::vec2& size);
+	UIObject(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size);
 	~UIObject();
 
 	virtual void OnUpdate(Timestep ts);
-	virtual void OnRender();
+	virtual void OnRender(Timestep ts);
 
-	void AddChild(UIObject* object);
+	virtual UIType GetType() const { return UIType::Object; }
+
+	void AddChild(UIObject* child);
 
 	void SetEnabled(bool enabled) { this->enabled = enabled; }
 	void Disable() { enabled = false; }
@@ -22,6 +30,7 @@ public:
 	float GetWidth() const { return size.x; }
 	float GetHeight() const { return size.y; }
 	const glm::vec2& GetSize() const { return size; }
+	void SetSize(const glm::vec2& size) { this->size = size; RecalculateRenderPos(); }
 
 	void SetRelativePos(const glm::vec2& newRelativePos) { relativePos = newRelativePos; RecalculateRenderPos(); }
 	const glm::vec2& GetRelativePos() const { return relativePos; }
@@ -39,11 +48,17 @@ public:
 	AnchorPoint GetAnchorPoint() { return anchorPoint; }
 	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateRenderPos(); }
 
+	UIManager* GetUIManager();
+
 private:
+	void RenderChildren(Timestep ts);
+
 	void RecalculateRenderPos();
 	void SetUIManager(UIManager* uiManager);
 
-private:
+protected:
+	std::string name;
+
 	glm::vec2 relativePos{ 0 };
 	glm::vec2 size{ 0 };
 	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
@@ -56,7 +71,10 @@ private:
 	bool enabled = true;
 
 	UIObject* parent = nullptr;
+
+private:
 	UIManager* uiManager = nullptr;
 
 	friend class UIManager;
+
 };

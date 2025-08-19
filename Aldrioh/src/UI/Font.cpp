@@ -47,3 +47,13 @@ const SubTexture* Font::GetBlockSubTexture()
 {
 	return &charSubTextures['c'];
 }
+
+
+
+
+// FONT STYLE
+
+float FontStyle::CalculateTextWidth(const std::string& text)
+{
+	return text.size() * size * charSpacingPercent;
+}

@@ -339,6 +339,13 @@ glm::vec2 Renderer::UIGetWindowSize()
 	return uiRd->cameraController->GetBounds().GetSize();
 }
 
+void Renderer::SetUIPixelHeight(float height)
+{
+	uiRd->cameraZoom = height / 2;
+	uiRd->cameraController->SetZoomLevel(uiRd->cameraZoom);
+	UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
+}
+
 void Renderer::StartUIScene()
 {
 	glDisable(GL_DEPTH_TEST);
@@ -387,6 +394,15 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 bool flipY = false;
 int anchorPoint = 0;
 AnchorPoint uiAnchorPoint = AnchorPoint::LEFT_BOTTOM;
+
+void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour)
+{
+	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
+	glm::vec2 absoluteSize = size.GetAbsolute(uiRd->WindowSize);
+
+	UIDrawTexture(Font::DEFAULT->GetBlockSubTexture(), absolutePos, absoluteSize, colour, 1);
+}
+
 
 void Renderer::UIDrawRectangle(const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap)
 {
@@ -476,11 +492,17 @@ inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const
 
 void Renderer::ImGuiDebug()
 {
-	ImGui::DragFloat2("Camera relativePos", (float*)&uiRd->cameraPos);
+	if (ImGui::DragFloat2("Camera relativePos", (float*)&uiRd->cameraPos))
+	{
+		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
+	}
 	if (ImGui::DragFloat("Camera zoom", &uiRd->cameraZoom))
 	{
 		UIResize(uiRd->WindowSize.x, uiRd->WindowSize.y);
 	}
+	ImGui::DragFloat2("UIRd->WindowSize", (float*)&uiRd->WindowSize);
+	glm::vec2 cameraBounds = uiRd->cameraController->GetBounds().GetSize();
+	ImGui::DragFloat2("CameraBounds", (float*)&cameraBounds);
 	ImGui::Checkbox("Flip UI on Y", &flipY);
 	if(ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8))
 	{
