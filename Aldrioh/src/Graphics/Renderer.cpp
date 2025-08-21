@@ -225,6 +225,7 @@ struct UIVertex
 	glm::vec4 pos;
 	glm::vec2 texCoords;
 	glm::vec4 colour;
+	float textureSampler;
 	float flags;
 };
 
@@ -243,6 +244,8 @@ struct UIRenderData
 	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
 	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
 
+	static const uint32_t MAX_TEXTURE = 8;
+
 	static constexpr float VERTEX_DEPTH_VALUE = 0.9f;
 
 	const glm::vec4 BatchQuadVertices[4] =
@@ -255,6 +258,9 @@ struct UIRenderData
 	UIVertex* batchBasePtr = nullptr;
 	UIVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
+
+	std::array<uint32_t, MAX_TEXTURE> textureSlots{ 0 };
+	uint32_t ptr = 0;
 };
 
 static UIRenderData* uiRd;
@@ -287,6 +293,7 @@ void Renderer::InitUIRenderer()
 	{ "aPos", VertexAttrib::Float4, false},
 	{ "aTexCoord", VertexAttrib::Float2, false},
 	{ "aColour", VertexAttrib::Float4, false},
+	{ "aTextureSampler", VertexAttrib::Float, false},
 	{ "aFlags", VertexAttrib::Float, false},
 	};
 	std::shared_ptr<VertexBuffer> batchVertexBuffer = std::make_shared<VertexBuffer>(sizeof(UIVertex) * UIRenderData::MAX_BATCH_VERTICES);
@@ -308,6 +315,9 @@ void Renderer::InitUIRenderer()
 	}
 	std::shared_ptr<IndexBuffer> batchIndexBuffer = std::make_shared<IndexBuffer>(batchIndices, UIRenderData::MAX_BATCH_INDICES);
 	uiRd->vao->SetIndexBuffer(batchIndexBuffer);
+
+	// Texture slots
+	
 
 	UIResize(Game::Instance().GetWindow()->GetWidth(), Game::Instance().GetWindow()->GetHeight());
 
@@ -357,7 +367,8 @@ void Renderer::StartUIScene()
 	uiRd->vao->Bind();
 	uiRd->shader->Use();
 	uiRd->shader->UniformMat4("u_ViewProjectionMatrix", uiRd->cameraController->GetCamera().GetViewProjection());
-	uiRd->shader->UniformInt("uTextureSampler", 1);
+
+	uiRd->ptr = 0;
 
 	UIResetBatch();
 }
@@ -372,6 +383,20 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 	if (uiRd->drawCount >= UIRenderData::MAX_DRAWS)
 		UIFlushAndReset();
 
+	// Texture slot
+	uint32_t slot = 0;
+	for (int slot = 0; slot < uiRd->textureSlots.size(); ++slot)
+	{
+		if (slot >= uiRd->ptr)
+		{
+			uiRd->textureSlots[slot] = subTexture->textureParent->GetTextureId();
+			uiRd->ptr++;
+			break;
+		}
+		if (uiRd->textureSlots[slot] == subTexture->textureParent->GetTextureId())
+			break;	
+	}
+
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{ pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), { size, 1.0f });
 
 	const TextureCoords& texCoords = subTexture->textureCoords;
@@ -385,7 +410,7 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 
 	for (int i = 0; i < 4; ++i)
 	{
-		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, flag);
+		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, slot, flag);
 		++uiRd->batchPtr;
 	}
 
@@ -464,8 +489,13 @@ void Renderer::UIFlushBatch()
 	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
 
 	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
-
-	Font::DEFAULT->GetTexture()->Bind(1);
+	
+	uiRd->shader->UniformIntArray("uTextureSamplers", (int*) & uiRd->textureSlots, uiRd->MAX_TEXTURE);
+	for (int slot = 0; slot < uiRd->ptr; ++slot)
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTextureUnit(slot, uiRd->textureSlots[slot]);
+	}
 
 	glDrawElements(GL_TRIANGLES, uiRd->drawCount * 6, GL_UNSIGNED_INT, 0);
 }
@@ -482,11 +512,12 @@ void Renderer::UIFlushAndReset()
 	UIFlushAndReset();
 }
 
-inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const float flags)
+inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags)
 {
 	ptr->pos = pos;
 	ptr->texCoords = texCoords;
 	ptr->colour = colour;
+	ptr->textureSampler = slot;
 	ptr->flags = flags;
 }
 

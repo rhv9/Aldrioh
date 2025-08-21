@@ -122,6 +122,6 @@ private:
 	static void UIOnResize(WindowResizeEventArg& e);
 	static void inline UIResize(uint32_t width, uint32_t height);
 
-	static inline void SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const float flags);
+	static inline void SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags);
 
 };
