@@ -18,7 +18,6 @@ void UIText::OnRender(Timestep ts)
 	UIObject::OnRender(ts);
 
 	Renderer::UIDrawText(style.font, text, { UIData::PIXEL, renderPos }, style.size, style.colour, style.charSpacingPercent);
-
 }
 
 void UIText::SetText(const std::string& text)

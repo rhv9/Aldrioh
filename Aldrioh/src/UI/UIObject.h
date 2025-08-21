@@ -5,6 +5,7 @@ enum UIType
 {
 	Object,
 	Text,
+	Image,
 };
 
 class UIManager;
@@ -13,7 +14,8 @@ class UIObject
 {
 public:
 	UIObject(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size);
-	~UIObject();
+	UIObject() = default;
+	virtual ~UIObject();
 
 	virtual void OnUpdate(Timestep ts);
 	virtual void OnRender(Timestep ts);
@@ -45,7 +47,7 @@ public:
 	UIObject* GetParent() const { return parent; }
 	void SetParent(UIObject* parent) { this->parent = parent; }
 
-	AnchorPoint GetAnchorPoint() { return anchorPoint; }
+	AnchorPoint GetAnchorPoint() const { return anchorPoint; }
 	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateRenderPos(); }
 
 	UIManager* GetUIManager();
@@ -57,7 +59,7 @@ private:
 	void SetUIManager(UIManager* uiManager);
 
 protected:
-	std::string name;
+	std::string name = "unnamed";
 
 	glm::vec2 relativePos{ 0 };
 	glm::vec2 size{ 0 };
