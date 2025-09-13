@@ -1,6 +1,8 @@
 #pragma once
 #include "AnchorPoint.h"
 
+#include <Events/Events.h>
+
 enum UIType
 {
 	Object,
@@ -52,11 +54,18 @@ public:
 
 	UIManager* GetUIManager();
 
+
+	// Event Related
+	void OnMouseHovering(MouseMoveEventArg& e);
+	void OnMouseHoveringChildren(MouseMoveEventArg& e);
+
 private:
 	void RenderChildren(Timestep ts);
 
 	void RecalculateRenderPos();
 	void SetUIManager(UIManager* uiManager);
+
+	bool IsMouseWithin(const glm::vec2& pos);
 
 protected:
 	std::string name = "unnamed";

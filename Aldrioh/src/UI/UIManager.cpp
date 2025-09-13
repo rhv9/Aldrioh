@@ -7,6 +7,7 @@
 UIManager::UIManager()
 {
 	Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnWindowResize);
+	Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseMove);
 
 	uiArea = Renderer::UIGetWindowSize();
 }
@@ -47,9 +48,27 @@ void UIManager::AddUIObject(UIObject* object)
 void UIManager::OnWindowResize(WindowResizeEventArg& e)
 {
 	uiArea = Renderer::UIGetWindowSize();
+	windowSizeCached = Game::Instance().GetWindow()->GetSize();
 
 	for (UIObject* obj : uiObjects)
 		obj->RecalculateRenderPos();
+}
+
+void UIManager::OnMouseMove(MouseMoveEventArg& e)
+{
+	float scaleX = uiArea.x / windowSizeCached.x;
+	float scaleY = uiArea.y / windowSizeCached.y;
+
+	MouseMoveEventArg relative{e.XPos * scaleX, uiArea.y - e.YPos * scaleY};
+
+	for (UIObject* obj : uiObjects)
+	{
+		if (obj->IsEnabled() && obj->IsMouseWithin({relative.XPos, relative.YPos}))
+		{
+			obj->OnMouseHovering(relative);
+			obj->OnMouseHoveringChildren(relative);
+		}
+	}
 }
 
 

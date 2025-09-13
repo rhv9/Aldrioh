@@ -7,6 +7,7 @@
 #include <Graphics/Renderer.h>
 #include <Debug/Statistics.h>
 #include <Debug/GameDebugState.h>
+#include <Input/Input.h>
 
 void GameImGuiWindows::ShowGameInfo()
 {
@@ -75,6 +76,7 @@ void GameImGuiWindows::ShowWindowInfo()
 		ImGui::Text("Size: (%d, %d)", window->GetWidth(), window->GetHeight());
 		ImGui::Text("Pos: (%.2f, %.2f)", window->GetPos().x, window->GetPos().y);
 		ImGui::Text("Aspect Ratio: %.4f", window->GetAspectRatio());
+		ImGui::Text("Mouse pos: (%.1f, %.1f)", Input::GetMouseX(), Input::GetMouseY());
 	}
 }
 

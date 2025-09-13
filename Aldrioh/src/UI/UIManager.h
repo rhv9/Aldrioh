@@ -1,7 +1,7 @@
 #pragma once
 #include "UIObject.h"
 
-struct WindowResizeEventArg;
+#include <Events/Events.h>
 
 class UIManager
 {
@@ -17,7 +17,8 @@ public:
 	const glm::vec2& GetUIArea() { return uiArea; }
 private:
 	void OnWindowResize(WindowResizeEventArg& e);
+	void OnMouseMove(MouseMoveEventArg& e);
 
 	std::vector<UIObject*> uiObjects;
-	glm::vec2 uiArea{ 0 };
+	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
 };
