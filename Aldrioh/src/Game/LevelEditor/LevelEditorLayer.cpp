@@ -106,7 +106,6 @@ void LevelEditorLayer::OnBegin()
 	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 	uiManager->AddUIObject(rectangle);
 
-
 	UIObject* rectangle2 = new UIObject("Yellow box", { 0, 0 }, {10, 10});
 	rectangle2->SetBackgroundColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 	rectangle->AddChild(rectangle2);
@@ -116,7 +115,7 @@ void LevelEditorLayer::OnBegin()
 	rectangle2->AddChild(rectangle3);
 
 	UIText* uiText = new UIText("Some label", { 0, 0 }, { 20, 20 });
-	uiText->SetText("Hello World!");
+	uiText->SetText("Why Hello There!");
 	uiText->SetBackgroundColour({ 0.0f, 0.0f, 0.0f, 0.25f });
 	uiText->SetFontSize(4);
 	rectangle->AddChild(uiText);
@@ -126,6 +125,8 @@ void LevelEditorLayer::OnBegin()
 	rectangle3->SetAnchorPoint(AnchorPoint::CENTER);
 	uiText->SetAnchorPoint(AnchorPoint::CENTER);
 	
+	LOG_CORE_INFO("SAND SPRITE TEXTURE ID: {}", Sprites::get(Sprites::sand_1)->textureParent->GetTextureId());
+	LOG_CORE_INFO("Font texture ID: {}", Font::DEFAULT->GetTexture()->GetTextureId());
 }
 
 static glm::vec2 pos{ 0 }, size{ 900, 100 };
@@ -140,8 +141,9 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 	uiManager->OnUpdate(delta);
 	uiManager->OnRender(delta);
 
+	Renderer::UIDrawTexture(Sprites::get(Sprites::sand_1), { 0.0f, 0.0f }, { 30.0f, 30.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) , 0);
 
-	//Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 10.0f, 100.0f }, 50, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
+	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 0.0f, 0.0f }, 10, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
 
 	Renderer::EndUIScene();
 }

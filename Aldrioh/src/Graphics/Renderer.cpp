@@ -259,7 +259,7 @@ struct UIRenderData
 	UIVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
 
-	std::array<uint32_t, MAX_TEXTURE> textureSlots{ 0 };
+	int textureSlots[MAX_TEXTURE];
 	uint32_t ptr = 0;
 };
 
@@ -276,7 +276,6 @@ void Renderer::InitUIRenderer()
 	uiRd->cameraController->SetPosition(uiRd->cameraPos);
 
 	uiRd->shader = &ShaderManager::Get().GetShader(ShaderName::UI_SHADER);
-
 
 	// Batching
 	uiRd->vao = std::make_unique<VertexArray>();
@@ -317,7 +316,14 @@ void Renderer::InitUIRenderer()
 	uiRd->vao->SetIndexBuffer(batchIndexBuffer);
 
 	// Texture slots
-	
+	int textureBindings[uiRd->MAX_TEXTURE];
+	for (int i = 0; i < uiRd->MAX_TEXTURE; ++i)
+	{
+		uiRd->textureSlots[i] = 0;
+		textureBindings[i] = i;
+	}
+	uiRd->shader->Use();
+	uiRd->shader->UniformIntArray("uTextureSamplers", &textureBindings[0], uiRd->MAX_TEXTURE);
 
 	UIResize(Game::Instance().GetWindow()->GetWidth(), Game::Instance().GetWindow()->GetHeight());
 
@@ -384,17 +390,20 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 		UIFlushAndReset();
 
 	// Texture slot
-	uint32_t slot = 0;
-	for (int slot = 0; slot < uiRd->textureSlots.size(); ++slot)
+	uint32_t textureSlot = -1;
+	for (int i = 0; i < uiRd->ptr; ++i)
 	{
-		if (slot >= uiRd->ptr)
+		if (uiRd->textureSlots[i] == subTexture->textureParent->GetTextureId())
 		{
-			uiRd->textureSlots[slot] = subTexture->textureParent->GetTextureId();
-			uiRd->ptr++;
+			textureSlot = i;
 			break;
 		}
-		if (uiRd->textureSlots[slot] == subTexture->textureParent->GetTextureId())
-			break;	
+	}
+	
+	if (textureSlot == -1)
+	{
+		textureSlot = uiRd->ptr;
+		uiRd->textureSlots[uiRd->ptr++] = subTexture->textureParent->GetTextureId();
 	}
 
 	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3{ pos.x, pos.y, UIRenderData::VERTEX_DEPTH_VALUE }), { size, 1.0f });
@@ -410,7 +419,7 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 
 	for (int i = 0; i < 4; ++i)
 	{
-		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, slot, flag);
+		SetUIVertexData(uiRd->batchPtr, transform * uiRd->BatchQuadVertices[i], texCoordsArray[i], colour, textureSlot, flag);
 		++uiRd->batchPtr;
 	}
 
@@ -485,12 +494,11 @@ void Renderer::UIFlushBatch()
 	uint32_t dataSize = static_cast<uint32_t>((uint8_t*)uiRd->batchPtr - (uint8_t*)uiRd->batchBasePtr);
 
 	uiRd->shader->Use();
+	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
+	
 	uiRd->vao->Bind();
 	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
 
-	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
-	
-	uiRd->shader->UniformIntArray("uTextureSamplers", (int*) & uiRd->textureSlots, uiRd->MAX_TEXTURE);
 	for (int slot = 0; slot < uiRd->ptr; ++slot)
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);
@@ -504,12 +512,13 @@ void Renderer::UIResetBatch()
 {
 	uiRd->batchPtr = uiRd->batchBasePtr;
 	uiRd->drawCount = 0;
+	uiRd->ptr = 0;
 }
 
 void Renderer::UIFlushAndReset()
 {
 	UIFlushBatch();
-	UIFlushAndReset();
+	UIResetBatch();
 }
 
 inline void Renderer::SetUIVertexData(UIVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags)

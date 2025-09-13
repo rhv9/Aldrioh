@@ -38,15 +38,36 @@ out vec4 FragColor;
 uniform float uTime;
 uniform sampler2D uTextureSamplers[8];
 
+// fFlags	= 0 : Do not replace the pixels with fColour
+//			= 1 : Replace non-transparent pixels with fColour
+
 void main()
 {
 	vec4 colour;
-	vec4 texColour = texture(uTextureSamplers[int(fTextureSampler)], fTexCoord);
+	vec4 texColour = vec4(0.0);
 
+	switch (int(fTextureSampler))
+	{
+		case 0: texColour = texture(uTextureSamplers[0], fTexCoord); break;
+		case 1: texColour = texture(uTextureSamplers[1], fTexCoord); break;
+		case 2: texColour = texture(uTextureSamplers[2], fTexCoord); break;
+		case 3: texColour = texture(uTextureSamplers[3], fTexCoord); break;
+		case 4: texColour = texture(uTextureSamplers[4], fTexCoord); break;
+		case 5: texColour = texture(uTextureSamplers[5], fTexCoord); break;
+		case 6: texColour = texture(uTextureSamplers[6], fTexCoord); break;
+		case 7: texColour = texture(uTextureSamplers[7], fTexCoord); break;
+	}
+	
 	if (texColour.a == 0.0)
 	{
 		discard;
 	}
 
-	FragColor = fColour;
+	if (fFlags == 1.0)
+	{
+		FragColor = fColour;
+		return;
+	}
+
+	FragColor = texColour;
 }
