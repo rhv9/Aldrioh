@@ -15,5 +15,5 @@ void UIImage::OnUpdate(Timestep ts)
 
 void UIImage::OnRender(Timestep ts)
 {
-	Renderer::UIDrawTexture(subTexture, renderPos, size, backgroundColour, 1);
+	Renderer::UIDrawImage(subTexture, renderPos, size, backgroundColour);
 }

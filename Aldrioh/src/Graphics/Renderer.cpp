@@ -486,6 +486,11 @@ void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& p
 
 }
 
+void Renderer::UIDrawImage(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
+{
+	UIDrawTexture(subTexture, pos, size, colour, 0);
+}
+
 void Renderer::UIFlushBatch()
 {
 	if (uiRd->drawCount == 0)

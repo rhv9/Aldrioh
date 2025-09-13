@@ -46,6 +46,7 @@
 #include <UI/UIManager.h>
 #include <UI/UIObject.h>
 #include <UI/UIText.h>
+#include <UI/UIImage.h>
 
 LevelEditorLayer::LevelEditorLayer()
 {
@@ -102,15 +103,15 @@ void LevelEditorLayer::OnBegin()
 	Renderer::SetUIPixelHeight(100);
 
 	uiManager = new UIManager();
-	UIObject* rectangle = new UIObject("Red box", { 0, 0 }, {20, 80});
+	UIObject* rectangle = new UIObject("Red box", { 0, 0 }, { 20, 80 });
 	rectangle->SetBackgroundColour({ 1.0f, 0.0f, 0.0f, 1.0f });
 	uiManager->AddUIObject(rectangle);
 
-	UIObject* rectangle2 = new UIObject("Yellow box", { 0, 0 }, {10, 10});
+	UIObject* rectangle2 = new UIObject("Yellow box", { 0, 0 }, { 10, 10 });
 	rectangle2->SetBackgroundColour({ 1.0f, 1.0f, 0.0f, 1.0f });
 	rectangle->AddChild(rectangle2);
 
-	UIObject* rectangle3 = new UIObject("Blue box", { 0, 0 }, {2, 2});
+	UIObject* rectangle3 = new UIObject("Blue box", { 0, 0 }, { 2, 2 });
 	rectangle3->SetBackgroundColour({ 0.0f, 0.0f, 1.0f, 1.0f });
 	rectangle2->AddChild(rectangle3);
 
@@ -119,12 +120,18 @@ void LevelEditorLayer::OnBegin()
 	uiText->SetBackgroundColour({ 0.0f, 0.0f, 0.0f, 0.25f });
 	uiText->SetFontSize(4);
 	rectangle->AddChild(uiText);
-	
+
+	UIImage* uiImage = new UIImage("UI Image", { 10.0f, 0.0f }, { 10.0f, 10.0f });
+	uiImage->SetSubTexture(Sprites::get(Sprites::fire));
+	rectangle->AddChild(uiImage);
+
 	rectangle->SetAnchorPoint(AnchorPoint::CENTER);
 	rectangle2->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
 	rectangle3->SetAnchorPoint(AnchorPoint::CENTER);
 	uiText->SetAnchorPoint(AnchorPoint::CENTER);
-	
+	uiImage->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
+
+
 	LOG_CORE_INFO("SAND SPRITE TEXTURE ID: {}", Sprites::get(Sprites::sand_1)->textureParent->GetTextureId());
 	LOG_CORE_INFO("Font texture ID: {}", Font::DEFAULT->GetTexture()->GetTextureId());
 }
@@ -141,7 +148,7 @@ void LevelEditorLayer::OnUpdate(Timestep delta)
 	uiManager->OnUpdate(delta);
 	uiManager->OnRender(delta);
 
-	Renderer::UIDrawTexture(Sprites::get(Sprites::sand_1), { 0.0f, 0.0f }, { 30.0f, 30.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) , 0);
+	Renderer::UIDrawTexture(Sprites::get(Sprites::fire), { 0.0f, 0.0f }, { 30.0f, 30.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0);
 
 	Renderer::UIDrawText(Font::DEFAULT, "Hello There!!", { UIData::PIXEL, 0.0f, 0.0f }, 10, glm::vec4{ 0.7f, 0.0f, 0.7f, 1.0f });
 

@@ -17,12 +17,14 @@ Engine Improvements:
 - Basic stopping player movement with ahead check of tile
 - Decide on how cameraController should be stored in CameraComponent
 - Scriptable components.
+- Need to deal with edge cases of UI System where order of setting parent objects and setting ui manager will cause crashes.
 
 
 Todo: LEVEL EDITOR
 - Be able to switch back and forth between editor and game layer
 
-v0.24
+v0.30
+- UI System
 
 
 v0.23
