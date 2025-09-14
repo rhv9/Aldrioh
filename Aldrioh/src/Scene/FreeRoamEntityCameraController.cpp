@@ -95,8 +95,7 @@ void FreeRoamEntityCameraController::OnMouseMoveCallback(MouseMoveEventArg& e)
 		result.x = offsetPercentage.x * bounds.GetWidth();
 		result.y = offsetPercentage.y * bounds.GetHeight();
 
-		result.x = -result.x;
-		SetPosition(initialCameraPos + result);
+		SetPosition(initialCameraPos - result);
 	}
 }
 

@@ -69,11 +69,6 @@ void FreeCameraController::OnMouseMoveCallback(MouseMoveEventArg& e)
 	uint32_t windowWidth = Game::Instance().GetWindow()->GetWidth();
 	uint32_t windowHeight = Game::Instance().GetWindow()->GetHeight();
 
-	//LOG_CORE_TRACE("Window width, height: ({},{})", windowWidth, windowHeight);
-	//LOG_CORE_TRACE("Bounds: ({},{})", bounds.GetWidth(), bounds.GetHeight());
-	//LOG_CORE_TRACE("MousePos: ({},{})", Input::GetMousePosition().x, Input::GetMousePosition().y);
-
-
 	if (mouseHeld)
 	{
 		glm::vec2 mousePos = Input::GetMousePosition();
@@ -90,8 +85,7 @@ void FreeCameraController::OnMouseMoveCallback(MouseMoveEventArg& e)
 		result.x = offsetPercentage.x * bounds.GetWidth();
 		result.y = offsetPercentage.y * bounds.GetHeight();
 
-		result.x = -result.x;
-		SetPosition(initialCameraPos + result);
+		SetPosition(initialCameraPos - result);
 	}
 }
 

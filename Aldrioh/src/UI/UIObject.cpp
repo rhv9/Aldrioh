@@ -46,19 +46,21 @@ UIManager* UIObject::GetUIManager()
 	return nullptr;
 }
 
-void UIObject::OnMouseHovering(MouseMoveEventArg& e)
+void UIObject::OnMouseMove(MouseMoveEventArg& e)
 {
-	LOG_CORE_INFO("Mouse hovering {}, pos:({},{})", name, e.XPos, e.YPos);
+	if (IsMouseWithin({ e.XPos, e.YPos }))
+		LOG_CORE_INFO("Mouse hovering {}, pos:({},{})", name, e.XPos, e.YPos);
+
 }
 
-void UIObject::OnMouseHoveringChildren(MouseMoveEventArg& e)
+void UIObject::OnMouseMoveChildren(MouseMoveEventArg& e)
 {
 	for (UIObject* child : children)
 	{
-		if (child->IsEnabled() && child->IsMouseWithin({ e.XPos, e.YPos }))
+		if (child->IsEnabled())
 		{
-			child->OnMouseHovering(e);
-			child->OnMouseHoveringChildren(e);
+			child->OnMouseMove(e);
+			child->OnMouseMoveChildren(e);
 		}
 	}
 }
@@ -97,7 +99,6 @@ void UIObject::SetUIManager(UIManager* uiManager)
 
 bool UIObject::IsMouseWithin(const glm::vec2& pos)
 {
-	//LOG_CORE_INFO("{}, mouse pos: {}, renderPos: {}, size: {}", name, glm::to_string(pos), glm::to_string(renderPos), glm::to_string(size));
 	return pos.x >= renderPos.x && pos.x <= renderPos.x + size.x
 		&& pos.y >= renderPos.y && pos.y <= renderPos.y + size.y;
 }

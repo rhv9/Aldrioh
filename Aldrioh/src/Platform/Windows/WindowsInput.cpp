@@ -23,12 +23,12 @@ float Input::GetMouseX()
 
 float Input::GetMouseY()
 {
-    return GetMousePosition().y;
+    return  GetMousePosition().y;
 }
 
 glm::vec2 Input::GetMousePosition()
 {
     double xpos, ypos;
     glfwGetCursorPos((GLFWwindow*)Game::Instance().GetWindow()->GetNativeWindow(), &xpos, &ypos);
-    return { (float)xpos, (float)ypos };
+    return { (float)xpos, Game::Instance().GetWindow()->GetHeight() - (float)ypos };
 }

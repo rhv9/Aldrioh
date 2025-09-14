@@ -56,8 +56,9 @@ public:
 
 
 	// Event Related
-	void OnMouseHovering(MouseMoveEventArg& e);
-	void OnMouseHoveringChildren(MouseMoveEventArg& e);
+	void OnMouseMove(MouseMoveEventArg& e);
+	void OnMouseMoveChildren(MouseMoveEventArg& e);
+
 
 private:
 	void RenderChildren(Timestep ts);

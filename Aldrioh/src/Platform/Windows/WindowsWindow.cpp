@@ -107,8 +107,8 @@ void WindowsWindow::Init(const WindowProps& windowProps)
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)
 		{
 			WindowData* windowData = (WindowData*)glfwGetWindowUserPointer(window);
-
-			MouseMoveEventArg mouseMoveEventArg{ (float)xpos, (float)ypos };
+			
+			MouseMoveEventArg mouseMoveEventArg{ (float)xpos, windowData->Height - (float)ypos };
 			windowData->WindowObj->MouseMoveEventHandler.Invoke(mouseMoveEventArg);
 		});
 
