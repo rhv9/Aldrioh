@@ -21,4 +21,7 @@ private:
 
 	std::vector<UIObject*> uiObjects;
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
+
+	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
+	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
 };

@@ -9,13 +9,13 @@
 FreeRoamEntityCameraController::FreeRoamEntityCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel)
 {
-	Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseScrollCallback);
-	Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnWindowResizeCallback);
+	callbackMouseScrolledID = Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseScrollCallback);
+	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnWindowResizeCallback);
 
 	// Camera dragging
-	Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMousePressedCallback);
-	Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseReleasedCallback);
-	Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseMoveCallback);
+	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMousePressedCallback);
+	callbackMouseReleasedID = Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseReleasedCallback);
+	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseMoveCallback);
 }
 
 // Will fix dragging and moving entity later. Good enough for now.

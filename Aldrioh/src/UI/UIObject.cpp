@@ -97,7 +97,7 @@ void UIObject::SetUIManager(UIManager* uiManager)
 	RecalculateRenderPos();
 }
 
-bool UIObject::IsMouseWithin(const glm::vec2& pos)
+bool UIObject::IsMouseWithin(const glm::vec2& pos) const
 {
 	return pos.x >= renderPos.x && pos.x <= renderPos.x + size.x
 		&& pos.y >= renderPos.y && pos.y <= renderPos.y + size.y;

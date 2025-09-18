@@ -20,4 +20,10 @@ private:
 	void OnMouseMoveCallback(MouseMoveEventArg& e);
 	void OnMouseScrollCallback(MouseScrolledEventArg& e);
 	void OnWindowResizeCallback(WindowResizeEventArg& e);
+
+	EventCallbackID<MouseButtonPressedEventArg> callbackMousePressedID;
+	EventCallbackID<MouseButtonReleasedEventArg> callbackMouseReleasedID;
+	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
+	EventCallbackID<MouseScrolledEventArg> callbackMouseScrolledID;
+	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 };

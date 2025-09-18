@@ -54,6 +54,8 @@ LevelEditorLayer::LevelEditorLayer()
 
 static UIManager* uiManager = nullptr;
 
+EventCallbackID<MouseButtonPressedEventArg> callbackMousePressedID;
+
 void LevelEditorLayer::OnBegin()
 {
 	scene = std::make_shared<Scene>();
@@ -83,7 +85,7 @@ void LevelEditorLayer::OnBegin()
 	scene->AddRenderSystem(&EntitySystem::LevelRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
 
-	Game::Instance().GetWindow()->MouseButtonPressedEventHandler += [&](MouseButtonPressedEventArg& arg)
+	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += [&](MouseButtonPressedEventArg& arg)
 		{
 			auto view = scene->getRegistry().view<LevelComponent>();
 

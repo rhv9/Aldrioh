@@ -13,12 +13,12 @@ ImGuiLayer::ImGuiLayer()
     : Layer() 
 {
     Window& window = *Game::Instance().GetWindow();
-    window.MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseMove);
-    window.MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMousePress);
-    window.MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseRelease);
-    window.KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyPressed);
-    window.KeyReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyReleased);
-    window.MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseScroll);
+    callbackMouseMoveID = window.MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseMove);
+    callbackMousePressID = window.MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMousePress);
+    callbackMouseReleaseID = window.MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseRelease);
+    callbackKeyPressID = window.KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyPressed);
+    callbackKeyReleaseID = window.KeyReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyReleased);
+    callbackMouseScrollID = window.MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseScroll);
 }
 
 void ImGuiLayer::OnMouseMove(MouseMoveEventArg& e)

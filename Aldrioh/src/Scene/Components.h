@@ -67,12 +67,12 @@ struct MoveComponent
 	MoveComponent() : speed(16.0f) {}
 	MoveComponent(const MoveComponent&) = default;
 
-	bool isMoving() { return moveVec != ZERO_VEC; }
-	bool isMovingUp() { return moveVec.y > 0; }
-	bool isMovingDown() { return moveVec.y < 0; }
-	bool isMovingLeft() { return moveVec.x < 0; }
-	bool isMovingRight() { return moveVec.x > 0; }
-	MoveDir getMoveDir() { return dir; }
+	bool isMoving() const { return moveVec != ZERO_VEC; }
+	bool isMovingUp() const { return moveVec.y > 0; }
+	bool isMovingDown() const { return moveVec.y < 0; }
+	bool isMovingLeft() const { return moveVec.x < 0; }
+	bool isMovingRight() const { return moveVec.x > 0; }
+	MoveDir getMoveDir() const { return dir; }
 
 	void updateMoveVec(const glm::vec2& newMoveVec);
 

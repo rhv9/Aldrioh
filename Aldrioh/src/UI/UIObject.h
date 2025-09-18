@@ -66,7 +66,7 @@ private:
 	void RecalculateRenderPos();
 	void SetUIManager(UIManager* uiManager);
 
-	bool IsMouseWithin(const glm::vec2& pos);
+	bool IsMouseWithin(const glm::vec2& pos) const;
 
 protected:
 	std::string name = "unnamed";

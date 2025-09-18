@@ -45,20 +45,18 @@ void Game::Init()
     //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
     window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
 
-    window->KeyPressedEventHandler += [](KeyPressedEventArg& arg)
+    callbackShutdownID = window->KeyPressedEventHandler.RegisterCallback([](KeyPressedEventArg& arg)
         {
             if (arg.Key == Input::KEY_ESCAPE)
                 Game::Instance().Shutdown();
-        };
-    window->WindowCloseEventHandler += std::bind(&Game::OnWindowClose, this, std::placeholders::_1);
+        });
+    callbackWindowCloseID = window->WindowCloseEventHandler.RegisterCallback(std::bind(&Game::OnWindowClose, this, std::placeholders::_1));
 
     ShaderManager::Get().LoadShaders();
     Renderer::Init();
     RenderQueue::Init();
     Font::InitGlobalFonts();
     Sprites::Init();
-
-    window->WindowResizeEventHandler += Renderer::OnResize;
 
 #ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer = new ImGuiLayer();

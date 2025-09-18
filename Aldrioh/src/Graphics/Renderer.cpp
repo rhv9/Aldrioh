@@ -45,6 +45,8 @@ struct RenderData
 	BatchVertex* batchBasePtr = nullptr;
 	BatchVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
+
+	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 };
 
 static RenderData renderData;
@@ -52,6 +54,8 @@ static RenderData renderData;
 void Renderer::Init()
 {
 	LOG_CORE_INFO("Renderer::Init()");
+
+	renderData.callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += Renderer::OnResize;
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

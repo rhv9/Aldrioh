@@ -10,13 +10,13 @@
 FreeCameraController::FreeCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel) 
 {
-	Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseScrollCallback);
-	Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnWindowResizeCallback);
+	callbackMouseScrolledID = Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseScrollCallback);
+	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnWindowResizeCallback);
 
 	// Camera dragging
-	Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMousePressedCallback);
-	Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseReleasedCallback);
-	Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseMoveCallback);
+	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMousePressedCallback);
+	callbackMouseReleasedID = Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseReleasedCallback);
+	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseMoveCallback);
 }
 
 
