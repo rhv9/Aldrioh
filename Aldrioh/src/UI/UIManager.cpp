@@ -50,6 +50,7 @@ void UIManager::OnWindowResize(WindowResizeEventArg& e)
 {
 	uiArea = Renderer::UIGetWindowSize();
 	windowSizeCached = Game::Instance().GetWindow()->GetSize();
+	LOG_CORE_INFO("Why hello there0 uiArea: {} windowSize {}", glm::to_string(uiArea), glm::to_string(windowSizeCached));
 
 	for (UIObject* obj : uiObjects)
 		obj->RecalculateRenderPos();

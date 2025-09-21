@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Input/InputCode.h"
+#include <Core/Platform.h>
 
 #define EVENT_BIND_MEMBER_FUNCTION(x) std::bind(&x, this, std::placeholders::_1)
 
@@ -53,9 +54,10 @@ class EventHandler
 	struct CallbackComponent
 	{
 		Callback callback;
+		float time = FLT_MAX;
 
 		CallbackComponent() = default;
-		CallbackComponent(Callback callback) : callback(callback) {}
+		CallbackComponent(Callback callback, float time) : callback(callback), time(time) {}
 	};
 
 public:
@@ -76,7 +78,12 @@ public:
 	EventCallbackID<T> RegisterCallback(Callback callbackFunction)
 	{
 		entt::entity id = registry.create();
-		registry.emplace<CallbackComponent>(id, callbackFunction);
+		registry.emplace<CallbackComponent>(id, callbackFunction, Platform::GetElapsedTime());
+
+		// TODO: Quickest fix I could think of to keep callbacks sorted based on order it is added. This must be the worst way to ensure this... but it works for now
+		registry.sort<CallbackComponent>([](const CallbackComponent& lhs, const CallbackComponent& rhs) {
+			return lhs.time < rhs.time;
+			});
 		EventCallbackID<T> callbackID{ id, this };
 		return callbackID;
 	}
