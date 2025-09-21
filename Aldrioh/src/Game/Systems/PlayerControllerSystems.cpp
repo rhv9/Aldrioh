@@ -54,7 +54,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 	if (Input::IsKeyPressed(Input::KEY_F))
 	{
-		if (shootTimer >= 1.0f || shootTimer == 0.0f)
+		if (shootTimer >= 0.1f || shootTimer == 0.0f)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 			LOG_TRACE("Shooting!");

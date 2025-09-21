@@ -102,7 +102,7 @@ void TestLevel::OnRender(Timestep ts)
 		for (int x = startX; x < endX; x++)
 		{
 			TileMetaData metadata{ {x, y}, this };
-			tiles[y * width + x]->OnRender(ts, metadata);
+			//tiles[y * width + x]->OnRender(ts, metadata);
 		}
 	}
 }

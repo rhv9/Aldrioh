@@ -45,26 +45,24 @@ void Sprites::Init()
 	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::TileSize };
 	spriteMap[spawner = spriteCounter++] = { spritesheet, glm::vec2{ 3, 2 }, Sprites::TileSize };
 
-	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 2, 3 }, Sprites::TileSize };
-	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 3, 3 }, Sprites::TileSize };
+	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
+	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
 
-	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 16 }, Sprites::TileSize };
+	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 15 }, Sprites::TileSize };
 
 
 	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
 	// Animated Sprites
-	animPlayerUp = CreateAnimSprites(spritesheet, glm::vec2{ 12, 3 }, 4);
-	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 12, 2 }, 4);
-	animPlayerLeft = CreateAnimSprites(spritesheet, glm::vec2{ 12, 1 }, 4);
-	animPlayerRight = CreateAnimSprites(spritesheet, glm::vec2{ 12, 0 }, 4);
+	animPlayerUp = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
+	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
+	animPlayerLeft = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
+	animPlayerRight = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
 
-	animBossUp = CreateAnimSprites(spritesheet, glm::vec2{ 8, 3 }, 4);
-	animBossDown = CreateAnimSprites(spritesheet, glm::vec2{ 8, 2 }, 4);
-	animBossLeft = CreateAnimSprites(spritesheet, glm::vec2{ 8, 1 }, 4);
-	animBossRight = CreateAnimSprites(spritesheet, glm::vec2{ 8, 0 }, 4);
+	animBossUp = CreateAnimSprites(spritesheet, glm::vec2{ 0, 14 }, 1);
+	animBossDown = CreateAnimSprites(spritesheet, glm::vec2{ 0, 14 }, 1);
+	animBossLeft = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
+	animBossRight = CreateAnimSprites(spritesheet, glm::vec2{ 0, 14 }, 1);
 
-	for (int i = 0; i < 4; i++)
-		LOG_CORE_INFO("Sprite id number {}: {}", i, Sprites::animPlayerUp[i]);
 
 
 	// Textures
