@@ -1,5 +1,6 @@
 #pragma once
 #include "EventHandler.h"
+#include <Input/InputCode.h>
 
 // Key callbacks
 
@@ -22,6 +23,19 @@ struct KeyReleasedEventArg : public EventArg
 
 // Mouse callbacks
 
+struct MouseButtonEventArg : public EventArg
+{
+	const int Button;
+	const int Mods;
+	const bool Action;
+
+	MouseButtonEventArg(int button, int mods, int action) : Button(button), Mods(mods), Action(action) {}
+	
+	inline bool IsPressed(int button) { return Button == button && Action == Input::MOUSE_PRESSED; }
+	inline bool IsReleased(int button) { return Button == button && Action == Input::MOUSE_RELEASED; }
+};
+
+// TODO: I should deprecate this to make it simpler
 struct MouseButtonPressedEventArg : public EventArg
 {
 	const int Button;
@@ -30,6 +44,7 @@ struct MouseButtonPressedEventArg : public EventArg
 	MouseButtonPressedEventArg(int button, int mods) : Button(button), Mods(mods) {}
 };
 
+// TODO: I should deprecate this to make it simpler
 struct MouseButtonReleasedEventArg : public EventArg
 {
 	const int Button;

@@ -128,7 +128,6 @@ void Renderer::StartScene(const Camera& camera)
 
 void Renderer::OnResize(WindowResizeEventArg& e)
 {
-	LOG_CORE_INFO("YO");
 	UIOnResize(e);
 }
 

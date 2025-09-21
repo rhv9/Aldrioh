@@ -15,13 +15,17 @@ public:
 	void AddUIObject(UIObject* object);
 
 	const glm::vec2& GetUIArea() { return uiArea; }
+
+	const glm::vec2 GetMousePos() const;
 private:
 	void OnWindowResize(WindowResizeEventArg& e);
 	void OnMouseMove(MouseMoveEventArg& e);
+	void OnMouseButton(MouseButtonEventArg& e);
 
 	std::vector<UIObject*> uiObjects;
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
 
 	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
+	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
 };

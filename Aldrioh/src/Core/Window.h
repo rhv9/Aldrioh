@@ -41,6 +41,7 @@ public:
 
 	EventHandler<MouseButtonPressedEventArg> MouseButtonPressedEventHandler;
 	EventHandler<MouseButtonReleasedEventArg> MouseButtonReleasedEventHandler;
+	EventHandler<MouseButtonEventArg> MouseButtonEventHandler;
 	EventHandler<MouseMoveEventArg> MouseMoveEventHandler;
 	EventHandler<MouseScrolledEventArg> MouseScrolledEventHandler;
 

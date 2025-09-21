@@ -43,27 +43,9 @@ UIManager* UIObject::GetUIManager()
 {
 	if (uiManager == nullptr && parent != nullptr)
 		return uiManager = parent->GetUIManager();
-	return nullptr;
+	return uiManager;
 }
 
-void UIObject::OnMouseMove(MouseMoveEventArg& e)
-{
-	if (IsMouseWithin({ e.XPos, e.YPos }))
-		LOG_CORE_INFO("Mouse hovering {}, pos:({},{})", name, e.XPos, e.YPos);
-
-}
-
-void UIObject::OnMouseMoveChildren(MouseMoveEventArg& e)
-{
-	for (UIObject* child : children)
-	{
-		if (child->IsEnabled())
-		{
-			child->OnMouseMove(e);
-			child->OnMouseMoveChildren(e);
-		}
-	}
-}
 
 void UIObject::RenderChildren(Timestep ts)
 {
@@ -97,7 +79,12 @@ void UIObject::SetUIManager(UIManager* uiManager)
 	RecalculateRenderPos();
 }
 
-bool UIObject::IsMouseWithin(const glm::vec2& pos) const
+bool UIObject::IsMouseHovering()
+{
+	return IsPosWithin(GetUIManager()->GetMousePos());
+}
+
+bool UIObject::IsPosWithin(const glm::vec2& pos) const
 {
 	return pos.x >= renderPos.x && pos.x <= renderPos.x + size.x
 		&& pos.y >= renderPos.y && pos.y <= renderPos.y + size.y;

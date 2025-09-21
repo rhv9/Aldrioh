@@ -85,6 +85,10 @@ void WindowsWindow::Init(const WindowProps& windowProps)
 	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData* windowData = (WindowData*)glfwGetWindowUserPointer(window);
+
+			MouseButtonEventArg mouseButtonEvent{ button, mods, action == GLFW_PRESS };
+			windowData->WindowObj->MouseButtonEventHandler.Invoke(mouseButtonEvent);
+
 			switch (action)
 			{
 			case GLFW_PRESS:

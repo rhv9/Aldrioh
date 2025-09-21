@@ -47,6 +47,7 @@
 #include <UI/UIObject.h>
 #include <UI/UIText.h>
 #include <UI/UIImage.h>
+#include <UI/UIButton.h>
 
 LevelEditorLayer::LevelEditorLayer()
 {
@@ -93,7 +94,6 @@ void LevelEditorLayer::OnBegin()
 			{
 				auto& lc = view.get<LevelComponent>(e);
 				TestLevel* level = (TestLevel*)lc.level;
-				LOG_CORE_INFO("Level width:{} height:{}", level->width, level->height);
 
 				glm::vec2 pos = scene->GetMousePosInScene();
 
@@ -127,11 +127,26 @@ void LevelEditorLayer::OnBegin()
 	uiImage->SetSubTexture(Sprites::get(Sprites::fire));
 	rectangle->AddChild(uiImage);
 
+	UIButton* uiButton = new UIButton("UI Button", { 0, 0 }, { 20, 10 });
+	uiButton->SetBackgroundColour({ 0.5f, 0.5f, 0.5f, 1.0f });
+	uiButton->GetUIText()->SetText("Click Me!");
+	uiButton->GetUIText()->SetFontSize(2.5f);
+
+	uiButton->SetOnClickCallback([](UIButton* button)
+		{
+			LOG_CORE_INFO("This is callback working!!");
+			button->SetBackgroundColour({ Math::Random::linearFloat(0, 1), Math::Random::linearFloat(0, 1), Math::Random::linearFloat(0, 1), 1.0f});
+		});
+
+	rectangle->AddChild(uiButton);
+
+
 	rectangle->SetAnchorPoint(AnchorPoint::CENTER);
 	rectangle2->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
 	rectangle3->SetAnchorPoint(AnchorPoint::CENTER);
 	uiText->SetAnchorPoint(AnchorPoint::CENTER);
 	uiImage->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
+	uiButton->SetAnchorPoint(AnchorPoint::CENTER_BOTTOM);
 
 
 	LOG_CORE_INFO("SAND SPRITE TEXTURE ID: {}", Sprites::get(Sprites::sand_1)->textureParent->GetTextureId());

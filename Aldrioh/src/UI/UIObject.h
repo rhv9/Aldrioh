@@ -8,9 +8,23 @@ enum UIType
 	Object,
 	Text,
 	Image,
+	Button,
 };
 
 class UIManager;
+
+#define UIOBJECT_EVENT(event) virtual void On##event##Event(##event##EventArg& e) {} \
+void On##event##EventChildren(##event##EventArg& e) \
+{ \
+	for (UIObject* child : children)\
+	{\
+		if (child->IsEnabled())\
+		{\
+			child->On##event##Event(e);\
+			child->On##event##EventChildren(e);\
+		}\
+	}\
+}\
 
 class UIObject
 {
@@ -55,10 +69,12 @@ public:
 	UIManager* GetUIManager();
 
 
-	// Event Related
-	void OnMouseMove(MouseMoveEventArg& e);
-	void OnMouseMoveChildren(MouseMoveEventArg& e);
+	bool IsMouseHovering();
+	bool IsPosWithin(const glm::vec2& pos) const;
 
+	// Event Related
+	UIOBJECT_EVENT(MouseMove)
+	UIOBJECT_EVENT(MouseButton)
 
 private:
 	void RenderChildren(Timestep ts);
@@ -66,27 +82,22 @@ private:
 	void RecalculateRenderPos();
 	void SetUIManager(UIManager* uiManager);
 
-	bool IsMouseWithin(const glm::vec2& pos) const;
 
 protected:
 	std::string name = "unnamed";
 
-	glm::vec2 relativePos{ 0 };
+	glm::vec2 relativePos{ 0 }, renderPos{ 0 };
 	glm::vec2 size{ 0 };
 	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
 	glm::vec4 backgroundColour{ 0 };
 
-	glm::vec2 renderPos{ 0 };
-
 	std::vector<UIObject*> children;
+	UIObject* parent = nullptr;
 
 	bool enabled = true;
-
-	UIObject* parent = nullptr;
 
 private:
 	UIManager* uiManager = nullptr;
 
 	friend class UIManager;
-
 };

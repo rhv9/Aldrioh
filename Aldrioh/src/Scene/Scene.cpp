@@ -112,9 +112,9 @@ glm::vec2 Scene::GetMousePosInScene()
 						 mousePos.y / Game::Instance().GetWindow()->GetHeight() };
 
 
-	glm::vec2 zoomedDimensions{ bounds.Right, -bounds.Top };
+	glm::vec2 zoomedDimensions{ bounds.Right, bounds.Top };
 
-	return (glm::vec2{ mousePosPercent.x * zoomedDimensions.x - bounds.Right / 2.0f, mousePosPercent.y * zoomedDimensions.y + bounds.Top / 2.0f } *2.0f) + cameraComponent.cameraController->GetPosition();
+	return (glm::vec2{ mousePosPercent.x * zoomedDimensions.x - bounds.Right / 2.0f, mousePosPercent.y * zoomedDimensions.y - bounds.Top / 2.0f } *2.0f) + cameraComponent.cameraController->GetPosition();
 }
 
 CollisionDispatcher& Scene::GetCollisionDispatcher()

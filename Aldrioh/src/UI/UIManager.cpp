@@ -4,10 +4,13 @@
 #include <Graphics/Renderer.h>
 #include <Game.h>
 
+#include <Input/Input.h>
+
 UIManager::UIManager()
 {
 	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnWindowResize);
-	callbackMouseMoveID =  Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseMove);
+	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseMove);
+	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseButton);
 
 	uiArea = Renderer::UIGetWindowSize();
 	windowSizeCached = Game::Instance().GetWindow()->GetSize();
@@ -46,11 +49,19 @@ void UIManager::AddUIObject(UIObject* object)
 	uiObjects.push_back(object);
 }
 
+const glm::vec2 UIManager::GetMousePos() const
+{
+	glm::vec2 mousePos = Input::GetMousePosition();
+	float scaleX = uiArea.x / windowSizeCached.x;
+	float scaleY = uiArea.y / windowSizeCached.y;
+
+	return glm::vec2(mousePos.x * scaleX, mousePos.y * scaleY);
+}
+
 void UIManager::OnWindowResize(WindowResizeEventArg& e)
 {
 	uiArea = Renderer::UIGetWindowSize();
 	windowSizeCached = Game::Instance().GetWindow()->GetSize();
-	LOG_CORE_INFO("Why hello there0 uiArea: {} windowSize {}", glm::to_string(uiArea), glm::to_string(windowSizeCached));
 
 	for (UIObject* obj : uiObjects)
 		obj->RecalculateRenderPos();
@@ -61,14 +72,27 @@ void UIManager::OnMouseMove(MouseMoveEventArg& e)
 	float scaleX = uiArea.x / windowSizeCached.x;
 	float scaleY = uiArea.y / windowSizeCached.y;
 
-	MouseMoveEventArg relative{e.XPos * scaleX, e.YPos * scaleY};
+	MouseMoveEventArg relative{ e.XPos * scaleX, e.YPos * scaleY };
 
 	for (UIObject* obj : uiObjects)
 	{
 		if (obj->IsEnabled())
 		{
-			obj->OnMouseMove(relative);
-			obj->OnMouseMoveChildren(relative);
+			obj->OnMouseMoveEvent(relative);
+			obj->OnMouseMoveEventChildren(relative);
+		}
+	}
+}
+
+void UIManager::OnMouseButton(MouseButtonEventArg& e)
+{
+
+	for (UIObject* obj : uiObjects)
+	{
+		if (obj->IsEnabled())
+		{
+			obj->OnMouseButtonEvent(e);
+			obj->OnMouseButtonEventChildren(e);
 		}
 	}
 }
