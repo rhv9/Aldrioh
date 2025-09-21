@@ -62,7 +62,7 @@ void Game::Init()
     imGuiLayer = new ImGuiLayer();
     layerStack.PushLayer(imGuiLayer);
 #endif
-    layerStack.PushLayer(new LevelEditorLayer());
+    layerStack.PushLayer(new GameLayer());
 
     running = true;
 }

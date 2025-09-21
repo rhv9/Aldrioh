@@ -10,13 +10,6 @@
 FreeCameraController::FreeCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel) 
 {
-	callbackMouseScrolledID = Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseScrollCallback);
-	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnWindowResizeCallback);
-
-	// Camera dragging
-	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMousePressedCallback);
-	callbackMouseReleasedID = Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseReleasedCallback);
-	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeCameraController::OnMouseMoveCallback);
 }
 
 
@@ -46,22 +39,20 @@ void FreeCameraController::OnUpdate(Timestep ts)
 	}
 }
 
-
-
-
-void FreeCameraController::OnMousePressedCallback(MouseButtonPressedEventArg& e)
+void FreeCameraController::OnMouseButtonCallback(MouseButtonEventArg& e)
 {
-	if (e.Button == Input::MOUSE_BUTTON_LEFT)
+	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
+		mouseHeld = false;
+	else if (e.IsPressed(Input::MOUSE_BUTTON_LEFT))
 	{
 		mousePressedPoint = Input::GetMousePosition();
 		initialCameraPos = GetPosition();
 		mouseHeld = true;
-	}
-}
 
-void FreeCameraController::OnMouseReleasedCallback(MouseButtonReleasedEventArg& e)
-{
-	mouseHeld = false;
+		//LOG_CORE_INFO("Intial camera relativePos x:{}, y:{}", initialCameraPos.x, initialCameraPos.y);
+		//LOG_CORE_INFO("Intial mousepress relativePos x:{}, y:{}", mousePressedPoint.x, /mousePressedPoint.y);
+		//LOG_CORE_INFO("Bounds width:{}, height:{}", bounds.GetWidth(), bounds.GetHeight());
+	}
 }
 
 void FreeCameraController::OnMouseMoveCallback(MouseMoveEventArg& e)
@@ -94,9 +85,3 @@ void FreeCameraController::OnMouseScrollCallback(MouseScrolledEventArg& e)
 	SetZoomLevel(zoomLevel + -e.YOffset * 0.1f * zoomLevel);
 	LOG_CORE_INFO("Zoom Level: {}", zoomLevel);
 }
-
-void FreeCameraController::OnWindowResizeCallback(WindowResizeEventArg& e)
-{
-	SetAspectRatio((float)e.Width / (float)e.Height);
-}
-

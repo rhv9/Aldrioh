@@ -9,13 +9,6 @@
 FreeRoamEntityCameraController::FreeRoamEntityCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel)
 {
-	callbackMouseScrolledID = Game::Instance().GetWindow()->MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseScrollCallback);
-	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnWindowResizeCallback);
-
-	// Camera dragging
-	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMousePressedCallback);
-	callbackMouseReleasedID = Game::Instance().GetWindow()->MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseReleasedCallback);
-	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(FreeRoamEntityCameraController::OnMouseMoveCallback);
 }
 
 // Will fix dragging and moving entity later. Good enough for now.
@@ -54,24 +47,20 @@ void FreeRoamEntityCameraController::OnUpdate(Timestep ts)
 }
 
 
-void FreeRoamEntityCameraController::OnMousePressedCallback(MouseButtonPressedEventArg& e)
+void FreeRoamEntityCameraController::OnMouseButtonCallback(MouseButtonEventArg& e)
 {
-	if (e.Button == Input::MOUSE_BUTTON_LEFT)
+	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
+		mouseHeld = false;
+	else if (e.IsPressed(Input::MOUSE_BUTTON_LEFT))
 	{
 		mousePressedPoint = Input::GetMousePosition();
 		initialCameraPos = GetPosition();
 		mouseHeld = true;
 
-		LOG_CORE_INFO("Intial camera relativePos x:{}, y:{}", initialCameraPos.x, initialCameraPos.y);
-		LOG_CORE_INFO("Intial mousepress relativePos x:{}, y:{}", mousePressedPoint.x, mousePressedPoint.y);
-		LOG_CORE_INFO("Bounds width:{}, height:{}", bounds.GetWidth(), bounds.GetHeight());
-
+		//LOG_CORE_INFO("Intial camera relativePos x:{}, y:{}", initialCameraPos.x, initialCameraPos.y);
+		//LOG_CORE_INFO("Intial mousepress relativePos x:{}, y:{}", mousePressedPoint.x, /mousePressedPoint.y);
+		//LOG_CORE_INFO("Bounds width:{}, height:{}", bounds.GetWidth(), bounds.GetHeight());
 	}
-}
-
-void FreeRoamEntityCameraController::OnMouseReleasedCallback(MouseButtonReleasedEventArg& e)
-{
-	mouseHeld = false;
 }
 
 void FreeRoamEntityCameraController::OnMouseMoveCallback(MouseMoveEventArg& e)
@@ -103,13 +92,6 @@ void FreeRoamEntityCameraController::OnMouseScrollCallback(MouseScrolledEventArg
 {
 	SetZoomLevel(zoomLevel + -e.YOffset * 0.1f * zoomLevel);
 }
-
-void FreeRoamEntityCameraController::OnWindowResizeCallback(WindowResizeEventArg& e)
-{
-	LOG_CORE_INFO("Resize ({},{})", e.Width, e.Height);
-	SetAspectRatio((float)e.Width / (float)e.Height);
-}
-
 
 void FreeRoamEntityCameraController::SetEntity(Entity entity)
 {

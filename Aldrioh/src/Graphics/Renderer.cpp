@@ -27,6 +27,8 @@ struct BatchVertex
 
 struct RenderData
 {
+	glm::vec4 clearColour{ 0.20f, 0.29f, 0.84f, 1.00f };
+
 	std::unique_ptr<VertexArray> batchTextureVA;
 	Shader* shaderBatchTexture = nullptr;
 
@@ -47,6 +49,7 @@ struct RenderData
 	uint32_t drawCount = 0;
 
 	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
+
 };
 
 static RenderData renderData;
@@ -120,7 +123,8 @@ void Renderer::StartScene(const Camera& camera)
 
 	//glClearColor(1.00f, 0.49f, 0.04f, 1.00f);
 	glEnable(GL_DEPTH_TEST);
-	glClearColor(0.20f, 0.29f, 0.84f, 1.00f);
+
+	glClearColor(renderData.clearColour.x, renderData.clearColour.y, renderData.clearColour.z, renderData.clearColour.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ResetBatch();
@@ -217,6 +221,11 @@ void Renderer::ResetBatch()
 {
 	renderData.batchPtr = renderData.batchBasePtr;
 	renderData.drawCount = 0;
+}
+
+void Renderer::SetClearColour(const glm::vec4& col)
+{
+	renderData.clearColour = col;
 }
 
 

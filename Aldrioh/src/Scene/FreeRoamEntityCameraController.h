@@ -17,18 +17,9 @@ public:
 	virtual void OnUpdate(Timestep delta) override;
 
 private:
-
-	void OnMousePressedCallback(MouseButtonPressedEventArg& e);
-	void OnMouseReleasedCallback(MouseButtonReleasedEventArg& e);
-	void OnMouseMoveCallback(MouseMoveEventArg& e);
-	void OnMouseScrollCallback(MouseScrolledEventArg& e);
-	void OnWindowResizeCallback(WindowResizeEventArg& e);
-
-	EventCallbackID<MouseButtonPressedEventArg> callbackMousePressedID;
-	EventCallbackID<MouseButtonReleasedEventArg> callbackMouseReleasedID;
-	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
-	EventCallbackID<MouseScrolledEventArg> callbackMouseScrolledID;
-	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
+	virtual void OnMouseButtonCallback(MouseButtonEventArg& e) override;
+	virtual void OnMouseMoveCallback(MouseMoveEventArg& e) override;
+	virtual void OnMouseScrollCallback(MouseScrolledEventArg& e) override;
 
 	Entity entity;
 };

@@ -89,6 +89,8 @@ public:
 	static void ResetBatch();
 	static void FlushAndReset();
 
+	static void SetClearColour(const glm::vec4& col);
+
 private:
 	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords);
 

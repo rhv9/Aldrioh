@@ -31,7 +31,7 @@ void Sprites::Init()
 {
 	
 	spriteMap = new SubTexture[size];
-	spritesheet = std::make_shared<Texture>("assets/textures/spritesheet.png");
+	spritesheet = std::make_shared<Texture>("assets/textures/shooter_spritesheet.png");
 
 	spriteMap[null = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::TileSize };
 	spriteMap[shadow = spriteCounter++] = { spritesheet, glm::vec2{ 0, 3 }, Sprites::TileSize };
@@ -47,6 +47,8 @@ void Sprites::Init()
 
 	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 2, 3 }, Sprites::TileSize };
 	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 3, 3 }, Sprites::TileSize };
+
+	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 16 }, Sprites::TileSize };
 
 
 	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
