@@ -7,6 +7,8 @@
 #include <Components/Collision.h>
 #include <Game/Entity/EntityType.h>
 
+#include <Math/Math.h>
+
 float shootTimer = 0.0f;
 
 void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dir)
@@ -25,6 +27,14 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dir)
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
 	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+}
+
+glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
+{
+	float newX = start.x + (dest.x - start.x) * Math::cosRad(x) - (dest.y - start.y) * Math::sinRad(x);
+	float newY = start.y + (dest.x - start.x) * Math::sinRad(x) + (dest.y - start.y) * Math::cosRad(x);
+
+	return { newX, newY };
 }
 
 
@@ -54,13 +64,15 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 	if (Input::IsKeyPressed(Input::KEY_F))
 	{
-		if (shootTimer >= 0.1f || shootTimer == 0.0f)
+		if (shootTimer >= 0.01f || shootTimer == 0.0f)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 			LOG_TRACE("Shooting!");
 			glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
 			shoot(player, playerPos, player.getScene()->GetMousePosInScene());
+			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(20)));
+			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(-20)));
 		}
 		shootTimer += ts;
 	}
