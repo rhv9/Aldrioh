@@ -71,8 +71,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
 			shoot(player, playerPos, player.getScene()->GetMousePosInScene());
-			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(20)));
-			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(-20)));
+			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 ) * 360.0f)));
+			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 + Math::PI) * 360.0f)));
 		}
 		shootTimer += ts;
 	}
