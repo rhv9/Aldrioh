@@ -11,10 +11,10 @@
 
 float shootTimer = 0.0f;
 
-void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dir)
+void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dest)
 {
 	// Center the direction and origin 
-	glm::vec2 dirOffseted = dir;
+	glm::vec2 dirOffseted = dest;
 	glm::vec2 originOffseted = origin;
 
 	// Create entity
@@ -23,7 +23,8 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dir)
 	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
 	mc.moveVec = glm::normalize(dirOffseted - originOffseted);
 	mc.locked = true;
-	fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{-0.5f, -0.5f, 0.0f});
+	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{-0.5f, -0.5f, 0.0f});
+	vc.rotation = Math::angle(mc.moveVec);
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
 	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
@@ -60,11 +61,12 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			move.x = 1.0f;
 
 		playerMove.updateMoveVec(move);
+		player.GetComponent<VisualComponent>().rotation = Math::angleBetweenVec2(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
 	}
 
 	if (Input::IsKeyPressed(Input::KEY_F))
 	{
-		if (shootTimer >= 0.01f || shootTimer == 0.0f)
+		if (shootTimer >= 0.08f || shootTimer == 0.0f)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 			LOG_TRACE("Shooting!");

@@ -25,6 +25,7 @@ struct VisualComponent
 	int spriteId;
 	glm::vec3 localTransform;
 	glm::vec2 scale;
+	float rotation = 0.0f;
 
 	VisualComponent(const int spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}
 	VisualComponent(const int spriteId, const glm::vec3& localTransform) : VisualComponent(spriteId, localTransform, DEFAULT_SCALE) {}

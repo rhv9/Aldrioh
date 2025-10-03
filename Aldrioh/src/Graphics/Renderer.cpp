@@ -37,13 +37,21 @@ struct RenderData
 	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
 	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
 
+//	const glm::vec4 BatchQuadVertices[4] =
+//	{
+//		{ 0.0f, 1.0f, 0.0f, 1.0f },
+//		{ 0.0f, 0.0f, 0.0f, 1.0f },
+//		{ 1.0f, 0.0f, 0.0f, 1.0f },
+//		{ 1.0f, 1.0f, 0.0f, 1.0f }
+//	};
 	const glm::vec4 BatchQuadVertices[4] =
 	{
-		{ 0.0f, 1.0f, 0.0f, 1.0f },
-		{ 0.0f, 0.0f, 0.0f, 1.0f },
-		{ 1.0f, 0.0f, 0.0f, 1.0f },
-		{ 1.0f, 1.0f, 0.0f, 1.0f }
+		{ -0.5f,  0.5f, 0.0f, 1.0f },
+		{  -0.5, -0.5f, 0.0f, 1.0f },
+		{  0.5f, -0.5f, 0.0f, 1.0f },
+		{  0.5f,  0.5f, 0.0f, 1.0f }
 	};
+
 	BatchVertex* batchBasePtr = nullptr;
 	BatchVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
@@ -151,12 +159,16 @@ void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& po
 	ptr->texCoord = texCoords;
 }
 
-void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale)
+void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale, float rotation)
 {
 	if (renderData.drawCount >= RenderData::MAX_DRAWS)
 		FlushAndReset();
 
-	glm::mat4 transform = glm::scale(glm::translate(glm::mat4(1.0f), position), { scale, 1.0f });
+	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position + glm::vec3(scale / 2.0f, 0.0f));
+	
+	transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
+
+	transform = glm::scale(transform, { scale, 1.0f });
 
 	const TextureCoords& texCoords = subTexture->textureCoords;
 	const glm::vec2 texCoordsArray[4] =
@@ -412,7 +424,7 @@ void Renderer::UIDrawTexture(const SubTexture* subTexture, const glm::vec2& pos,
 			break;
 		}
 	}
-	
+
 	if (textureSlot == -1)
 	{
 		textureSlot = uiRd->ptr;
@@ -513,7 +525,7 @@ void Renderer::UIFlushBatch()
 
 	uiRd->shader->Use();
 	uiRd->shader->UniformFloat("uTime", Platform::GetElapsedTime());
-	
+
 	uiRd->vao->Bind();
 	uiRd->vao->GetVertexBuffer()->SetData(uiRd->batchBasePtr, dataSize);
 
@@ -563,7 +575,7 @@ void Renderer::ImGuiDebug()
 	glm::vec2 cameraBounds = uiRd->cameraController->GetBounds().GetSize();
 	ImGui::DragFloat2("CameraBounds", (float*)&cameraBounds);
 	ImGui::Checkbox("Flip UI on Y", &flipY);
-	if(ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8))
+	if (ImGui::SliderInt("AnchorPoint ", &anchorPoint, 0, 8))
 	{
 		uiAnchorPoint = (AnchorPoint::Value)anchorPoint;
 	}
