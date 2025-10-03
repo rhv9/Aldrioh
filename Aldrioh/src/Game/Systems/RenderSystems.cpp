@@ -14,7 +14,7 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 		auto [transform, visual] = view.get(e);
 		glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
 		//RenderQueue::EnQueue(RenderLayer::ONE, drawTransform + glm::vec3{ 0.0f, -0.4f, 0.0f }, Sprites::shadow, { 1, 1 });
-		RenderQueue::EnQueue(RenderLayer::TWO, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, { 1, 1 }, visual.rotation);
+		RenderQueue::EnQueue(RenderLayer::TWO, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
 	}
 }
 

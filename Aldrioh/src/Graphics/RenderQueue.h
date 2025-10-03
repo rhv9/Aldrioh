@@ -21,7 +21,7 @@ public:
 
 
 	static void Reset();
-	static void EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f);
+	static void EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec4& colour = glm::vec4(1.0f), const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f, float flags = 0);
 	static void Flush();
 	static void FlushAndReset();
 

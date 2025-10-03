@@ -83,7 +83,7 @@ public:
 
 	static void DrawQuad(const glm::vec3& position, const glm::vec2& scale = { 1.0f, 1.0f });
 	static void DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale = { 1.0f, 1.0f });
-	static void DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale = { 1.0f, 1.0f }, float rotation = 0.0f);
+	static void DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec4& colour = glm::vec4(1.0f), const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f, float flags = 0);
 
 	static void FlushBatch();
 	static void ResetBatch();
@@ -92,7 +92,7 @@ public:
 	static void SetClearColour(const glm::vec4& col);
 
 private:
-	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords);
+	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags);
 
 public:
 

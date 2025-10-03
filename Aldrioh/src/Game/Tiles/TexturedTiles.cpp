@@ -21,5 +21,5 @@ void TexturedTiles::OnUpdate(Timestep ts, const TileMetaData& metadata)
 void TexturedTiles::OnRender(Timestep ts, const TileMetaData& metadata)
 {
 	glm::vec3 renderPos = { metadata.pos.x * 1.0f, metadata.pos.y * 1.0f, RenderDepth::TILE };
-	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, spriteId, { 1, 1 });
+	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, spriteId);
 }

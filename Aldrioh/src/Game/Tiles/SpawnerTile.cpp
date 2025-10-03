@@ -41,6 +41,6 @@ void SpawnerTile::OnUpdate(Timestep ts, const TileMetaData& metadata)
 void SpawnerTile::OnRender(Timestep ts, const TileMetaData& metadata)
 {
 	glm::vec3 renderPos = { metadata.pos.x * 1.0f, metadata.pos.y * 1.0f, RenderDepth::TILE };
-	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, floorSpriteId, { 1, 1 });
-	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, spawnerSpriteId, { 1, 1 });
+	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, floorSpriteId);
+	RenderQueue::EnQueue(RenderLayer::ZERO, renderPos, spawnerSpriteId);
 }

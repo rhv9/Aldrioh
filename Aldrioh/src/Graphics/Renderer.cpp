@@ -23,6 +23,9 @@ struct BatchVertex
 {
 	glm::vec4 pos{ 0 };
 	glm::vec2 texCoord{ 0 };
+	glm::vec4 colour;
+	float textureSampler;
+	float flags;
 };
 
 struct RenderData
@@ -36,6 +39,7 @@ struct RenderData
 	static const uint32_t MAX_DRAWS = 5000;
 	static const uint32_t MAX_BATCH_VERTICES = MAX_DRAWS * 4;
 	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
+	static const uint32_t MAX_TEXTURE = 8;
 
 //	const glm::vec4 BatchQuadVertices[4] =
 //	{
@@ -55,6 +59,9 @@ struct RenderData
 	BatchVertex* batchBasePtr = nullptr;
 	BatchVertex* batchPtr = nullptr;
 	uint32_t drawCount = 0;
+
+	int textureSlots[MAX_TEXTURE];
+	uint32_t ptr = 0;
 
 	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 
@@ -92,6 +99,9 @@ void Renderer::Init()
 	std::vector<BufferElement> batchBufferElements = {
 	{ "aPos", VertexAttrib::Float4, false},
 	{ "aTexCoord", VertexAttrib::Float2, false},
+	{ "aColour", VertexAttrib::Float4, false},
+	{ "aTextureSampler", VertexAttrib::Float, false},
+	{ "aFlags", VertexAttrib::Float, false},
 	};
 	std::shared_ptr<VertexBuffer> batchVertexBuffer = std::make_shared<VertexBuffer>(sizeof(BatchVertex) * RenderData::MAX_BATCH_VERTICES);
 	batchVertexBuffer->SetLayout({ batchBufferElements });
@@ -115,6 +125,16 @@ void Renderer::Init()
 
 	delete[] batchIndices;
 
+	// Texture slots
+	int textureBindings[renderData.MAX_TEXTURE];
+	for (int i = 0; i < renderData.MAX_TEXTURE; ++i)
+	{
+		renderData.textureSlots[i] = 0;
+		textureBindings[i] = i;
+	}
+	renderData.shaderBatchTexture->Use();
+	renderData.shaderBatchTexture->UniformIntArray("uTextureSamplers", &textureBindings[0], renderData.MAX_TEXTURE);
+
 	InitUIRenderer();
 }
 
@@ -127,7 +147,6 @@ void Renderer::StartScene(const Camera& camera)
 	// Batching
 	renderData.shaderBatchTexture->Use();
 	renderData.shaderBatchTexture->UniformMat4("u_ViewProjectionMatrix", camera.GetProjection());
-	renderData.shaderBatchTexture->UniformInt("uTextureSampler", 0);
 
 	//glClearColor(1.00f, 0.49f, 0.04f, 1.00f);
 	glEnable(GL_DEPTH_TEST);
@@ -150,24 +169,42 @@ void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
 
 void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale)
 {
-	DrawQuad(position, subTexture.get(), scale);
+	DrawQuad(position, subTexture.get(), glm::vec4(1.0f), scale);
 }
 
-void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords)
+void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags)
 {
 	ptr->pos = pos;
 	ptr->texCoord = texCoords;
+	ptr->colour = colour;
+	ptr->textureSampler = slot;
+	ptr->flags = flags;
 }
 
-void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale, float rotation)
+void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec4& colour, const glm::vec2& scale, float rotation, float flags)
 {
 	if (renderData.drawCount >= RenderData::MAX_DRAWS)
 		FlushAndReset();
 
-	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position + glm::vec3(scale / 2.0f, 0.0f));
-	
-	transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
+	// Texture slot
+	uint32_t textureSlot = -1;
+	for (int i = 0; i < renderData.ptr; ++i)
+	{
+		if (renderData.textureSlots[i] == subTexture->textureParent->GetTextureId())
+		{
+			textureSlot = i;
+			break;
+		}
+	}
 
+	if (textureSlot == -1)
+	{
+		textureSlot = renderData.ptr;
+		renderData.textureSlots[renderData.ptr++] = subTexture->textureParent->GetTextureId();
+	}
+
+	glm::mat4 transform = glm::translate(glm::mat4(1.0f), position + glm::vec3(scale / 2.0f, 0.0f));
+	transform = glm::rotate(transform, rotation, { 0.0f, 0.0f, 1.0f });
 	transform = glm::scale(transform, { scale, 1.0f });
 
 	const TextureCoords& texCoords = subTexture->textureCoords;
@@ -181,7 +218,7 @@ void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture,
 
 	for (int i = 0; i < 4; ++i)
 	{
-		SetBatchVertexBuffer(renderData.batchPtr, transform * renderData.BatchQuadVertices[i], texCoordsArray[i]);
+		SetBatchVertexBuffer(renderData.batchPtr, transform * renderData.BatchQuadVertices[i], texCoordsArray[i], colour, textureSlot, flags);
 		++renderData.batchPtr;
 	}
 
@@ -217,7 +254,11 @@ void Renderer::FlushBatch()
 	renderData.batchTextureVA->Bind();
 	renderData.batchTextureVA->GetVertexBuffer()->SetData(renderData.batchBasePtr, dataSize);
 
-	Sprites::get(Sprites::fire)->textureParent->Bind(0);
+	for (int slot = 0; slot < renderData.ptr; ++slot)
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTextureUnit(slot, renderData.textureSlots[slot]);
+	}
 
 	glDrawElements(GL_TRIANGLES, renderData.drawCount * 6, GL_UNSIGNED_INT, 0);
 }
@@ -233,6 +274,7 @@ void Renderer::ResetBatch()
 {
 	renderData.batchPtr = renderData.batchBasePtr;
 	renderData.drawCount = 0;
+	renderData.ptr = 0;
 }
 
 void Renderer::SetClearColour(const glm::vec4& col)

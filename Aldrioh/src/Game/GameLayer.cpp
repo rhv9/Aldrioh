@@ -63,7 +63,9 @@ void GameLayer::OnBegin()
 	Entity player = scene->CreateEntity("Player");
 	scene->SetPlayer(player);
 	player.GetComponent<TransformComponent>().position = { 0.0f, 0.0f, 0.4f };
-	player.AddComponent<VisualComponent>(Sprites::player_ship).localTransform = { -0.5f, -0.5f, 0.0f };
+	VisualComponent& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
+	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	vc.colour = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
 	player.AddComponent<EntityTypeComponent>(EntityType::Player);
 	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);

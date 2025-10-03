@@ -35,7 +35,7 @@ void RenderQueue::Reset()
 	rqData.renderCount = 0;
 }
 
-void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec2& scale, float rotation)
+void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec4& colour, const glm::vec2& scale, float rotation, float flags)
 {
 	ASSERT(layer >= 0 && layer < RenderQueue::COUNT_RENDERLAYERS, "Layer does not exist!");
 
@@ -48,6 +48,8 @@ void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId,
 	rqData.layers[layer].ptr->spriteId = spriteId;
 	rqData.layers[layer].ptr->scale = scale;
 	rqData.layers[layer].ptr->rotation = rotation;
+	rqData.layers[layer].ptr->colour = colour;
+	rqData.layers[layer].ptr->flags = flags;
 
 	++rqData.layers[layer].ptr;
 	++rqData.layers[layer].count;
@@ -62,7 +64,7 @@ void RenderQueue::Flush()
 		for (int i = 0; i < rlData.count; ++i)
 		{
 			SpriteRenderObject& renderObj = rlData.basePtr[i];
-			Renderer::DrawQuad(renderObj.pos, Sprites::get(renderObj.spriteId), renderObj.scale, renderObj.rotation);
+			Renderer::DrawQuad(renderObj.pos, Sprites::get(renderObj.spriteId), renderObj.colour, renderObj.scale, renderObj.rotation, renderObj.flags);
 		}
 	}
 }
