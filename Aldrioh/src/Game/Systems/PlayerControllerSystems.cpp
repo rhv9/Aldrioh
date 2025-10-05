@@ -12,17 +12,13 @@
 
 float shootTimer = 0.0f;
 
-void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dest)
+void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 {
-	// Center the direction and origin 
-	glm::vec2 dirOffseted = dest;
-	glm::vec2 originOffseted = origin;
-
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ originOffseted , 0.5f };
+	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
 	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
-	mc.moveVec = glm::normalize(dirOffseted - originOffseted);
+	mc.moveVec = normalizedDir;
 	mc.locked = true;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(mc.moveVec);
@@ -31,6 +27,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dest)
 	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
 	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 }
+
 
 glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
 {
@@ -72,42 +69,26 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 
 		if (pcc.dirLock == DIRLOCK_FREE)
-		{
 			player.GetComponent<VisualComponent>().rotation = Math::angleBetweenVec2(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
-		}
 		else
-		{
 			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
-		}
 
 		if (Input::IsKeyPressed(Input::KEY_F))
 		{
 			if (shootTimer >= 0.08f || shootTimer == 0.0f)
 			{
 				shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-				LOG_TRACE("Shooting!");
+
+
 				glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
-				shoot(player, playerPos, player.getScene()->GetMousePosInScene());
-				shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1) * 360.0f)));
-				shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 + Math::PI) * 360.0f)));
+				const glm::vec2 dir = (pcc.dirLock == DIRLOCK_FREE) ? Math::normalizedDirection(glm::vec2(playerPos), player.getScene()->GetMousePosInScene()) : pcc.dirLock;
+				shoot(player, playerPos, dir);
 			}
 			shootTimer += ts;
 		}
 		else
 			shootTimer = 0.0f;
-
-
-		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
-		{
-			auto& jc = player.GetComponent<JumpComponent>();
-
-			if (jc.z == 0)
-			{
-				//jc.acceleration = 0.05f;
-				jc.velocity = 0.14f;
-			}
-		}
 
 	}
 }

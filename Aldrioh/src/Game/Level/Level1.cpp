@@ -11,6 +11,24 @@
 
 float zoomLevel = 10;
 
+void AddEnemy(Scene& scene)
+{
+	// Create enemy
+	Entity enemy = scene.CreateEntity("Enemy");
+	auto& tc = enemy.GetComponent<TransformComponent>();
+	tc.position = { 0.0f, -zoomLevel / 2.0f + 3, 0.4f };
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
+	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	vc.colour = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+	enemy.AddComponent<MoveComponent>(6.0f);
+	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
+	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	auto& dac = enemy.AddComponent<DumbAIComponent>();
+	dac.startPos = glm::vec2(tc.position);
+	dac.distance = 1;
+}
+
 Level1::Level1(Scene& scene) : Level(scene)
 {
 	// collisionDispatcher
@@ -38,7 +56,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	player.AddComponent<JumpComponent>();
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
-	pcc.dirLock = DIRLOCK_UP;
+	pcc.dirLock = DIRLOCK_RIGHT;
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -50,7 +68,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
-
+	AddEnemy(scene);
 }
 
 Level1::~Level1()

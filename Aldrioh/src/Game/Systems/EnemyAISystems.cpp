@@ -4,6 +4,9 @@
 #include <Scene/Entity.h>
 #include "HeadersUpdateSystems.h"
 
+#include <Core/Platform.h>
+#include <Math/Math.h>
+
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {
 	// DumbAIComponent
@@ -11,11 +14,16 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 	auto& player_mc = scene.GetPlayer()->GetComponent<TransformComponent>();
 	for (entt::entity e : view)
 	{
-		auto [tc, mc] = view.get<TransformComponent, MoveComponent>(e);
+		auto [dac, tc, mc] = view.get<DumbAIComponent, TransformComponent, MoveComponent>(e);
+		float elapsedTime = Platform::GetElapsedTime();
 
-		glm::vec2 diff{ -tc.position.x + player_mc.position.x, -tc.position.y + player_mc.position.y };
-		diff = glm::normalize(diff);
+		if (tc.position.x < dac.startPos.x - dac.distance)
+			dac.move = 1;
 
-		mc.updateMoveVec(diff);
+		if (tc.position.x > dac.startPos.x + dac.distance)
+			dac.move = -1;
+
+		LOG_CORE_INFO("dac move: {}", dac.move);
+		mc.updateMoveVec({dac.move, 0 });
 	}
 }

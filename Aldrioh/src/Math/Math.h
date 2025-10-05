@@ -10,15 +10,18 @@ namespace Math {
 		float linearFloat(float min, float max);
 	}
 
+	float abs(float val);
+
 	float sinRad(float val);
 	float cosRad(float val);
 	float tan2Rad(float y, float x);
+	float angle(const glm::vec2& pos);
 
 	float degreesToRad(float val);
 
 	float angleBetween(const glm::vec2& p1, const glm::vec2& p2);
 	float angleBetweenVec2(const glm::vec3& p1, const glm::vec3& p2);
+	glm::vec2 normalizedDirection(const glm::vec2& origin, const glm::vec2& dest);
 
-	float angle(const glm::vec2& pos);
-
+	float triangleWave(float t);
 }

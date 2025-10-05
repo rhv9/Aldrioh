@@ -159,9 +159,10 @@ struct TimeLifeComponent
 
 struct DumbAIComponent
 {
-	float val = 0.0f;
+	glm::vec2 startPos{ 0 };
+	float distance = 1;
+	float move = 1;
 	DumbAIComponent() = default;
-	DumbAIComponent(float val) : val(val) {}
 	DumbAIComponent(const DumbAIComponent&) = default;
 };
 
