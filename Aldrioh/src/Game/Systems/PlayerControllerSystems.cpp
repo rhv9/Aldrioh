@@ -3,6 +3,7 @@
 #include "HeadersUpdateSystems.h"
 #include <Input/Input.h>
 #include <Game/SpriteCollection.h>
+#include <Game/Components/ControllerComponents.h>
 
 #include <Components/Collision.h>
 #include <Game/Entity/EntityType.h>
@@ -23,7 +24,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& dest)
 	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
 	mc.moveVec = glm::normalize(dirOffseted - originOffseted);
 	mc.locked = true;
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{-0.5f, -0.5f, 0.0f});
+	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(mc.moveVec);
 	vc.colour.a = 0.4f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
@@ -43,10 +44,13 @@ glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
 
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
-	Entity& player = *scene.GetPlayer();
+	auto view = scene.getRegistry().view<PlayerControllerComponent>();
 
-	// Keyboard movement of player
+	for (entt::entity e : view)
 	{
+		Entity player = scene.WrapEntityHandle(e);
+
+		// Keyboard movement of player
 		auto& playerTransform = player.GetComponent<TransformComponent>();
 		auto& playerMove = player.GetComponent<MoveComponent>();
 
@@ -62,37 +66,48 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			move.x = 1.0f;
 
 		playerMove.updateMoveVec(move);
-		player.GetComponent<VisualComponent>().rotation = Math::angleBetweenVec2(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
-	}
 
-	if (Input::IsKeyPressed(Input::KEY_F))
-	{
-		if (shootTimer >= 0.08f || shootTimer == 0.0f)
+
+
+		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
+
+		if (pcc.dirLock == DIRLOCK_FREE)
 		{
-			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-			LOG_TRACE("Shooting!");
-			glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
-
-			shoot(player, playerPos, player.getScene()->GetMousePosInScene());
-			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 ) * 360.0f)));
-			shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 + Math::PI) * 360.0f)));
+			player.GetComponent<VisualComponent>().rotation = Math::angleBetweenVec2(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
 		}
-		shootTimer += ts;
-	}
-	else
-		shootTimer = 0.0f;
-
-
-	if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
-	{
-		auto& jc = player.GetComponent<JumpComponent>();
-
-		if (jc.z == 0)
+		else
 		{
-			//jc.acceleration = 0.05f;
-			jc.velocity = 0.14f;
+			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 		}
+
+		if (Input::IsKeyPressed(Input::KEY_F))
+		{
+			if (shootTimer >= 0.08f || shootTimer == 0.0f)
+			{
+				shootTimer = std::max(shootTimer - 1.0f, 0.0f);
+				LOG_TRACE("Shooting!");
+				glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
+
+				shoot(player, playerPos, player.getScene()->GetMousePosInScene());
+				shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1) * 360.0f)));
+				shoot(player, playerPos, RotatePosition(playerPos, player.getScene()->GetMousePosInScene(), Math::degreesToRad(Math::sinRad(Platform::GetElapsedTime() * 1 + Math::PI) * 360.0f)));
+			}
+			shootTimer += ts;
+		}
+		else
+			shootTimer = 0.0f;
+
+
+		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
+		{
+			auto& jc = player.GetComponent<JumpComponent>();
+
+			if (jc.z == 0)
+			{
+				//jc.acceleration = 0.05f;
+				jc.velocity = 0.14f;
+			}
+		}
+
 	}
-
-
 }

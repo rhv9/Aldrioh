@@ -169,7 +169,7 @@ void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
 
 void Renderer::DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale)
 {
-	DrawQuad(position, subTexture.get(), glm::vec4(1.0f), scale);
+	DrawQuad(position, subTexture.get(), scale);
 }
 
 void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags)
@@ -181,7 +181,7 @@ void inline Renderer::SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& po
 	ptr->flags = flags;
 }
 
-void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec4& colour, const glm::vec2& scale, float rotation, float flags)
+void Renderer::DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale, const glm::vec4& colour, float rotation, float flags)
 {
 	if (renderData.drawCount >= RenderData::MAX_DRAWS)
 		FlushAndReset();

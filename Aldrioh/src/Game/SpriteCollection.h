@@ -29,7 +29,7 @@ namespace Sprites {
 
 	SPRITES_EXTERN int player_ship;
 
-	SPRITES_EXTERN int redBox, greenBox;
+	SPRITES_EXTERN int redBox, greenBox, box;
 	
 	SPRITES_EXTERN std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
 	SPRITES_EXTERN std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;

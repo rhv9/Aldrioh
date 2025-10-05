@@ -16,7 +16,6 @@ public:
 
 	void CreateBoss(const glm::vec2& pos);
 
-	Scene& scene;
 
 	Tiles** tiles;
 	int width, height;

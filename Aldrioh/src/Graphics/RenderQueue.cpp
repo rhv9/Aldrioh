@@ -64,7 +64,7 @@ void RenderQueue::Flush()
 		for (int i = 0; i < rlData.count; ++i)
 		{
 			SpriteRenderObject& renderObj = rlData.basePtr[i];
-			Renderer::DrawQuad(renderObj.pos, Sprites::get(renderObj.spriteId), renderObj.colour, renderObj.scale, renderObj.rotation, renderObj.flags);
+			Renderer::DrawQuad(renderObj.pos, Sprites::get(renderObj.spriteId), renderObj.scale, renderObj.colour, renderObj.rotation, renderObj.flags);
 		}
 	}
 }

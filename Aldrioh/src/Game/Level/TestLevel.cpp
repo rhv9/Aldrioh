@@ -29,7 +29,7 @@ class ObjectiveRegion : public Region
 
 };
 
-TestLevel::TestLevel(Scene& scene) : scene(scene)
+TestLevel::TestLevel(Scene& scene) : Level(scene)
 {
 	width = 40;
 	height = 200;
