@@ -22,7 +22,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	mc.locked = true;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(mc.moveVec);
-	vc.colour.a = 0.4f;
+	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
 	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
@@ -90,5 +90,9 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		else
 			shootTimer = 0.0f;
 
+		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
+		{
+
+		}
 	}
 }

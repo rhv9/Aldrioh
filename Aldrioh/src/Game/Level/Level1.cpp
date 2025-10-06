@@ -9,24 +9,38 @@
 
 #include <Graphics/Renderer.h>
 
+#include <Math/Math.h>
+
 float zoomLevel = 10;
 
-void AddEnemy(Scene& scene)
+void AddEnemy(Scene& scene, Entity enemyManager, const glm::vec2& spawnPos)
 {
 	// Create enemy
 	Entity enemy = scene.CreateEntity("Enemy");
 	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.position = { 0.0f, -zoomLevel / 2.0f + 3, 0.4f };
+	tc.position = glm::vec3{ spawnPos, 0.4f };
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
-	vc.colour = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
-	enemy.AddComponent<MoveComponent>(6.0f);
+	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	vc.rotation = Math::PI;
+	enemy.AddComponent<MoveComponent>(1);
 	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	auto& dac = enemy.AddComponent<DumbAIComponent>();
-	dac.startPos = glm::vec2(tc.position);
-	dac.distance = 1;
+	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
+	dac.enemyManager = enemyManager;
+}
+
+Entity AddEnemyManager(Scene& scene)
+{
+	Entity manager = scene.CreateEntity("Entity Manager");
+	auto& emc = manager.AddComponent<EnemyManagerComponent>();
+	emc.move = 1;
+	emc.distance = 3;
+	emc.speed = 30;
+	manager.AddComponent<MoveComponent>(1);
+
+	return manager;
 }
 
 Level1::Level1(Scene& scene) : Level(scene)
@@ -49,14 +63,14 @@ Level1::Level1(Scene& scene) : Level(scene)
 	player.GetComponent<TransformComponent>().position = { 0.0f, -zoomLevel / 2.0f, 0.4f };
 	VisualComponent& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
-	vc.colour = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
 	player.AddComponent<EntityTypeComponent>(EntityType::Player);
 	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	player.AddComponent<JumpComponent>();
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
-	pcc.dirLock = DIRLOCK_RIGHT;
+	pcc.dirLock = DIRLOCK_UP;
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -68,7 +82,14 @@ Level1::Level1(Scene& scene) : Level(scene)
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
-	AddEnemy(scene);
+	Entity enemyManager = AddEnemyManager(scene);
+	for (float y = 1; y < 8; y+=1.3f)
+	{
+		for (float x = -8; x < 8; x+= 2.1f)
+		{
+			AddEnemy(scene, enemyManager, { x, y });
+		}
+	}
 }
 
 Level1::~Level1()

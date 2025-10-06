@@ -9,21 +9,45 @@
 
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {
+	{
+		auto view = scene.getRegistry().view<EnemyManagerComponent, MoveComponent>();
+
+		for (entt::entity e : view)
+		{
+			float elapsedTime = Platform::GetElapsedTime();
+
+			auto [emc, mc] = view.get<EnemyManagerComponent, MoveComponent>(e);
+			auto& tc = scene.getRegistry().get<TransformComponent>(e);
+			if (emc.startTime == -1)
+			{
+				emc.startTime = elapsedTime;
+				emc.startX = tc.position.x;
+			}
+			
+			if (tc.position.x > emc.startX + emc.distance)
+				emc.move = -1;
+			else if (tc.position.x < emc.startX - emc.distance)
+				emc.move = 1;
+
+
+			mc.updateMoveVec({ emc.move * emc.speed, 0 });
+		}
+	}
+
+
 	// DumbAIComponent
-	auto view = scene.getRegistry().view<DumbAIComponent, TransformComponent, MoveComponent>();
+	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveComponent>();
 	auto& player_mc = scene.GetPlayer()->GetComponent<TransformComponent>();
 	for (entt::entity e : view)
 	{
-		auto [dac, tc, mc] = view.get<DumbAIComponent, TransformComponent, MoveComponent>(e);
-		float elapsedTime = Platform::GetElapsedTime();
+		auto [dac, tc, mc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveComponent>(e);
 
-		if (tc.position.x < dac.startPos.x - dac.distance)
-			dac.move = 1;
-
-		if (tc.position.x > dac.startPos.x + dac.distance)
-			dac.move = -1;
-
-		LOG_CORE_INFO("dac move: {}", dac.move);
-		mc.updateMoveVec({dac.move, 0 });
+		if (dac.enemyManager.Valid())
+		{
+			auto& emc = dac.enemyManager.GetComponent<EnemyManagerComponent>();
+			mc.updateMoveVec({emc.move * emc.speed, -0.3f });
+		}
 	}
+
+
 }

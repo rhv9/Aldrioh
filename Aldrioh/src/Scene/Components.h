@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/Entity/EntityType.h>
 #include <Scene/CameraController.h>
+#include <Scene/Entity.h>
 
 struct EntityTypeComponent
 {
@@ -157,13 +158,29 @@ struct TimeLifeComponent
 	TimeLifeComponent(const float lifeSpan) : timeRemaining(lifeSpan) {}
 };
 
-struct DumbAIComponent
+
+struct EnemyManagerComponent
 {
-	glm::vec2 startPos{ 0 };
+	float move = 1;
+	float speed = 1;
+	float startTime = -1;
+	float startX = 0;
+	float distance = 1;
+	float elapsedTime = 0;
+	float alreadyMoved = 0;
+
+	EnemyManagerComponent() = default;
+	EnemyManagerComponent(const EnemyManagerComponent&) = default;
+};
+
+struct GlobalDumbAIComponent
+{
+	Entity enemyManager;
 	float distance = 1;
 	float move = 1;
-	DumbAIComponent() = default;
-	DumbAIComponent(const DumbAIComponent&) = default;
+
+	GlobalDumbAIComponent() = default;
+	GlobalDumbAIComponent(const GlobalDumbAIComponent&) = default;
 };
 
 struct JumpComponent

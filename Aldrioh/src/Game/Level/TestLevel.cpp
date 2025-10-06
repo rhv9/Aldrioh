@@ -126,6 +126,6 @@ void TestLevel::CreateBoss(const glm::vec2& pos)
 	boss.AddComponent<EntityTypeComponent>(EntityType::Enemy);
 	boss.AddComponent<AnimatedMovementComponent>(Sprites::animBossUp, Sprites::animBossDown, Sprites::animBossLeft, Sprites::animBossRight, 0.1f);
 	boss.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	boss.AddComponent<DumbAIComponent>();
+	boss.AddComponent<GlobalDumbAIComponent>();
 }
 
