@@ -13,6 +13,15 @@ public:
 
 	virtual void OnRemove() = 0;
 
+	template<typename T>
+	void TransitionTo()
+	{
+
+	}
+
+	virtual void OnTransitionOut() {};
+	virtual void OnTransitionIn() {};
+
 private:
 
 };

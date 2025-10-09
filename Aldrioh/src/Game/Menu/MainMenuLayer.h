@@ -2,7 +2,9 @@
 #include <Core/Layer.h>
 #include <Scene/Scene.h>
 
-class MainMenuLayer : Layer
+#include <UI/UIManager.h>
+
+class MainMenuLayer : public Layer
 {
 public:
 	MainMenuLayer();
@@ -16,4 +18,5 @@ public:
 private:
 	std::shared_ptr<Scene> scene;
 
+	UIManager* uiManager;
 };

@@ -3,6 +3,8 @@
 
 #include <Events/Events.h>
 
+// TODO: UIManager needs Renderer::SetUIPixelHeight set first for it to set effect.
+
 class UIManager
 {
 public:

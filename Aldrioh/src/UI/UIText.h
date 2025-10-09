@@ -14,7 +14,7 @@ public:
 	void SetText(const std::string& text);
 	const std::string& GetText() const { return text; }
 
-	const FontStyle& GetFontStyle() const { return style; }
+	FontStyle& GetFontStyle() { return style; }
 	void SetFontStyle(const FontStyle& newStyle) { this->style = style; }
 
 	void SetFontSize(float fontSize);
