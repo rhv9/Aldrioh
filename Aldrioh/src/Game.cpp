@@ -22,6 +22,7 @@
 
 #include "Game/GameLayer.h"
 #include "Game/LevelEditor/LevelEditorLayer.h"
+#include "Game/Menu/MainMenuLayer.h"
 
 #include <Game/SpriteCollection.h>
 #include <UI/Font.h>

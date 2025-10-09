@@ -94,10 +94,12 @@ Level1::Level1(Scene& scene) : Level(scene)
 
 Level1::~Level1()
 {
+
 }
 
 void Level1::OnUpdate(Timestep ts)
 {
+
 }
 
 void Level1::OnRender(Timestep ts)
