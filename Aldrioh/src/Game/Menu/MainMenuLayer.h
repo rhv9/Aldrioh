@@ -15,8 +15,15 @@ public:
 
 	virtual void OnRemove() override;
 
+	virtual void OnTransitionIn() override;
+	virtual void OnTransitionOut() override;
+
+	void OnKeyPressed(KeyPressedEventArg& e);
+
 private:
 	std::shared_ptr<Scene> scene;
 
 	UIManager* uiManager;
+
+	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
 };

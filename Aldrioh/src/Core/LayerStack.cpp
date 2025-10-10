@@ -30,18 +30,20 @@ void LayerStack::PopLayer(Layer* layer)
 	}
 }
 
-void LayerStack::SwapLayer(Layer* firstLayer, Layer* secondLayer)
+void LayerStack::SwapLayers(Layer* first, Layer* second)
 {
-	std::vector<Layer*>::iterator it = std::find(layerVector.begin(), layerVector.end(), firstLayer);
+	for (int i = 0; i < layerVector.size(); ++i)
+	{
+		if (layerVector[i] == first)
+		{
+			first->OnTransitionOut();
+			layerVector[i] = second;
+			second->OnTransitionIn();
+			return;
+		}
 
-	if (it != layerVector.end())
-	{
-		firstLayer->OnTransitionOut();
-		*it = secondLayer;
-		secondLayer->OnTransitionIn();
 	}
-	else
-	{
-		LOG_CORE_CRITICAL("Failed transition, not in layerstack");
-	}
+	LOG_CORE_CRITICAL("Layer does not exist in layerstack!");
+
 }
+

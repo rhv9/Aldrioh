@@ -16,6 +16,8 @@
 #include <Game.h>
 #include <Scene/Entity.h>
 
+#include <Game/GlobalLayers.h>
+
 MainMenuLayer::MainMenuLayer()
 {
 }
@@ -24,6 +26,8 @@ void MainMenuLayer::OnBegin()
 {
 	scene = std::make_shared<Scene>();
 	Renderer::SetClearColour(Colour::BLACK);
+
+	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKeyPressed);
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -51,8 +55,8 @@ void MainMenuLayer::OnBegin()
 	startButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
 	startButton->SetAnchorPoint(AnchorPoint::CENTER);
 	startButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
-	startButton->SetOnClickCallback([](UIButton* button) {
-
+	startButton->SetOnClickCallback([this](UIButton* button) {
+		this->TransitionTo(GlobalLayers::game);
 		});
 	uiManager->AddUIObject(startButton);
 	
@@ -63,6 +67,7 @@ void MainMenuLayer::OnBegin()
 	exitButton->SetAnchorPoint(AnchorPoint::CENTER);
 	exitButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	exitButton->SetOnClickCallback([](UIButton* button) {
+		LOG_CORE_INFO("Shutdown");
 		Game::Instance().Shutdown();
 		});
 	uiManager->AddUIObject(exitButton);
@@ -88,4 +93,27 @@ void MainMenuLayer::OnImGuiRender(Timestep delta)
 
 void MainMenuLayer::OnRemove()
 {
+	delete uiManager;
+}
+
+void MainMenuLayer::OnKeyPressed(KeyPressedEventArg& e)
+{
+	if (e.Key == Input::KEY_ESCAPE)
+	{
+		LOG_CORE_INFO("Shutdown");
+		Game::Instance().Shutdown();
+	}
+}
+
+void MainMenuLayer::OnTransitionIn()
+{
+	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKeyPressed);
+	uiManager->AttachEventListeners();
+}
+
+void MainMenuLayer::OnTransitionOut()
+{
+	LOG_CORE_INFO("Detaching!");
+	callbackKeyPressedID.~EventCallbackID();
+	uiManager->DetachEventListeners();
 }

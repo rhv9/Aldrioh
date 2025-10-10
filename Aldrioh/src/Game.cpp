@@ -20,9 +20,7 @@
 #include "Graphics/RenderQueue.h"
 #include <Graphics/ShaderManager.h>
 
-#include "Game/GameLayer.h"
-#include "Game/LevelEditor/LevelEditorLayer.h"
-#include "Game/Menu/MainMenuLayer.h"
+#include <Core/LayerInitialiser.h>
 
 #include <Game/SpriteCollection.h>
 #include <UI/Font.h>
@@ -46,11 +44,6 @@ void Game::Init()
     //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
     window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
 
-    callbackShutdownID = window->KeyPressedEventHandler.RegisterCallback([](KeyPressedEventArg& arg)
-        {
-            if (arg.Key == Input::KEY_ESCAPE)
-                Game::Instance().Shutdown();
-        });
     callbackWindowCloseID = window->WindowCloseEventHandler.RegisterCallback(std::bind(&Game::OnWindowClose, this, std::placeholders::_1));
 
     ShaderManager::Get().LoadShaders();
@@ -63,7 +56,7 @@ void Game::Init()
     imGuiLayer = new ImGuiLayer();
     layerStack.PushLayer(imGuiLayer);
 #endif
-    layerStack.PushLayer(new MainMenuLayer());
+    layerStack.PushLayer(LayerInitialiser::PushFirstLayer());
 
     running = true;
 }
@@ -71,10 +64,12 @@ void Game::Init()
 void Game::Start()
 {
     for (Layer* layer : layerStack)
-    {
         layer->OnBegin();
-    }
 
+    std::vector<Layer*> otherLayers = LayerInitialiser::OtherLayers();
+    for (Layer* layer : otherLayers)
+        layer->OnBegin();
+    
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop
     while (running)

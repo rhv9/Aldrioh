@@ -19,6 +19,9 @@ public:
 	const glm::vec2& GetUIArea() { return uiArea; }
 
 	const glm::vec2 GetMousePos() const;
+
+	void AttachEventListeners();
+	void DetachEventListeners();
 private:
 	void OnWindowResize(WindowResizeEventArg& e);
 	void OnMouseMove(MouseMoveEventArg& e);

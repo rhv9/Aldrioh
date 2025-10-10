@@ -10,18 +10,7 @@ public:
 	void PushLayer(Layer* layer);
 	void PopLayer(Layer* layer);
 
-	template<typename T, typename U>
-	void SwapLayer()
-	{
-		for (Layer* layer : layerVector)
-		{
-			if (layer->ID == T::ID)
-			{
-
-			}
-		}
-	}
-
+	void SwapLayers(Layer* first, Layer* second);
 
 	std::vector<Layer*>::iterator begin() { return layerVector.begin(); }
 	std::vector<Layer*>::iterator end() { return layerVector.end(); }

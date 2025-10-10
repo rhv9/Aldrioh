@@ -2,6 +2,9 @@
 #include <Core/Layer.h>
 #include <Scene/Scene.h>
 
+#include <Events/EventHandler.h>
+#include <UI/UIManager.h>
+
 class Level;
 
 class GameLayer : public Layer
@@ -15,9 +18,12 @@ public:
 
 	virtual void OnRemove();
 
-public:
-	static constexpr int ID = 0;
+	void OnKeyPressed(KeyPressedEventArg& e);
+	virtual void OnTransitionIn() override;
+	virtual void OnTransitionOut() override;
 
 private:
 	std::shared_ptr<Scene> scene;
+
+	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
 };

@@ -15,10 +15,6 @@ public:
 
 	virtual void OnRemove();
 
-
-public:
-	static constexpr int ID = 1;
-
 private:
 	std::shared_ptr<Scene> scene;
 };

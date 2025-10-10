@@ -4,7 +4,7 @@
 
 class UIButton : public UIObject
 {
-	using UIButtonCallback = void(*)(UIButton* button);
+	using UIButtonCallback = std::function<void(UIButton* button)>;
 
 public:
 	UIButton(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size);

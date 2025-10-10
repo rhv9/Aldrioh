@@ -38,6 +38,8 @@
 
 #include <ImGui/ImGuiWindows.h>
 
+#include <Game/GlobalLayers.h>
+
 GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
@@ -125,4 +127,23 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 void GameLayer::OnRemove()
 {
+}
+
+void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
+{
+	if (e.Key == Input::KEY_ESCAPE)
+	{
+		LOG_INFO("Switching to main menu");
+		TransitionTo(GlobalLayers::mainMenu);
+	}
+}
+
+void GameLayer::OnTransitionIn()
+{
+	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
+}
+
+void GameLayer::OnTransitionOut()
+{
+	callbackKeyPressedID.~EventCallbackID();
 }

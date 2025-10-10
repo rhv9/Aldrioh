@@ -58,7 +58,6 @@ private:
 	LayerStack layerStack;
 
 	EventCallbackID<WindowCloseEventArg> callbackWindowCloseID;
-	EventCallbackID<KeyPressedEventArg> callbackShutdownID;
 
 	friend Statistics::EngineStats;
 };

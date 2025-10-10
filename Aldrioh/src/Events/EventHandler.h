@@ -32,7 +32,7 @@ public:
 	EventCallbackID& operator=(EventCallbackID&& other) noexcept
 	{
 		this->id = other.id;
-		this->eventHandler = eventHandler;
+		this->eventHandler = other.eventHandler;
 		other.eventHandler = nullptr;
 		return *this;
 	}
