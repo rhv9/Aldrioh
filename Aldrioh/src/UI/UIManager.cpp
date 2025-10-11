@@ -8,9 +8,7 @@
 
 UIManager::UIManager()
 {
-	AttachEventListeners();
-	uiArea = Renderer::UIGetWindowSize();
-	windowSizeCached = Game::Instance().GetWindow()->GetSize();
+	PollAndUpdateWindowSize();
 }
 
 UIManager::~UIManager()
@@ -59,11 +57,7 @@ const glm::vec2 UIManager::GetMousePos() const
 
 void UIManager::OnWindowResize(WindowResizeEventArg& e)
 {
-	uiArea = Renderer::UIGetWindowSize();
-	windowSizeCached = Game::Instance().GetWindow()->GetSize();
-
-	for (UIObject* obj : uiObjects)
-		obj->RecalculateRenderPos();
+	PollAndUpdateWindowSize();
 }
 
 void UIManager::OnMouseMove(MouseMoveEventArg& e)
@@ -101,6 +95,8 @@ void UIManager::AttachEventListeners()
 	callbackWindowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnWindowResize);
 	callbackMouseMoveID = Game::Instance().GetWindow()->MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseMove);
 	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(UIManager::OnMouseButton);
+
+	PollAndUpdateWindowSize();
 }
 
 void UIManager::DetachEventListeners()
@@ -108,6 +104,15 @@ void UIManager::DetachEventListeners()
 	callbackWindowResizeID.~EventCallbackID();
 	callbackMouseMoveID.~EventCallbackID();
 	callbackMouseButtonID.~EventCallbackID();
+}
+
+void UIManager::PollAndUpdateWindowSize()
+{
+	uiArea = Renderer::UIGetWindowSize();
+	windowSizeCached = Game::Instance().GetWindow()->GetSize();
+
+	for (UIObject* obj : uiObjects)
+		obj->RecalculateRenderPos();
 }
 
 

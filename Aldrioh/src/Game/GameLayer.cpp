@@ -77,6 +77,10 @@ void GameLayer::OnBegin()
 void GameLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
+}
+
+void GameLayer::OnRender(Timestep delta)
+{
 	scene->OnRender(delta);
 }
 
@@ -133,13 +137,17 @@ void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
 {
 	if (e.Key == Input::KEY_ESCAPE)
 	{
-		LOG_INFO("Switching to main menu");
-		TransitionTo(GlobalLayers::mainMenu);
+		LOG_INFO("Pushing pause menu layer");
+		Game::Instance().GetLayerStack().PushLayer(GlobalLayers::pauseMenu);
+		SetShouldUpdate(false);
+		OnTransitionOut();
 	}
 }
 
 void GameLayer::OnTransitionIn()
 {
+	SetShouldUpdate(true);
+	SetShouldRender(true);
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
 }
 

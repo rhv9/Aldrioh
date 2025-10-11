@@ -158,11 +158,14 @@ static glm::vec2 pos{ 0 }, size{ 900, 100 };
 void LevelEditorLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
-	scene->OnRender(delta);
+	uiManager->OnUpdate(delta);
+}
 
+void LevelEditorLayer::OnRender(Timestep delta)
+{
+	scene->OnRender(delta);
 	Renderer::StartUIScene();
 
-	uiManager->OnUpdate(delta);
 	uiManager->OnRender(delta);
 
 	Renderer::UIDrawTexture(Sprites::get(Sprites::fire), { 0.0f, 0.0f }, { 30.0f, 30.0f }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0);

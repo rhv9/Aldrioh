@@ -4,10 +4,10 @@
 
 #include <UI/UIManager.h>
 
-class MainMenuLayer : public Layer
+class PauseMenuLayer : public Layer
 {
 public:
-	MainMenuLayer();
+	PauseMenuLayer();
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
@@ -22,6 +22,8 @@ public:
 	void OnKeyPressed(KeyPressedEventArg& e);
 
 private:
+	void ExitPauseMenuToGame();
+
 	std::shared_ptr<Scene> scene;
 
 	UIManager* uiManager = nullptr;

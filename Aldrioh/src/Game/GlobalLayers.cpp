@@ -13,6 +13,7 @@ std::vector<Layer*> LayerInitialiser::OtherLayers()
 {
 	//GlobalLayers::levelEditor = new LevelEditorLayer();
 	GlobalLayers::game = new GameLayer();
+	GlobalLayers::pauseMenu = new PauseMenuLayer();
 
-	return { GlobalLayers::game };
+	return { GlobalLayers::game, GlobalLayers::pauseMenu};
 }

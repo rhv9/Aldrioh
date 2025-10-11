@@ -29,5 +29,7 @@ namespace Statistics {
 		Timestep delta;
 		int fpsCounter = 0;
 		int fps = 0;
+
+		int layerCount = 0;
 	};
 }

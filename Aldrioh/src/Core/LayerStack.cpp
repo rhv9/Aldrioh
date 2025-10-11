@@ -17,6 +17,7 @@ LayerStack::~LayerStack()
 void LayerStack::PushLayer(Layer* layer)
 {
 	layerVector.push_back(layer);
+	layer->OnTransitionIn();
 }
 
 void LayerStack::PopLayer(Layer* layer)
@@ -25,7 +26,7 @@ void LayerStack::PopLayer(Layer* layer)
 
 	if (it != layerVector.end())
 	{
-		layer->OnRemove();
+		layer->OnTransitionOut();
 		layerVector.erase(it);
 	}
 }

@@ -27,6 +27,6 @@ void Statistics::RendererStats::Reset()
 const Statistics::EngineStats Statistics::EngineStats::GetStats()
 {
 	auto& gameStats = Game::Instance().gameStats;
-	return EngineStats(Game::Instance().delta, gameStats.fpsCounter, gameStats.fps);
+	return EngineStats(Game::Instance().delta, gameStats.fpsCounter, gameStats.fps, Game::Instance().GetLayerStack().layerVector.size());
 }
 

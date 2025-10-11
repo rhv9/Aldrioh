@@ -1,6 +1,10 @@
 #pragma once
 #include "Layer.h"
 
+namespace Statistics {
+	struct EngineStats;
+}
+
 class LayerStack
 {
 public:
@@ -17,4 +21,6 @@ public:
 
 private:
 	std::vector<Layer*> layerVector;
+
+	friend Statistics::EngineStats;
 };

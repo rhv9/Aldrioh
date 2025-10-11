@@ -22,10 +22,12 @@ public:
 
 	void AttachEventListeners();
 	void DetachEventListeners();
-private:
 	void OnWindowResize(WindowResizeEventArg& e);
 	void OnMouseMove(MouseMoveEventArg& e);
 	void OnMouseButton(MouseButtonEventArg& e);
+
+private:
+	void PollAndUpdateWindowSize();
 
 	std::vector<UIObject*> uiObjects;
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };

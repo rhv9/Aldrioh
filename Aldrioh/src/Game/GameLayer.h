@@ -13,7 +13,8 @@ public:
 	GameLayer();
 
 	virtual void OnBegin();
-	virtual void OnUpdate(Timestep delta);
+	virtual void OnUpdate(Timestep delta) override;
+	virtual void OnRender(Timestep delta) override;
 	virtual void OnImGuiRender(Timestep delta) override;
 
 	virtual void OnRemove();

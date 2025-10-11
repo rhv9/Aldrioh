@@ -93,10 +93,6 @@ void ImGuiLayer::OnBegin()
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 }
 
-void ImGuiLayer::OnUpdate(Timestep delta)
-{
-}
-
 void ImGuiLayer::OnRemove()
 {
     ImGui_ImplOpenGL3_Shutdown();

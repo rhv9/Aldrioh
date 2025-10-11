@@ -116,7 +116,14 @@ bool Game::Iterate()
 
     for (Layer* layer : layerStack)
     {
-        layer->OnUpdate(delta);
+        if (layer->ShouldUpdate())
+            layer->OnUpdate(delta);
+    }
+
+    for (Layer* layer : layerStack)
+    {
+        if (layer->ShouldRender())
+            layer->OnRender(delta);
     }
 
 #ifdef DISPLAY_IMGUI_DEBUG

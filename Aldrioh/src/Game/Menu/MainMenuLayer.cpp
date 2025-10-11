@@ -27,8 +27,6 @@ void MainMenuLayer::OnBegin()
 	scene = std::make_shared<Scene>();
 	Renderer::SetClearColour(Colour::BLACK);
 
-	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKeyPressed);
-
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
 	CameraController* cameraController = new CameraController(aspectRatio, 1.0f);
@@ -41,6 +39,7 @@ void MainMenuLayer::OnBegin()
 
 	Renderer::SetUIPixelHeight(100);
 	uiManager = new UIManager();
+	uiManager->AttachEventListeners();
 
 	UIText* title = new UIText("Title", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);
@@ -56,6 +55,7 @@ void MainMenuLayer::OnBegin()
 	startButton->SetAnchorPoint(AnchorPoint::CENTER);
 	startButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	startButton->SetOnClickCallback([this](UIButton* button) {
+		LOG_INFO("MainMenu - switching to game layer");
 		this->TransitionTo(GlobalLayers::game);
 		});
 	uiManager->AddUIObject(startButton);
@@ -67,7 +67,7 @@ void MainMenuLayer::OnBegin()
 	exitButton->SetAnchorPoint(AnchorPoint::CENTER);
 	exitButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	exitButton->SetOnClickCallback([](UIButton* button) {
-		LOG_CORE_INFO("Shutdown");
+		LOG_CORE_INFO("MainMenu - Shutdown");
 		Game::Instance().Shutdown();
 		});
 	uiManager->AddUIObject(exitButton);
@@ -76,13 +76,15 @@ void MainMenuLayer::OnBegin()
 void MainMenuLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
+	uiManager->OnUpdate(delta);
+}
+
+void MainMenuLayer::OnRender(Timestep delta)
+{
 	scene->OnRender(delta);
 	
 	Renderer::StartUIScene();
-
-	uiManager->OnUpdate(delta);
 	uiManager->OnRender(delta);
-
 	Renderer::EndUIScene();
 }
 
@@ -108,7 +110,8 @@ void MainMenuLayer::OnKeyPressed(KeyPressedEventArg& e)
 void MainMenuLayer::OnTransitionIn()
 {
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKeyPressed);
-	uiManager->AttachEventListeners();
+	if (uiManager != nullptr)
+		uiManager->AttachEventListeners();
 }
 
 void MainMenuLayer::OnTransitionOut()

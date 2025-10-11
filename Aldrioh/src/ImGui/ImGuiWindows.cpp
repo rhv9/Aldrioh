@@ -16,6 +16,7 @@ void GameImGuiWindows::ShowGameInfo()
 		auto engineStats = Statistics::EngineStats::GetStats();
 		ImGui::Text("frame time: %.2f (%dfps)", engineStats.delta.GetMilliSeconds(), engineStats.fps);
 		ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
+		ImGui::Text("Layer Count: %d", engineStats.layerCount);
 	}
 }
 

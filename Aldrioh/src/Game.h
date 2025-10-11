@@ -53,8 +53,8 @@ private:
 	float delta = 0.0f;
 
 	std::unique_ptr<Window> window;
-	ImGuiLayer* imGuiLayer;
 
+	ImGuiLayer* imGuiLayer;
 	LayerStack layerStack;
 
 	EventCallbackID<WindowCloseEventArg> callbackWindowCloseID;
