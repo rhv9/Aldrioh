@@ -35,6 +35,13 @@ Entity Scene::CreateEntity(const std::string& name)
 	return e;
 }
 
+Entity Scene::CreateEntityNoTransform(const std::string& name)
+{
+	Entity e = { registry.create(), this };
+	e.AddComponent<NameComponent>(name);
+	return e;
+}
+
 void Scene::DestroyEntity(Entity& e)
 {
 	registry.destroy(e.entityHandle);

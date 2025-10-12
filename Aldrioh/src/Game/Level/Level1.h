@@ -1,6 +1,7 @@
 #pragma once
 #include "Level.h"
 
+
 class Level1 : public Level
 {
 public:
@@ -10,4 +11,5 @@ public:
 	void virtual OnUpdate(Timestep ts) override;
 	void virtual OnRender(Timestep ts) override;
 
+	void UpdateScore(float newScore);
 };

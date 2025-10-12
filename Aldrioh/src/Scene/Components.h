@@ -47,8 +47,17 @@ struct DestroyEntityComponent
 	float timeRemaining = 0.0f;
 
 	DestroyEntityComponent() = default;
-	DestroyEntityComponent(float timer) : timeRemaining(timer) {}
+	DestroyEntityComponent(float timer) :  timeRemaining(timer) {}
 	DestroyEntityComponent(DestroyEntityComponent&) = default;
+};
+
+struct OnDestroyComponent
+{
+	std::function<void(Entity)> onDeathFunc;
+
+	OnDestroyComponent() = default;
+	OnDestroyComponent(std::function<void(Entity)> onDeathFunc) : onDeathFunc(onDeathFunc) {}
+	OnDestroyComponent(OnDestroyComponent&) = default;
 };
 
 enum MoveDir
@@ -156,6 +165,16 @@ struct TimeLifeComponent
 	TimeLifeComponent() = default;
 	TimeLifeComponent(const TimeLifeComponent&) = default;
 	TimeLifeComponent(const float lifeSpan) : timeRemaining(lifeSpan) {}
+};
+
+struct HealthComponent
+{
+	float maxHealth = 1;
+	float health = 1;
+
+	HealthComponent() = default;
+	HealthComponent(const HealthComponent&) = default;
+	HealthComponent(float maxHealth) : maxHealth(maxHealth), health(maxHealth) {}
 };
 
 

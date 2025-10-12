@@ -4,6 +4,7 @@
 
 #include <Events/EventHandler.h>
 #include <UI/UIManager.h>
+#include <UI/UIText.h>
 
 class Level;
 
@@ -23,8 +24,13 @@ public:
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 
+	UIText* GetUIScoreText() { return uiScoreText; }
+
 private:
 	std::shared_ptr<Scene> scene;
+
+	UIManager* uiManager = nullptr;
+	UIText* uiScoreText = nullptr;
 
 	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
 };

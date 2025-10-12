@@ -11,6 +11,9 @@
 
 #include <Math/Math.h>
 
+#include <Game/Components/LevelComponents.h>
+#include <Game/GlobalLayers.h>
+
 float zoomLevel = 10;
 
 void AddEnemy(Scene& scene, Entity enemyManager, const glm::vec2& spawnPos)
@@ -29,6 +32,11 @@ void AddEnemy(Scene& scene, Entity enemyManager, const glm::vec2& spawnPos)
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
 	dac.enemyManager = enemyManager;
+	enemy.AddComponent<HealthComponent>(1.0f);
+	enemy.AddComponent<OnDestroyComponent>([](Entity e) {
+		Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
+		scoreEntity.AddComponent<AddScoreComponent>(1.0f);
+		});
 }
 
 Entity AddEnemyManager(Scene& scene)
@@ -37,7 +45,7 @@ Entity AddEnemyManager(Scene& scene)
 	auto& emc = manager.AddComponent<EnemyManagerComponent>();
 	emc.move = 1;
 	emc.distance = 3;
-	emc.speed = 30;
+	emc.speed = 15;
 	manager.AddComponent<MoveComponent>(1);
 
 	return manager;
@@ -51,9 +59,10 @@ Level1::Level1(Scene& scene) : Level(scene)
 		};
 	scene.GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
 
-	CollisionCallbackFunction callbackFireball = [](Entity& e1, Entity& e2) {
-		e1.Destroy();
-		e2.Destroy();
+	CollisionCallbackFunction callbackFireball = [](Entity& fireball, Entity& enemy) {
+		fireball.Destroy();
+		HealthComponent& hc = enemy.GetComponent<HealthComponent>();
+		hc.health -= 0.5f;
 		};
 	scene.GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
 
@@ -90,11 +99,17 @@ Level1::Level1(Scene& scene) : Level(scene)
 			AddEnemy(scene, enemyManager, { x, y });
 		}
 	}
+
+	// Add score entity
+	Entity scoreEntity = scene.CreateEntityNoTransform("Score");
+	scoreEntity.AddComponent<ScoreComponent>([this](float newScore)
+		{
+			this->UpdateScore(newScore);
+		});
 }
 
 Level1::~Level1()
 {
-
 }
 
 void Level1::OnUpdate(Timestep ts)
@@ -105,4 +120,9 @@ void Level1::OnUpdate(Timestep ts)
 void Level1::OnRender(Timestep ts)
 {
 	Renderer::DrawQuad({ 0, 0, 0.5f }, Sprites::get(Sprites::box), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+}
+
+void Level1::UpdateScore(float newScore)
+{
+	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));
 }

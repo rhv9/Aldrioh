@@ -53,13 +53,25 @@ void GameLayer::OnBegin()
 	levelEntity.AddComponent<LevelComponent>(new Level1(*scene));
 	levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
+	// UI
+	uiManager = new UIManager();
+	uiScoreText = new UIText("Score", { 2, 2 }, glm::vec2{ 0 });
+	uiScoreText->SetText("Score: 0");
+	uiScoreText->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+	uiScoreText->GetFontStyle().colour = Colour::WHITE;
+	uiScoreText->SetFontSize(4);
+	uiManager->AddUIObject(uiScoreText);
+
+
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
+	scene->AddUpdateSystem(&EntitySystem::HealthSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
+	scene->AddUpdateSystem(&EntitySystem::ScoreSystems);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
@@ -77,11 +89,15 @@ void GameLayer::OnBegin()
 void GameLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
+	uiManager->OnUpdate(delta);
 }
 
 void GameLayer::OnRender(Timestep delta)
 {
 	scene->OnRender(delta);
+	Renderer::StartUIScene();
+	uiManager->OnRender(delta);
+	Renderer::EndUIScene();
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
@@ -149,9 +165,11 @@ void GameLayer::OnTransitionIn()
 	SetShouldUpdate(true);
 	SetShouldRender(true);
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
+	uiManager->AttachEventListeners();
 }
 
 void GameLayer::OnTransitionOut()
 {
 	callbackKeyPressedID.~EventCallbackID();
+	uiManager->DetachEventListeners();
 }

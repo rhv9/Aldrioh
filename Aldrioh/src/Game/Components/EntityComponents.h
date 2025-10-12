@@ -1,4 +1,5 @@
 #pragma once
+#include <Scene/Entity.h>
 
 struct ShipComponent
 {
@@ -7,3 +8,4 @@ struct ShipComponent
 	ShipComponent() = default;
 	ShipComponent(const ShipComponent&) = default;
 };
+
