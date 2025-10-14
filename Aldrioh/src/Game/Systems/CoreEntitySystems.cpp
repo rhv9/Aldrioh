@@ -15,6 +15,17 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 			if (entity.HasComponent<OnDestroyComponent>())
 				entity.GetComponent<OnDestroyComponent>().onDeathFunc(entity);
 
+			if (entity.HasComponent<GlobalDumbAIComponent>())
+			{
+				GlobalDumbAIComponent& aic = entity.GetComponent<GlobalDumbAIComponent>();
+				if (aic.enemyManager.Valid())
+				{
+					EnemyManagerComponent& emc = aic.enemyManager.GetComponent<EnemyManagerComponent>();
+					emc.entityCount--;
+				}
+				
+			}
+
 			scene.DestroyEntity(entity);
 		}
 	}

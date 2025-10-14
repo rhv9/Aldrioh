@@ -188,6 +188,8 @@ struct EnemyManagerComponent
 	float elapsedTime = 0;
 	float alreadyMoved = 0;
 
+	float entityCount = 0;
+
 	EnemyManagerComponent() = default;
 	EnemyManagerComponent(const EnemyManagerComponent&) = default;
 };
@@ -197,6 +199,8 @@ struct GlobalDumbAIComponent
 	Entity enemyManager;
 	float distance = 1;
 	float move = 1;
+
+	bool firstUpdate = true;
 
 	GlobalDumbAIComponent() = default;
 	GlobalDumbAIComponent(const GlobalDumbAIComponent&) = default;

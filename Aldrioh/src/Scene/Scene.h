@@ -32,6 +32,7 @@ public:
 
 	Entity WrapEntityHandle(entt::entity entityHandle);
 
+
 private:
 
 	entt::registry registry;
