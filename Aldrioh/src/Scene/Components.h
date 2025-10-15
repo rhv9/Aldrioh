@@ -3,6 +3,15 @@
 #include <Scene/CameraController.h>
 #include <Scene/Entity.h>
 
+class UIManager;
+struct UIManagerComponent
+{
+	std::unique_ptr<UIManager> uiManager = nullptr;
+
+	UIManagerComponent() = default;
+	UIManagerComponent(const UIManagerComponent&) = default;
+};
+
 struct EntityTypeComponent
 {
 	EntityType type;

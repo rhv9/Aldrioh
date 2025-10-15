@@ -50,18 +50,8 @@ void Scene::DestroyEntity(Entity& e)
 
 void Scene::SetPlayer(const Entity& e)
 {
-	if (!player) delete player;
+	delete player;
 	player = new Entity(e);
-}
-
-void Scene::AddUpdateSystem(const SystemFunction& callback)
-{
-	updateSystems.push_back(callback);
-}
-
-void Scene::AddRenderSystem(const SystemFunction& callback)
-{
-	renderSystems.push_back(callback);
 }
 
 void Scene::OnUpdate(Timestep ts)
@@ -88,9 +78,43 @@ void Scene::OnRender(Timestep ts)
 	Renderer::EndScene();
 }
 
+void Scene::OnUIRender(Timestep ts)
+{
+	Renderer::StartUIScene();
+
+	for (auto system : uiRenderSystems)
+		system(ts, *this);
+
+	Renderer::EndUIScene();
+}
+
 Entity Scene::WrapEntityHandle(entt::entity entityHandle)
 {
 	return { entityHandle, this };
+}
+
+// Temporarily hard coded for simplicity
+void Scene::OnTransitionIn()
+{
+	auto view = getRegistry().view<UIManagerComponent>();
+
+	for (entt::entity e : view)
+	{
+		UIManagerComponent& uimc = view.get<UIManagerComponent>(e);
+		uimc.uiManager->AttachEventListeners();
+	}
+}
+
+// Temporarily hard coded for simplicity
+void Scene::OnTransitionOut()
+{
+	auto view = getRegistry().view<UIManagerComponent>();
+
+	for (entt::entity e : view)
+	{
+		UIManagerComponent& uimc = view.get<UIManagerComponent>(e);
+		uimc.uiManager->DetachEventListeners();
+	}
 }
 
 Entity Scene::GetPrimaryCameraEntity()

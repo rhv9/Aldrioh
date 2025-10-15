@@ -1,9 +1,9 @@
 #include <pch.h>
 #include "PlayerControllerSystems.h"
-#include "HeadersUpdateSystems.h"
+#include <Systems/HeadersUpdateSystems.h>
 #include <Input/Input.h>
-#include <Game/SpriteCollection.h>
 #include <Game/Components/ControllerComponents.h>
+#include <Game/SpriteCollection.h>
 
 #include <Components/Collision.h>
 #include <Game/Entity/EntityType.h>

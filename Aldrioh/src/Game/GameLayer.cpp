@@ -25,6 +25,7 @@
 #include <Game/Systems/PlayerControllerSystems.h>
 #include <Game/Systems/TestSystems.h>
 #include <Game/Systems/CoreEntitySystems.h>
+#include <Systems/UISystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -48,19 +49,22 @@ void GameLayer::OnBegin()
 
 	scene = std::make_shared<Scene>();
 
+	// UI Component has to be before level
+	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
+	UIManagerComponent& uimc = uiEntity.AddComponent<UIManagerComponent>();
+	uimc.uiManager = std::make_unique<UIManager>();
+
 	// Level system
-	Entity levelEntity = scene->CreateEntity("Level 1");
+	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
 	levelEntity.AddComponent<LevelComponent>(new Level1(*scene));
-	levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	// UI
-	uiManager = new UIManager();
 	uiScoreText = new UIText("Score", { 2, 2 }, glm::vec2{ 0 });
 	uiScoreText->SetText("Score: 0");
 	uiScoreText->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 	uiScoreText->GetFontStyle().colour = Colour::WHITE;
 	uiScoreText->SetFontSize(4);
-	uiManager->AddUIObject(uiScoreText);
+	uimc.uiManager->AddUIObject(uiScoreText);
 
 
 	// On Update Systems
@@ -77,6 +81,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
+	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);
 
 
 	// On Render Systems
@@ -84,20 +89,21 @@ void GameLayer::OnBegin()
 	scene->AddRenderSystem(&EntitySystem::TestRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
+
+
+	// On UI Render Systems
+	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 }
 
 void GameLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
-	uiManager->OnUpdate(delta);
 }
 
 void GameLayer::OnRender(Timestep delta)
 {
 	scene->OnRender(delta);
-	Renderer::StartUIScene();
-	uiManager->OnRender(delta);
-	Renderer::EndUIScene();
+	scene->OnUIRender(delta);
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
@@ -165,11 +171,11 @@ void GameLayer::OnTransitionIn()
 	SetShouldUpdate(true);
 	SetShouldRender(true);
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
-	uiManager->AttachEventListeners();
+	scene->OnTransitionIn();
 }
 
 void GameLayer::OnTransitionOut()
 {
 	callbackKeyPressedID.~EventCallbackID();
-	uiManager->DetachEventListeners();
+	scene->OnTransitionOut();
 }
