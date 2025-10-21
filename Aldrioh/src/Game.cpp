@@ -27,6 +27,8 @@
 
 #include <Debug/Statistics.h>
 
+#include <miniaudio.h>
+
 #define DISPLAY_IMGUI_DEBUG
 
 Game& Game::Instance()
@@ -61,6 +63,8 @@ void Game::Init()
     running = true;
 }
 
+ma_engine* maEngine = nullptr;
+
 void Game::Start()
 {
     for (Layer* layer : layerStack)
@@ -69,13 +73,37 @@ void Game::Start()
     std::vector<Layer*> otherLayers = LayerInitialiser::OtherLayers();
     for (Layer* layer : otherLayers)
         layer->OnBegin();
-    
+
+    ma_result result;
+    maEngine = (ma_engine*) malloc(sizeof(*maEngine));
+
+    result = ma_engine_init(NULL, maEngine);
+    if (result != MA_SUCCESS)
+    {
+        LOG_CORE_CRITICAL("Failed to load audio file");
+    }
+
+    ma_sound sound;
+
+    result = ma_sound_init_from_file(maEngine, "assets/audio/sfx_exp_long4.wav", 0, NULL, NULL, &sound);
+    if (result != MA_SUCCESS) {
+        LOG_CORE_CRITICAL("AUDIO file not loading");
+    }
+    ma_sound_start(&sound);
+
+    ma_sound sound2;
+
+    result = ma_sound_init_from_file(maEngine, "assets/audio/OrbitalColossus.mp3", 0, NULL, NULL, &sound2);
+    if (result != MA_SUCCESS) {
+        LOG_CORE_CRITICAL("AUDIO file not loading");
+    }
+    ma_sound_start(&sound2);
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop
     while (running)
     {
         Iterate();
-
+        ma_sound_start(&sound);
         Statistics::ResetStats();
     }
 
@@ -148,6 +176,7 @@ void Game::OnClosing()
 {
     Font::DestroyGlobalFonts();
     Renderer::Destroy();
+    ma_engine_uninit(maEngine);
 }
 
 void Game::BlockEvents(bool val)

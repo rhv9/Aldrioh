@@ -106,6 +106,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 		{
 			this->UpdateScore(newScore);
 		});
+
 }
 
 Level1::~Level1()

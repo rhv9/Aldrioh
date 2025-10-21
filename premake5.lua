@@ -26,6 +26,7 @@ IncludeDir["Glm"]           = projectName .. "/vendor/glm"
 IncludeDir["Emscripten"]    = projectName .. "/vendor/emscripten/system/include/emscripten"
 IncludeDir["Stb_image"]     = projectName .. "/vendor/stb_image"
 IncludeDir["Entt"]          = projectName .. "/vendor/entt/include"
+IncludeDir["Miniaudio"]     = projectName .. "/vendor/miniaudio"
 
 
 include (projectName .. "/vendor/glfw_premake5.lua")
@@ -72,6 +73,8 @@ project "Aldrioh"
         "%{IncludeDir.Stb_image}",
         "%{IncludeDir.Entt}",
         "%{IncludeDir.ImGui}",
+        "%{IncludeDir.Miniaudio}",
+
 
         "%{prj.name}/include",
     }
