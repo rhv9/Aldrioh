@@ -76,7 +76,7 @@ void Game::Start()
     for (Layer* layer : otherLayers)
         layer->OnBegin();
     
-    //SoundManager::Play("sfx");
+
 
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop

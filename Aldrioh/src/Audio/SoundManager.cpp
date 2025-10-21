@@ -10,7 +10,9 @@ struct Sound
 struct SMData
 {
 	ma_engine* engine;
-	std::unordered_map<std::string, Sound> soundMap;
+	std::array<ma_sound, 100> soundArray;
+	std::unordered_map<std::string, int> soundMap;
+	int counter = 0;
 };
 
 static SMData* smdata;
@@ -18,7 +20,6 @@ static SMData* smdata;
 void SoundManager::Init()
 {
 	smdata = new SMData();
-	smdata->soundMap.reserve(100);
 
 	ma_result result;
 	smdata->engine = (ma_engine*)malloc(sizeof(*smdata->engine));
@@ -38,26 +39,29 @@ void SoundManager::Destroy()
 	delete smdata;
 }
 
-Sound AddSound(const std::string& filePath)
+void SoundManager::LoadSounds()
 {
-	ma_sound sound;
-	ma_result result = ma_sound_init_from_file(smdata->engine, filePath.c_str(), 0, NULL, NULL, &sound);
+}
+
+void SoundManager::AddSound(const std::string& name, const std::string& filePath)
+{
+	ma_result result = ma_sound_init_from_file(smdata->engine, filePath.c_str(), 0, NULL, NULL, &smdata->soundArray[smdata->counter]);
 	if (result != MA_SUCCESS)
 	{
 		LOG_CORE_CRITICAL("Audio failed to load, filepath: {}", filePath);
 	}
-	return Sound(sound);
-}
-
-void SoundManager::LoadSounds()
-{
-	smdata->soundMap.insert({ std::string("sfx"), AddSound("assets/audio/sfx_exp_long4.wav") });
+	smdata->soundMap.insert({ name, smdata->counter });
+	++smdata->counter;
 }
 
 void SoundManager::Play(const std::string& soundName)
 {
 	if (smdata->soundMap.find(soundName) != smdata->soundMap.end())
 	{
-		ma_sound_start(&smdata->soundMap[soundName].sound);
+		ma_sound_start(&smdata->soundArray[smdata->soundMap[soundName]]);
+	}
+	else
+	{
+		LOG_CORE_INFO("Sound not added before");
 	}
 }

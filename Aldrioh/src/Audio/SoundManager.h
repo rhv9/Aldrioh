@@ -8,5 +8,6 @@ public:
 	static void Destroy();
 
 	static void LoadSounds();
+	static void AddSound(const std::string& name, const std::string& filePath);
 	static void Play(const std::string& soundName);
 };

@@ -40,6 +40,7 @@
 #include <ImGui/ImGuiWindows.h>
 
 #include <Game/GlobalLayers.h>
+#include <Audio/SoundManager.h>
 
 GameLayer::GameLayer() {}
 
@@ -93,6 +94,9 @@ void GameLayer::OnBegin()
 
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
+
+	SoundManager::AddSound("sfx", "assets/audio/sfx_exp_long4.wav");
+	SoundManager::Play("sfx");
 }
 
 void GameLayer::OnUpdate(Timestep delta)
