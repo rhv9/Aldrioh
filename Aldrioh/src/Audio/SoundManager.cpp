@@ -13,6 +13,7 @@ struct SMData
 	std::array<ma_sound, 100> soundArray;
 	std::unordered_map<std::string, int> soundMap;
 	int counter = 0;
+	std::vector<ma_sound> finishedSounds;
 };
 
 static SMData* smdata;
@@ -56,12 +57,34 @@ void SoundManager::AddSound(const std::string& name, const std::string& filePath
 
 void SoundManager::Play(const std::string& soundName)
 {
+	ma_sound_uninit
 	if (smdata->soundMap.find(soundName) != smdata->soundMap.end())
 	{
-		ma_sound_start(&smdata->soundArray[smdata->soundMap[soundName]]);
+		ma_sound* soundToPlay = &smdata->soundArray[smdata->soundMap[soundName]];
+
+		ma_sound sound;
+		ma_sound_config soundConfig;
+
+		soundConfig = ma_sound_config_init();
+		soundConfig.pFilePath = NULL; // Set this to load from a file path.
+		soundConfig.pDataSource = soundToPlay->pDataSource; // Set this to initialize from an existing data source.
+		soundConfig.pInitialAttachment = NULL;
+		soundConfig.initialAttachmentInputBusIndex = 0;
+		soundConfig.channelsIn = 1;
+		soundConfig.channelsOut = 0;    // Set to 0 to use the engine's native channel count.
+
+		ma_result result = ma_sound_init_ex(smdata->engine,&soundConfig, &sound);
+		if (result != MA_SUCCESS) {
+			LOG_CORE_INFO("WHAT!!");
+		}
 	}
 	else
 	{
 		LOG_CORE_INFO("Sound not added before");
 	}
+}
+
+void SoundManager::ClearFinishedSounds()
+{
+
 }
