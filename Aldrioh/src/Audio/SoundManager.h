@@ -11,4 +11,6 @@ public:
 	static void AddSound(const std::string& name, const std::string& filePath);
 	static void Play(const std::string& soundName);
 	static void ClearFinishedSounds();
+
+	static void Test();
 };

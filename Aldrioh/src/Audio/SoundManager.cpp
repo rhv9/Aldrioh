@@ -55,28 +55,21 @@ void SoundManager::AddSound(const std::string& name, const std::string& filePath
 	++smdata->counter;
 }
 
+ma_sound soundtest[200];
+int counttest = 0;
+
 void SoundManager::Play(const std::string& soundName)
 {
-	ma_sound_uninit
+	LOG_CORE_INFO("Playing sound!");
 	if (smdata->soundMap.find(soundName) != smdata->soundMap.end())
 	{
 		ma_sound* soundToPlay = &smdata->soundArray[smdata->soundMap[soundName]];
-
-		ma_sound sound;
-		ma_sound_config soundConfig;
-
-		soundConfig = ma_sound_config_init();
-		soundConfig.pFilePath = NULL; // Set this to load from a file path.
-		soundConfig.pDataSource = soundToPlay->pDataSource; // Set this to initialize from an existing data source.
-		soundConfig.pInitialAttachment = NULL;
-		soundConfig.initialAttachmentInputBusIndex = 0;
-		soundConfig.channelsIn = 1;
-		soundConfig.channelsOut = 0;    // Set to 0 to use the engine's native channel count.
-
-		ma_result result = ma_sound_init_ex(smdata->engine,&soundConfig, &sound);
+		ma_result result = ma_sound_init_copy(smdata->engine, soundToPlay, 0, 0, &soundtest[counttest]);
 		if (result != MA_SUCCESS) {
 			LOG_CORE_INFO("WHAT!!");
 		}
+		ma_sound_start(&soundtest[counttest++]);
+
 	}
 	else
 	{
@@ -86,5 +79,11 @@ void SoundManager::Play(const std::string& soundName)
 
 void SoundManager::ClearFinishedSounds()
 {
+
+}
+
+void SoundManager::Test()
+{
+	ma_resource_manager* rm = ma_engine_get_resource_manager(smdata->engine);
 
 }

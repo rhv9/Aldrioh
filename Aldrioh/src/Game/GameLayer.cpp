@@ -96,12 +96,12 @@ void GameLayer::OnBegin()
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 
 	SoundManager::AddSound("sfx", "assets/audio/sfx_exp_long4.wav");
-	SoundManager::Play("sfx");
 }
 
 void GameLayer::OnUpdate(Timestep delta)
 {
 	scene->OnUpdate(delta);
+
 }
 
 void GameLayer::OnRender(Timestep delta)
@@ -167,6 +167,11 @@ void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
 		Game::Instance().GetLayerStack().PushLayer(GlobalLayers::pauseMenu);
 		SetShouldUpdate(false);
 		OnTransitionOut();
+	}
+
+	if (e.Key == Input::KEY_P)
+	{
+		SoundManager::Play("sfx");
 	}
 }
 

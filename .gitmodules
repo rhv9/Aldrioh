@@ -10,6 +10,6 @@
 [submodule "Aldrioh/vendor/imgui"]
 	path = Aldrioh/vendor/imgui
 	url = https://github.com/ocornut/imgui
-[submodule "Aldrioh\\vendor\\miniaudio"]
-	path = Aldrioh\\vendor\\miniaudio
+[submodule "Aldrioh/vendor/miniaudio"]
+	path = Aldrioh/vendor/miniaudio
 	url = https://github.com/mackron/miniaudio
