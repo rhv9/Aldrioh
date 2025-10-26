@@ -143,6 +143,8 @@ bool Game::Iterate()
 #endif
     window->OnUpdate();
 
+    SoundManager::ClearFinishedSounds();
+
     return true;
 }
 

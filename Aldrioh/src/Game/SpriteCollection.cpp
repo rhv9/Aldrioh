@@ -52,7 +52,7 @@ void Sprites::Init()
 	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 15 }, Sprites::TileSize };
 
 
-	LOG_INFO("Sprite counter before animations: {}", spriteCounter);
+	LOG_INFO("Sprite loadedCounter before animations: {}", spriteCounter);
 	// Animated Sprites
 	animPlayerUp = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
 	animPlayerDown = CreateAnimSprites(spritesheet, glm::vec2{ 0, 15 }, 1);
