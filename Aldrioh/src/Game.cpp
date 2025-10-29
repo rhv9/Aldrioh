@@ -67,8 +67,6 @@ void Game::Init()
 
 void Game::Start()
 {
-    SoundManager::LoadSounds();
-
     for (Layer* layer : layerStack)
         layer->OnBegin();
 
