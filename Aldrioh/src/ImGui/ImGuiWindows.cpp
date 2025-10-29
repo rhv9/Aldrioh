@@ -9,6 +9,7 @@
 #include <Debug/GameDebugState.h>
 #include <Input/Input.h>
 
+#include <Audio/SoundManager.h>
 void GameImGuiWindows::ShowGameInfo()
 {
 	if (ImGui::CollapsingHeader("Game"))
@@ -18,6 +19,18 @@ void GameImGuiWindows::ShowGameInfo()
 		ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
 		ImGui::Text("Layer Count: %d", engineStats.layerCount);
 	}
+
+	if (ImGui::CollapsingHeader("Audio"))
+	{
+		float audio = SoundManager::GetVolume(SoundCategory::MASTER);
+		if (ImGui::SliderFloat("Master", &audio, 0, 1))
+			SoundManager::SetVolume(SoundCategory::MASTER, audio);
+
+		audio = SoundManager::GetVolume(SoundCategory::SFX);
+		if (ImGui::SliderFloat("SFX", &audio, 0, 1))
+			SoundManager::SetVolume(SoundCategory::SFX, audio);
+	}
+
 }
 
 void GameImGuiWindows::ShowRendererInfo()

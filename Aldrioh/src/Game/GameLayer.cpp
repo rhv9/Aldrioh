@@ -95,7 +95,7 @@ void GameLayer::OnBegin()
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 
-	SoundManager::LoadSound("sfx", "assets/audio/sfx_exp_long4.wav");
+	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
 }
 
 void GameLayer::OnUpdate(Timestep delta)
@@ -151,9 +151,8 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	ImGui::End();
 	ImGui::SetNextWindowBgAlpha(1.0f);
 
-	ImGui::ShowDemoWindow();
-
-}
+	//ImGui::ShowDemoWindow();
+}	
 
 void GameLayer::OnRemove()
 {

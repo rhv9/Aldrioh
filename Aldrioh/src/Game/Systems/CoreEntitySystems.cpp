@@ -42,7 +42,7 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 			switch (cesc.hitVisualState)
 			{
 			case HitVisualState::JUST_HIT:
-				cesc.originalColour = vc.colour;
+				cesc.hitvisualOriginalColour = vc.colour;
 				vc.colour = glm::vec4{ 1 };
 				vc.flags = 1;
 				cesc.hitVisualState = HitVisualState::COUNTING_DOWN;
@@ -53,7 +53,7 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 				cesc.hitVisualTimer -= ts;
 				break;
 			case HitVisualState::FINISH:
-				vc.colour = cesc.originalColour;
+				vc.colour = cesc.hitvisualOriginalColour;
 				vc.flags = 0;
 				cesc.hitVisualState = HitVisualState::NORMAL;
 				break;
