@@ -13,14 +13,15 @@ struct SMData
 	ma_engine* engine;
 	constexpr static int LOADED_SOUND_ARRAY_SIZE = 100;
 	std::array<ma_sound, LOADED_SOUND_ARRAY_SIZE> loadedSoundArray;
-	std::unordered_map<std::string, int> soundMap;
+	std::unordered_map<std::string, int> soundNameMap;
 	int loadedCounter = 0;
 
 	constexpr static int PLAYING_SIZE = 200;
 	ma_sound playingSounds[PLAYING_SIZE];
 
 	std::vector<int> availablePlayback;
-	std::vector<int> finishedSlots;
+	// Finished slots get cleared every update and added back to playback
+	std::vector<int> finishedSlots; 
 	
 	std::mutex availablePlayback_mutex;
 };
@@ -57,15 +58,15 @@ void SoundManager::LoadSound(const std::string& name, const std::string& filePat
 	if (result != MA_SUCCESS)
 		LOG_CORE_CRITICAL("Audio failed to load, filepath: {}", filePath);
 
-	smdata->soundMap.insert({ name, smdata->loadedCounter });
+	smdata->soundNameMap.insert({ name, smdata->loadedCounter });
 	++smdata->loadedCounter;
 }
 
 void SoundManager::Play(const std::string& soundName)
 {
-	if (smdata->soundMap.find(soundName) != smdata->soundMap.end())
+	if (smdata->soundNameMap.find(soundName) != smdata->soundNameMap.end())
 	{
-		ma_sound* soundToPlay = &smdata->loadedSoundArray[smdata->soundMap[soundName]];
+		ma_sound* soundToPlay = &smdata->loadedSoundArray[smdata->soundNameMap[soundName]];
 
 		std::optional<int> optionalval = TryGetNextPlaybackSlot();
 		if (!optionalval.has_value())
@@ -126,5 +127,4 @@ void SoundManager::maSoundEndCallback(void* pUserData, ma_sound* pSound)
 void SoundManager::Test()
 {
 	ma_resource_manager* rm = ma_engine_get_resource_manager(smdata->engine);
-
 }

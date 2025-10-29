@@ -7,6 +7,7 @@
 
 #include <Components/Collision.h>
 #include <Game/Entity/EntityType.h>
+#include <Game/Components/EntityComponents.h>
 
 #include <Math/Math.h>
 
@@ -73,7 +74,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		else
 			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 
-		if (Input::IsKeyPressed(Input::KEY_F))
+		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
 		{
 			if (shootTimer >= 0.08f || shootTimer == 0.0f)
 			{

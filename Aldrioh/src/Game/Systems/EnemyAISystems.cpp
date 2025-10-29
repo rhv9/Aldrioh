@@ -3,6 +3,7 @@
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
 #include <Systems/HeadersUpdateSystems.h>
+#include <Game/Components/EntityComponents.h>
 
 #include <Core/Platform.h>
 #include <Math/Math.h>

@@ -13,6 +13,7 @@
 
 #include <Components/Collision.h>
 #include <Input/Input.h>
+#include <Game/Components/EntityComponents.h>
 
 class Region
 {

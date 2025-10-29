@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "CoreEntitySystems.h"
 #include <Systems/HeadersUpdateSystems.h>
+#include <Game/Components/EntityComponents.h>
 
 void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 {
@@ -27,6 +28,36 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 			}
 
 			scene.DestroyEntity(entity);
+		}
+	}
+
+	// Visual Hit System
+
+	{
+		auto view = scene.getRegistry().view<CoreEnemyStateComponent, VisualComponent>();
+		for (entt::entity e : view)
+		{
+			auto [cesc, vc] = view.get<CoreEnemyStateComponent, VisualComponent>(e);
+
+			switch (cesc.hitVisualState)
+			{
+			case HitVisualState::JUST_HIT:
+				cesc.originalColour = vc.colour;
+				vc.colour = glm::vec4{ 1 };
+				vc.flags = 1;
+				cesc.hitVisualState = HitVisualState::COUNTING_DOWN;
+				break;
+			case HitVisualState::COUNTING_DOWN:
+				if (cesc.hitVisualTimer <= 0.0f)
+					cesc.hitVisualState = HitVisualState::FINISH;
+				cesc.hitVisualTimer -= ts;
+				break;
+			case HitVisualState::FINISH:
+				vc.colour = cesc.originalColour;
+				vc.flags = 0;
+				cesc.hitVisualState = HitVisualState::NORMAL;
+				break;
+			}
 		}
 	}
 }

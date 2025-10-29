@@ -55,5 +55,11 @@ void main()
 	if (texColour.a == 0.0)
 		discard;
 
+	if (fFlags == 1.0)
+	{
+		FragColor = fColour;
+		return;
+	}
+
 	FragColor = texColour * fColour;
 }
