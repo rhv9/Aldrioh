@@ -13,3 +13,6 @@
 [submodule "Aldrioh/vendor/miniaudio"]
 	path = Aldrioh/vendor/miniaudio
 	url = https://github.com/mackron/miniaudio
+[submodule "Aldrioh/vendor/simdjson"]
+	path = Aldrioh/vendor/simdjson
+	url = https://github.com/simdjson/simdjson

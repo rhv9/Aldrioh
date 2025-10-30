@@ -27,11 +27,13 @@ IncludeDir["Emscripten"]    = projectName .. "/vendor/emscripten/system/include/
 IncludeDir["Stb_image"]     = projectName .. "/vendor/stb_image"
 IncludeDir["Entt"]          = projectName .. "/vendor/entt/include"
 IncludeDir["Miniaudio"]     = projectName .. "/vendor/miniaudio"
+IncludeDir["Simdjson"]     = projectName .. "/vendor/simdjson/singleheader"
 
 
 include (projectName .. "/vendor/glfw_premake5.lua")
 include (projectName .. "/vendor/Glad")
 include (projectName .. "/vendor/imgui_premake5.lua")
+include (projectName .. "/vendor/simdjson_premake5.lua")
 
 project "Aldrioh"
     filter "system:windows"
@@ -74,7 +76,7 @@ project "Aldrioh"
         "%{IncludeDir.Entt}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.Miniaudio}",
-
+        "%{IncludeDir.Simdjson}",
 
         "%{prj.name}/include",
     }
@@ -84,6 +86,7 @@ project "Aldrioh"
         "GLFW",
         "Glad",
         "ImGui",
+        "Simdjson",
     }
 
     defines { "FMT_UNICODE=0" }

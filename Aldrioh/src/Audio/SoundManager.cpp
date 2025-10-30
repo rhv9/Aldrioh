@@ -114,7 +114,6 @@ void SoundManager::ClearFinishedSounds()
 			ma_sound_uninit(&smdata->playingSounds[slot]);
 			smdata->availablePlayback.push_back(slot);
 		}
-
 		smdata->finishedSlots.clear();
 	}
 }

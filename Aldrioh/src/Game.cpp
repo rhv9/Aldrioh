@@ -28,7 +28,7 @@
 
 #include <Debug/Statistics.h>
 
-#include <miniaudio.h>
+#include <File/Settings.h>
 
 #define DISPLAY_IMGUI_DEBUG
 
@@ -55,6 +55,9 @@ void Game::Init()
     Font::InitGlobalFonts();
     Sprites::Init();
     SoundManager::Init();
+
+    Settings::Get().LoadOrCreate();
+    Settings::Get().Apply();
 
 #ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer = new ImGuiLayer();

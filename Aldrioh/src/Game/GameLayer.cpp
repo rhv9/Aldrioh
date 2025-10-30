@@ -96,6 +96,7 @@ void GameLayer::OnBegin()
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 
 	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
+
 }
 
 void GameLayer::OnUpdate(Timestep delta)
