@@ -13,7 +13,7 @@ Entity::~Entity()
 {
 }
 
-void Entity::Destroy()
+void Entity::QueueDestroy()
 {
 	if (!HasComponent<DestroyEntityComponent>())
 		AddComponent<DestroyEntityComponent>();

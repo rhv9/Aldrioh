@@ -157,6 +157,24 @@ struct NameComponent
 	NameComponent(const std::string& name) : name(name + std::to_string(++entityCount)) {}
 };
 
+struct SoundComponent
+{
+	std::string soundName;
+
+	SoundComponent(const std::string& soundName) : soundName(soundName) {}
+	SoundComponent(const SoundComponent&) = default;
+};
+
+// CollisionDispatcher adds this component to make it easy to test whether its collision has already been dealt with and not to handle any other collision with that entity. Easy to test if an entity has this and iterate to remove this component.
+struct CollisionHandledComponent
+{
+	bool handled = true;
+
+	CollisionHandledComponent() = default;
+	CollisionHandledComponent(bool handled) : handled(handled) {}
+	CollisionHandledComponent(const CollisionHandledComponent&) = default;
+};
+
 
 
 

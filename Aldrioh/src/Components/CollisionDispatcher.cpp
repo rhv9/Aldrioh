@@ -5,7 +5,7 @@
 
 CollisionDispatcher::CollisionDispatcher()
 {
-	CollisionCallbackFunction emptyCallback = [](Entity& e1, Entity& e2) {
+	CollisionCallbackFunction emptyCallback = [](CollisionEvent& e1, CollisionEvent& e2) {
 		};
 	for (int y = 0; y < SIZE; ++y)
 		for (int x = 0; x < SIZE; ++x)
@@ -20,10 +20,10 @@ void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, Collis
 	map[type2][type1] = { callback, true };
 }
 
-void CollisionDispatcher::Dispatch(Entity e1, Entity e2)
+void CollisionDispatcher::Dispatch(CollisionEvent& e1, CollisionEvent& e2)
 {
-	EntityType type1 = e1.GetComponent<EntityTypeComponent>().type;
-	EntityType type2 = e2.GetComponent<EntityTypeComponent>().type;
+	EntityType type1 = e1.e.GetComponent<EntityTypeComponent>().type;
+	EntityType type2 = e2.e.GetComponent<EntityTypeComponent>().type;
 
 	if (map[type1][type2].reverseArguments)
 		map[type1][type2].callback(e2, e1);

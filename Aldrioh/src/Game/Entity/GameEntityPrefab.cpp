@@ -46,8 +46,8 @@ Entity EnemyManagerPrefab::create(Scene& scene)
 {
 	Entity manager = scene.CreateEntity("Entity Manager");
 	auto& emc = manager.AddComponent<EnemyManagerComponent>();
-	emc.move = 1;
-	emc.distance = 3;
+	emc.move = 0;
+	emc.distance = 0;
 	emc.speed = 15;
 	manager.AddComponent<MoveComponent>(1);
 
@@ -69,7 +69,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
 	dac.enemyManager = enemyManager;
-	enemy.AddComponent<HealthComponent>(1.0f);
+	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<OnDestroyComponent>([](Entity e) {
 		Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
 		scoreEntity.AddComponent<AddScoreComponent>(1.0f);

@@ -44,7 +44,7 @@ void EntitySystem::ScoreSystems(Timestep ts, Scene& scene)
 				}
 			}
 
-			scene.WrapEntityHandle(e).Destroy();
+			scene.WrapEntityHandle(e).QueueDestroy();
 		}
 	}
 

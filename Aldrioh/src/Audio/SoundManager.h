@@ -20,7 +20,7 @@ public:
 	static void Init();
 	static void Destroy();
 
-	static void LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath);
+	static void LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath, float volume = 1);
 	static void Play(const std::string& soundName);
 	static void ClearFinishedSounds();
 

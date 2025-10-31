@@ -61,7 +61,7 @@ void EntitySystem::LifeSystem(Timestep ts, Scene& scene)
 		if (tlc.timeRemaining <= 0.0f)
 		{
 			Entity entity = scene.WrapEntityHandle(e);
-			entity.Destroy();
+			entity.QueueDestroy();
 		}
 		else
 			tlc.timeRemaining -= ts;

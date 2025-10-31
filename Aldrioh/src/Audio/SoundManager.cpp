@@ -3,10 +3,16 @@
 #include <miniaudio.h>
 #include <mutex>
 
-struct Sound
+class Sound
 {
+public:
 	ma_sound sound;
 	SoundCategory soundCategory;
+
+	float GetVolume()
+	{
+		return ma_sound_get_volume(&sound);
+	}
 };
 
 struct SMData
@@ -65,14 +71,16 @@ void SoundManager::Destroy()
 	delete smdata;
 }
 
-void SoundManager::LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath)
+void SoundManager::LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath, float volume)
 {
 	ma_sound_group* soundGroup = &smdata->soundGroups[static_cast<uint8_t>(soundCategory)];
+	ma_sound* sound = &smdata->loadedSoundArray[smdata->loadedCounter].sound;
 
-	ma_result result = ma_sound_init_from_file(smdata->engine, filePath.c_str(), 0, soundGroup, NULL, &smdata->loadedSoundArray[smdata->loadedCounter].sound);
+	ma_result result = ma_sound_init_from_file(smdata->engine, filePath.c_str(), 0, soundGroup, NULL, sound);
 	smdata->loadedSoundArray[smdata->loadedCounter].soundCategory = soundCategory;
 	if (result != MA_SUCCESS)
 		LOG_CORE_CRITICAL("Audio failed to load, filepath: {}", filePath);
+	ma_sound_set_volume(sound, volume);
 
 	smdata->soundNameMap.insert({ name, smdata->loadedCounter });
 	++smdata->loadedCounter;
@@ -82,8 +90,8 @@ void SoundManager::Play(const std::string& soundName)
 {
 	if (smdata->soundNameMap.find(soundName) != smdata->soundNameMap.end())
 	{
-		Sound& soundToPlay = smdata->loadedSoundArray[smdata->soundNameMap[soundName]];
-		ma_sound_group* soundGroup = &smdata->soundGroups[static_cast<uint8_t>(soundToPlay.soundCategory)];
+		Sound& loadedSound = smdata->loadedSoundArray[smdata->soundNameMap[soundName]];
+		ma_sound_group* soundGroup = &smdata->soundGroups[static_cast<uint8_t>(loadedSound.soundCategory)];
 
 		std::optional<int> optionalval = TryGetNextPlaybackSlot();
 		if (!optionalval.has_value())
@@ -93,10 +101,12 @@ void SoundManager::Play(const std::string& soundName)
 		}
 		int slot = optionalval.value();
 		ma_sound* sound = &smdata->playingSounds[slot];
-		ma_result result = ma_sound_init_copy(smdata->engine, &soundToPlay.sound, 0, soundGroup, sound);
+		ma_result result = ma_sound_init_copy(smdata->engine, &loadedSound.sound, 0, soundGroup, sound);
 		if (result != MA_SUCCESS) // TODO fix
 			LOG_CORE_INFO("Failed to create sound");
 
+
+		ma_sound_set_volume(sound, loadedSound.GetVolume());
 		ma_sound_set_end_callback(sound, SoundManager::maSoundEndCallback, NULL);
 		ma_sound_start(sound);
 	}

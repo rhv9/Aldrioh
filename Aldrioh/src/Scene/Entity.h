@@ -43,7 +43,7 @@ public:
 		scene->registry.erase<T>(entityHandle);
 	}
 
-	void Destroy();
+	void QueueDestroy();
 
 	bool Valid() {
 		if (scene != nullptr) return scene->getRegistry().valid(entityHandle);

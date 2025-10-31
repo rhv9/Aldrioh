@@ -26,6 +26,7 @@
 #include <Game/Systems/TestSystems.h>
 #include <Game/Systems/CoreEntitySystems.h>
 #include <Systems/UISystems.h>
+#include <Systems/SoundSystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -83,6 +84,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);
+	scene->AddUpdateSystem(&EntitySystem::SoundSystem);
 
 
 	// On Render Systems
@@ -96,6 +98,8 @@ void GameLayer::OnBegin()
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 
 	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
+	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.05f);
+	SoundManager::LoadSound(SoundCategory::SFX, "bullet_impact", "assets/audio/General\ Sounds/Impacts/sfx_sounds_impact1.wav", 0.05f);
 
 }
 

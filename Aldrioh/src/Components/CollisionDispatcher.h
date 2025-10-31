@@ -4,7 +4,13 @@
 
 class Entity;
 
-using CollisionCallbackFunction = std::function<void(Entity& e1, Entity& e2)>;
+struct CollisionEvent
+{
+	Entity& e;
+	bool handled = false;
+};
+
+using CollisionCallbackFunction = std::function<void(CollisionEvent& e1, CollisionEvent& e2)>;
 
 class CollisionDispatcher
 {
@@ -13,7 +19,7 @@ public:
 	CollisionDispatcher();
 	
 	void AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction& callback);
-	void Dispatch(Entity e1, Entity e2);
+	void Dispatch(CollisionEvent& e1, CollisionEvent& e2);
 
 private:
 	struct CollisionHandle

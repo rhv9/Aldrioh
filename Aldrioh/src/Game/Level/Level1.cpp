@@ -22,18 +22,16 @@ float zoomLevel = 10;
 Level1::Level1(Scene& scene) : Level(scene)
 {
 	// collisionDispatcher
-	CollisionCallbackFunction callback = [](Entity& e1, Entity& e2) {
-		LOG_CORE_INFO("{} collides {}", e1.GetComponent<NameComponent>().name, e2.GetComponent<NameComponent>().name);
-		};
-	scene.GetCollisionDispatcher().AddCallback(EntityType::Player, EntityType::Enemy, callback);
 
-	CollisionCallbackFunction callbackFireball = [](Entity& fireball, Entity& enemy) {
-		fireball.Destroy();
-		HealthComponent& hc = enemy.GetComponent<HealthComponent>();
+	CollisionCallbackFunction callbackFireball = [](CollisionEvent& fireball, CollisionEvent& enemy) {
+		fireball.e.QueueDestroy();
+		HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 		hc.health -= 0.5f;
-		auto& cesc = enemy.GetComponent<CoreEnemyStateComponent>();
+		auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 		cesc.hitVisualTimer = 0.1;
 		cesc.hitVisualState = HitVisualState::JUST_HIT;
+		fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+		fireball.handled = true;
 		};
 	scene.GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
 
@@ -54,7 +52,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 		{
 			EnemyPrefab enemyPrefab;
 			enemyPrefab.enemyManager = enemyManager;
-			enemyPrefab.maxHealth = 1;
+			enemyPrefab.maxHealth = 200;
 			enemyPrefab.spawnPos = { x, y };
 			enemyPrefab.create(scene);
 		}

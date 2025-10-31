@@ -85,6 +85,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 				const glm::vec2 dir = (pcc.dirLock == DIRLOCK_FREE) ? Math::normalizedDirection(glm::vec2(playerPos), player.getScene()->GetMousePosInScene()) : pcc.dirLock;
 				shoot(player, playerPos, dir);
+				scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
+				
 			}
 			shootTimer += ts;
 		}
