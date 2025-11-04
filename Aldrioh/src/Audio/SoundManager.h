@@ -22,7 +22,7 @@ public:
 
 	static void LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath, float volume = 1);
 	static void Play(const std::string& soundName);
-	static void ClearFinishedSounds();
+	static void RecycleFinishedSounds();
 
 	static void SetVolume(SoundCategory soundCategory, float normalized);
 	static float GetVolume(SoundCategory soundCategory);

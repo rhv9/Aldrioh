@@ -34,6 +34,7 @@ const Statistics::EngineStats Statistics::EngineStats::GetStats()
 	stats.updateTicks = gameStats.updateTicks;
 	stats.ticksPerSecond = gameStats.ticksPerSecond;
 	stats.layerCount = Game::Instance().GetLayerStack().layerVector.size();
+	stats.deltaSinceUpdate = Game::Instance().deltaSinceUpdate;
 	return stats;
 }
 

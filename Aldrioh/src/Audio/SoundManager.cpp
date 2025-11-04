@@ -114,7 +114,7 @@ void SoundManager::Play(const std::string& soundName)
 		LOG_CORE_INFO("Sound not added before");
 }
 
-void SoundManager::ClearFinishedSounds()
+void SoundManager::RecycleFinishedSounds()
 {
 	if (!smdata->finishedSlots.empty())
 	{

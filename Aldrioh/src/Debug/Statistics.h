@@ -31,6 +31,7 @@ namespace Statistics {
 		int fps = 0;
 		int updateTicks = 0;
 		int ticksPerSecond = 0;
+		float deltaSinceUpdate = 0;
 
 		int layerCount = 0;
 	};

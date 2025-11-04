@@ -30,6 +30,9 @@ public:
 	void Shutdown();
 	void OnClosing();
 
+	Timestep GetDelta() { return delta; }
+	Timestep GetFixedUpdateTimestep();
+
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);
 	bool isEventsBlocked() {
@@ -54,6 +57,7 @@ private:
 	bool running = false;
 	float delta = 0.0f;
 	float tickTimer = 0.0f;
+	float deltaSinceUpdate = 0.0f;
 
 	std::unique_ptr<Window> window;
 

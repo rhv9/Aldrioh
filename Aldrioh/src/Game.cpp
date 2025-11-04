@@ -81,6 +81,7 @@ void Game::Start()
 
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop
+    previousTime = std::chrono::system_clock::now();
     while (running)
     {
         Iterate();
@@ -101,7 +102,7 @@ void Game::Loop()
 #endif
 }
 
-constexpr float TICK_TIMESTEP = 1.0f / 60.0f;
+constexpr float TICK_TIMESTEP = 1.0f / 30.0f;
 
 bool Game::Iterate()
 {
@@ -127,36 +128,27 @@ bool Game::Iterate()
     }
 
     tickTimer += delta;
-    
-    if (tickTimer >= TICK_TIMESTEP)
+    deltaSinceUpdate += delta;
+
+    while (tickTimer >= TICK_TIMESTEP)
     {
-        for (Layer* layer : layerStack)
-        {
-            if (layer->ShouldUpdate())
-                layer->OnUpdate(TICK_TIMESTEP);
-        }
+        layerStack.Update(tickTimer);
+
         tickTimer -= TICK_TIMESTEP;
         ++i_gameStats.updateTicks;
+        deltaSinceUpdate = 0;
     }
 
-
-    for (Layer* layer : layerStack)
-    {
-        if (layer->ShouldRender())
-            layer->OnRender(delta);
-    }
+    layerStack.Render(deltaSinceUpdate / TICK_TIMESTEP);
 
 #ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer->BeginRender();
-    for (Layer* layer : layerStack)
-    {
-        layer->OnImGuiRender(delta);
-    }
+    layerStack.ImGuiRender(delta);
     imGuiLayer->EndRender();
 #endif
     window->OnUpdate();
 
-    SoundManager::ClearFinishedSounds();
+    SoundManager::RecycleFinishedSounds();
 
     return true;
 }
@@ -171,6 +163,11 @@ void Game::OnClosing()
     Font::DestroyGlobalFonts();
     Renderer::Destroy();
     SoundManager::Destroy();
+}
+
+Timestep Game::GetFixedUpdateTimestep()
+{
+    return TICK_TIMESTEP;
 }
 
 void Game::BlockEvents(bool val)

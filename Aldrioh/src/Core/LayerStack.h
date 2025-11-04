@@ -14,6 +14,10 @@ public:
 	void PushLayer(Layer* layer);
 	void PopLayer(Layer* layer);
 
+	void Update(Timestep delta);
+	void Render(Timestep delta);
+	void ImGuiRender(Timestep delta);
+
 	void SwapLayers(Layer* first, Layer* second);
 
 	std::vector<Layer*>::iterator begin() { return layerVector.begin(); }
