@@ -101,6 +101,8 @@ void Game::Loop()
 #endif
 }
 
+constexpr float TICK_TIMESTEP = 1.0f / 60.0f;
+
 bool Game::Iterate()
 {
     if (!running)
@@ -118,15 +120,25 @@ bool Game::Iterate()
             deltaCummulative--;
             i_gameStats.fps = i_gameStats.fpsCounter;
             i_gameStats.fpsCounter = 0;
+            i_gameStats.ticksPerSecond = i_gameStats.updateTicks;
+            i_gameStats.updateTicks = 0;
         }
         i_gameStats.fpsCounter++;
     }
 
-    for (Layer* layer : layerStack)
+    tickTimer += delta;
+    
+    if (tickTimer >= TICK_TIMESTEP)
     {
-        if (layer->ShouldUpdate())
-            layer->OnUpdate(delta);
+        for (Layer* layer : layerStack)
+        {
+            if (layer->ShouldUpdate())
+                layer->OnUpdate(TICK_TIMESTEP);
+        }
+        tickTimer -= TICK_TIMESTEP;
+        ++i_gameStats.updateTicks;
     }
+
 
     for (Layer* layer : layerStack)
     {

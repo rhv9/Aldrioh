@@ -26,9 +26,11 @@ namespace Statistics {
 	{
 		static const EngineStats GetStats();
 
-		Timestep delta;
+		Timestep delta = 0;
 		int fpsCounter = 0;
 		int fps = 0;
+		int updateTicks = 0;
+		int ticksPerSecond = 0;
 
 		int layerCount = 0;
 	};

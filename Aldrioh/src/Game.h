@@ -13,6 +13,8 @@ struct GameStats
 {
 	int fpsCounter = 0;
 	int fps = 0;
+	int updateTicks = 0;
+	int ticksPerSecond = 0;
 };
 
 class Game
@@ -51,6 +53,7 @@ private:
 	GameStats i_gameStats;
 	bool running = false;
 	float delta = 0.0f;
+	float tickTimer = 0.0f;
 
 	std::unique_ptr<Window> window;
 
