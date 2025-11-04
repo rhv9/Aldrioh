@@ -1,5 +1,6 @@
 #pragma once
 #include <Scene/Scene.h>
+#include <Scene/Entity.h>
 
 struct LevelArea
 {
@@ -14,16 +15,21 @@ class Level
 {
 public:
 
-	Level(Scene& scene) : scene(scene) {};
-	virtual ~Level() {};
-	void virtual OnUpdate(Timestep ts) = 0;
-	void virtual OnRender(Timestep ts) = 0;
+	Level(Scene& scene);
+	~Level();
+	void OnUpdate(Timestep ts);
+	void OnRender(Timestep ts);
 
-	virtual void UpdateLevelArea() = 0;
+	void UpdateLevelArea();
 	const LevelArea& GetLevelArea() const { return levelArea; }
+
+	void UpdateScore(float newScore);
+
 	// A reference to the scene from GameLayer
 	Scene& scene;
-
 protected:
 	LevelArea levelArea;
+	Entity camera;
+
 };
+

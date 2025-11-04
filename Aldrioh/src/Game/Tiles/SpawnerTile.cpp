@@ -32,7 +32,7 @@ void SpawnerTile::OnUpdate(Timestep ts, const TileMetaData& metadata)
 
 		spawnPos += metadata.pos;
 
-		static_cast<TestLevel*>(metadata.level)->CreateBoss(spawnPos);
+		//static_cast<TestLevel*>(metadata.level)->CreateBoss(spawnPos);
 	}
 	else
 		remainingTime -= ts;

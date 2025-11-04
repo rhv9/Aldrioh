@@ -32,7 +32,6 @@
 #include <Game/Systems/RenderSystems.h>
 #include <Graphics/RenderQueue.h>
 
-#include <Game/Level/Level1.h>
 #include <Game/Components/LevelComponents.h>
 
 #include <Debug/GameDebugState.h>
@@ -44,7 +43,6 @@
 #include <Audio/SoundManager.h>
 
 
-static Level1* level1 = nullptr;
 static Level* currentLevel = nullptr;;
 
 GameLayer::GameLayer() {}
@@ -61,10 +59,9 @@ void GameLayer::OnBegin()
 	uimc.uiManager = std::make_unique<UIManager>();
 
 	// Level system
-	level1 = new Level1(*scene);
-	currentLevel = level1;
+	currentLevel = new Level(*scene);
 	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
-	levelEntity.AddComponent<LevelComponent>(level1);
+	levelEntity.AddComponent<LevelComponent>(currentLevel);
 	currentLevel->UpdateLevelArea();
 
 	// UI

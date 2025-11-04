@@ -73,9 +73,9 @@ void LevelEditorLayer::OnBegin()
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	// Level system
-	Entity levelEntity = scene->CreateEntity("Test Level");
-	levelEntity.AddComponent<LevelComponent>(new TestLevel(*scene));
-	levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
+	//Entity levelEntity = scene->CreateEntity("Test Level");
+	//levelEntity.AddComponent<LevelComponent>(new TestLevel(*scene));
+	//levelEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
@@ -88,6 +88,7 @@ void LevelEditorLayer::OnBegin()
 
 	callbackMousePressedID = Game::Instance().GetWindow()->MouseButtonPressedEventHandler += [&](MouseButtonPressedEventArg& arg)
 		{
+			/*
 			auto view = scene->getRegistry().view<LevelComponent>();
 
 			for (auto e : view)
@@ -99,6 +100,7 @@ void LevelEditorLayer::OnBegin()
 
 				level->SetTile((int)pos.x, (int)pos.y, new TexturedTiles(Sprites::sand_cactus));
 			}
+			*/
 		};
 
 	// UI Related

@@ -15,6 +15,7 @@
 #include <Input/Input.h>
 #include <Game/Components/EntityComponents.h>
 
+/*
 class Region
 {
 
@@ -130,3 +131,4 @@ void TestLevel::CreateBoss(const glm::vec2& pos)
 	boss.AddComponent<GlobalDumbAIComponent>();
 }
 
+*/

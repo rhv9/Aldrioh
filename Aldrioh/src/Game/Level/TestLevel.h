@@ -2,7 +2,7 @@
 #include "Level.h"
 #include <Scene/Scene.h>
 #include <Game/Tiles/Tiles.h>
-
+/*
 class TestLevel : public Level
 {
 public:
@@ -22,3 +22,4 @@ public:
 	int width, height;
 private:
 };
+*/
