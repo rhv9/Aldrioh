@@ -21,6 +21,7 @@ public:
 	virtual void OnRemove();
 
 	void OnKeyPressed(KeyPressedEventArg& e);
+	void OnWindowResize(WindowResizeEventArg& e);
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 
@@ -33,4 +34,6 @@ private:
 	UIText* uiScoreText = nullptr;
 
 	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
+	EventCallbackID<WindowResizeEventArg> windowResizeID;
+
 };

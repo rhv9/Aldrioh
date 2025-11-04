@@ -8,18 +8,18 @@ struct PlayerPrefab : public EntityPrefab
 {
 	glm::vec2 startPos { 0 };
 	DIR dir {DIRLOCK_FREE};
-	EntityPrefabCreateOverride;
+	virtual Entity create(Scene& scene) override;
 };
 
 struct FixedCameraPrefab : public EntityPrefab
 {
 	float zoomLevel;
-	EntityPrefabCreateOverride;
+	virtual Entity create(Scene& scene) override;
 };
 
 struct EnemyManagerPrefab : public EntityPrefab
 {
-	EntityPrefabCreateOverride;
+	virtual Entity create(Scene& scene) override;
 };
 
 struct EnemyPrefab : public EntityPrefab
@@ -27,6 +27,6 @@ struct EnemyPrefab : public EntityPrefab
 	glm::vec2 spawnPos{ 0 };
 	float maxHealth = 1;
 	Entity enemyManager;
-	EntityPrefabCreateOverride;
+	virtual Entity create(Scene& scene) override;
 };
 

@@ -42,7 +42,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 	// Camera
 	FixedCameraPrefab fixedCameraPrefab;
 	fixedCameraPrefab.zoomLevel = zoomLevel;
-	fixedCameraPrefab.create(scene);
+	camera = fixedCameraPrefab.create(scene);
 
 	EnemyManagerPrefab enemyManagerPrefab;
 	Entity enemyManager = enemyManagerPrefab.create(scene);
@@ -78,10 +78,23 @@ void Level1::OnUpdate(Timestep ts)
 
 void Level1::OnRender(Timestep ts)
 {
-	Renderer::DrawQuad({ 0, 0, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+	Renderer::DrawQuad({ levelArea.bottomLeft, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+	Renderer::DrawQuad({ levelArea.topRight - glm::vec2{1,1}, 0.5f}, Font::DEFAULT->GetCharSubTexture('a'), {1, 1}, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 }
 
 void Level1::UpdateScore(float newScore)
 {
 	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));
+}
+
+void Level1::UpdateLevelArea()
+{
+	if (camera.Valid())
+	{
+		auto& cc = camera.GetComponent<CameraComponent>();
+		auto& bounds = cc.cameraController->GetBounds();
+
+		levelArea.bottomLeft = glm::vec2{ bounds.Left, bounds.Bottom };
+		levelArea.topRight = glm::vec2{ bounds.Right, bounds.Top };
+	}
 }

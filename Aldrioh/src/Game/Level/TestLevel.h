@@ -16,6 +16,7 @@ public:
 
 	void CreateBoss(const glm::vec2& pos);
 
+	virtual void UpdateLevelArea() override {}
 
 	Tiles** tiles;
 	int width, height;

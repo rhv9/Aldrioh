@@ -1,6 +1,6 @@
 #pragma once
 #include "Level.h"
-
+#include <Scene/Entity.h>
 
 class Level1 : public Level
 {
@@ -12,4 +12,9 @@ public:
 	void virtual OnRender(Timestep ts) override;
 
 	void UpdateScore(float newScore);
+
+	virtual void UpdateLevelArea() override;
+
+private:
+	Entity camera;
 };

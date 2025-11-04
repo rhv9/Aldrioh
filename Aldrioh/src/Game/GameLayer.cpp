@@ -43,6 +43,10 @@
 #include <Game/GlobalLayers.h>
 #include <Audio/SoundManager.h>
 
+
+static Level1* level1 = nullptr;
+static Level* currentLevel = nullptr;;
+
 GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
@@ -57,8 +61,11 @@ void GameLayer::OnBegin()
 	uimc.uiManager = std::make_unique<UIManager>();
 
 	// Level system
+	level1 = new Level1(*scene);
+	currentLevel = level1;
 	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
-	levelEntity.AddComponent<LevelComponent>(new Level1(*scene));
+	levelEntity.AddComponent<LevelComponent>(level1);
+	currentLevel->UpdateLevelArea();
 
 	// UI
 	uiScoreText = new UIText("Score", { 2, 2 }, glm::vec2{ 0 });
@@ -176,20 +183,29 @@ void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
 	if (e.Key == Input::KEY_P)
 	{
 		SoundManager::Play("sfx");
-
 	}
 }
+
+void GameLayer::OnWindowResize(WindowResizeEventArg& e)
+{
+	if (currentLevel != nullptr)
+		currentLevel->UpdateLevelArea();
+}
+
 
 void GameLayer::OnTransitionIn()
 {
 	SetShouldUpdate(true);
 	SetShouldRender(true);
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
+	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
+
 	scene->OnTransitionIn();
 }
 
 void GameLayer::OnTransitionOut()
 {
 	callbackKeyPressedID.~EventCallbackID();
+	windowResizeID.~EventCallbackID();
 	scene->OnTransitionOut();
 }
