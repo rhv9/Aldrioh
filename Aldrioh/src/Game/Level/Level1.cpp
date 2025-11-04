@@ -52,7 +52,7 @@ Level1::Level1(Scene& scene) : Level(scene)
 		{
 			EnemyPrefab enemyPrefab;
 			enemyPrefab.enemyManager = enemyManager;
-			enemyPrefab.maxHealth = 200;
+			enemyPrefab.maxHealth = 1;
 			enemyPrefab.spawnPos = { x, y };
 			enemyPrefab.create(scene);
 		}

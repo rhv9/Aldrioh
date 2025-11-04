@@ -64,8 +64,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			move.x = 1.0f;
 
 		playerMove.updateMoveVec(move);
-
-
+		
 
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 
@@ -83,7 +82,13 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 				glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
-				const glm::vec2 dir = (pcc.dirLock == DIRLOCK_FREE) ? Math::normalizedDirection(glm::vec2(playerPos), player.getScene()->GetMousePosInScene()) : pcc.dirLock;
+				glm::vec2 dir;
+				if (pcc.dirLock == DIRLOCK_FREE)
+				{
+					dir = Math::normalizedDirection(glm::vec2(playerPos), player.getScene()->GetMousePosInScene());
+				}
+				else
+					dir = pcc.dirLock;
 				shoot(player, playerPos, dir);
 				scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 				

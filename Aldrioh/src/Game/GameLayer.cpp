@@ -70,7 +70,7 @@ void GameLayer::OnBegin()
 
 
 	// On Update Systems
-	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
+	//scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
