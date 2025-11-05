@@ -46,11 +46,27 @@ Entity EnemyManagerPrefab::create(Scene& scene)
 {
 	Entity manager = scene.CreateEntity("Entity Manager");
 	auto& emc = manager.AddComponent<EnemyManagerComponent>();
-	emc.move = 0;
-	emc.distance = 0;
-	emc.speed = 15;
-	manager.AddComponent<MoveComponent>(1);
 
+	float distance = 1;
+	
+	emc.OnUpdateFunc = [distance](Timestep ts, Entity enemyManager) mutable
+		{
+			auto& tc = enemyManager.GetComponent<TransformComponent>();
+			auto& mc = enemyManager.GetComponent<MoveComponent>();
+
+			glm::vec2 move = mc.moveVec;
+			glm::vec2 newPos = glm::vec2{ tc.position.x, tc.position.y } + move;
+			float length = glm::length(newPos);
+			if (length > distance)
+				move.x = -1;
+			else if (length < -distance)
+				move.x = 1;
+
+			mc.updateMoveVec(move);
+		};
+
+	auto& mc = manager.AddComponent<MoveComponent>(speed);
+	mc.updateMoveVec({ 1.0f, 0.0f });
 	return manager;
 }
 
@@ -63,7 +79,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	vc.rotation = Math::PI;
-	enemy.AddComponent<MoveComponent>(1);
+	enemy.AddComponent<MoveComponent>(1.0f);
 	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });

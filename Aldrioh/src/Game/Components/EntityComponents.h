@@ -22,15 +22,9 @@ struct HealthComponent
 
 struct EnemyManagerComponent
 {
-	float move = 1;
-	float speed = 1;
-	float startTime = -1;
-	float startX = 0;
-	float distance = 1;
-	float elapsedTime = 0;
-	float alreadyMoved = 0;
-
 	float entityCount = 0;
+
+	std::function<void(Timestep, Entity)> OnUpdateFunc;
 
 	EnemyManagerComponent() = default;
 	EnemyManagerComponent(const EnemyManagerComponent&) = default;

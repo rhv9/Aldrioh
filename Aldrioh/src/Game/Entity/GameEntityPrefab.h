@@ -19,6 +19,8 @@ struct FixedCameraPrefab : public EntityPrefab
 
 struct EnemyManagerPrefab : public EntityPrefab
 {
+	float speed = 4.0f;
+	glm::vec2 dirFacing;
 	virtual Entity create(Scene& scene) override;
 };
 

@@ -4,6 +4,8 @@
 #include <Game/Entity/GameEntityPrefab.h>
 #include <Game/Level/Level.h>
 
+#include "ObjectivePreset.h"
+
 WaveManager::WaveManager(Scene& scene, Level& level) : scene(scene), level(level)
 {
 }
@@ -35,18 +37,7 @@ void WaveManager::Init()
 			}
 			obj.entities.push_back(enemyManager);
 		};
-	obj.OnUpdateFunc = [](Objective& obj, Level& level)
-		{
-			bool complete = true;
-			for (Entity& e : obj.entities)
-			{
-				if (e.Valid())
-					complete = false;
-			}
-
-			obj.complete = complete;
-		};
-
+	obj.OnUpdateFunc = ObjectivePreset::OnUpdate_AllEntitiesDestroyed;
 	obj.OnCompleteFunc = [](Objective& obj, Level& level)
 		{
 			LOG_CORE_INFO("First Wave Complete!!");
@@ -73,17 +64,7 @@ void WaveManager::Init()
 			}
 			obj.entities.push_back(enemyManager);
 		};
-	obj2.OnUpdateFunc = [](Objective& obj, Level& level)
-		{
-			bool complete = true;
-			for (Entity& e : obj.entities)
-			{
-				if (e.Valid())
-					complete = false;
-			}
-
-			obj.complete = complete;
-		};
+	obj2.OnUpdateFunc = ObjectivePreset::OnUpdate_AllEntitiesDestroyed;
 
 	obj2.OnCompleteFunc = [](Objective& obj, Level& level)
 		{

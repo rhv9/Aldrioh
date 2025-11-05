@@ -21,8 +21,11 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 		if (dac.enemyManager.Valid())
 		{
 			auto& emc = dac.enemyManager.GetComponent<EnemyManagerComponent>();
-			mc.updateMoveVec({emc.move * emc.speed, -0.3f });
-		
+			auto& emmc = dac.enemyManager.GetComponent<MoveComponent>();
+
+			mc.speed = emmc.speed;
+			mc.updateMoveVec(emmc.moveVec);
+
 			if (dac.firstUpdate)
 			{
 				dac.firstUpdate = false;
@@ -32,33 +35,16 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 	}
 
 	{
-		auto view = scene.getRegistry().view<EnemyManagerComponent, MoveComponent>();
+		auto view = scene.getRegistry().view<TransformComponent, EnemyManagerComponent, MoveComponent>();
 
 		for (entt::entity e : view)
 		{
-			float elapsedTime = Platform::GetElapsedTime();
-
-			auto [emc, mc] = view.get<EnemyManagerComponent, MoveComponent>(e);
-			auto& tc = scene.getRegistry().get<TransformComponent>(e);
+			auto [tc, emc, mc] = view.get<TransformComponent, EnemyManagerComponent, MoveComponent>(e);
 
 			if (emc.entityCount == 0)
 				scene.WrapEntityHandle(e).AddComponent<DestroyEntityComponent>();
 
-			if (emc.startTime == -1)
-			{
-				emc.startTime = elapsedTime;
-				emc.startX = tc.position.x;
-			}
-
-			if (tc.position.x > emc.startX + emc.distance)
-				emc.move = -1;
-			else if (tc.position.x < emc.startX - emc.distance)
-				emc.move = 1;
-
-
-			mc.updateMoveVec({ emc.move * emc.speed, 0 });
+			emc.OnUpdateFunc(ts, scene.WrapEntityHandle(e));
 		}
 	}
-
-
 }
