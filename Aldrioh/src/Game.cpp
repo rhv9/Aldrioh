@@ -132,7 +132,7 @@ bool Game::Iterate()
 
     while (tickTimer >= TICK_TIMESTEP)
     {
-        layerStack.Update(tickTimer);
+        layerStack.Update(TICK_TIMESTEP);
 
         tickTimer -= TICK_TIMESTEP;
         ++i_gameStats.updateTicks;

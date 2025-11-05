@@ -19,9 +19,10 @@
 
 float zoomLevel = 10;
 
-Level::Level(Scene& scene) : scene(scene)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 {
 	// collisionDispatcher
+	waveManager.Init();
 
 	CollisionCallbackFunction callbackFireball = [](CollisionEvent& fireball, CollisionEvent& enemy) {
 		fireball.e.QueueDestroy();
@@ -44,19 +45,6 @@ Level::Level(Scene& scene) : scene(scene)
 	fixedCameraPrefab.zoomLevel = zoomLevel;
 	camera = fixedCameraPrefab.create(scene);
 
-	EnemyManagerPrefab enemyManagerPrefab;
-	Entity enemyManager = enemyManagerPrefab.create(scene);
-	for (float y = 1; y < 8; y += 1.3f)
-	{
-		for (float x = -8; x < 8; x += 2.1f)
-		{
-			EnemyPrefab enemyPrefab;
-			enemyPrefab.enemyManager = enemyManager;
-			enemyPrefab.maxHealth = 1;
-			enemyPrefab.spawnPos = { x, y };
-			enemyPrefab.create(scene);
-		}
-	}
 
 	// Add score entity
 	Entity scoreEntity = scene.CreateEntityNoTransform("Score");
@@ -73,7 +61,7 @@ Level::~Level()
 
 void Level::OnUpdate(Timestep ts)
 {
-
+	waveManager.OnUpdate(ts);
 }
 
 void Level::OnRender(Timestep ts)

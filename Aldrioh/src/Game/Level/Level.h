@@ -2,6 +2,8 @@
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
 
+#include <Game/Waves/WaveManager.h>
+
 struct LevelArea
 {
 	glm::vec2 bottomLeft{ 0 };
@@ -30,6 +32,6 @@ public:
 protected:
 	LevelArea levelArea;
 	Entity camera;
-
+	WaveManager waveManager;
 };
 
