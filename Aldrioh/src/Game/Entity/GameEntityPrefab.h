@@ -17,10 +17,17 @@ struct FixedCameraPrefab : public EntityPrefab
 	virtual Entity create(Scene& scene) override;
 };
 
-struct EnemyManagerPrefab : public EntityPrefab
+struct WobblyEnemyGroupPrefab : public EntityPrefab
 {
 	float speed = 4.0f;
-	glm::vec2 dirFacing;
+	glm::vec2 dirFacing{ 0, -1 };
+	float distance = 1;
+
+	glm::vec2 spacing{ 1 };
+	glm::vec2 count{ 1, 1 };
+
+	glm::vec2 startPos{ 0, 0 };
+
 	virtual Entity create(Scene& scene) override;
 };
 
@@ -29,6 +36,7 @@ struct EnemyPrefab : public EntityPrefab
 	glm::vec2 spawnPos{ 0 };
 	float maxHealth = 1;
 	Entity enemyManager;
+	glm::vec2 dirFacing{ 0, -1 };
 	virtual Entity create(Scene& scene) override;
 };
 

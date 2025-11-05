@@ -42,31 +42,48 @@ Entity FixedCameraPrefab::create(Scene& scene)
 	return cameraEntity;
 }
 
-Entity EnemyManagerPrefab::create(Scene& scene)
+Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 {
 	Entity manager = scene.CreateEntity("Entity Manager");
 	auto& emc = manager.AddComponent<EnemyManagerComponent>();
 
-	float distance = 1;
-	
-	emc.OnUpdateFunc = [distance](Timestep ts, Entity enemyManager) mutable
+	glm::vec2 moveBy = Math::perpendicularClockwise(dirFacing);
+	auto& mc = manager.AddComponent<MoveComponent>(speed);
+	mc.updateMoveVec(moveBy);
+
+	bool alreadyFlipped = false;
+	emc.OnUpdateFunc = [distance = distance, alreadyFlipped](Timestep ts, Entity enemyManager) mutable
 		{
 			auto& tc = enemyManager.GetComponent<TransformComponent>();
 			auto& mc = enemyManager.GetComponent<MoveComponent>();
 
 			glm::vec2 move = mc.moveVec;
-			glm::vec2 newPos = glm::vec2{ tc.position.x, tc.position.y } + move;
+			glm::vec2 newPos = glm::vec2{ tc.position.x, tc.position.y };
 			float length = glm::length(newPos);
-			if (length > distance)
-				move.x = -1;
-			else if (length < -distance)
-				move.x = 1;
+			if (!alreadyFlipped && length > distance)
+			{
+				move = -move;
+				alreadyFlipped = true;
+			}
+			if (length < distance)
+				alreadyFlipped = false;
 
 			mc.updateMoveVec(move);
 		};
 
-	auto& mc = manager.AddComponent<MoveComponent>(speed);
-	mc.updateMoveVec({ 1.0f, 0.0f });
+	for (int y = 0; y < count.y; ++y)
+	{
+		for (int x = 0; x < count.x; ++x)
+		{
+			EnemyPrefab enemyPrefab;
+			enemyPrefab.enemyManager = manager;
+			enemyPrefab.maxHealth = 1;
+			enemyPrefab.dirFacing = dirFacing;
+			enemyPrefab.spawnPos = { startPos.x + x * spacing.x, startPos.y + y * spacing.y};
+			enemyPrefab.create(scene);
+		}
+	}
+
 	return manager;
 }
 
@@ -78,7 +95,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	vc.rotation = Math::PI;
+	vc.rotation = Math::angle(dirFacing);
 	enemy.AddComponent<MoveComponent>(1.0f);
 	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);

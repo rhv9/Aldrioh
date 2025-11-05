@@ -5,6 +5,7 @@
 #include <Game/Level/Level.h>
 
 #include "ObjectivePreset.h"
+#include <Math/Math.h>
 
 WaveManager::WaveManager(Scene& scene, Level& level) : scene(scene), level(level)
 {
@@ -22,19 +23,16 @@ void WaveManager::Init()
 		{
 			Scene& scene = level.scene;
 
-			EnemyManagerPrefab enemyManagerPrefab;
+			WobblyEnemyGroupPrefab enemyManagerPrefab;
+			enemyManagerPrefab.count = { 5, 2 };
+			enemyManagerPrefab.spacing = { 1.3f, 1.6f };
+
+			enemyManagerPrefab.dirFacing = Math::angleToNormalizedVector(Math::degreesToRad(45));
+			enemyManagerPrefab.startPos = glm::vec2{ 0.0f, 3.0f };
+			enemyManagerPrefab.distance = 1;
+			enemyManagerPrefab.speed = 1;
+
 			Entity enemyManager = enemyManagerPrefab.create(scene);
-			for (float y = 1; y < 8; y += 1.3f)
-			{
-				for (float x = -8; x < 8; x += 2.1f)
-				{
-					EnemyPrefab enemyPrefab;
-					enemyPrefab.enemyManager = enemyManager;
-					enemyPrefab.maxHealth = 1;
-					enemyPrefab.spawnPos = { x, y };
-					enemyPrefab.create(scene);
-				}
-			}
 			obj.entities.push_back(enemyManager);
 		};
 	obj.OnUpdateFunc = ObjectivePreset::OnUpdate_AllEntitiesDestroyed;
@@ -49,19 +47,16 @@ void WaveManager::Init()
 		{
 			Scene& scene = level.scene;
 
-			EnemyManagerPrefab enemyManagerPrefab;
+			WobblyEnemyGroupPrefab enemyManagerPrefab;
+			enemyManagerPrefab.count = { 10, 4 };
+			enemyManagerPrefab.spacing = { 1.3f, 1.6f };
+
+			enemyManagerPrefab.dirFacing = Math::angleToNormalizedVector(Math::degreesToRad(180 + 45));
+			enemyManagerPrefab.startPos = glm::vec2{ 0.0f, 3.0f };
+			enemyManagerPrefab.distance = 1;
+			enemyManagerPrefab.speed = 4;
+
 			Entity enemyManager = enemyManagerPrefab.create(scene);
-			for (float y = 1; y < 8; y += 1.3f)
-			{
-				for (float x = -8; x < 8; x += 2.1f)
-				{
-					EnemyPrefab enemyPrefab;
-					enemyPrefab.enemyManager = enemyManager;
-					enemyPrefab.maxHealth = 1;
-					enemyPrefab.spawnPos = { x, y };
-					enemyPrefab.create(scene);
-				}
-			}
 			obj.entities.push_back(enemyManager);
 		};
 	obj2.OnUpdateFunc = ObjectivePreset::OnUpdate_AllEntitiesDestroyed;

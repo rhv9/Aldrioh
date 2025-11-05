@@ -33,6 +33,16 @@ float Math::degreesToRad(float degrees)
 	return degrees * (PI / 180.0f);
 }
 
+glm::vec2 Math::perpendicularClockwise(const glm::vec2& pos)
+{
+	return glm::vec2{ pos.y, -pos.x };
+}
+
+glm::vec2 Math::perpendicularCounterClockwise(const glm::vec2& pos)
+{
+	return glm::vec2{ -pos.y, pos.x };
+}
+
 float Math::angleBetween(const glm::vec2& p1, const glm::vec2& p2)
 {
 	float dx = p2.x - p1.x;
@@ -50,6 +60,11 @@ float Math::angleBetweenVec2(const glm::vec3& p1, const glm::vec3& p2)
 float Math::angle(const glm::vec2& pos)
 {
 	return atan2f(pos.y, pos.x) - Math::PI / 2.0f;
+}
+
+glm::vec2 Math::angleToNormalizedVector(float angle)
+{
+	return glm::vec2(cosRad(angle), sinRad(angle));
 }
 
 glm::vec2 Math::normalizedDirection(const glm::vec2& origin, const glm::vec2& dest)
