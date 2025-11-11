@@ -52,7 +52,7 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 	mc.updateMoveVec(moveBy);
 
 	bool alreadyFlipped = false;
-	emc.OnUpdateFunc = [distance = distance, alreadyFlipped](Timestep ts, Entity enemyManager) mutable
+	emc.OnUpdateFunc = [distance = distance, alreadyFlipped, dirFacing = dirFacing * 1.0f](Timestep ts, Entity enemyManager) mutable
 		{
 			auto& tc = enemyManager.GetComponent<TransformComponent>();
 			auto& mc = enemyManager.GetComponent<MoveComponent>();
@@ -67,6 +67,8 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 			}
 			if (length < distance)
 				alreadyFlipped = false;
+
+			move = glm::normalize(move + dirFacing);
 
 			mc.updateMoveVec(move);
 		};

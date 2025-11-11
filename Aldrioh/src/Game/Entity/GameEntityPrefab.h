@@ -21,6 +21,7 @@ struct WobblyEnemyGroupPrefab : public EntityPrefab
 {
 	float speed = 4.0f;
 	glm::vec2 dirFacing{ 0, -1 };
+	float dirFacingMovingSpeed = 0.0f;
 	float distance = 1;
 
 	glm::vec2 spacing{ 1 };
