@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "SubTexture.h"
+#include "Framebuffer.h"
 
 #include "RenderQueue.h"
 
@@ -65,6 +66,9 @@ struct RenderData
 
 	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 
+	// Background pass
+	std::unique_ptr<Framebuffer> backFramebuffer = nullptr;
+	Shader* backgroundShader = nullptr;
 };
 
 static RenderData renderData;
@@ -136,6 +140,10 @@ void Renderer::Init()
 	renderData.shaderBatchTexture->UniformIntArray("uTextureSamplers", &textureBindings[0], renderData.MAX_TEXTURE);
 
 	InitUIRenderer();
+
+	// Background pass setup
+	renderData.backFramebuffer = std::make_unique<Framebuffer>(200, 100);
+	renderData.backgroundShader = &ShaderManager::Get().GetShader(ShaderName::BACKGROUND_SHADER);
 }
 
 static glm::mat4 viewProjection;
@@ -234,6 +242,20 @@ void Renderer::Destroy()
 {
 	delete[] renderData.batchBasePtr;
 	DestroyUIRenderer();
+}
+
+void Renderer::DrawBackgroundPass()
+{
+	renderData.backFramebuffer->Bind();
+
+	renderData.backgroundShader->Use();
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	renderData.backFramebuffer->UnBind();
+}
+
+std::unique_ptr<Texture>& Renderer::GetBackgroundPassTexture()
+{
+	return renderData.backFramebuffer->GetTextureObj();
 }
 
 void Renderer::FlushBatch()

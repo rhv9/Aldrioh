@@ -73,7 +73,10 @@ void Scene::OnRender(Timestep ts)
 
 	for (auto system : renderSystems)
 		system(ts, *this);
-	
+
+	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
+	Renderer::DrawQuad(glm::vec3{ 3, 3, 0 }, &subTexture, { 5, 5 });
+
 	RenderQueue::Flush();
 	Renderer::EndScene();
 }

@@ -115,6 +115,7 @@ void GameLayer::OnUpdate(Timestep delta)
 
 void GameLayer::OnRender(Timestep delta)
 {
+	Renderer::DrawBackgroundPass();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
 }

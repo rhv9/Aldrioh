@@ -85,6 +85,10 @@ public:
 	static void DrawQuad(const glm::vec3& position, const std::shared_ptr<SubTexture>& subTexture, const glm::vec2& scale = { 1.0f, 1.0f });
 	static void DrawQuad(const glm::vec3& position, const SubTexture* subTexture, const glm::vec2& scale = { 1.0f, 1.0f }, const glm::vec4& colour = glm::vec4(1.0f), float rotation = 0.0f, float flags = 0);
 
+	// TODO: Need to generalise this later
+	static void DrawBackgroundPass();
+	static std::unique_ptr<Texture>& GetBackgroundPassTexture();
+
 	static void FlushBatch();
 	static void ResetBatch();
 	static void FlushAndReset();

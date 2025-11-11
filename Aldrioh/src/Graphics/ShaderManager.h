@@ -6,6 +6,7 @@ enum class ShaderName : uint32_t
 	GENERAL_TEXTURE = 0,
 	BATCH_TEXTURE,
 	UI_SHADER,
+	BACKGROUND_SHADER,
 };
 
 class ShaderManager
@@ -22,6 +23,6 @@ private:
 private:
 	static ShaderManager shaderManager;
 
-	// This is not good, have to manually remember to increase this;
-	std::array<Shader, 5> shaders;
+	// TODO: This is not good, have to manually remember to increase this;
+	std::array<Shader, 10> shaders;
 };

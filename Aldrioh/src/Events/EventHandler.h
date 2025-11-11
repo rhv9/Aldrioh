@@ -92,7 +92,7 @@ public:
 	{
 		if (registry.valid(id))
 		{
-			LOG_CORE_TRACE("Removing callback");
+			//LOG_CORE_TRACE("Removing callback");
 			registry.destroy(id);
 
 		}
