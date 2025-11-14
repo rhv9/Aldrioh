@@ -249,6 +249,7 @@ void Renderer::DrawBackgroundPass()
 	renderData.backFramebuffer->Bind();
 
 	renderData.backgroundShader->Use();
+	renderData.backgroundShader->UniformFloat("uTime", Platform::GetElapsedTime());
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	renderData.backFramebuffer->UnBind();
 }
