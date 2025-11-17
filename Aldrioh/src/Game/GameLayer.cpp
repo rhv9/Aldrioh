@@ -42,9 +42,14 @@
 #include <Game/GlobalLayers.h>
 #include <Audio/SoundManager.h>
 
+struct ImGuiSettings
+{
+	bool shouldUpdateScene = true;
+};
 
-static Level* currentLevel = nullptr;;
+static ImGuiSettings imGuiSettings;
 
+static Level* currentLevel = nullptr;
 GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
@@ -109,8 +114,8 @@ void GameLayer::OnBegin()
 
 void GameLayer::OnUpdate(Timestep delta)
 {
-	scene->OnUpdate(delta);
-
+	if (imGuiSettings.shouldUpdateScene)
+		scene->OnUpdate(delta);
 }
 
 void GameLayer::OnRender(Timestep delta)
@@ -152,6 +157,13 @@ void GameLayer::OnImGuiRender(Timestep delta)
 				ImGui::SeparatorText("Entity");
 				ImGui::Text("Entity count: %d", scene->getRegistry().view<TransformComponent>().size());
 			}
+
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Level"))
+		{
+			if (ImGui::Button(imGuiSettings.shouldUpdateScene ? "Pause" : "Play"))
+				imGuiSettings.shouldUpdateScene = !imGuiSettings.shouldUpdateScene;
 
 			ImGui::EndTabItem();
 		}
