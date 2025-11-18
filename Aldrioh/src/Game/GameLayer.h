@@ -22,6 +22,7 @@ public:
 
 	void OnKeyPressed(KeyPressedEventArg& e);
 	void OnWindowResize(WindowResizeEventArg& e);
+	void OnMouseButton(MouseButtonEventArg& e);
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 
@@ -35,5 +36,6 @@ private:
 
 	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
 	EventCallbackID<WindowResizeEventArg> windowResizeID;
+	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
 
 };

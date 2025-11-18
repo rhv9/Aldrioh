@@ -175,6 +175,11 @@ struct CollisionHandledComponent
 	CollisionHandledComponent(const CollisionHandledComponent&) = default;
 };
 
+struct ScriptComponent
+{
+	std::unique_ptr<ScriptObject> scriptObject;
+};
+
 
 
 

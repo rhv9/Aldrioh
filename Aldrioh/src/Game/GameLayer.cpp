@@ -45,9 +45,17 @@
 struct ImGuiSettings
 {
 	bool shouldUpdateScene = true;
+	bool shouldPathRecord = false;
+	bool pathStartStopHovered = false;
+};
+
+struct LevelEditorData
+{
+	std::vector<glm::vec2> points;
 };
 
 static ImGuiSettings imGuiSettings;
+static LevelEditorData levelEditorData;
 
 static Level* currentLevel = nullptr;
 GameLayer::GameLayer() {}
@@ -127,8 +135,9 @@ void GameLayer::OnRender(Timestep delta)
 
 void GameLayer::OnImGuiRender(Timestep delta)
 {
+	static bool open = true;
 	ImGui::SetNextWindowBgAlpha(0.6f);
-	ImGui::Begin("Main Window");
+	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_AlwaysAutoResize);
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
 	{
@@ -164,6 +173,33 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		{
 			if (ImGui::Button(imGuiSettings.shouldUpdateScene ? "Pause" : "Play"))
 				imGuiSettings.shouldUpdateScene = !imGuiSettings.shouldUpdateScene;
+
+			ImGui::SeparatorText("Entity Pathing");
+
+			if (ImGui::Button(imGuiSettings.shouldPathRecord ? "Stop recording path" : "Start recording path"))
+				imGuiSettings.shouldPathRecord = !imGuiSettings.shouldPathRecord;
+
+			if (ImGui::IsItemHovered())
+				imGuiSettings.pathStartStopHovered = true;
+			else
+				imGuiSettings.pathStartStopHovered = false;
+
+			if (ImGui::Button("Reset Path"))
+				levelEditorData.points.clear();
+
+
+			if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
+			{
+				std::string text;
+				text.reserve(512);
+
+				for (const glm::vec2& point : levelEditorData.points)
+				{
+					text.append(std::format(",({:.1f},{:.1f})", point.x, point.y));
+				}
+
+				ImGui::Text(std::format("Path: {}",text).c_str());
+			}
 
 			ImGui::EndTabItem();
 		}
@@ -202,6 +238,17 @@ void GameLayer::OnWindowResize(WindowResizeEventArg& e)
 		currentLevel->UpdateLevelArea();
 }
 
+void GameLayer::OnMouseButton(MouseButtonEventArg& e)
+{
+	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
+	{
+		if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
+		{
+			levelEditorData.points.push_back(scene->GetMousePosInScene());
+		}
+	}
+}
+
 
 void GameLayer::OnTransitionIn()
 {
@@ -209,6 +256,7 @@ void GameLayer::OnTransitionIn()
 	SetShouldRender(true);
 	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
 	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
+	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnMouseButton);
 
 	scene->OnTransitionIn();
 }
@@ -217,5 +265,6 @@ void GameLayer::OnTransitionOut()
 {
 	callbackKeyPressedID.~EventCallbackID();
 	windowResizeID.~EventCallbackID();
+	callbackMouseButtonID.~EventCallbackID();
 	scene->OnTransitionOut();
 }
