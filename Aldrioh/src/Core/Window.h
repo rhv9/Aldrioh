@@ -36,11 +36,8 @@ public:
 	virtual void* GetNativeWindow() const = 0;
 
 public:
-	EventHandler<KeyPressedEventArg> KeyPressedEventHandler;
-	EventHandler<KeyReleasedEventArg> KeyReleasedEventHandler;
+	EventHandler<KeyEventArg> KeyEventHandler;
 
-	EventHandler<MouseButtonPressedEventArg> MouseButtonPressedEventHandler;
-	EventHandler<MouseButtonReleasedEventArg> MouseButtonReleasedEventHandler;
 	EventHandler<MouseButtonEventArg> MouseButtonEventHandler;
 	EventHandler<MouseMoveEventArg> MouseMoveEventHandler;
 	EventHandler<MouseScrolledEventArg> MouseScrolledEventHandler;

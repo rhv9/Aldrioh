@@ -98,9 +98,9 @@ void MainMenuLayer::OnRemove()
 	delete uiManager;
 }
 
-void MainMenuLayer::OnKeyPressed(KeyPressedEventArg& e)
+void MainMenuLayer::OnKey(KeyEventArg& e)
 {
-	if (e.Key == Input::KEY_ESCAPE)
+	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_CORE_INFO("Shutdown");
 		Game::Instance().Shutdown();
@@ -109,7 +109,7 @@ void MainMenuLayer::OnKeyPressed(KeyPressedEventArg& e)
 
 void MainMenuLayer::OnTransitionIn()
 {
-	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKeyPressed);
+	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKey);
 	if (uiManager != nullptr)
 		uiManager->AttachEventListeners();
 }
@@ -117,6 +117,6 @@ void MainMenuLayer::OnTransitionIn()
 void MainMenuLayer::OnTransitionOut()
 {
 	LOG_CORE_INFO("Detaching!");
-	callbackKeyPressedID.~EventCallbackID();
+	callbackKeyID.~EventCallbackID();
 	uiManager->DetachEventListeners();
 }

@@ -60,52 +60,17 @@ void WindowsWindow::Init(const WindowProps& windowProps)
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			WindowData* windowData = (WindowData*)glfwGetWindowUserPointer(window);
-			switch (action)
-			{
-			case GLFW_PRESS:
-			{
-				KeyPressedEventArg keyPressedEventArg{ key, mods };
-				windowData->WindowObj->KeyPressedEventHandler.Invoke(keyPressedEventArg);
-				break;
-			}
-			case GLFW_RELEASE:
-			{
-				KeyReleasedEventArg keyReleasedEventArg{ key, mods };
-				windowData->WindowObj->KeyReleasedEventHandler.Invoke(keyReleasedEventArg);
-				break;
-			}
-			case GLFW_REPEAT:
-			{
-				// TODO: Do not need it now
-				break;
-			}
-			}
+
+			KeyEventArg keyEventArg{ key, mods, static_cast<uint8_t>(action) };
+			windowData->WindowObj->KeyEventHandler.Invoke(keyEventArg);
 		});
 
 	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData* windowData = (WindowData*)glfwGetWindowUserPointer(window);
 
-			MouseButtonEventArg mouseButtonEvent{ button, mods, action == GLFW_PRESS };
+			MouseButtonEventArg mouseButtonEvent{ button, mods, static_cast<uint8_t>(action) };
 			windowData->WindowObj->MouseButtonEventHandler.Invoke(mouseButtonEvent);
-
-			switch (action)
-			{
-			case GLFW_PRESS:
-				{
-					MouseButtonPressedEventArg mouseButtonPressed{ button, mods };
-					windowData->WindowObj->MouseButtonPressedEventHandler.Invoke(mouseButtonPressed);
-					break;
-				}
-			case GLFW_RELEASE:
-				{
-					MouseButtonReleasedEventArg mouseButtonReleased{ button, mods };
-					windowData->WindowObj->MouseButtonReleasedEventHandler.Invoke(mouseButtonReleased);
-					break;
-				}
-			default:
-				break;
-			}
 		});
 
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xpos, double ypos)

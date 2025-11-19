@@ -19,7 +19,7 @@ public:
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 
-	void OnKeyPressed(KeyPressedEventArg& e);
+	void OnKey(KeyEventArg& e);
 
 private:
 	void ExitPauseMenuToGame();
@@ -28,5 +28,5 @@ private:
 
 	UIManager* uiManager = nullptr;
 
-	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
+	EventCallbackID<KeyEventArg> callbackKeyID;
 };

@@ -131,11 +131,12 @@ void GameLayer::OnRender(Timestep delta)
 	Renderer::DrawBackgroundPass();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
+	
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
 {
-	static bool open = true;
+	static bool open = false;
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_AlwaysAutoResize);
 
@@ -216,9 +217,9 @@ void GameLayer::OnRemove()
 {
 }
 
-void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
+void GameLayer::OnKey(KeyEventArg& e)
 {
-	if (e.Key == Input::KEY_ESCAPE)
+	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_INFO("Pushing pause menu layer");
 		Game::Instance().GetLayerStack().PushLayer(GlobalLayers::pauseMenu);
@@ -226,7 +227,7 @@ void GameLayer::OnKeyPressed(KeyPressedEventArg& e)
 		OnTransitionOut();
 	}
 
-	if (e.Key == Input::KEY_P)
+	if (e.IsPressed(Input::KEY_P))
 	{
 		SoundManager::Play("sfx");
 	}
@@ -254,7 +255,7 @@ void GameLayer::OnTransitionIn()
 {
 	SetShouldUpdate(true);
 	SetShouldRender(true);
-	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKeyPressed);
+	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKey);
 	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
 	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnMouseButton);
 
@@ -263,7 +264,7 @@ void GameLayer::OnTransitionIn()
 
 void GameLayer::OnTransitionOut()
 {
-	callbackKeyPressedID.~EventCallbackID();
+	callbackKeyID.~EventCallbackID();
 	windowResizeID.~EventCallbackID();
 	callbackMouseButtonID.~EventCallbackID();
 	scene->OnTransitionOut();

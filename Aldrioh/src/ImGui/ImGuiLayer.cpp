@@ -14,10 +14,8 @@ ImGuiLayer::ImGuiLayer()
 {
     Window& window = *Game::Instance().GetWindow();
     callbackMouseMoveID = window.MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseMove);
-    callbackMousePressID = window.MouseButtonPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMousePress);
-    callbackMouseReleaseID = window.MouseButtonReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseRelease);
-    callbackKeyPressID = window.KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyPressed);
-    callbackKeyReleaseID = window.KeyReleasedEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKeyReleased);
+    callbackMouseButtonID = window.MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseButton);
+    callbackKeyID = window.KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnKey);
     callbackMouseScrollID = window.MouseScrolledEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseScroll);
 }
 
@@ -27,25 +25,13 @@ void ImGuiLayer::OnMouseMove(MouseMoveEventArg& e)
     e.isHandled = io.WantCaptureMouse;
 }
 
-void ImGuiLayer::OnMousePress(MouseButtonPressedEventArg& e)
+void ImGuiLayer::OnMouseButton(MouseButtonEventArg& e)
 {
     ImGuiIO& io = ImGui::GetIO();
     e.isHandled = io.WantCaptureMouse;
 }
 
-void ImGuiLayer::OnMouseRelease(MouseButtonReleasedEventArg& e)
-{
-    ImGuiIO& io = ImGui::GetIO();
-    e.isHandled = io.WantCaptureMouse;
-}
-
-void ImGuiLayer::OnKeyPressed(KeyPressedEventArg& e)
-{
-    ImGuiIO& io = ImGui::GetIO();
-    e.isHandled = io.WantCaptureKeyboard;
-}
-
-void ImGuiLayer::OnKeyReleased(KeyReleasedEventArg& e)
+void ImGuiLayer::OnKey(KeyEventArg& e)
 {
     ImGuiIO& io = ImGui::GetIO();
     e.isHandled = io.WantCaptureKeyboard;
@@ -67,7 +53,7 @@ void ImGuiLayer::OnBegin()
 
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     io.ConfigFlags |= !ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     // Setup Dear ImGui style

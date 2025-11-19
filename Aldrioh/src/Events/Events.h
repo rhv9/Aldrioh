@@ -20,6 +20,16 @@ struct KeyReleasedEventArg : public EventArg
 	KeyReleasedEventArg(int key, int mods) : Key(key), Mods(mods) {}
 };
 
+struct KeyEventArg : public EventArg
+{
+	const int Key;
+	const int Mods;
+	const uint8_t Action;
+
+	KeyEventArg(int key, int mods, uint8_t action) : Key(key), Mods(mods), Action(action) {}
+	inline bool IsPressed(int key) { return Key == key && Action == Input::PRESSED; }
+	inline bool IsReleased(int key) { return Key == key && Action == Input::RELEASED; }
+};
 
 // Mouse callbacks
 
@@ -27,12 +37,12 @@ struct MouseButtonEventArg : public EventArg
 {
 	const int Button;
 	const int Mods;
-	const bool Action;
+	const uint8_t Action;
 
-	MouseButtonEventArg(int button, int mods, int action) : Button(button), Mods(mods), Action(action) {}
+	MouseButtonEventArg(int button, int mods, uint8_t action) : Button(button), Mods(mods), Action(action) {}
 	
-	inline bool IsPressed(int button) { return Button == button && Action == Input::MOUSE_PRESSED; }
-	inline bool IsReleased(int button) { return Button == button && Action == Input::MOUSE_RELEASED; }
+	inline bool IsPressed(int button) { return Button == button && Action == Input::PRESSED; }
+	inline bool IsReleased(int button) { return Button == button && Action == Input::RELEASED; }
 };
 
 // TODO: I should deprecate this to make it simpler

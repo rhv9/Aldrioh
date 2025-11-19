@@ -144,8 +144,9 @@ namespace Input {
 	constexpr uint32_t MOUSE_BUTTON_RIGHT     = MOUSE_BUTTON_2;
 	constexpr uint32_t MOUSE_BUTTON_MIDDLE	  = MOUSE_BUTTON_3;
 
-	constexpr bool MOUSE_PRESSED = true;
-	constexpr bool MOUSE_RELEASED = false;
+	constexpr uint8_t RELEASED = 0;
+	constexpr uint8_t PRESSED = 1;
+	constexpr uint8_t REPEAT = 2;
 
 	/*! @brief If this bit is set one or more Shift keys were held down.
 	 *

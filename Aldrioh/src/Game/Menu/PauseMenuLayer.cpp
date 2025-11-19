@@ -88,9 +88,9 @@ void PauseMenuLayer::OnRemove()
 	delete uiManager;
 }
 
-void PauseMenuLayer::OnKeyPressed(KeyPressedEventArg& e)
+void PauseMenuLayer::OnKey(KeyEventArg& e)
 {
-	if (e.Key == Input::KEY_ESCAPE)
+	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		ExitPauseMenuToGame();
 	}
@@ -105,13 +105,13 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 
 void PauseMenuLayer::OnTransitionIn()
 {
-	callbackKeyPressedID = Game::Instance().GetWindow()->KeyPressedEventHandler += EVENT_BIND_MEMBER_FUNCTION(PauseMenuLayer::OnKeyPressed);
+	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(PauseMenuLayer::OnKey);
 	uiManager->AttachEventListeners();
 }
 
 void PauseMenuLayer::OnTransitionOut()
 {
 	LOG_CORE_INFO("Detaching!");
-	callbackKeyPressedID.~EventCallbackID();
+	callbackKeyID.~EventCallbackID();
 	uiManager->DetachEventListeners();
 }

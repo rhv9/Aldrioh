@@ -21,19 +21,14 @@ public:
 
 private:
 	void OnMouseMove(MouseMoveEventArg& e);
-	void OnMousePress(MouseButtonPressedEventArg& e);
-	void OnMouseRelease(MouseButtonReleasedEventArg& e);
-	void OnKeyPressed(KeyPressedEventArg& e);
-	void OnKeyReleased(KeyReleasedEventArg& e);
+	void OnMouseButton(MouseButtonEventArg& e);
 	void OnMouseScroll(MouseScrolledEventArg& e);
+	void OnKey(KeyEventArg& e);
 
 	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
-	EventCallbackID<MouseButtonPressedEventArg> callbackMousePressID;
-	EventCallbackID<MouseButtonReleasedEventArg> callbackMouseReleaseID;
-	EventCallbackID<KeyPressedEventArg> callbackKeyPressID;
-	EventCallbackID<KeyReleasedEventArg> callbackKeyReleaseID;
+	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
 	EventCallbackID<MouseScrolledEventArg> callbackMouseScrollID;
-
+	EventCallbackID<KeyEventArg> callbackKeyID;
 
 	bool blockEvents = false;
 };

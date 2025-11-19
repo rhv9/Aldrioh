@@ -26,7 +26,7 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 
 		}
 
-		RenderQueue::EnQueue(RenderLayer::TWO, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
+		RenderQueue::EnQueue(visual.renderLayer, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
 	}
 }
 

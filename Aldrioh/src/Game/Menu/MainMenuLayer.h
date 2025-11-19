@@ -19,12 +19,12 @@ public:
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 
-	void OnKeyPressed(KeyPressedEventArg& e);
+	void OnKey(KeyEventArg& e);
 
 private:
 	std::shared_ptr<Scene> scene;
 
 	UIManager* uiManager = nullptr;
 
-	EventCallbackID<KeyPressedEventArg> callbackKeyPressedID;
+	EventCallbackID<KeyEventArg> callbackKeyID;
 };

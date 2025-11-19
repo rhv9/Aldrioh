@@ -2,6 +2,7 @@
 #include <Game/Entity/EntityType.h>
 #include <Scene/CameraController.h>
 #include <Scene/Entity.h>
+#include <Graphics/RenderQueue.h>
 
 class UIManager;
 struct UIManagerComponent
@@ -38,6 +39,7 @@ struct VisualComponent
 	float rotation = 0.0f;
 	glm::vec4 colour{ 1.0f };
 	float flags = 0;
+	RenderLayer renderLayer = RenderLayer::TWO;
 
 	VisualComponent(const int spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}
 	VisualComponent(const int spriteId, const glm::vec3& localTransform) : VisualComponent(spriteId, localTransform, DEFAULT_SCALE) {}
@@ -174,13 +176,6 @@ struct CollisionHandledComponent
 	CollisionHandledComponent(bool handled) : handled(handled) {}
 	CollisionHandledComponent(const CollisionHandledComponent&) = default;
 };
-
-struct ScriptComponent
-{
-	std::unique_ptr<ScriptObject> scriptObject;
-};
-
-
 
 
 
