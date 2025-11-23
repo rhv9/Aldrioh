@@ -156,11 +156,7 @@ void Renderer::StartScene(const Camera& camera)
 	renderData.shaderBatchTexture->Use();
 	renderData.shaderBatchTexture->UniformMat4("u_ViewProjectionMatrix", camera.GetProjection());
 
-	//glClearColor(1.00f, 0.49f, 0.04f, 1.00f);
 	glEnable(GL_DEPTH_TEST);
-
-	glClearColor(renderData.clearColour.x, renderData.clearColour.y, renderData.clearColour.z, renderData.clearColour.a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ResetBatch();
 }
@@ -168,6 +164,16 @@ void Renderer::StartScene(const Camera& camera)
 void Renderer::OnResize(WindowResizeEventArg& e)
 {
 	UIOnResize(e);
+}
+
+void Renderer::ClearColourBuffer()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Renderer::ClearDepthBuffer()
+{
+	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& scale)
@@ -303,6 +309,7 @@ void Renderer::ResetBatch()
 void Renderer::SetClearColour(const glm::vec4& col)
 {
 	renderData.clearColour = col;
+	glClearColor(renderData.clearColour.x, renderData.clearColour.y, renderData.clearColour.z, renderData.clearColour.a);
 }
 
 

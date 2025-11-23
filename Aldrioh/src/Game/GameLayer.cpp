@@ -27,6 +27,7 @@
 #include <Game/Systems/CoreEntitySystems.h>
 #include <Systems/UISystems.h>
 #include <Systems/SoundSystems.h>
+#include <Systems/PathSystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -41,6 +42,8 @@
 
 #include <Game/GlobalLayers.h>
 #include <Audio/SoundManager.h>
+
+#include <Game/Entity/GameEntityPrefab.h>
 
 struct ImGuiSettings
 {
@@ -87,20 +90,28 @@ void GameLayer::OnBegin()
 
 
 	// On Update Systems
-	//scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
+	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
+	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
+
+
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
 	scene->AddUpdateSystem(&EntitySystem::HealthSystem);
-	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
-	scene->AddUpdateSystem(&EntitySystem::ScoreSystems);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
+
+	// After rest of updates are done
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
+
+	// Not game system 
 	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);
+
+	// Does not matter order
+	scene->AddUpdateSystem(&EntitySystem::ScoreSystems);
 	scene->AddUpdateSystem(&EntitySystem::SoundSystem);
 
 
@@ -131,7 +142,18 @@ void GameLayer::OnRender(Timestep delta)
 	Renderer::DrawBackgroundPass();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
+
+	// Render Pass for drawing LevelEditing pointers
+	CameraController* cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
+	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
+
+	for (const glm::vec2& point : levelEditorData.points)
+	{
+		constexpr glm::vec2 size = { 0.25f, 0.25f };
+		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(),size ,glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+	}
 	
+	Renderer::EndScene();
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
@@ -188,6 +210,15 @@ void GameLayer::OnImGuiRender(Timestep delta)
 			if (ImGui::Button("Reset Path"))
 				levelEditorData.points.clear();
 
+			if (ImGui::Button("Create enemy"))
+			{
+				LOG_INFO("Creating a path enemy!");
+				EnemyPathPrefab epp;
+				epp.points = levelEditorData.points;
+				epp.speed = 1.0f;
+				epp.create(currentLevel->scene);
+			}
+
 
 			if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
 			{
@@ -199,7 +230,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 					text.append(std::format(",({:.1f},{:.1f})", point.x, point.y));
 				}
 
-				ImGui::Text(std::format("Path: {}",text).c_str());
+				ImGui::Text(std::format("Path: {}", text).c_str());
 			}
 
 			ImGui::EndTabItem();
@@ -211,7 +242,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	ImGui::SetNextWindowBgAlpha(1.0f);
 
 	//ImGui::ShowDemoWindow();
-}	
+}
 
 void GameLayer::OnRemove()
 {

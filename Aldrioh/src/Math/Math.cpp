@@ -23,9 +23,9 @@ float Math::cosRad(float val)
 	return cosf(val);
 }
 
-float Math::tan2Rad(float y, float x)
+float Math::arcTan(float x)
 {
-	return atan2f(y, x);
+	return atanf(x);
 }
 
 float Math::degreesToRad(float degrees)
@@ -50,7 +50,7 @@ float Math::angleBetween(const glm::vec2& p1, const glm::vec2& p2)
 	return atan2f(dy, dx) - Math::PI / 2.0f;
 }
 
-float Math::angleBetweenVec2(const glm::vec3& p1, const glm::vec3& p2)
+float Math::angleBetween2d(const glm::vec3& p1, const glm::vec3& p2)
 {
 	float dx = p2.x - p1.x;
 	float dy = p2.y - p1.y;
@@ -78,7 +78,20 @@ float Math::triangleWave(float t)
 	return Math::abs(fmodf(x, 4.0f) - 2.0f) - 1.0f;
 }
 
+float Math::gradient(const glm::vec2& p1, const glm::vec2& p2)
+{
+	float dy = p2.y - p1.y;
+	float dx = p2.x - p1.x;
+	if (dx == 0) return 0;
+	return dy / dx;
+}
+
 float Math::abs(float val)
 {
 	return (val < 0) ? -val : val;
+}
+
+float Math::sign(float val)
+{
+	return val < 0 ? -1 : 1;
 }

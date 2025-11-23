@@ -41,3 +41,13 @@ struct EnemyPrefab : public EntityPrefab
 	virtual Entity create(Scene& scene) override;
 };
 
+struct EnemyPathPrefab : public EntityPrefab
+{
+	float maxHealth = 1;
+	glm::vec2 dirFacing{ 0, -1 };
+	std::vector<glm::vec2> points;
+	float speed = 1.0f;
+
+	virtual Entity create(Scene& scene) override;
+};
+

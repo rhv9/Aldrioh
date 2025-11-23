@@ -3,6 +3,7 @@
 
 #include <Scene/Scene.h>
 #include <Scene/Components.h>
+#include <Components/Path/PathComponent.h>
 #include <Components/Collision.h>
 #include <Game/Components/LevelComponents.h>
 
@@ -10,6 +11,11 @@
 #include <Game.h>
 
 #include <Math/Math.h>
+
+static auto OnDestroy_AddScore = [](Entity e) {
+	Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
+	scoreEntity.AddComponent<AddScoreComponent>(1.0f);
+	};
 
 Entity PlayerPrefab::create(Scene& scene)
 {
@@ -105,10 +111,38 @@ Entity EnemyPrefab::create(Scene& scene)
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
 	dac.enemyManager = enemyManager;
 	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<OnDestroyComponent>([](Entity e) {
-		Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
-		scoreEntity.AddComponent<AddScoreComponent>(1.0f);
-		});
+	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	enemy.AddComponent<CoreEnemyStateComponent>();
+	return enemy;
+}
+
+Entity EnemyPathPrefab::create(Scene& scene)
+{
+	if (points.size() < 2)
+		return Entity{};
+
+	const glm::vec2& spawnPos = points[0];
+	Entity enemy = scene.CreateEntity("Enemy Path");
+	auto& tc = enemy.GetComponent<TransformComponent>();
+	tc.position = glm::vec3{ spawnPos, 0.4f };
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
+	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	vc.rotation = Math::angle(dirFacing);
+	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
+	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	enemy.AddComponent<HealthComponent>(maxHealth);
+	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
+	enemy.AddComponent<CoreEnemyStateComponent>();
+
+	// Pathing
+	PathComponent& pc = enemy.AddComponent<PathComponent>();
+	pc.currentPosition = { tc.position.x, tc.position.y };
+	pc.path.Init(points);
+	for (int i = 0; i < pc.path.maxPaths; ++i)
+	{
+		pc.path.pathConfigs[i].speed = speed;
+	}
 	return enemy;
 }

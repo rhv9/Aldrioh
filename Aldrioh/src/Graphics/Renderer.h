@@ -78,6 +78,10 @@ public:
 
 	static void OnResize(WindowResizeEventArg& e);
 	
+	static void SetClearColour(const glm::vec4& col);
+	static void ClearColourBuffer();
+	static void ClearDepthBuffer();
+
 	static void StartScene(const Camera& camera);
 	static void EndScene();
 
@@ -93,7 +97,6 @@ public:
 	static void ResetBatch();
 	static void FlushAndReset();
 
-	static void SetClearColour(const glm::vec4& col);
 
 private:
 	static inline void SetBatchVertexBuffer(BatchVertex* ptr, const glm::vec4& pos, const glm::vec2& texCoords, const glm::vec4& colour, const uint32_t slot, const float flags);

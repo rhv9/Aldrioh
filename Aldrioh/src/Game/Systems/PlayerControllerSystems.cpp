@@ -69,7 +69,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 
 		if (pcc.dirLock == DIRLOCK_FREE)
-			player.GetComponent<VisualComponent>().rotation = Math::angleBetweenVec2(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
+			player.GetComponent<VisualComponent>().rotation = Math::angleBetween2d(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
 		else
 			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 

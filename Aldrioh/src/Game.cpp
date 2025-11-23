@@ -139,6 +139,8 @@ bool Game::Iterate()
         deltaSinceUpdate = 0;
     }
 
+    Renderer::ClearColourBuffer();
+    Renderer::ClearDepthBuffer();
     layerStack.Render(deltaSinceUpdate / TICK_TIMESTEP);
 
 #ifdef DISPLAY_IMGUI_DEBUG
