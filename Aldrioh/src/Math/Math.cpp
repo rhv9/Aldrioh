@@ -95,3 +95,13 @@ float Math::sign(float val)
 {
 	return val < 0 ? -1 : 1;
 }
+
+float Math::min(float x, float y)
+{
+	return x < y ? x : y;
+}
+
+float Math::max(float x, float y)
+{
+	return x > y ? x : y;
+}

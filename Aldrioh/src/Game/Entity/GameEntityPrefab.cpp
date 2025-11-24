@@ -142,7 +142,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	pc.path.Init(points);
 	for (int i = 0; i < pc.path.maxPaths; ++i)
 	{
-		pc.path.pathConfigs[i].speed = speed;
+		pc.path.pathConfigs[i].speed = speed + i;
 	}
 	return enemy;
 }

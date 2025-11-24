@@ -13,6 +13,9 @@ namespace Math {
 	float abs(float val);
 	float sign(float val);
 
+	float min(float x, float y);
+	float max(float x, float y);
+
 	float sinRad(float val);
 	float cosRad(float val);
 	float arcTan(float x);

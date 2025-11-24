@@ -20,9 +20,10 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
 		Path& path = pc.path;
 		
-		const glm::vec2& p1 = path.points[0];
-		const glm::vec2& p2 = path.points[1];
-		float speed = path.pathConfigs[0].speed;
+		const glm::vec2& cp = pc.currentPosition;
+		const glm::vec2& p1 = path.points[pc.currentPathIndex];
+		const glm::vec2& p2 = path.points[pc.currentPathIndex + 1];
+		float speed = path.pathConfigs[pc.currentPathIndex].speed;
 		float h = speed * ts;
 
 		// calculate gradient
@@ -32,7 +33,6 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 		if (dx == 0) m = 0;
 		else m = dy / dx;
 
-		const glm::vec2& cp = pc.currentPosition;
 		float yn = 0, xn = 0;
 
 		if (dy == 0)
@@ -57,5 +57,26 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 
 		//LOG_CORE_INFO("cp {}, new {}", glm::to_string(cp), glm::to_string(glm::vec2{ xn, yn }));
 		pc.currentPosition = { xn, yn };
+	}
+
+	for (entt::entity e : view)
+	{
+		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
+		if (pc.currentPathIndex >= pc.path.maxPaths - 1)
+			continue;
+		Path& path = pc.path;
+		const glm::vec2& cp = pc.currentPosition;
+		const glm::vec2& p1 = path.points[pc.currentPathIndex];
+		const glm::vec2& p2 = path.points[pc.currentPathIndex + 1];
+		float dy = p2.y - p1.y;
+		float dx = p2.x - p1.x;
+		
+		if (!(cp.x >= Math::min(p1.x, p2.x) && cp.x <= Math::max(p1.x, p2.x) && cp.y >= Math::min(p1.y, p2.y) && cp.y <= Math::max(p1.y, p2.y)))
+		{
+			LOG_CORE_INFO("Next path!, cp: {}, p1: {}, p2: {}", glm::to_string(cp), glm::to_string(p1), glm::to_string(p2));
+			pc.currentPathIndex++;
+			pc.currentPosition = p2;
+			continue;
+		}
 	}
 }

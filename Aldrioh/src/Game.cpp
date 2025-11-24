@@ -102,7 +102,7 @@ void Game::Loop()
 #endif
 }
 
-constexpr float TICK_TIMESTEP = 1.0f / 30.0f;
+constexpr float TICK_TIMESTEP = 1.0f / 5.0f;
 
 bool Game::Iterate()
 {
