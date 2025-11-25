@@ -73,7 +73,10 @@ void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 			HealthComponent& hc = view.get<HealthComponent>(e);
 
 			if (hc.health <= 0.0f)
-				entity.AddComponent<DestroyEntityComponent>();
+			{
+
+				entity.TryAddComponent<DestroyEntityComponent>();
+			}
 		}
 	}
 }

@@ -11,16 +11,10 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 	for (entt::entity e : view)
 	{
 		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
-		tc.position.x = pc.currentPosition.x;
-		tc.position.y = pc.currentPosition.y;
-	}
-
-	for (entt::entity e : view)
-	{
-		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
 		Path& path = pc.path;
 		
 		const glm::vec2& cp = pc.currentPosition;
+		pc.prevPosition = cp;
 		const glm::vec2& p1 = path.points[pc.currentPathIndex];
 		const glm::vec2& p2 = path.points[pc.currentPathIndex + 1];
 		float speed = path.pathConfigs[pc.currentPathIndex].speed;
@@ -63,7 +57,10 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 	{
 		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
 		if (pc.currentPathIndex >= pc.path.maxPaths - 1)
+		{
+			scene.WrapEntityHandle(e).QueueDestroy();
 			continue;
+		}
 		Path& path = pc.path;
 		const glm::vec2& cp = pc.currentPosition;
 		const glm::vec2& p1 = path.points[pc.currentPathIndex];
@@ -78,5 +75,12 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 			pc.currentPosition = p2;
 			continue;
 		}
+	}
+
+	for (entt::entity e : view)
+	{
+		auto [tc, pc] = view.get<TransformComponent, PathComponent>(e);
+		tc.position.x = pc.currentPosition.x;
+		tc.position.y = pc.currentPosition.y;
 	}
 }

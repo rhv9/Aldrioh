@@ -21,6 +21,15 @@ public:
 		return scene->registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
 	}
 
+	template<typename T, typename... Args>
+	T& TryAddComponent(Args&&... args)
+	{
+		if (HasComponent<T>())
+			return GetComponent<T>();
+
+		return scene->registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
+	}
+
 	template<typename T>
 	T& GetComponent()
 	{

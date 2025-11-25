@@ -6,7 +6,7 @@
 struct PathComponent
 {
 	Path path;
-	glm::vec2 currentPosition{ 0 };
+	glm::vec2 currentPosition{ 0 }, prevPosition{ 0 };
 	float time = 0;
 	int currentPathIndex = 0;
 

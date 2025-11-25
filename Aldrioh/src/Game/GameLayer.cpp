@@ -147,10 +147,11 @@ void GameLayer::OnRender(Timestep delta)
 	CameraController* cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
 
+	int i = 0;
 	for (const glm::vec2& point : levelEditorData.points)
 	{
-		constexpr glm::vec2 size = { 0.25f, 0.25f };
-		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(),size ,glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+		constexpr glm::vec2 size = { 0.45f, 0.45f };
+		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	}
 	
 	Renderer::EndScene();
@@ -210,15 +211,40 @@ void GameLayer::OnImGuiRender(Timestep delta)
 			if (ImGui::Button("Reset Path"))
 				levelEditorData.points.clear();
 
+			static float pathEnemySpeed = 1.0f;
+			ImGui::InputFloat("Initial Speed", &pathEnemySpeed);
+
+
 			if (ImGui::Button("Create enemy"))
 			{
 				LOG_INFO("Creating a path enemy!");
 				EnemyPathPrefab epp;
 				epp.points = levelEditorData.points;
-				epp.speed = 1.0f;
+				epp.speed = pathEnemySpeed;
 				epp.create(currentLevel->scene);
 			}
 
+			static bool keepCreating = false;
+			static float interval = 1.0f;
+			static float elapsedTime = 0.0f;
+			elapsedTime += delta;
+
+			ImGui::DragFloat("Interval", &interval);
+
+			if (ImGui::Button(keepCreating ? "Stop  da centipede" : "Begin epicness"))
+				keepCreating = !keepCreating;
+
+			if (elapsedTime >= interval)
+			{
+				elapsedTime -= interval;
+				if (keepCreating)
+				{
+					EnemyPathPrefab epp;
+					epp.points = levelEditorData.points;
+					epp.speed = pathEnemySpeed;
+					epp.create(currentLevel->scene);
+				}
+			}
 
 			if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
 			{

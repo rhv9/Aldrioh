@@ -2,6 +2,7 @@
 #include "RenderSystems.h"
 #include <Systems/HeadersRenderSystems.h>
 #include <Components/Collision.h>
+#include <Components/Path/PathComponent.h>
 
 #include <Debug/GameDebugState.h>
 #include <Game.h>
@@ -24,6 +25,15 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 			drawTransform.x -= mc.moveVec.x * mc.speed * delta * (1.0f-ts);
 			drawTransform.y -= mc.moveVec.y * mc.speed * delta * (1.0f-ts);
 
+		}
+
+		if (entity.HasComponent<PathComponent>())
+		{
+			PathComponent& pc = entity.GetComponent<PathComponent>();
+			Timestep delta = Game::Instance().GetFixedUpdateTimestep();
+			const glm::vec2& diff = pc.currentPosition - pc.prevPosition;
+			drawTransform.x -= diff.x * (1.0f - ts);
+			drawTransform.y -= diff.y * (1.0f - ts);
 		}
 
 		RenderQueue::EnQueue(visual.renderLayer, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);

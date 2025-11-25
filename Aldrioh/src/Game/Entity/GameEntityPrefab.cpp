@@ -139,6 +139,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	// Pathing
 	PathComponent& pc = enemy.AddComponent<PathComponent>();
 	pc.currentPosition = { tc.position.x, tc.position.y };
+	pc.prevPosition = pc.currentPosition;
 	pc.path.Init(points);
 	for (int i = 0; i < pc.path.maxPaths; ++i)
 	{
