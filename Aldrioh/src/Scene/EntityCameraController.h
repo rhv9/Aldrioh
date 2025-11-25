@@ -13,9 +13,11 @@ public:
 	void SetEntity(Entity e) { entity = e; }
 	virtual void OnUpdate(Timestep delta) override;
 
-	float maxDistance = 0.0f;
-	float tolerance = 0.01f;
-	float percentSpeed = 1.0f;
+	float maxDistance = 1.0f;
+	float tolerance = 0.0001f;
+	float percentSpeed = 0.9999f;
+
+	glm::vec2 currentPosition{ 0 };
 private:
 	Entity entity;
 };
