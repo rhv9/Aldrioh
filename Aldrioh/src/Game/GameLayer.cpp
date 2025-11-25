@@ -107,6 +107,8 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 
+	// Very last
+
 	// Not game system 
 	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);
 
@@ -212,7 +214,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 				levelEditorData.points.clear();
 
 			static float pathEnemySpeed = 1.0f;
-			ImGui::InputFloat("Initial Speed", &pathEnemySpeed);
+			ImGui::DragFloat("Initial Speed", &pathEnemySpeed);
 
 
 			if (ImGui::Button("Create enemy"))

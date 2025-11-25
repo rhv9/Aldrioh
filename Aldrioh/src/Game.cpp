@@ -123,6 +123,9 @@ bool Game::Iterate()
             i_gameStats.fpsCounter = 0;
             i_gameStats.ticksPerSecond = i_gameStats.updateTicks;
             i_gameStats.updateTicks = 0;
+            
+            if (window)
+                GetWindow()->SetTitle(std::format("Aldrioh | tick: {} | fps: {}", i_gameStats.ticksPerSecond, i_gameStats.fps));
         }
         i_gameStats.fpsCounter++;
     }

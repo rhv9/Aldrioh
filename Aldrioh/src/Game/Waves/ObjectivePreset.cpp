@@ -10,7 +10,7 @@ namespace ObjectivePreset {
 			bool complete = true;
 			for (Entity& e : obj.entities)
 			{
-				if (e.Valid())
+				if (e.IsValid())
 					complete = false;
 			}
 

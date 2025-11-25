@@ -6,6 +6,8 @@
 class Entity
 {
 public:
+	static Entity Null;
+
 	Entity() = default;
 	Entity(entt::entity handle, Scene* scene);
 	Entity(const Entity& other) = default;
@@ -54,11 +56,12 @@ public:
 
 	void QueueDestroy();
 
-	bool Valid() {
+	bool IsValid() const {
 		if (scene != nullptr) return scene->getRegistry().valid(entityHandle);
 		else return false;
 	}
 
+	bool IsNull() const { return entityHandle == entt::null; }
 	operator bool() const { return entityHandle != entt::null; }
 
 private:

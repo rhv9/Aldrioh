@@ -38,12 +38,16 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 
 	// Create player
 	PlayerPrefab playerPrefab;
-	playerPrefab.create(scene);
+	Entity player = playerPrefab.create(scene);
 
 	// Camera
-	FixedCameraPrefab fixedCameraPrefab;
-	fixedCameraPrefab.zoomLevel = zoomLevel;
-	camera = fixedCameraPrefab.create(scene);
+	//FixedCameraPrefab fixedCameraPrefab;
+	//fixedCameraPrefab.zoomLevel = zoomLevel;
+	//camera = fixedCameraPrefab.create(scene);
+	FollowingCameraPrefab followingCameraPrefab;
+	followingCameraPrefab.zoomLevel = zoomLevel;
+	followingCameraPrefab.entity = player;
+	camera = followingCameraPrefab.create(scene);
 
 
 	// Add score entity
@@ -77,7 +81,7 @@ void Level::UpdateScore(float newScore)
 
 void Level::UpdateLevelArea()
 {
-	if (camera.Valid())
+	if (camera.IsValid())
 	{
 		auto& cc = camera.GetComponent<CameraComponent>();
 		auto& bounds = cc.cameraController->GetBounds();

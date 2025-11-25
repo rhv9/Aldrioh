@@ -18,7 +18,7 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 	{
 		auto [dac, tc, mc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveComponent>(e);
 
-		if (dac.enemyManager.Valid())
+		if (dac.enemyManager.IsValid())
 		{
 			auto& emc = dac.enemyManager.GetComponent<EnemyManagerComponent>();
 			auto& emmc = dac.enemyManager.GetComponent<MoveComponent>();

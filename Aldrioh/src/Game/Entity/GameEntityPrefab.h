@@ -13,7 +13,15 @@ struct PlayerPrefab : public EntityPrefab
 
 struct FixedCameraPrefab : public EntityPrefab
 {
+	float zoomLevel = 1.0f;
+	glm::vec2 position{ 0 };
+	virtual Entity create(Scene& scene) override;
+};
+
+struct FollowingCameraPrefab : public EntityPrefab
+{
 	float zoomLevel;
+	Entity entity;
 	virtual Entity create(Scene& scene) override;
 };
 

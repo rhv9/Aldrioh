@@ -19,7 +19,7 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 			if (entity.HasComponent<GlobalDumbAIComponent>())
 			{
 				GlobalDumbAIComponent& aic = entity.GetComponent<GlobalDumbAIComponent>();
-				if (aic.enemyManager.Valid())
+				if (aic.enemyManager.IsValid())
 				{
 					EnemyManagerComponent& emc = aic.enemyManager.GetComponent<EnemyManagerComponent>();
 					emc.entityCount--;
@@ -73,10 +73,7 @@ void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 			HealthComponent& hc = view.get<HealthComponent>(e);
 
 			if (hc.health <= 0.0f)
-			{
-
-				entity.TryAddComponent<DestroyEntityComponent>();
-			}
+				entity.QueueDestroy();
 		}
 	}
 }

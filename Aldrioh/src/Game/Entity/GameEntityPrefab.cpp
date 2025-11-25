@@ -7,6 +7,8 @@
 #include <Components/Collision.h>
 #include <Game/Components/LevelComponents.h>
 
+#include <Scene/EntityCameraController.h>
+
 #include <Game/SpriteCollection.h>
 #include <Game.h>
 
@@ -40,13 +42,28 @@ Entity FixedCameraPrefab::create(Scene& scene)
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
 	CameraController* cameraController = new CameraController(aspectRatio, 1.0f);
 	cameraController->SetZoomLevel(zoomLevel);
-	cameraController->SetPosition({ 0, 0 });
+	cameraController->SetPosition(position);
 	// Add camera component
-	Entity cameraEntity = scene.CreateEntityNoTransform("RoamAndEntityCamera");
+	Entity cameraEntity = scene.CreateEntityNoTransform("FixedCamera");
 	cameraEntity.AddComponent<CameraComponent>(cameraController);
 
 	return cameraEntity;
 }
+
+
+Entity FollowingCameraPrefab::create(Scene& scene)
+{
+	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+	EntityCameraController* cameraController = new EntityCameraController(aspectRatio, 1.0f);
+	cameraController->SetZoomLevel(zoomLevel);
+	cameraController->SetEntity(entity);
+	// Add camera component
+	Entity cameraEntity = scene.CreateEntityNoTransform("EntityCamera");
+	cameraEntity.AddComponent<CameraComponent>(cameraController);
+
+	return cameraEntity;
+}
+
 
 Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 {

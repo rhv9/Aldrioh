@@ -3,6 +3,8 @@
 
 #include <Scene/Components.h>
 
+Entity Entity::Null{};
+
 Entity::Entity(entt::entity handle, Scene* scene)
 {
 	this->entityHandle = handle;

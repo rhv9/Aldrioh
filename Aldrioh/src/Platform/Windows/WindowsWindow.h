@@ -26,6 +26,9 @@ public:
 
 	virtual void* GetNativeWindow() const;
 
+	virtual void SetTitle(const std::string& title) override;
+
+
 private:
 	void Init(const WindowProps& windowProps);
 

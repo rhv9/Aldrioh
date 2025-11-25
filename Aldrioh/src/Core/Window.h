@@ -32,6 +32,8 @@ public:
 	virtual void SetVsync(bool val) = 0;
 	virtual bool GetVsync() const { return vsync; }
 
+	virtual void SetTitle(const std::string& title) = 0;
+
 
 	virtual void* GetNativeWindow() const = 0;
 

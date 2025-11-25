@@ -7,6 +7,34 @@
 #include <Debug/GameDebugState.h>
 #include <Game.h>
 
+glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity, Timestep ts)
+{
+	glm::vec2 entityTransform{ 0 };
+	TransformComponent& tc = entity.GetComponent<TransformComponent>();
+	entityTransform.x = tc.position.x;
+	entityTransform.y = tc.position.y;
+
+	if (entity.HasComponent<MoveComponent>())
+	{
+		MoveComponent& mc = entity.GetComponent<MoveComponent>();
+		Timestep delta = Game::Instance().GetFixedUpdateTimestep();
+		entityTransform.x -= mc.moveVec.x * mc.speed * delta * (1.0f - ts);
+		entityTransform.y -= mc.moveVec.y * mc.speed * delta * (1.0f - ts);
+
+	}
+
+	if (entity.HasComponent<PathComponent>())
+	{
+		PathComponent& pc = entity.GetComponent<PathComponent>();
+		Timestep delta = Game::Instance().GetFixedUpdateTimestep();
+		const glm::vec2& diff = pc.currentPosition - pc.prevPosition;
+		entityTransform.x -= diff.x * (1.0f - ts);
+		entityTransform.y -= diff.y * (1.0f - ts);
+	}
+
+	return entityTransform;
+}
+
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<TransformComponent, VisualComponent>();
@@ -16,27 +44,13 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 		auto [transform, visual] = view.get(e);
 		Entity entity = scene.WrapEntityHandle(e);
 		
-		glm::vec3 drawTransform = { transform.position.x + visual.localTransform.x, transform.position.y + visual.localTransform.y, RenderDepth::ENTITY };
+		glm::vec2 entityPos = CalculateEntityTransformWithInterpolation(entity, ts);
 
-		if (entity.HasComponent<MoveComponent>())
-		{
-			MoveComponent& mc = entity.GetComponent<MoveComponent>();
-			Timestep delta = Game::Instance().GetFixedUpdateTimestep();
-			drawTransform.x -= mc.moveVec.x * mc.speed * delta * (1.0f-ts);
-			drawTransform.y -= mc.moveVec.y * mc.speed * delta * (1.0f-ts);
+		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
 
-		}
 
-		if (entity.HasComponent<PathComponent>())
-		{
-			PathComponent& pc = entity.GetComponent<PathComponent>();
-			Timestep delta = Game::Instance().GetFixedUpdateTimestep();
-			const glm::vec2& diff = pc.currentPosition - pc.prevPosition;
-			drawTransform.x -= diff.x * (1.0f - ts);
-			drawTransform.y -= diff.y * (1.0f - ts);
-		}
 
-		RenderQueue::EnQueue(visual.renderLayer, drawTransform + glm::vec3{ 0.0f, visual.localTransform.z, 0.0f }, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
+		RenderQueue::EnQueue(visual.renderLayer, drawTransform, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
 	}
 }
 

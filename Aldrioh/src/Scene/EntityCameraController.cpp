@@ -3,6 +3,8 @@
 
 #include "Scene/Components.h"
 
+#include <Game/Systems/RenderSystems.h>
+
 
 EntityCameraController::EntityCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel)
@@ -11,19 +13,14 @@ EntityCameraController::EntityCameraController(const float aspectRatio, const fl
 
 void EntityCameraController::OnUpdate(Timestep delta)
 {
-	TransformComponent& playerTransform = registry->get<TransformComponent>(entity);
-
-	SetPosition({playerTransform.position.x, playerTransform.position.y});
-	//LOG_TRACE("Camera player position {}", glm::to_string(tc.position));
+	if (entity.IsValid())
+	{
+		glm::vec2 pos = EntitySystem::CalculateEntityTransformWithInterpolation(entity, delta);
+		SetPosition({ pos.x, pos.y});
+	}
 }
 
 EntityCameraController::~EntityCameraController()
 {
-}
-
-void EntityCameraController::SetEntity(entt::registry* registry, entt::entity entity)
-{
-	this->entity = entity;
-	this->registry = registry;
 }
 
