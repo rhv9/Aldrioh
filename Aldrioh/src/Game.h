@@ -15,6 +15,8 @@ struct GameStats
 	int fps = 0;
 	int updateTicks = 0;
 	int ticksPerSecond = 0;
+
+	uint32_t totalTickCount = 0;
 };
 
 class Game
@@ -30,8 +32,9 @@ public:
 	void Shutdown();
 	void OnClosing();
 
-	Timestep GetDelta() { return delta; }
-	Timestep GetFixedUpdateTimestep();
+	Timestep GetDelta() const { return delta; }
+	Timestep GetFixedTickTimestep() const;
+	uint32_t GetTickCount() const { return i_gameStats.totalTickCount; }
 
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);

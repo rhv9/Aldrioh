@@ -104,6 +104,17 @@ struct MoveComponent
 	void zero() { moveVec = ZERO_VEC; }
 };
 
+struct RotationComponent
+{
+	float angle = 0.0f;
+	bool shouldRotateTo = false;
+	uint8_t skipTicks = 1;
+	
+	RotationComponent() = default;
+	RotationComponent(float angle) : angle(angle) {};
+	RotationComponent(const RotationComponent&) = default;
+};
+
 
 struct AnimateVisualComponent
 {

@@ -139,6 +139,7 @@ bool Game::Iterate()
 
         tickTimer -= TICK_TIMESTEP;
         ++i_gameStats.updateTicks;
+        ++i_gameStats.totalTickCount;
         deltaSinceUpdate = 0;
     }
 
@@ -170,7 +171,7 @@ void Game::OnClosing()
     SoundManager::Destroy();
 }
 
-Timestep Game::GetFixedUpdateTimestep()
+Timestep Game::GetFixedTickTimestep() const
 {
     return TICK_TIMESTEP;
 }

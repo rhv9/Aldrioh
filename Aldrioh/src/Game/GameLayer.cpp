@@ -108,6 +108,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 
 	// Very last
+	scene->AddUpdateSystem(&EntitySystem::RotationSystem);
 
 	// Not game system 
 	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);

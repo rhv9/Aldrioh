@@ -13,6 +13,6 @@
 
 namespace GameDebugState {
 
-	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionBox, true);
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionBox, false);
 
 }

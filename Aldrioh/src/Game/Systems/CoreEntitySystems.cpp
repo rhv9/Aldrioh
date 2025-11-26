@@ -3,6 +3,8 @@
 #include <Systems/HeadersUpdateSystems.h>
 #include <Game/Components/EntityComponents.h>
 
+#include <Game.h>
+
 void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 {
 	// Destroy Entity
@@ -58,6 +60,26 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 				cesc.hitVisualState = HitVisualState::NORMAL;
 				break;
 			}
+		}
+	}
+
+
+}
+
+void EntitySystem::RotationSystem(Timestep ts, Scene& scene)
+{
+	uint32_t tickCount = Game::Instance().GetTickCount();
+	auto view = scene.getRegistry().view<RotationComponent, VisualComponent>();
+	for (entt::entity e : view)
+	{
+		auto [rc, vc] = view.get<RotationComponent, VisualComponent>(e);
+
+		if ((tickCount % rc.skipTicks) == 0)
+		{
+			if (rc.shouldRotateTo)
+				vc.rotation = rc.angle;
+			else
+				vc.rotation += rc.angle * ts * rc.skipTicks;
 		}
 	}
 }

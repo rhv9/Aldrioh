@@ -28,7 +28,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
-	player.AddComponent<EntityTypeComponent>(EntityType::Player);
+	player.AddComponent<EntityTypeComponent>(EntityTypes::Player);
 	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
@@ -122,7 +122,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	vc.rotation = Math::angle(dirFacing);
 	enemy.AddComponent<MoveComponent>(1.0f);
-	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
@@ -146,7 +146,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	vc.rotation = Math::angle(dirFacing);
-	enemy.AddComponent<EntityTypeComponent>(EntityType::Enemy);
+	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	enemy.AddComponent<HealthComponent>(maxHealth);
@@ -163,4 +163,25 @@ Entity EnemyPathPrefab::create(Scene& scene)
 		pc.path.pathConfigs[i].speed = speed + i;
 	}
 	return enemy;
+}
+
+Entity AsteroidPrefab::create(Scene& scene)
+{
+	Entity asteroid = scene.CreateEntity("Asteroid");
+	auto& tc = asteroid.GetComponent<TransformComponent>();
+	tc.position = glm::vec3{ spawnPos, 0.4f };
+	VisualComponent& vc = asteroid.AddComponent<VisualComponent>(Sprites::asteroid_small);
+	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	MoveComponent& mc = asteroid.AddComponent<MoveComponent>(speed);
+	mc.moveVec = Math::angleToNormalizedVector(angle);
+	int rand = Math::Random::linearInt(-45, 45);
+	RotationComponent& rc = asteroid.AddComponent<RotationComponent>(Math::degreesToRad(rand));
+	rc.skipTicks = 5;
+
+	asteroid.AddComponent<EntityTypeComponent>(EntityTypes::Asteroid);
+	asteroid.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	asteroid.AddComponent<HealthComponent>(maxHealth);
+	asteroid.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
+	asteroid.AddComponent<CoreEnemyStateComponent>();
+	return asteroid;
 }

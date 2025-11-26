@@ -59,3 +59,13 @@ struct EnemyPathPrefab : public EntityPrefab
 	virtual Entity create(Scene& scene) override;
 };
 
+struct AsteroidPrefab : public EntityPrefab
+{
+	float maxHealth = 1;
+	float speed = 1.0f;
+	glm::vec2 spawnPos{ 0 };
+	float angle = 0.0f;
+
+	virtual Entity create(Scene& scene) override;
+};
+

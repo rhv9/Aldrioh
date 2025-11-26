@@ -21,11 +21,11 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
 	mc.moveVec = normalizedDir;
 	mc.locked = true;
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
+	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(mc.moveVec);
 	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
-	fireball.AddComponent<EntityTypeComponent>(EntityType::Fireball);
+	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball);
 	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 }
 

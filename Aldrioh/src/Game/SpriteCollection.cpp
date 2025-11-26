@@ -38,7 +38,10 @@ void Sprites::Init()
 	spriteMap[sand_1 = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
 	spriteMap[sand_rock = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
 	spriteMap[sand_cactus = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
-	spriteMap[fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::TileSize };
+	
+	spriteMap[bullet_fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::TileSize };
+	spriteMap[bullet_red = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
+	spriteMap[bullet_white = spriteCounter++] = { spritesheet, glm::vec2{ 0, 3 }, Sprites::TileSize };
 
 	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
 	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::TileSize };
@@ -50,6 +53,10 @@ void Sprites::Init()
 	spriteMap[box = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
 
 	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 15 }, Sprites::TileSize };
+	spriteMap[asteroid_small = spriteCounter++] = { spritesheet, glm::vec2{ 0, 14 }, Sprites::TileSize };
+	spriteMap[drone_mini = spriteCounter++] = { spritesheet, glm::vec2{ 0, 13 }, Sprites::TileSize };
+
+
 
 
 	LOG_INFO("Sprite loadedCounter before animations: {}", spriteCounter);

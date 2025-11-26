@@ -34,7 +34,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 		fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 		fireball.handled = true;
 		};
-	scene.GetCollisionDispatcher().AddCallback(EntityType::Fireball, EntityType::Enemy, callbackFireball);
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, callbackFireball);
 
 	// Create player
 	PlayerPrefab playerPrefab;
@@ -63,9 +63,25 @@ Level::~Level()
 {
 }
 
+static float elapsedTime = 0.0f;
+
 void Level::OnUpdate(Timestep ts)
 {
 	waveManager.OnUpdate(ts);
+
+	elapsedTime += ts;
+
+	if (elapsedTime >= 1.0f)
+	{
+		elapsedTime -= 1.0f;
+
+		AsteroidPrefab prefab;
+		prefab.spawnPos = { 0.0f, 0.0f };
+		prefab.speed = 1.0f;
+		prefab.angle = Math::degreesToRad(Math::Random::linearInt(0, 360));
+		prefab.create(scene);
+	}
+	
 }
 
 void Level::OnRender(Timestep ts)
