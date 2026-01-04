@@ -38,6 +38,17 @@ public:
 	void OnTransitionIn();
 	void OnTransitionOut();
 
+	template<typename T>
+	Entity GetFirstEntity()
+	{
+		auto view = registry.view<T>();
+
+		for (entt::entity e : view)
+			return Entity{ e, this };
+
+		return Entity{};
+	}
+
 private:
 	entt::registry registry;
 	Entity* player = nullptr;

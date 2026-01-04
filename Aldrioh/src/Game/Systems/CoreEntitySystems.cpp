@@ -5,6 +5,9 @@
 
 #include <Game.h>
 
+#include <Game/GlobalLayers.h>
+#include <Game/Components/LevelComponents.h>
+
 void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 {
 	// Destroy Entity
@@ -96,6 +99,27 @@ void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 
 			if (hc.health <= 0.0f)
 				entity.QueueDestroy();
+		}
+	}
+}
+
+void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
+{
+	Entity levelEntity = scene.GetFirstEntity<LevelComponent>();
+	LevelComponent& lc = levelEntity.GetComponent<LevelComponent>();
+	CameraComponent& cameraComponent = scene.GetPrimaryCameraEntity().GetComponent<CameraComponent>();
+	const glm::vec2& cameraPos = cameraComponent.cameraController->GetPosition();
+
+	auto view = scene.getRegistry().view<TransformComponent, EntityTypeComponent>();
+
+	for (entt::entity e : view)
+	{
+		auto [tc, etc] = view.get<TransformComponent, EntityTypeComponent>(e);
+
+		if (etc.type == EntityTypes::Asteroid)
+		{
+			// if outside boundaries then queue to delete
+			
 		}
 	}
 }
