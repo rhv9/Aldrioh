@@ -3,7 +3,7 @@
 #include <Scene/Entity.h>
 #include <Scene/Components.h>
 #include <Game/SpriteCollection.h>
-#include <Components/Collision.h>
+#include <Collision/Collision.h>
 #include <Game/Components/ControllerComponents.h>
 #include <Game.h>
 

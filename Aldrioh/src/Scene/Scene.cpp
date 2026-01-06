@@ -7,8 +7,8 @@
 #include <Input/Input.h>
 #include <Game.h>
 
-#include <Components/Collision.h>
-#include <Components/CollisionDispatcher.h>
+#include <Collision/Collision.h>
+#include <Collision/CollisionDispatcher.h>
 
 #include <Graphics/Renderer.h>
 #include <Graphics/RenderQueue.h>

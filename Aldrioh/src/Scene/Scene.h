@@ -1,6 +1,6 @@
 #pragma once
 #include <entt.hpp>
-#include <Components/CollisionDispatcher.h>
+#include <Collision/CollisionDispatcher.h>
 #include <UI/UIManager.h>
 
 class Entity;

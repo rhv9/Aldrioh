@@ -4,7 +4,7 @@
 #include <Scene/Scene.h>
 #include <Scene/Components.h>
 #include <Components/Path/PathComponent.h>
-#include <Components/Collision.h>
+#include <Collision/Collision.h>
 #include <Game/Components/LevelComponents.h>
 
 #include <Scene/EntityCameraController.h>

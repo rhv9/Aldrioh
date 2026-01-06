@@ -11,7 +11,7 @@
 #include <Game/Tiles/TexturedTiles.h>
 #include <Game/Tiles/SpawnerTile.h>
 
-#include <Components/Collision.h>
+#include <Collision/Collision.h>
 #include <Input/Input.h>
 #include <Game/Components/EntityComponents.h>
 

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "RenderSystems.h"
 #include <Systems/HeadersRenderSystems.h>
-#include <Components/Collision.h>
+#include <Collision/Collision.h>
 #include <Components/Path/PathComponent.h>
 
 #include <Debug/GameDebugState.h>

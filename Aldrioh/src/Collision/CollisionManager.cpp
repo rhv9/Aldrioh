@@ -6,11 +6,11 @@
 
 static bool collides(CollisionBox* box1, CollisionBox* box2)
 {
-	const glm::vec2 p1 = box1->position;
-	const glm::vec2 p2 = box2->position;
+	const glm::vec2& p1 = box1->position;
+	const glm::vec2& p2 = box2->position;
 
-	const glm::vec2 s1 = box1->size;
-	const glm::vec2 s2 = box2->size;
+	const glm::vec2& s1 = box1->size;
+	const glm::vec2& s2 = box2->size;
 
 	return p1.x + s1.x >= p2.x &&
 		p1.x <= p2.x + s2.x &&

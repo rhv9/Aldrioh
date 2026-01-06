@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CollisionSystems.h"
 #include <Systems/HeadersUpdateSystems.h>
-#include <Components/Collision.h>
+#include <Collision/Collision.h>
 
 void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 {

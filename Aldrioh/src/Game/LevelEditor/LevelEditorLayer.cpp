@@ -16,7 +16,7 @@
 #include <Scene/Components.h>
 #include <Scene/FreeRoamEntityCameraController.h>
 #include <FreeCameraController.h>
-#include "Components/Collision.h"
+#include "Collision/Collision.h"
 
 #include <Scene/Entity.h>
 
