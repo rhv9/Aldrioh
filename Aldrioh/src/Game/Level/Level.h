@@ -23,7 +23,9 @@ public:
 	void OnRender(Timestep ts);
 
 	void UpdateLevelArea();
-	const LevelArea& GetLevelArea() const { return levelArea; }
+	// Gives the bottom left and top right offset for screen to world position
+	const LevelArea& GetScreenBorderOffset() const { return levelArea; }
+	const LevelArea& GetScreenBorderOffsetByCamera(const glm::vec2& offset);
 
 	void UpdateScore(float newScore);
 

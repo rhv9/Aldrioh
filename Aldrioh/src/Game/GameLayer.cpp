@@ -106,6 +106,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
+	scene->AddUpdateSystem(&EntitySystem::DeleteEnemyOutsideScreenSystem);
 
 	// Very last
 	scene->AddUpdateSystem(&EntitySystem::RotationSystem);
@@ -156,6 +157,12 @@ void GameLayer::OnRender(Timestep delta)
 		constexpr glm::vec2 size = { 0.45f, 0.45f };
 		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	}
+
+	auto& offset = currentLevel->GetScreenBorderOffsetByCamera(cameraController->GetPosition());
+
+	constexpr glm::vec2 size = { 0.45f, 0.45f };
+	Renderer::DrawQuad(glm::vec3{ offset.bottomLeft - size / 2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+	Renderer::DrawQuad(glm::vec3{ offset.topRight - size / 2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	
 	Renderer::EndScene();
 }

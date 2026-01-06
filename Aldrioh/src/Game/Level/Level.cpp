@@ -90,6 +90,12 @@ void Level::OnRender(Timestep ts)
 	Renderer::DrawQuad({ levelArea.topRight - glm::vec2{1,1}, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 }
 
+const LevelArea& Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
+{
+	auto& screenOffset = GetScreenBorderOffset();
+	return { offset + screenOffset.bottomLeft, offset + screenOffset.topRight };
+}
+
 void Level::UpdateScore(float newScore)
 {
 	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));

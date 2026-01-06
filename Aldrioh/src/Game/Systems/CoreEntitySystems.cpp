@@ -105,13 +105,14 @@ void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 {
-	Entity levelEntity = scene.GetFirstEntity<LevelComponent>();
-	LevelComponent& lc = levelEntity.GetComponent<LevelComponent>();
+	LevelComponent& lc = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>();
 	CameraComponent& cameraComponent = scene.GetPrimaryCameraEntity().GetComponent<CameraComponent>();
-	const glm::vec2& cameraPos = cameraComponent.cameraController->GetPosition();
+
+	const LevelArea& offset = lc.level->GetScreenBorderOffsetByCamera(cameraComponent.cameraController->GetPosition());
+	glm::vec2 bottomLeft = offset.bottomLeft;
+	glm::vec2 topRight = offset.topRight;
 
 	auto view = scene.getRegistry().view<TransformComponent, EntityTypeComponent>();
-
 	for (entt::entity e : view)
 	{
 		auto [tc, etc] = view.get<TransformComponent, EntityTypeComponent>(e);
@@ -119,7 +120,11 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 		if (etc.type == EntityTypes::Asteroid)
 		{
 			// if outside boundaries then queue to delete
-			
+			if (tc.position.x < bottomLeft.x || tc.position.y < bottomLeft.y ||
+				tc.position.x > topRight.x || tc.position.y > topRight.y)
+			{
+				scene.WrapEntityHandle(e).QueueDestroy();
+			}
 		}
 	}
 }
