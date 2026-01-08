@@ -33,5 +33,5 @@ void MoveComponent::updateMoveVec(const glm::vec2& newMoveVec)
 CameraComponent::CameraComponent()
 {
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	cameraController = new CameraController(aspectRatio, 5.0f);
+	cameraController = std::make_unique<CameraController>(aspectRatio, 5.0f);
 }

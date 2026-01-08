@@ -36,9 +36,12 @@ public:
 	Entity GetPlayerCamera() { return playerCamera; }
 
 	Scene& scene;
+
+	// debugging related
+	void SetEnableDebugCamera(bool enable);
 protected:
 	LevelArea levelArea;
-	Entity playerCamera;
+	Entity playerCamera, debugCamera;
 	WaveManager waveManager;
 
 	CollisionGrid collisionGrid;

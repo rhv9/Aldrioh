@@ -127,12 +127,44 @@ Entity Scene::GetPrimaryCameraEntity()
 	// TODO: Currently accepts only one camera as main camera, update to support more
 	for (entt::entity e : view)
 	{
+		CameraComponent& cc = view.get<CameraComponent>(e);
+		if (cc.primary)
+			return Entity(e, this);
+	}
+
+	// If primary not set, then auto set the first camera
+	for (entt::entity e : view)
+	{
+		CameraComponent& cc = view.get<CameraComponent>(e);
+		cc.primary = true;
 		return Entity(e, this);
 	}
 
 	LOG_CORE_CRITICAL("No camera added to scene!");
 
 	return Entity();
+}
+
+void Scene::SetPrimaryCameraEntity(Entity primaryEntity)
+{
+	bool found = false;
+	auto view = registry.view<CameraComponent>();
+
+	for (auto e : view)
+	{
+		CameraComponent& cc = view.get<CameraComponent>(e);
+		if (e == primaryEntity.entityHandle)
+		{
+			cc.primary = true;
+			found = true;
+		}
+		else
+			cc.primary = false;
+	}
+
+	if (!found)
+		LOG_CORE_ERROR("Primary Camera not found when trying to set!");
+
 }
 
 glm::vec2 Scene::GetMousePosInScene()

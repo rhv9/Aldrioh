@@ -8,6 +8,7 @@
 #include <Game/Components/LevelComponents.h>
 
 #include <Scene/EntityCameraController.h>
+#include <FreeCameraController.h>
 
 #include <Game/SpriteCollection.h>
 #include <Game.h>
@@ -40,12 +41,11 @@ Entity PlayerPrefab::create(Scene& scene)
 Entity FixedCameraPrefab::create(Scene& scene)
 {
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	CameraController* cameraController = new CameraController(aspectRatio, 1.0f);
-	cameraController->SetZoomLevel(zoomLevel);
-	cameraController->SetPosition(position);
-	// Add camera component
 	Entity cameraEntity = scene.CreateEntityNoTransform("FixedCamera");
-	cameraEntity.AddComponent<CameraComponent>(cameraController);
+	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<CameraController>(aspectRatio, 1.0f));
+	cc.cameraController->SetZoomLevel(zoomLevel);
+	cc.cameraController->SetPosition(position);
+	// Add camera component
 
 	return cameraEntity;
 }
@@ -54,13 +54,13 @@ Entity FixedCameraPrefab::create(Scene& scene)
 Entity FollowingCameraPrefab::create(Scene& scene)
 {
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	EntityCameraController* cameraController = new EntityCameraController(aspectRatio, 1.0f);
-	cameraController->SetZoomLevel(zoomLevel);
-	cameraController->SetEntity(entity);
 	// Add camera component
 	Entity cameraEntity = scene.CreateEntityNoTransform("EntityCamera");
-	cameraEntity.AddComponent<CameraComponent>(cameraController);
+	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<EntityCameraController>(aspectRatio, 1.0f));
+	EntityCameraController* cameraController = static_cast<EntityCameraController*>(cc.cameraController.get());
 
+	cameraController->SetZoomLevel(zoomLevel);
+	cameraController->SetEntity(entity);
 	return cameraEntity;
 }
 
@@ -184,4 +184,14 @@ Entity AsteroidPrefab::create(Scene& scene)
 	asteroid.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	asteroid.AddComponent<CoreEnemyStateComponent>();
 	return asteroid;
+}
+
+Entity FreeRoamCameraPrefab::create(Scene& scene)
+{
+	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+	// Add camera component
+	Entity cameraEntity = scene.CreateEntityNoTransform("Debugging Camera");
+	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<FreeCameraController>(aspectRatio, 1.0f));
+	cc.cameraController->SetZoomLevel(zoomLevel);
+	return cameraEntity;
 }

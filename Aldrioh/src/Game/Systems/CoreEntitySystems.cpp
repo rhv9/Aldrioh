@@ -106,7 +106,7 @@ void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 {
 	LevelComponent& lc = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>();
-	CameraComponent& cameraComponent = scene.GetPrimaryCameraEntity().GetComponent<CameraComponent>();
+	CameraComponent& cameraComponent = lc.level->GetPlayerCamera().GetComponent<CameraComponent>();
 
 	const LevelArea& offset = lc.level->GetScreenBorderOffsetByCamera(cameraComponent.cameraController->GetPosition());
 	glm::vec2 bottomLeft = offset.bottomLeft;

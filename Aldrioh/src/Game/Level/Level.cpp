@@ -41,14 +41,17 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionG
 	Entity player = playerPrefab.create(scene);
 
 	// Camera
-	//FixedCameraPrefab fixedCameraPrefab;
-	//fixedCameraPrefab.zoomLevel = zoomLevel;
-	//camera = fixedCameraPrefab.create(scene);
+	// Main player camera
 	FollowingCameraPrefab followingCameraPrefab;
 	followingCameraPrefab.zoomLevel = zoomLevel;
 	followingCameraPrefab.entity = player;
 	playerCamera = followingCameraPrefab.create(scene);
+	scene.SetPrimaryCameraEntity(playerCamera);
 
+	// Debug free roam camera 
+	FreeRoamCameraPrefab freeRoamPrefab;
+	freeRoamPrefab.zoomLevel = zoomLevel + 2;
+	debugCamera = freeRoamPrefab.create(scene);
 
 	// Add score entity
 	Entity scoreEntity = scene.CreateEntityNoTransform("Score");
@@ -146,6 +149,17 @@ glm::vec2 Level::GenerateRandomSpawnCoords()
 	}
 
 	return spawnCoords;
+}
+
+void Level::SetEnableDebugCamera(bool enable)
+{
+	if (enable)
+	{
+		debugCamera.GetComponent<CameraComponent>().cameraController->SetPosition(playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition());
+		scene.SetPrimaryCameraEntity(debugCamera);
+	}
+	else
+		scene.SetPrimaryCameraEntity(playerCamera);
 }
 
 void Level::UpdateLevelArea()

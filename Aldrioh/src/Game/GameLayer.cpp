@@ -50,6 +50,8 @@ struct ImGuiSettings
 	bool shouldUpdateScene = true;
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
+
+	bool EnabledDebugCamera = false;
 };
 
 struct LevelEditorData
@@ -148,7 +150,7 @@ void GameLayer::OnRender(Timestep delta)
 	scene->OnUIRender(delta);
 
 	// Render Pass for drawing LevelEditing pointers
-	CameraController* cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
+	auto& cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
 
 	int i = 0;
@@ -158,7 +160,7 @@ void GameLayer::OnRender(Timestep delta)
 		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	}
 
-	auto offset = currentLevel->GetScreenBorderOffsetByCamera(cameraController->GetPosition());
+	auto offset = currentLevel->GetScreenBorderOffsetByCamera(currentLevel->GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition());
 
 	constexpr glm::vec2 size = { 0.45f, 0.45f };
 	Renderer::DrawQuad(glm::vec3{ offset.bottomLeft - size / 2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
@@ -205,6 +207,9 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		}
 		if (ImGui::BeginTabItem("Level"))
 		{
+			if (ImGui::Checkbox("Debugging Camera", &imGuiSettings.EnabledDebugCamera))
+				currentLevel->SetEnableDebugCamera(imGuiSettings.EnabledDebugCamera);
+
 			if (ImGui::Button(imGuiSettings.shouldUpdateScene ? "Pause" : "Play"))
 				imGuiSettings.shouldUpdateScene = !imGuiSettings.shouldUpdateScene;
 

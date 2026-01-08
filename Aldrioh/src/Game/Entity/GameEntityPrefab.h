@@ -25,6 +25,12 @@ struct FollowingCameraPrefab : public EntityPrefab
 	virtual Entity create(Scene& scene) override;
 };
 
+struct FreeRoamCameraPrefab : public EntityPrefab
+{
+	float zoomLevel;
+	virtual Entity create(Scene& scene) override;
+};
+
 struct WobblyEnemyGroupPrefab : public EntityPrefab
 {
 	float speed = 4.0f;

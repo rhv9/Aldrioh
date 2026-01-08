@@ -33,6 +33,7 @@ public:
 	CollisionDispatcher& GetCollisionDispatcher();
 
 	Entity GetPrimaryCameraEntity();
+	void SetPrimaryCameraEntity(Entity primaryEntity);
 
 	Entity WrapEntityHandle(entt::entity entityHandle);
 
@@ -53,7 +54,7 @@ public:
 private:
 	entt::registry registry;
 	Entity* player = nullptr;
-
+	
 	CollisionDispatcher collisionDispatcher;
 
 	std::vector<SystemFunction> updateSystems;

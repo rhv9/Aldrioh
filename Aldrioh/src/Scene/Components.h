@@ -151,10 +151,11 @@ struct AnimatedMovementComponent
 
 struct CameraComponent
 {
-	CameraController* cameraController;
+	std::unique_ptr<CameraController> cameraController;
+	bool primary = false;
 
 	CameraComponent();
-	CameraComponent(CameraController* cameraController) : cameraController(cameraController) {}
+	CameraComponent(std::unique_ptr<CameraController> cameraController) : cameraController(std::move(cameraController)) {}
 	CameraComponent(const CameraComponent&) = default;
 };
 

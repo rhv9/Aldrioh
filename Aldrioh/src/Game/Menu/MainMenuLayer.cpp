@@ -29,12 +29,12 @@ void MainMenuLayer::OnBegin()
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
-	CameraController* cameraController = new CameraController(aspectRatio, 1.0f);
+	std::unique_ptr<CameraController> cameraController = std::make_unique<CameraController>(aspectRatio, 1.0f);
 	cameraController->SetZoomLevel(10);
 	cameraController->SetPosition({ 0, 0 });
 	// Add camera component
 	Entity cameraEntity = scene->CreateEntity("RoamAndEntityCamera");
-	cameraEntity.AddComponent<CameraComponent>(cameraController);
+	cameraEntity.AddComponent<CameraComponent>(std::move(cameraController));
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	Renderer::SetUIPixelHeight(100);
