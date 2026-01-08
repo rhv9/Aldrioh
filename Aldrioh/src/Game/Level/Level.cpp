@@ -36,22 +36,36 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionG
 		};
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, callbackFireball);
 
+	CollisionCallbackFunction callbackFireballAsteroid = [](CollisionEvent& fireball, CollisionEvent& asteroid) {
+		fireball.e.QueueDestroy();
+		HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
+		hc.health -= 0.5f;
+		auto& cesc = asteroid.e.GetComponent<CoreEnemyStateComponent>();
+		cesc.hitVisualTimer = 0.1;
+		cesc.hitVisualState = HitVisualState::JUST_HIT;
+		fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+		fireball.handled = true;
+		};
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Asteroid, callbackFireballAsteroid);
+
+
 	// Create player
 	PlayerPrefab playerPrefab;
-	Entity player = playerPrefab.create(scene);
+	playerEntity = playerPrefab.create(scene);
 
 	// Camera
 	// Main player camera
 	FollowingCameraPrefab followingCameraPrefab;
 	followingCameraPrefab.zoomLevel = zoomLevel;
-	followingCameraPrefab.entity = player;
+	followingCameraPrefab.entity = playerEntity;
 	playerCamera = followingCameraPrefab.create(scene);
 	scene.SetPrimaryCameraEntity(playerCamera);
 
 	// Debug free roam camera 
-	FreeRoamCameraPrefab freeRoamPrefab;
-	freeRoamPrefab.zoomLevel = zoomLevel + 2;
-	debugCamera = freeRoamPrefab.create(scene);
+	FreeRoamCameraPrefab freeCameraPrefab;
+	freeCameraPrefab.zoomLevel = zoomLevel + 2;
+	freeCameraPrefab.speed = 0.05f;
+	debugCamera = freeCameraPrefab.create(scene);
 
 	// Add score entity
 	Entity scoreEntity = scene.CreateEntityNoTransform("Score");
@@ -69,7 +83,7 @@ Level::~Level()
 }
 
 static float elapsedTime = 0.0f;
-static float asteroidSpawnSpeed = 0.1f;
+static float asteroidSpawnSpeed = 0.4f;
 
 void Level::OnUpdate(Timestep ts)
 {
@@ -86,6 +100,11 @@ void Level::OnUpdate(Timestep ts)
 		prefab.speed = Math::Random::linearFloat(1.0f, 5.0f);
 		prefab.angle = Math::degreesToRad(Math::Random::linearInt(0, 360));
 		prefab.create(scene);
+
+		DroneEnemyPrefab dronePrefab;
+		dronePrefab.maxHealth = 1.0f;
+		dronePrefab.spawnPos = GenerateRandomSpawnCoords();
+		dronePrefab.create(scene);
 	}
 
 }
@@ -96,7 +115,7 @@ void Level::OnRender(Timestep ts)
 	Renderer::DrawQuad({ levelArea.topRight - glm::vec2{1,1}, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 }
 
-LevelArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
+BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
 {
 	auto& screenOffset = GetScreenBorderOffset();
 	return { offset + screenOffset.bottomLeft, offset + screenOffset.topRight };
@@ -110,12 +129,12 @@ void Level::UpdateScore(float newScore)
 // TODO See if can improve efficiency
 glm::vec2 Level::GenerateRandomSpawnCoords()
 {
-	constexpr float SPAWN_OFFSET = -2;
+	constexpr float SPAWN_OFFSET = 2;
 
 	glm::vec2 spawnCoords{ 0 };
 
 	glm::vec2 cameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
-	LevelArea edgeBounds = GetScreenBorderOffsetByCamera(cameraPos);
+	BoundingArea edgeBounds = GetScreenBorderOffsetByCamera(cameraPos);
 
 	glm::vec2 maxCoord{ edgeBounds.topRight.x + SPAWN_OFFSET, edgeBounds.topRight.y + SPAWN_OFFSET };
 	glm::vec2 minCoord{ edgeBounds.bottomLeft.x - SPAWN_OFFSET, edgeBounds.bottomLeft.y - SPAWN_OFFSET };

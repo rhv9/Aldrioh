@@ -36,6 +36,8 @@ public:
 	Timestep GetFixedTickTimestep() const;
 	// Returns the total count of ticks done
 	uint32_t GetTickCount() const { return i_gameStats.totalTickCount; }
+	// Returns the target ticks per second
+	uint32_t GetTicksTarget() const;
 
 	std::unique_ptr<Window>& GetWindow() { return window; }
 	void BlockEvents(bool val);

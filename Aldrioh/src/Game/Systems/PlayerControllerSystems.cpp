@@ -26,7 +26,8 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball);
-	fireball.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	glm::vec2 collisionSize{ 0.3f };
+	fireball.AddComponent<CollisionBox>(glm::vec3{ collisionSize/-2.0f, 0.0f }, collisionSize);
 }
 
 

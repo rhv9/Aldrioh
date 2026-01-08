@@ -45,7 +45,6 @@ Entity FixedCameraPrefab::create(Scene& scene)
 	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<CameraController>(aspectRatio, 1.0f));
 	cc.cameraController->SetZoomLevel(zoomLevel);
 	cc.cameraController->SetPosition(position);
-	// Add camera component
 
 	return cameraEntity;
 }
@@ -104,7 +103,7 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 			enemyPrefab.enemyManager = manager;
 			enemyPrefab.maxHealth = 1;
 			enemyPrefab.dirFacing = dirFacing;
-			enemyPrefab.spawnPos = { startPos.x + x * spacing.x, startPos.y + y * spacing.y};
+			enemyPrefab.spawnPos = { startPos.x + x * spacing.x, startPos.y + y * spacing.y };
 			enemyPrefab.create(scene);
 		}
 	}
@@ -192,6 +191,26 @@ Entity FreeRoamCameraPrefab::create(Scene& scene)
 	// Add camera component
 	Entity cameraEntity = scene.CreateEntityNoTransform("Debugging Camera");
 	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<FreeCameraController>(aspectRatio, 1.0f));
+	static_cast<FreeCameraController*>(cc.cameraController.get())->SetSpeed(speed);
 	cc.cameraController->SetZoomLevel(zoomLevel);
 	return cameraEntity;
+}
+
+Entity DroneEnemyPrefab::create(Scene& scene)
+{
+	Entity enemy = scene.CreateEntity("Drone");
+	auto& tc = enemy.GetComponent<TransformComponent>();
+	tc.position = glm::vec3{ spawnPos, 0.4f };
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_mini);
+	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	enemy.AddComponent<MoveComponent>(speed);
+	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
+	glm::vec2 collisionSize{ 0.5f };
+	enemy.AddComponent<CollisionBox>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
+	enemy.AddComponent<HealthComponent>(maxHealth);
+	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
+	enemy.AddComponent<CoreEnemyStateComponent>();
+	enemy.AddComponent<FollowPlayerAIComponent>();
+
+	return Entity();
 }

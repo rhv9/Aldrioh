@@ -28,6 +28,7 @@ struct FollowingCameraPrefab : public EntityPrefab
 struct FreeRoamCameraPrefab : public EntityPrefab
 {
 	float zoomLevel;
+	float speed = 1.0f;
 	virtual Entity create(Scene& scene) override;
 };
 
@@ -62,6 +63,14 @@ struct EnemyPathPrefab : public EntityPrefab
 	std::vector<glm::vec2> points;
 	float speed = 1.0f;
 
+	virtual Entity create(Scene& scene) override;
+};
+
+struct DroneEnemyPrefab : public EntityPrefab
+{
+	glm::vec2 spawnPos{ 0 };
+	float maxHealth = 1;
+	float speed = 1.0f;
 	virtual Entity create(Scene& scene) override;
 };
 

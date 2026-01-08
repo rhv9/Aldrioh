@@ -7,6 +7,7 @@
 
 #include <Core/Platform.h>
 #include <Math/Math.h>
+#include <Game/Components/LevelComponents.h>
 
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {
@@ -46,5 +47,21 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 
 			emc.OnUpdateFunc(ts, scene.WrapEntityHandle(e));
 		}
+	}
+}
+
+void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
+{
+	auto view = scene.getRegistry().view<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>();
+
+	glm::vec3 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
+	
+	for (auto e : view)
+	{
+		auto [tc, mc, vc, aic] = view.get<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>(e);
+
+		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
+		vc.rotation = Math::angle(dir);
+		mc.updateMoveVec(dir);
 	}
 }

@@ -5,7 +5,7 @@
 
 #include <Game/Waves/WaveManager.h>
 
-struct LevelArea
+struct BoundingArea
 {
 	glm::vec2 bottomLeft{ 0 };
 	glm::vec2 topRight{ 0 };
@@ -25,8 +25,8 @@ public:
 
 	void UpdateLevelArea();
 	// Gives the bottom left and top right offset for screen to world position
-	const LevelArea& GetScreenBorderOffset() const { return levelArea; }
-	LevelArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
+	const BoundingArea& GetScreenBorderOffset() const { return levelArea; }
+	BoundingArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
 
 	void UpdateScore(float newScore);
 
@@ -34,14 +34,16 @@ public:
 	glm::vec2 GenerateRandomSpawnCoords();
 
 	Entity GetPlayerCamera() { return playerCamera; }
+	Entity GetPlayer() { return playerEntity; }
 
 	Scene& scene;
 
 	// debugging related
 	void SetEnableDebugCamera(bool enable);
 protected:
-	LevelArea levelArea;
+	BoundingArea levelArea;
 	Entity playerCamera, debugCamera;
+	Entity playerEntity;
 	WaveManager waveManager;
 
 	CollisionGrid collisionGrid;

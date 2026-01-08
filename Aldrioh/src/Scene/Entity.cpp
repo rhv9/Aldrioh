@@ -15,6 +15,12 @@ Entity::~Entity()
 {
 }
 
+TransformComponent& Entity::GetTransformComponent()
+{
+	CORE_ASSERT(HasComponent<TransformComponent>(), "GetComponent: Entity does not have component!");
+	return scene->registry.get<TransformComponent>(entityHandle);
+}
+
 void Entity::QueueDestroy()
 {
 	if (!HasComponent<DestroyEntityComponent>())

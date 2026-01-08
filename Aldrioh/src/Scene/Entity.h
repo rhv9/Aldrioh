@@ -3,6 +3,8 @@
 
 #include "Scene.h"
 
+struct TransformComponent;
+
 class Entity
 {
 public:
@@ -39,6 +41,8 @@ public:
 
 		return scene->registry.get<T>(entityHandle);
 	}
+
+	TransformComponent& GetTransformComponent();
 
 	template<typename T>
 	bool HasComponent()

@@ -42,6 +42,14 @@ struct GlobalDumbAIComponent
 	GlobalDumbAIComponent(const GlobalDumbAIComponent&) = default;
 };
 
+struct FollowPlayerAIComponent
+{
+	bool follow = true;
+
+	FollowPlayerAIComponent() = default;
+	FollowPlayerAIComponent(const FollowPlayerAIComponent&) = default;
+};
+
 enum class HitVisualState : uint8_t
 {
 	NORMAL = 0,

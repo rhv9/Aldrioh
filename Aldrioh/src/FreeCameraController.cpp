@@ -18,13 +18,13 @@ void FreeCameraController::OnUpdate(Timestep ts)
 	glm::vec2 move{ 0.0f };
 
 	if (Input::IsKeyPressed(Input::KEY_W))
-		move.y += zoomLevel * ts;
+		move.y += zoomLevel * ts * speed;
 	if (Input::IsKeyPressed(Input::KEY_S))
-		move.y -= zoomLevel * ts;
+		move.y -= zoomLevel * ts * speed;
 	if (Input::IsKeyPressed(Input::KEY_D))
-		move.x += zoomLevel * ts;
+		move.x += zoomLevel * ts * speed;
 	if (Input::IsKeyPressed(Input::KEY_A))
-		move.x -= zoomLevel * ts;
+		move.x -= zoomLevel * ts * speed;
 
 	if (Input::IsKeyPressed(Input::KEY_LEFT))
 		rotation -= rotationSpeed * ts;

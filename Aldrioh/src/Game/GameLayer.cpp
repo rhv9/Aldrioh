@@ -94,6 +94,7 @@ void GameLayer::OnBegin()
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
+	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
 
 

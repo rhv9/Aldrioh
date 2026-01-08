@@ -102,7 +102,8 @@ void Game::Loop()
 #endif
 }
 
-constexpr float TICK_TIMESTEP = 1.0f / 30.0f;
+constexpr uint32_t TICK_PER_SECOND = 30;
+constexpr float TICK_TIMESTEP = 1.0f / (float)TICK_PER_SECOND;
 
 bool Game::Iterate()
 {
@@ -174,6 +175,11 @@ void Game::OnClosing()
 Timestep Game::GetFixedTickTimestep() const
 {
     return TICK_TIMESTEP;
+}
+
+uint32_t Game::GetTicksTarget() const
+{
+    return TICK_PER_SECOND;
 }
 
 void Game::BlockEvents(bool val)
