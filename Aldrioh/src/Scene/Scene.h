@@ -29,9 +29,10 @@ public:
 
 	// temp
 	entt::registry& getRegistry() { return registry; }
-	Entity GetPrimaryCameraEntity();
 	glm::vec2 GetMousePosInScene();
 	CollisionDispatcher& GetCollisionDispatcher();
+
+	Entity GetPrimaryCameraEntity();
 
 	Entity WrapEntityHandle(entt::entity entityHandle);
 

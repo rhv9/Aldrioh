@@ -145,7 +145,6 @@ glm::vec2 Scene::GetMousePosInScene()
 	glm::vec2 mousePosPercent = { mousePos.x / Game::Instance().GetWindow()->GetWidth(),
 						 mousePos.y / Game::Instance().GetWindow()->GetHeight() };
 
-
 	glm::vec2 zoomedDimensions{ bounds.Right, bounds.Top };
 
 	return (glm::vec2{ mousePosPercent.x * zoomedDimensions.x - bounds.Right / 2.0f, mousePosPercent.y * zoomedDimensions.y - bounds.Top / 2.0f } *2.0f) + cameraComponent.cameraController->GetPosition();

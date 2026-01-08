@@ -1,5 +1,6 @@
 #pragma once
-#include <Scene/Scene.h>
+
+class Scene;
 
 struct Cell
 {
@@ -7,15 +8,17 @@ struct Cell
 	int count = 0;
 };
 
-class CollisionSystem
+class CollisionGrid
 {
 public:
-	CollisionSystem(Scene& scene);
+
+	CollisionGrid(Scene& scene);
 
 	Cell& GetCell(const glm::vec2& entityPos);
+	void SetSize(int newWidth, int newHeight);
 
 private:
-	int width, height;
+	int width = 1, height = 1;
 	float cellSize = 1.0f;
 	Scene& scene;
 	std::vector<Cell> grid;

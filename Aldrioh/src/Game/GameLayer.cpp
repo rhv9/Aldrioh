@@ -143,7 +143,7 @@ void GameLayer::OnUpdate(Timestep delta)
 
 void GameLayer::OnRender(Timestep delta)
 {
-	Renderer::DrawBackgroundPass();
+	//Renderer::DrawBackgroundPass();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
 
@@ -158,7 +158,7 @@ void GameLayer::OnRender(Timestep delta)
 		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	}
 
-	auto& offset = currentLevel->GetScreenBorderOffsetByCamera(cameraController->GetPosition());
+	auto offset = currentLevel->GetScreenBorderOffsetByCamera(cameraController->GetPosition());
 
 	constexpr glm::vec2 size = { 0.45f, 0.45f };
 	Renderer::DrawQuad(glm::vec3{ offset.bottomLeft - size / 2.0f, 1.0f }, Font::DEFAULT->GetBlockSubTexture(), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);

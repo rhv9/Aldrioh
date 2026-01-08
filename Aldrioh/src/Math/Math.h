@@ -6,7 +6,9 @@ namespace Math {
 
 	namespace Random {
 
+		// Min/max inclusive
 		uint32_t linearInt(int min, int max);
+		// Min/max inclusive
 		float linearFloat(float min, float max);
 	}
 

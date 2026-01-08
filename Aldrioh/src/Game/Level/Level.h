@@ -1,6 +1,7 @@
 #pragma once
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
+#include <Collision/CollisionGrid.h>
 
 #include <Game/Waves/WaveManager.h>
 
@@ -25,15 +26,21 @@ public:
 	void UpdateLevelArea();
 	// Gives the bottom left and top right offset for screen to world position
 	const LevelArea& GetScreenBorderOffset() const { return levelArea; }
-	const LevelArea& GetScreenBorderOffsetByCamera(const glm::vec2& offset);
+	LevelArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
 
 	void UpdateScore(float newScore);
 
-	// A reference to the scene from GameLayer
+	// Algorithm to generate the spawn coords for enemies/asteroids
+	glm::vec2 GenerateRandomSpawnCoords();
+
+	Entity GetPlayerCamera() { return playerCamera; }
+
 	Scene& scene;
 protected:
 	LevelArea levelArea;
-	Entity camera;
+	Entity playerCamera;
 	WaveManager waveManager;
+
+	CollisionGrid collisionGrid;
 };
 

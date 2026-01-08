@@ -19,7 +19,7 @@
 
 float zoomLevel = 10;
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionGrid(scene)
 {
 	// collisionDispatcher
 	waveManager.Init();
@@ -47,7 +47,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 	FollowingCameraPrefab followingCameraPrefab;
 	followingCameraPrefab.zoomLevel = zoomLevel;
 	followingCameraPrefab.entity = player;
-	camera = followingCameraPrefab.create(scene);
+	playerCamera = followingCameraPrefab.create(scene);
 
 
 	// Add score entity
@@ -57,6 +57,8 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 			this->UpdateScore(newScore);
 		});
 
+	collisionGrid.SetSize(100, 100);
+
 }
 
 Level::~Level()
@@ -64,6 +66,7 @@ Level::~Level()
 }
 
 static float elapsedTime = 0.0f;
+static float asteroidSpawnSpeed = 0.1f;
 
 void Level::OnUpdate(Timestep ts)
 {
@@ -71,17 +74,17 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (elapsedTime >= 1.0f)
+	if (elapsedTime >= asteroidSpawnSpeed)
 	{
-		elapsedTime -= 1.0f;
+		elapsedTime -= asteroidSpawnSpeed;
 
 		AsteroidPrefab prefab;
-		prefab.spawnPos = { 0.0f, 0.0f };
-		prefab.speed = 1.0f;
+		prefab.spawnPos = GenerateRandomSpawnCoords();
+		prefab.speed = Math::Random::linearFloat(1.0f, 5.0f);
 		prefab.angle = Math::degreesToRad(Math::Random::linearInt(0, 360));
 		prefab.create(scene);
 	}
-	
+
 }
 
 void Level::OnRender(Timestep ts)
@@ -90,7 +93,7 @@ void Level::OnRender(Timestep ts)
 	Renderer::DrawQuad({ levelArea.topRight - glm::vec2{1,1}, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 }
 
-const LevelArea& Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
+LevelArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
 {
 	auto& screenOffset = GetScreenBorderOffset();
 	return { offset + screenOffset.bottomLeft, offset + screenOffset.topRight };
@@ -101,11 +104,55 @@ void Level::UpdateScore(float newScore)
 	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));
 }
 
+// TODO See if can improve efficiency
+glm::vec2 Level::GenerateRandomSpawnCoords()
+{
+	constexpr float SPAWN_OFFSET = -2;
+
+	glm::vec2 spawnCoords{ 0 };
+
+	glm::vec2 cameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
+	LevelArea edgeBounds = GetScreenBorderOffsetByCamera(cameraPos);
+
+	glm::vec2 maxCoord{ edgeBounds.topRight.x + SPAWN_OFFSET, edgeBounds.topRight.y + SPAWN_OFFSET };
+	glm::vec2 minCoord{ edgeBounds.bottomLeft.x - SPAWN_OFFSET, edgeBounds.bottomLeft.y - SPAWN_OFFSET };
+
+	// Choose edge
+	int edge = Math::Random::linearInt(0, 3);
+
+	if (edge == 0)
+	{
+		// left edge
+		spawnCoords.x = minCoord.x;
+		spawnCoords.y = Math::Random::linearFloat(minCoord.y, maxCoord.y);
+	}
+	else if (edge == 1)
+	{
+		// top edge
+		spawnCoords.x = Math::Random::linearFloat(minCoord.x, maxCoord.x);
+		spawnCoords.y = maxCoord.y;
+	}
+	else if (edge == 2)
+	{
+		// right edge
+		spawnCoords.x = maxCoord.x;
+		spawnCoords.y = Math::Random::linearFloat(minCoord.y, maxCoord.y);
+	}
+	else
+	{
+		// bottom edge
+		spawnCoords.x = Math::Random::linearFloat(minCoord.x, maxCoord.x);
+		spawnCoords.y = minCoord.y;
+	}
+
+	return spawnCoords;
+}
+
 void Level::UpdateLevelArea()
 {
-	if (camera.IsValid())
+	if (playerCamera.IsValid())
 	{
-		auto& cc = camera.GetComponent<CameraComponent>();
+		auto& cc = playerCamera.GetComponent<CameraComponent>();
 		auto& bounds = cc.cameraController->GetBounds();
 
 		levelArea.bottomLeft = glm::vec2{ bounds.Left, bounds.Bottom };
