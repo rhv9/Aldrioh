@@ -29,6 +29,7 @@ public:
 
 	UIText* GetUIScoreText() { return uiScoreText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
+	UIText* GetUITimerText() { return uiTimerText; }
 
 private:
 	std::shared_ptr<Scene> scene;
@@ -36,6 +37,7 @@ private:
 	UIManager* uiManager = nullptr;
 	UIText* uiScoreText = nullptr;
 	UIProgressBar* uiPlayerHealthBar = nullptr;
+	UIText* uiTimerText = nullptr;
 
 	EventCallbackID<KeyEventArg> callbackKeyID;
 	EventCallbackID<WindowResizeEventArg> windowResizeID;

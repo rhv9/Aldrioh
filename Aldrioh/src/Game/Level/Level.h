@@ -29,6 +29,7 @@ public:
 	BoundingArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
 
 	void UpdateScore(float newScore);
+	void UpdateTimerText(float elapsedTime);
 
 	// Algorithm to generate the spawn coords for enemies/asteroids
 	glm::vec2 GenerateRandomSpawnCoords();
@@ -45,6 +46,8 @@ protected:
 	Entity playerCamera, debugCamera;
 	Entity playerEntity;
 	WaveManager waveManager;
+
+	float levelStartTime = 0.0f;
 
 	CollisionGrid collisionGrid;
 };

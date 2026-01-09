@@ -96,6 +96,15 @@ void GameLayer::OnBegin()
 	uiPlayerHealthBar->SetProgress(0.5f);
 	uimc.uiManager->AddUIObject(uiPlayerHealthBar);
 
+	// UI
+	uiTimerText = new UIText("Timer", { 0, 4 }, glm::vec2{ 4, 4 });
+	uiTimerText->SetText("");
+	uiTimerText->SetAnchorPoint(AnchorPoint::CENTER_TOP);
+	uiTimerText->GetFontStyle().colour = Colour::WHITE;
+	uiTimerText->GetFontStyle().charSpacingPercent = 0.9f;
+	uiTimerText->SetFontSize(4);
+	uimc.uiManager->AddUIObject(uiTimerText);
+
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
@@ -148,10 +157,6 @@ void GameLayer::OnUpdate(Timestep delta)
 {
 	if (imGuiSettings.shouldUpdateScene)
 		scene->OnUpdate(delta);
-
-	float percent = (float)(Game::Instance().GetTickCount() % Game::Instance().GetTicksTarget()) / Game::Instance().GetTicksTarget();
-	LOG_CORE_INFO("Percent: {}", percent);
-	uiPlayerHealthBar->SetProgress(percent);
 }
 
 void GameLayer::OnRender(Timestep delta)

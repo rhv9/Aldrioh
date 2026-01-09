@@ -90,6 +90,9 @@ static float asteroidSpawnSpeed = 0.4f;
 void Level::OnUpdate(Timestep ts)
 {
 	waveManager.OnUpdate(ts);
+	
+	// TODO: does not necessarily have to update every tick.
+	UpdateTimerText(Platform::GetElapsedTime() - levelStartTime);
 
 	elapsedTime += ts;
 
@@ -144,6 +147,15 @@ BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
 void Level::UpdateScore(float newScore)
 {
 	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));
+}
+
+void Level::UpdateTimerText(float elapsedTime)
+{
+	int mins = elapsedTime / 60.0f;
+	int seconds = (int)elapsedTime % 60;
+
+	std::string timerText = std::format("{}:{:02}", mins, seconds);
+	GlobalLayers::game->GetUITimerText()->SetText(timerText);
 }
 
 // TODO See if can improve efficiency
