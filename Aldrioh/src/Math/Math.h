@@ -14,6 +14,7 @@ namespace Math {
 
 	float abs(float val);
 	float sign(float val);
+	float floatMod(float lhs, float rhs);
 
 	float min(float x, float y);
 	float max(float x, float y);

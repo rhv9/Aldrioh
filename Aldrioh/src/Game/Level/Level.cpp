@@ -17,6 +17,8 @@
 
 #include <Game/Entity/GameEntityPrefab.h>
 
+#include <Game/Systems/RenderSystems.h>
+
 float zoomLevel = 10;
 
 Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionGrid(scene)
@@ -113,6 +115,24 @@ void Level::OnRender(Timestep ts)
 {
 	Renderer::DrawQuad({ levelArea.bottomLeft, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
 	Renderer::DrawQuad({ levelArea.topRight - glm::vec2{1,1}, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
+
+	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
+
+	// Update player health bar position
+	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
+	auto& playerCameraController = playerCamera.GetComponent<CameraComponent>().cameraController;
+	glm::vec2 barPos = playerPos - playerCameraController->GetPosition();
+	barPos.y -= 0.7f;
+
+	// TODO this does not need to be calculated every frame
+	glm::vec2 uiArea = uiPlayerHealthBar->GetUIManager()->GetUIArea();
+	glm::vec2 cameraArea = playerCameraController->GetBounds().GetSize();
+	glm::vec2 cameraToUIMapping{ uiArea.x / cameraArea.x, uiArea.y / cameraArea.y };
+
+	barPos.x *= cameraToUIMapping.x;
+	barPos.y *= cameraToUIMapping.y;
+
+	uiPlayerHealthBar->SetRelativePos(barPos);
 }
 
 BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)

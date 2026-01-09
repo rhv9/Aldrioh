@@ -96,6 +96,11 @@ float Math::sign(float val)
 	return val < 0 ? -1 : 1;
 }
 
+float Math::floatMod(float lhs, float rhs)
+{
+	return fmodf(lhs, rhs);
+}
+
 float Math::min(float x, float y)
 {
 	return x < y ? x : y;

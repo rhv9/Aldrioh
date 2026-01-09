@@ -5,6 +5,7 @@
 #include <Events/EventHandler.h>
 #include <UI/UIManager.h>
 #include <UI/UIText.h>
+#include <UI/UIProgressBar.h>
 
 class Level;
 
@@ -27,12 +28,14 @@ public:
 	virtual void OnTransitionOut() override;
 
 	UIText* GetUIScoreText() { return uiScoreText; }
+	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 
 private:
 	std::shared_ptr<Scene> scene;
 
 	UIManager* uiManager = nullptr;
 	UIText* uiScoreText = nullptr;
+	UIProgressBar* uiPlayerHealthBar = nullptr;
 
 	EventCallbackID<KeyEventArg> callbackKeyID;
 	EventCallbackID<WindowResizeEventArg> windowResizeID;

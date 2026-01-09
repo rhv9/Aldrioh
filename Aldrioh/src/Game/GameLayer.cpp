@@ -90,6 +90,12 @@ void GameLayer::OnBegin()
 	uiScoreText->SetFontSize(4);
 	uimc.uiManager->AddUIObject(uiScoreText);
 
+	uiPlayerHealthBar = new UIProgressBar("Player Health", { 2, 2 }, { 7, 0.4f });
+	uiPlayerHealthBar->SetAnchorPoint(AnchorPoint::CENTER);
+	uiPlayerHealthBar->SetBackgroundColour(Colour::GREY);
+	uiPlayerHealthBar->SetProgress(0.5f);
+	uimc.uiManager->AddUIObject(uiPlayerHealthBar);
+
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
@@ -142,6 +148,10 @@ void GameLayer::OnUpdate(Timestep delta)
 {
 	if (imGuiSettings.shouldUpdateScene)
 		scene->OnUpdate(delta);
+
+	float percent = (float)(Game::Instance().GetTickCount() % Game::Instance().GetTicksTarget()) / Game::Instance().GetTicksTarget();
+	LOG_CORE_INFO("Percent: {}", percent);
+	uiPlayerHealthBar->SetProgress(percent);
 }
 
 void GameLayer::OnRender(Timestep delta)
