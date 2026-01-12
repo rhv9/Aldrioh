@@ -32,7 +32,6 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 
 		if (entityWrapped.HasComponent<CollisionBox>())
 		{
-			
 		}
 	}
 }

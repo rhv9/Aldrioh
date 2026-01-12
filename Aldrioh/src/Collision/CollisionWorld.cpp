@@ -1,15 +1,33 @@
 #include <pch.h>
 #include "CollisionWorld.h"
 
-void CollisionWorld::Init(int numOfChunkWidth, int numOfChunkHeight, int chunkWidth, int chunkHeight)
+#include <Math/Math.h>
+
+void CollisionWorld::Init(int numOfChunkWidth, int numOfChunkHeight)
 {
 	width = numOfChunkWidth;
 	height = numOfChunkHeight;
-	this->chunkWidth = chunkWidth;
-	this->chunkHeight = chunkHeight;
 
 	chunks.reserve(width * height);
+	
+	for (int i = 0; i < width * height; ++i)
+		chunks.emplace_back(scene);
+}
 
-	for (auto& chunk : chunks)
-		chunk.Init(chunkWidth, chunkHeight);
+PositionMapping CollisionWorld::GetMapping(const glm::vec2& pos)
+{
+	float chunkSize = chunks[0].SIZE * chunks[0].GetCellSize();
+	glm::vec2 dividedPos = pos / chunkSize;
+	PositionMapping mapping;
+	mapping.chunkX = static_cast<int>(dividedPos.x);
+	mapping.chunkY = static_cast<int>(dividedPos.y);
+	mapping.cellX = static_cast<int>(Math::floatMod(pos.x, chunkSize));
+	mapping.cellY = static_cast<int>(Math::floatMod(pos.y, chunkSize));
+
+	return mapping;
+}
+
+std::string PositionMapping::ToString() const
+{
+	return std::format("Chunk:({},{}), Cell({},{})", chunkX, chunkY, cellX, cellY);
 }

@@ -33,8 +33,9 @@ public:
 	glm::vec2 GetMousePosInScene();
 
 	CollisionDispatcher& GetCollisionDispatcher();
-	void InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight, int chunkWidth, int chunkHeight);
+	void InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight);
 	bool HandleCollisions(Entity e, CollisionDispatcher& dispatcher);
+	CollisionWorld& GetCollisionWorld() { return collisionWorld; }
 
 	Entity GetPrimaryCameraEntity();
 	void SetPrimaryCameraEntity(Entity primaryEntity);

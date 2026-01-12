@@ -1,7 +1,6 @@
 #pragma once
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
-#include <Collision/CollisionGrid.h>
 
 #include <Game/Waves/WaveManager.h>
 
@@ -48,7 +47,5 @@ protected:
 	WaveManager waveManager;
 
 	float levelStartTime = 0.0f;
-
-	CollisionGrid collisionGrid;
 };
 

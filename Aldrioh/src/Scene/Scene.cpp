@@ -18,7 +18,7 @@
 
 #include <Game/Systems/PlayerControllerSystems.h>
 
-Scene::Scene()
+Scene::Scene() : collisionWorld(*this)
 {
 }
 
@@ -187,14 +187,13 @@ CollisionDispatcher& Scene::GetCollisionDispatcher()
 	return collisionDispatcher;
 }
 
-void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight, int chunkWidth, int chunkHeight)
+void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight)
 {
-	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight, chunkWidth, chunkHeight);
+	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight);
 }
 
 bool Scene::HandleCollisions(Entity e, CollisionDispatcher& dispatcher)
 {
-	
 
 	return false;
 }

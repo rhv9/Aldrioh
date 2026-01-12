@@ -15,10 +15,11 @@ public:
 	CollisionChunk(Scene& scene);
 
 	Cell& GetCell(const glm::vec2& entityPos);
-	void Init(int newWidth, int newHeight);
+	float GetCellSize() { return cellSize; }
 
+	static constexpr int SIZE = 16;
 private:
-	int width = 1, height = 1;
+	float cellSize = 1.0f;
 	Scene& scene;
-	std::vector<Cell> grid;
+	std::array<Cell, SIZE * SIZE> grid;
 };

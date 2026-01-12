@@ -21,7 +21,7 @@
 
 float zoomLevel = 10;
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionGrid(scene)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 {
 	// collisionDispatcher
 	waveManager.Init();
@@ -75,9 +75,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collisionG
 		{
 			this->UpdateScore(newScore);
 		});
-
-	collisionGrid.SetSize(100, 100);
-
+	LOG_CORE_INFO("Test {}", scene.GetCollisionWorld().GetMapping({ 15.0f, 16.0f }).ToString());
 }
 
 Level::~Level()
