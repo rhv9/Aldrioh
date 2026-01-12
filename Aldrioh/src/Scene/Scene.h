@@ -1,6 +1,7 @@
 #pragma once
 #include <entt.hpp>
 #include <Collision/CollisionDispatcher.h>
+#include <Collision/CollisionWorld.h>
 #include <UI/UIManager.h>
 
 class Entity;
@@ -30,7 +31,10 @@ public:
 	// temp
 	entt::registry& getRegistry() { return registry; }
 	glm::vec2 GetMousePosInScene();
+
 	CollisionDispatcher& GetCollisionDispatcher();
+	void InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight, int chunkWidth, int chunkHeight);
+	bool HandleCollisions(Entity e, CollisionDispatcher& dispatcher);
 
 	Entity GetPrimaryCameraEntity();
 	void SetPrimaryCameraEntity(Entity primaryEntity);
@@ -56,6 +60,7 @@ private:
 	Entity* player = nullptr;
 	
 	CollisionDispatcher collisionDispatcher;
+	CollisionWorld collisionWorld;
 
 	std::vector<SystemFunction> updateSystems;
 	std::vector<SystemFunction> renderSystems;

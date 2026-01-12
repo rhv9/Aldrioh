@@ -3,6 +3,10 @@
 #include <Game/Components/EntityComponents.h>
 #include <Systems/HeadersUpdateSystems.h>
 
+#include <Collision/CollisionDispatcher.h>
+#include <Collision/CollisionWorld.h>
+#include <Collision/Collision.h>
+
 void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)
 {
 	// Reset Move Component
@@ -23,6 +27,13 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 	{
 		auto [transform, move] = view.get(e);
 		transform.position += glm::vec3{ move.moveVec * move.speed * (float)ts, 0.0f };
+
+		Entity entityWrapped = scene.WrapEntityHandle(e);
+
+		if (entityWrapped.HasComponent<CollisionBox>())
+		{
+			
+		}
 	}
 }
 

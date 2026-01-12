@@ -4,22 +4,21 @@ class Scene;
 
 struct Cell
 {
-	std::array<entt::entity, 10> entities;
+	std::array<entt::entity, 16> entities;
 	int count = 0;
 };
 
-class CollisionGrid
+
+class CollisionChunk
 {
 public:
-
-	CollisionGrid(Scene& scene);
+	CollisionChunk(Scene& scene);
 
 	Cell& GetCell(const glm::vec2& entityPos);
-	void SetSize(int newWidth, int newHeight);
+	void Init(int newWidth, int newHeight);
 
 private:
 	int width = 1, height = 1;
-	float cellSize = 1.0f;
 	Scene& scene;
 	std::vector<Cell> grid;
 };

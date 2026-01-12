@@ -187,3 +187,15 @@ CollisionDispatcher& Scene::GetCollisionDispatcher()
 	return collisionDispatcher;
 }
 
+void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight, int chunkWidth, int chunkHeight)
+{
+	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight, chunkWidth, chunkHeight);
+}
+
+bool Scene::HandleCollisions(Entity e, CollisionDispatcher& dispatcher)
+{
+	
+
+	return false;
+}
+
