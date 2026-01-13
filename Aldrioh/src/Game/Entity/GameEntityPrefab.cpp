@@ -60,6 +60,7 @@ Entity FollowingCameraPrefab::create(Scene& scene)
 
 	cameraController->SetZoomLevel(zoomLevel);
 	cameraController->SetEntity(entity);
+	cameraController->ResetToPosition(startPos);
 	return cameraEntity;
 }
 

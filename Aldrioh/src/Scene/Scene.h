@@ -34,7 +34,7 @@ public:
 
 	CollisionDispatcher& GetCollisionDispatcher();
 	void InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight);
-	bool HandleCollisions(Entity e, CollisionDispatcher& dispatcher);
+	bool DispatchCollisions(Entity e);
 	CollisionWorld& GetCollisionWorld() { return collisionWorld; }
 
 	Entity GetPrimaryCameraEntity();

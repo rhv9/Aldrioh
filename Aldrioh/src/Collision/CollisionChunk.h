@@ -1,25 +1,26 @@
 #pragma once
 
 class Scene;
+class Entity;
 
 struct Cell
 {
 	std::array<entt::entity, 16> entities;
 	int count = 0;
+
+	void AddEntity(entt::entity handle);
 };
 
 
-class CollisionChunk
+struct CollisionChunk
 {
-public:
-	CollisionChunk(Scene& scene);
-
-	Cell& GetCell(const glm::vec2& entityPos);
-	float GetCellSize() { return cellSize; }
-
 	static constexpr int SIZE = 16;
-private:
 	float cellSize = 1.0f;
 	Scene& scene;
 	std::array<Cell, SIZE * SIZE> grid;
+
+	CollisionChunk(Scene& scene);
+
+	inline Cell& GetCell(int x, int y) { return grid[y * SIZE + x]; }
+	void Clear();
 };

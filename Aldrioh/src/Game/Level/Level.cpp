@@ -53,6 +53,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 
 	// Create player
 	PlayerPrefab playerPrefab;
+	playerPrefab.startPos = { 200, 200 };
 	playerEntity = playerPrefab.create(scene);
 
 	// Camera
@@ -60,6 +61,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 	FollowingCameraPrefab followingCameraPrefab;
 	followingCameraPrefab.zoomLevel = zoomLevel;
 	followingCameraPrefab.entity = playerEntity;
+	followingCameraPrefab.startPos = playerPrefab.startPos;
 	playerCamera = followingCameraPrefab.create(scene);
 	scene.SetPrimaryCameraEntity(playerCamera);
 
@@ -198,6 +200,20 @@ glm::vec2 Level::GenerateRandomSpawnCoords()
 	}
 
 	return spawnCoords;
+}
+
+BoundingArea Level::GetDeathArea()
+{
+	CameraComponent& cameraComponent = GetPlayerCamera().GetComponent<CameraComponent>();
+	const BoundingArea& offset = GetScreenBorderOffsetByCamera(cameraComponent.cameraController->GetPosition());
+
+	glm::vec2 bottomLeft = offset.bottomLeft - 5.0f;
+	glm::vec2 topRight = offset.topRight + 5.0f;
+
+	BoundingArea boundingArea;
+	boundingArea.bottomLeft = bottomLeft;
+	boundingArea.topRight = topRight;
+	return boundingArea;
 }
 
 void Level::SetEnableDebugCamera(bool enable)

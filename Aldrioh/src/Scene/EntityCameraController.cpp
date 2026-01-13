@@ -33,6 +33,12 @@ void EntityCameraController::OnUpdate(Timestep delta)
 	}
 }
 
+void EntityCameraController::ResetToPosition(const glm::vec2& pos)
+{
+	currentPosition = pos;
+	SetPosition(pos);
+}
+
 EntityCameraController::~EntityCameraController()
 {
 }

@@ -123,7 +123,8 @@ void GameLayer::OnBegin()
 
 	// After rest of updates are done
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
-	scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
+	//scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
+	scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionWorld);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 	scene->AddUpdateSystem(&EntitySystem::DeleteEnemyOutsideScreenSystem);
 

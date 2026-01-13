@@ -67,6 +67,7 @@ public:
 
 	bool IsNull() const { return entityHandle == entt::null; }
 	operator bool() const { return entityHandle != entt::null; }
+	bool operator==(const Entity& other) const { return entityHandle == other.entityHandle; }
 
 private:
 	friend Scene;

@@ -36,6 +36,8 @@ public:
 	Entity GetPlayerCamera() { return playerCamera; }
 	Entity GetPlayer() { return playerEntity; }
 
+	BoundingArea GetDeathArea();
+
 	Scene& scene;
 
 	// debugging related

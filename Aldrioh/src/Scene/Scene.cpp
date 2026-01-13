@@ -192,9 +192,8 @@ void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight)
 	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight);
 }
 
-bool Scene::HandleCollisions(Entity e, CollisionDispatcher& dispatcher)
+bool Scene::DispatchCollisions(Entity e)
 {
-
-	return false;
+	return collisionWorld.FindAndDispatchCollisions(e, collisionDispatcher);
 }
 

@@ -110,11 +110,9 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 		return;
 
 	LevelComponent& lc = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>();
-	CameraComponent& cameraComponent = lc.level->GetPlayerCamera().GetComponent<CameraComponent>();
-
-	const BoundingArea& offset = lc.level->GetScreenBorderOffsetByCamera(cameraComponent.cameraController->GetPosition());
-	glm::vec2 bottomLeft = offset.bottomLeft - 5.0f;
-	glm::vec2 topRight = offset.topRight + 5.0f;
+	BoundingArea deathArea = lc.level->GetDeathArea();
+	glm::vec2 bottomLeft = deathArea.bottomLeft;
+	glm::vec2 topRight = deathArea.topRight;
 
 	auto view = scene.getRegistry().view<TransformComponent, EntityTypeComponent>();
 	for (entt::entity e : view)

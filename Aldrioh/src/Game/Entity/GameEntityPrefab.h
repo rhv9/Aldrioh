@@ -22,6 +22,7 @@ struct FollowingCameraPrefab : public EntityPrefab
 {
 	float zoomLevel;
 	Entity entity;
+	glm::vec2 startPos{ 0 };
 	virtual Entity create(Scene& scene) override;
 };
 

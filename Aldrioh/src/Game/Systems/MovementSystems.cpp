@@ -30,8 +30,10 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 
 		Entity entityWrapped = scene.WrapEntityHandle(e);
 
-		if (entityWrapped.HasComponent<CollisionBox>())
+
+		if (false && entityWrapped.HasComponent<CollisionBox>())
 		{
+			scene.DispatchCollisions(entityWrapped);
 		}
 	}
 }

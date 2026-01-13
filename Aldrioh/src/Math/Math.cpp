@@ -110,3 +110,13 @@ float Math::max(float x, float y)
 {
 	return x > y ? x : y;
 }
+
+float Math::minAndMax(float lhs, float val, float rhs)
+{
+	if (val < lhs)
+		return lhs;
+	else if (val > rhs)
+		return rhs;
+	else
+		return val;
+}

@@ -13,6 +13,8 @@ public:
 	void SetEntity(Entity e) { entity = e; }
 	virtual void OnUpdate(Timestep delta) override;
 
+	void ResetToPosition(const glm::vec2& pos);
+
 	float maxDistance = 1.0f;
 	float tolerance = 0.0001f;
 	float percentSpeed = 0.9999f;
