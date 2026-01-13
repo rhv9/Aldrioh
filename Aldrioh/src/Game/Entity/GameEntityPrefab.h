@@ -8,6 +8,7 @@ struct PlayerPrefab : public EntityPrefab
 {
 	glm::vec2 startPos { 0 };
 	DIR dir {DIRLOCK_FREE};
+	float maxHealth = 10.0f;
 	virtual Entity create(Scene& scene) override;
 };
 

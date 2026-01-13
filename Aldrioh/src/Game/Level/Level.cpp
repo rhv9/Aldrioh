@@ -26,29 +26,35 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 	// collisionDispatcher
 	waveManager.Init();
 
-	CollisionCallbackFunction callbackFireball = [](CollisionEvent& fireball, CollisionEvent& enemy) {
-		fireball.e.QueueDestroy();
-		HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
-		hc.health -= 0.5f;
-		auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
-		cesc.hitVisualTimer = 0.1;
-		cesc.hitVisualState = HitVisualState::JUST_HIT;
-		fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
-		fireball.handled = true;
-		};
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, callbackFireball);
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
+		{
+			fireball.e.QueueDestroy();
+			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
+			hc.health -= 0.5f;
+			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
+			cesc.hitVisualTimer = 0.1;
+			cesc.hitVisualState = HitVisualState::JUST_HIT;
+			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+			fireball.handled = true;
+		});
 
-	CollisionCallbackFunction callbackFireballAsteroid = [](CollisionEvent& fireball, CollisionEvent& asteroid) {
-		fireball.e.QueueDestroy();
-		HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
-		hc.health -= 0.5f;
-		auto& cesc = asteroid.e.GetComponent<CoreEnemyStateComponent>();
-		cesc.hitVisualTimer = 0.1;
-		cesc.hitVisualState = HitVisualState::JUST_HIT;
-		fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
-		fireball.handled = true;
-		};
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Asteroid, callbackFireballAsteroid);
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Asteroid, [](CollisionEvent& fireball, CollisionEvent& asteroid)
+		{
+			fireball.e.QueueDestroy();
+			HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
+			hc.health -= 0.5f;
+			auto& cesc = asteroid.e.GetComponent<CoreEnemyStateComponent>();
+			cesc.hitVisualTimer = 0.1;
+			cesc.hitVisualState = HitVisualState::JUST_HIT;
+			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+			fireball.handled = true;
+		});
+
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Player, [](CollisionEvent& enemy, CollisionEvent& player)
+		{
+			auto& hc = player.e.GetComponent<HealthComponent>();
+			hc.health -= 0.03f;
+		});
 
 
 	// Create player
@@ -90,9 +96,12 @@ static float asteroidSpawnSpeed = 0.4f;
 void Level::OnUpdate(Timestep ts)
 {
 	waveManager.OnUpdate(ts);
-	
+
 	// TODO: does not necessarily have to update every tick.
 	UpdateTimerText(Platform::GetElapsedTime() - levelStartTime);
+	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
+	auto& hc = playerEntity.GetComponent<HealthComponent>();
+	uiPlayerHealthBar->SetProgress(hc.health / hc.maxHealth);
 
 	elapsedTime += ts;
 

@@ -12,7 +12,7 @@ CollisionDispatcher::CollisionDispatcher()
 			map[y][x] = { emptyCallback, false };
 }
 
-void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction& callback)
+void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction callback)
 {
 	ASSERT(type1.id <= SIZE && type2.id <= SIZE, "Size is out of bounds of map");
 

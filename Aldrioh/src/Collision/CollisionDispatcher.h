@@ -18,7 +18,7 @@ class CollisionDispatcher
 public:
 	CollisionDispatcher();
 	
-	void AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction& callback);
+	void AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction callback);
 	void Dispatch(CollisionEvent& e1, CollisionEvent& e2);
 
 private:

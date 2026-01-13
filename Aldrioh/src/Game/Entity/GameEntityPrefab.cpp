@@ -29,6 +29,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
+	player.AddComponent<HealthComponent>(maxHealth);
 
 	return player;
 }
