@@ -15,11 +15,6 @@
 
 #include <Math/Math.h>
 
-static auto OnDestroy_AddScore = [](Entity e) {
-	Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
-	scoreEntity.AddComponent<AddScoreComponent>(1.0f);
-	};
-
 Entity PlayerPrefab::create(Scene& scene)
 {
 	Entity player = scene.CreateEntity("Player");
@@ -128,7 +123,6 @@ Entity EnemyPrefab::create(Scene& scene)
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
 	dac.enemyManager = enemyManager;
 	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	return enemy;
 }
@@ -150,7 +144,6 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 
 	// Pathing
@@ -181,7 +174,6 @@ Entity AsteroidPrefab::create(Scene& scene)
 	asteroid.AddComponent<EntityTypeComponent>(EntityTypes::Asteroid);
 	asteroid.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	asteroid.AddComponent<HealthComponent>(maxHealth);
-	asteroid.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	asteroid.AddComponent<CoreEnemyStateComponent>();
 	return asteroid;
 }
@@ -209,7 +201,6 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	glm::vec2 collisionSize{ 0.5f };
 	enemy.AddComponent<CollisionBox>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_AddScore);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();
 

@@ -63,6 +63,7 @@ struct CoreEnemyStateComponent
 	float hitVisualTimer = 0;
 	HitVisualState hitVisualState = HitVisualState::NORMAL;
 	glm::vec4 hitvisualOriginalColour{ 0.0f };
+	bool addScoreOnDeath = true;
 	
 	CoreEnemyStateComponent() = default;
 	CoreEnemyStateComponent(const CoreEnemyStateComponent&) = default;

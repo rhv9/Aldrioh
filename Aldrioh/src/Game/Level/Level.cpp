@@ -85,7 +85,7 @@ Level::~Level()
 }
 
 static float elapsedTime = 0.0f;
-static float asteroidSpawnSpeed = 0.05f;
+static float asteroidSpawnSpeed = 0.4f;
 
 void Level::OnUpdate(Timestep ts)
 {
@@ -106,10 +106,10 @@ void Level::OnUpdate(Timestep ts)
 		prefab.angle = Math::degreesToRad(Math::Random::linearInt(0, 360));
 		prefab.create(scene);
 
-		//DroneEnemyPrefab dronePrefab;
-		//dronePrefab.maxHealth = 1.0f;
-		//dronePrefab.spawnPos = GenerateRandomSpawnCoords();
-		//dronePrefab.create(scene);
+		DroneEnemyPrefab dronePrefab;
+		dronePrefab.maxHealth = 1.0f;
+		dronePrefab.spawnPos = GenerateRandomSpawnCoords();
+		dronePrefab.create(scene);
 	}
 
 }

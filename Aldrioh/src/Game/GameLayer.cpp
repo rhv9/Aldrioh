@@ -70,7 +70,7 @@ void GameLayer::OnBegin()
 	Renderer::SetClearColour({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 	scene = std::make_shared<Scene>();
-	scene->InitCollisionWorldSize(300, 200);
+	scene->InitCollisionWorldSize(100, 100);
 
 	// UI Component has to be before level
 	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
