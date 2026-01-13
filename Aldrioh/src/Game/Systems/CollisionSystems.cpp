@@ -65,13 +65,12 @@ void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 {
+	CollisionWorld& collisionWorld = scene.GetCollisionWorld();
+	BoundingArea deathArea = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetDeathArea();
+	glm::vec2 maxActualPos = collisionWorld.GetMaxActualPosition();
+
 	// Reset 
 	{
-		CollisionWorld& collisionWorld = scene.GetCollisionWorld();
-		BoundingArea deathArea = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetDeathArea();
-
-		glm::vec2 maxActualPos = collisionWorld.GetMaxActualPosition();
-		
 		glm::vec2 bottomLeft, topRight;
 		bottomLeft.x = Math::minAndMax(0, deathArea.bottomLeft.x, maxActualPos.x);
 		bottomLeft.y = Math::minAndMax(0, deathArea.bottomLeft.y, maxActualPos.y);
@@ -80,7 +79,7 @@ void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 
 		PositionMapping bottomLeftMapping = collisionWorld.GetMapping(bottomLeft);
 		PositionMapping topRightMapping = collisionWorld.GetMapping(topRight);
-		
+
 		int startX = bottomLeftMapping.chunkX;
 		int startY = bottomLeftMapping.chunkY;
 		int endX = topRightMapping.chunkX;
@@ -101,20 +100,30 @@ void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 	}
 
 	// Add collisions
-	
+
 	{
 		auto view = scene.getRegistry().view<TransformComponent, CollisionBox>();
 
+
 		for (auto eHandle : view)
 		{
-			auto [tc, cb]= view.get<TransformComponent, CollisionBox>(eHandle);
-			
+			auto [tc, cb] = view.get<TransformComponent, CollisionBox>(eHandle);
+
+
 			// Get collision centre pos and use that.
-			CollisionBox offsetBox = cb.OffsetNew(tc.position);
-			glm::vec2 midPos{ offsetBox.position.x + offsetBox.size.x / 2.0f, offsetBox.position.y + offsetBox.size.y / 2.0f };
+			glm::vec2 midPos = cb.OffsetNew(tc.position).GetMidpoint();
+
+			// if within Death area, then do things with collision
+			if (midPos.x < deathArea.bottomLeft.x || midPos.y < deathArea.bottomLeft.y ||
+				midPos.x > deathArea.topRight.x || midPos.y > deathArea.topRight.y)
+				continue;
+
+			if (midPos.x < 0.0f || midPos.y < 0.0f || midPos.x >= maxActualPos.x || midPos.y >= maxActualPos.y)
+				continue;
 
 			CollisionWorld& collisionWorld = scene.GetCollisionWorld();
 			PositionMapping positionMapping = collisionWorld.GetMapping(midPos);
+
 
 			Cell& cell = collisionWorld.GetChunk(positionMapping.chunkX, positionMapping.chunkY).GetCell(positionMapping.cellX, positionMapping.cellY);
 

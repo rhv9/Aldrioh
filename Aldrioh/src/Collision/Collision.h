@@ -21,6 +21,7 @@ public:
 		: position(pos), size(size) {}
 
 	CollisionBox OffsetNew(const glm::vec3& offset) { return CollisionBox(position + offset, size); }
+	glm::vec2 GetMidpoint() const { return { position.x + size.x / 2.0f, position.y + size.y / 2.0f }; }
 
 	virtual bool CollidesWith(CollisionShape* shape) override;
 	virtual CollisionManager* GetCollisionManager() override;

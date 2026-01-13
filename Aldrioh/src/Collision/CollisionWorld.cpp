@@ -36,6 +36,7 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 	bool hasCollided = false;
 	glm::vec2 pos1 = glm::vec2(e1.GetTransformComponent().position);
 	CollisionBox& cb1 = e1.GetComponent<CollisionBox>();
+	glm::vec2 collisionMidPos1 = cb1.OffsetNew({ pos1, 0.0f }).GetMidpoint();
 
 	glm::vec2 maxActualPos = GetMaxActualPosition();
 
@@ -44,7 +45,7 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 		for (int x = -cellSize; x < cellSize * 2; x += cellSize)
 		{
 			// offset pos is moving entity pos by cellSize to be able to find the bordering cells, irregardless of chunks, making it easier.
-			glm::vec2 offsetPos = pos1;
+			glm::vec2 offsetPos = collisionMidPos1;
 			offsetPos.x += x;
 			offsetPos.y += y;
 
@@ -61,6 +62,9 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 			for (int i = 0; i < cell.count; ++i)
 			{
 				Entity e2 = scene.WrapEntityHandle(cell.entities[i]);
+
+				if (!e2.IsValid())
+					continue;
 
 				if (e1 == e2)
 					continue;
