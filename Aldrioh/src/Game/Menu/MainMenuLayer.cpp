@@ -56,7 +56,7 @@ void MainMenuLayer::OnBegin()
 	startButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	startButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_INFO("MainMenu - switching to game layer");
-		this->TransitionTo(GlobalLayers::game);
+		this->QueueTransitionTo(GlobalLayers::game);
 		});
 	uiManager->AddUIObject(startButton);
 	

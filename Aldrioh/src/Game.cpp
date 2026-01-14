@@ -76,8 +76,6 @@ void Game::Start()
     std::vector<Layer*> otherLayers = LayerInitialiser::OtherLayers();
     for (Layer* layer : otherLayers)
         layer->OnBegin();
-    
-
 
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop
@@ -143,6 +141,9 @@ bool Game::Iterate()
         ++i_gameStats.totalTickCount;
         deltaSinceUpdate = 0;
     }
+
+    // TODO: maybe want to skip the render if has done one? Let's leave it like this for now
+    bool hasDoneSwap = layerStack.HandleQueuedTasks();
 
     Renderer::ClearColourBuffer();
     Renderer::ClearDepthBuffer();

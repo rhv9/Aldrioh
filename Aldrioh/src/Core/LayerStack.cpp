@@ -71,6 +71,24 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 
 	}
 	LOG_CORE_CRITICAL("Layer does not exist in layerstack!");
+}
 
+void LayerStack::QueueSwapLayers(Layer* first, Layer* second)
+{
+	layerSwapStack.push_back({ first, second });
+}
+
+bool LayerStack::HandleQueuedTasks()
+{
+	ASSERT(layerSwapStack.size() < 2, "Why is there two transitions queued? Maybe it is valid");
+	bool doneSwap = false;
+	for (std::pair<Layer*, Layer*>& pair : layerSwapStack)
+	{
+		doneSwap = true;
+		SwapLayers(pair.first, pair.second);
+	}
+	if (doneSwap)
+		layerSwapStack.clear();
+	return doneSwap;
 }
 

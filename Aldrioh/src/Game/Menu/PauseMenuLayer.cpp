@@ -61,7 +61,7 @@ void PauseMenuLayer::OnBegin()
 		LOG_CORE_INFO("Pause menu - Switching to main menu");
 		Game::Instance().GetLayerStack().PopLayer(this);
 		GlobalLayers::game->OnTransitionIn();
-		GlobalLayers::game->TransitionTo(GlobalLayers::mainMenu);
+		GlobalLayers::game->QueueTransitionTo(GlobalLayers::mainMenu);
 		});
 	uiManager->AddUIObject(exitButton);
 

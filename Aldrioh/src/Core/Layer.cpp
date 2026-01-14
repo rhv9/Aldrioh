@@ -3,7 +3,7 @@
 
 #include <Game.h>
 
-void Layer::TransitionTo(Layer* layer)
+void Layer::QueueTransitionTo(Layer* layer)
 {
-	Game::Instance().GetLayerStack().SwapLayers(this, layer);
+	Game::Instance().GetLayerStack().QueueSwapLayers(this, layer);
 }

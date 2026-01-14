@@ -18,13 +18,18 @@ public:
 	void Render(Timestep delta);
 	void ImGuiRender(Timestep delta);
 
-	void SwapLayers(Layer* first, Layer* second);
+	void QueueSwapLayers(Layer* first, Layer* second);
+	// Does the queued swap layers, if it does do one, will return true
+	bool HandleQueuedTasks();
 
 	std::vector<Layer*>::iterator begin() { return layerVector.begin(); }
 	std::vector<Layer*>::iterator end() { return layerVector.end(); }
 
 private:
+	void SwapLayers(Layer* first, Layer* second);
+
 	std::vector<Layer*> layerVector;
+	std::vector<std::pair<Layer*, Layer*>> layerSwapStack;
 
 	friend Statistics::EngineStats;
 };

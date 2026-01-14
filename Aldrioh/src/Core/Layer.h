@@ -14,7 +14,7 @@ public:
 
 	virtual void OnRemove() = 0;
 
-	void TransitionTo(Layer* layer);
+	void QueueTransitionTo(Layer* layer);
 
 	virtual void OnTransitionOut() {};
 	virtual void OnTransitionIn() {};
