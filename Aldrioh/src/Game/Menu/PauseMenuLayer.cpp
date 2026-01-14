@@ -18,9 +18,6 @@
 
 #include <Game/GlobalLayers.h>
 
-PauseMenuLayer::PauseMenuLayer()
-{
-}
 
 void PauseMenuLayer::OnBegin()
 {

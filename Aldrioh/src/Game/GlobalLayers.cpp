@@ -5,15 +5,16 @@
 
 Layer* LayerInitialiser::PushFirstLayer()
 {
-	GlobalLayers::mainMenu = new MainMenuLayer();
+	GlobalLayers::mainMenu = new MainMenuLayer("Main Menu Layer");
 	return GlobalLayers::mainMenu;
 }
 
 std::vector<Layer*> LayerInitialiser::OtherLayers()
 {
 	//GlobalLayers::levelEditor = new LevelEditorLayer();
-	GlobalLayers::game = new GameLayer();
-	GlobalLayers::pauseMenu = new PauseMenuLayer();
+	GlobalLayers::game = new GameLayer("Game Layer");
+	GlobalLayers::pauseMenu = new PauseMenuLayer("Pause Menu Layer");
+	GlobalLayers::gameOver = new GameOverLayer("Game Over Layer");
 
-	return { GlobalLayers::game, GlobalLayers::pauseMenu};
+	return { GlobalLayers::game, GlobalLayers::pauseMenu, GlobalLayers::gameOver };
 }

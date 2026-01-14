@@ -12,8 +12,13 @@
 
 #include <Game/SpriteCollection.h>
 #include <Game.h>
+#include <Game/GlobalLayers.h>
 
 #include <Math/Math.h>
+
+auto OnDestroy_Player = [](Entity player) -> void {
+	GlobalLayers::game->QueueTransitionTo(GlobalLayers::gameOver);
+	};
 
 Entity PlayerPrefab::create(Scene& scene)
 {
@@ -30,6 +35,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
 	player.AddComponent<HealthComponent>(maxHealth);
+	player.AddComponent<OnDestroyComponent>(OnDestroy_Player);
 
 	return player;
 }

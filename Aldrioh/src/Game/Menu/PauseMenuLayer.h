@@ -7,7 +7,7 @@
 class PauseMenuLayer : public Layer
 {
 public:
-	PauseMenuLayer();
+	PauseMenuLayer(const std::string& name) : Layer(name) {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;

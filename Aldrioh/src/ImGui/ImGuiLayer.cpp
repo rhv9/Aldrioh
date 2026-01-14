@@ -10,7 +10,7 @@
 #include "Game.h"
 
 ImGuiLayer::ImGuiLayer()
-    : Layer() 
+    : Layer("ImGui Layer")
 {
     Window& window = *Game::Instance().GetWindow();
     callbackMouseMoveID = window.MouseMoveEventHandler += EVENT_BIND_MEMBER_FUNCTION(ImGuiLayer::OnMouseMove);

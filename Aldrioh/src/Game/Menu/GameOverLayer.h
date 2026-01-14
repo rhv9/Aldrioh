@@ -3,11 +3,12 @@
 #include <Scene/Scene.h>
 
 #include <UI/UIManager.h>
+#include <UI/UIText.h>
 
-class MainMenuLayer : public Layer
+class GameOverLayer : public Layer
 {
 public:
-	MainMenuLayer(const std::string& name) : Layer(name) {}
+	GameOverLayer(const std::string& name) : Layer(name) {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
@@ -23,8 +24,12 @@ public:
 
 private:
 	std::shared_ptr<Scene> scene;
+	float timeElapsed = 0.0f;
+	bool displayTitle = true;
+	bool currentDisplayTitleState = true;
 
 	UIManager* uiManager = nullptr;
+	UIText* title = nullptr;
 
 	EventCallbackID<KeyEventArg> callbackKeyID;
 };

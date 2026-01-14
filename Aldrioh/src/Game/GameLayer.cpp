@@ -63,7 +63,6 @@ static ImGuiSettings imGuiSettings;
 static LevelEditorData levelEditorData;
 
 static Level* currentLevel = nullptr;
-GameLayer::GameLayer() {}
 
 void GameLayer::OnBegin()
 {

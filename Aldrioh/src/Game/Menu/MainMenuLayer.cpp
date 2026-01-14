@@ -18,14 +18,9 @@
 
 #include <Game/GlobalLayers.h>
 
-MainMenuLayer::MainMenuLayer()
-{
-}
-
 void MainMenuLayer::OnBegin()
 {
 	scene = std::make_shared<Scene>();
-	Renderer::SetClearColour(Colour::BLACK);
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -81,6 +76,7 @@ void MainMenuLayer::OnUpdate(Timestep delta)
 
 void MainMenuLayer::OnRender(Timestep delta)
 {
+	Renderer::SetClearColour(Colour::BLACK);
 	scene->OnRender(delta);
 	
 	Renderer::StartUIScene();

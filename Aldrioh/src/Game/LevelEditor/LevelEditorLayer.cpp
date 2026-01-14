@@ -49,9 +49,6 @@
 #include <UI/UIImage.h>
 #include <UI/UIButton.h>
 
-LevelEditorLayer::LevelEditorLayer()
-{
-}
 
 static UIManager* uiManager = nullptr;
 

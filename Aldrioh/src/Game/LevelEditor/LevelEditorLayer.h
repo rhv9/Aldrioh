@@ -6,7 +6,7 @@
 class LevelEditorLayer : public Layer
 {
 public:
-	LevelEditorLayer();
+	LevelEditorLayer(const std::string& name) : Layer(name) {}
 
 	virtual void OnBegin();
 

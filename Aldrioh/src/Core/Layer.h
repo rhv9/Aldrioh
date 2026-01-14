@@ -4,7 +4,7 @@ class Layer
 {
 public:
 
-	Layer() = default;
+	Layer(const std::string& name) : name(name) {}
 
 	virtual void OnBegin() = 0;
 
@@ -26,6 +26,6 @@ public:
 	inline bool ShouldRender() { return shouldRender; }
 
 private:
-
+	std::string name{""};
 	bool shouldUpdate = true, shouldRender = true;
 };

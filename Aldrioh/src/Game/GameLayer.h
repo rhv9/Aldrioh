@@ -12,7 +12,7 @@ class Level;
 class GameLayer : public Layer
 {
 public:
-	GameLayer();
+	GameLayer(const std::string& name) : Layer(name) {}
 
 	virtual void OnBegin();
 	virtual void OnUpdate(Timestep delta) override;
