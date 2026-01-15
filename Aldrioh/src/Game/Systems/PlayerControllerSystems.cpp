@@ -40,7 +40,6 @@ glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
 }
 
 
-
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<PlayerControllerComponent>();
@@ -66,7 +65,6 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 		playerMove.updateMoveVec(move);
 		
-
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 
 		if (pcc.dirLock == DIRLOCK_FREE)
@@ -101,7 +99,18 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
 		{
+			ParticleTemplate particleTemplate;
+			particleTemplate.startPos = playerTransform.position;
+			particleTemplate.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particleTemplate.endColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			particleTemplate.beginSize = 1.0f;
+			particleTemplate.life = 1.0f;
+			particleTemplate.velocity = { 0.0f, -1.0f };
+
+			for (int i = 0; i < 1; i++)
+				scene.GetParticleManager().Emit(particleTemplate);
 
 		}
+
 	}
 }

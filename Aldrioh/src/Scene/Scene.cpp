@@ -60,6 +60,8 @@ void Scene::OnUpdate(Timestep ts)
 	for (auto system : updateSystems)
 		system(ts, *this);
 
+	particleManager.OnUpdate(ts);
+
 }
 
 void Scene::OnRender(Timestep ts)
@@ -73,6 +75,8 @@ void Scene::OnRender(Timestep ts)
 
 	for (auto system : renderSystems)
 		system(ts, *this);
+
+	particleManager.OnRender(ts);
 
 	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
 	Renderer::DrawQuad(glm::vec3{ 3, 3, 0 }, &subTexture, { 5, 5 });

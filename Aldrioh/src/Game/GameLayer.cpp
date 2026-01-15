@@ -105,13 +105,11 @@ void GameLayer::OnBegin()
 	uiTimerText->SetFontSize(4);
 	uimc.uiManager->AddUIObject(uiTimerText);
 
-
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
-
 
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);

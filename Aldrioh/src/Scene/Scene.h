@@ -4,6 +4,8 @@
 #include <Collision/CollisionWorld.h>
 #include <UI/UIManager.h>
 
+#include "ParticleManager.h"
+
 class Entity;
 
 class Scene
@@ -42,6 +44,8 @@ public:
 
 	Entity WrapEntityHandle(entt::entity entityHandle);
 
+	ParticleManager& GetParticleManager() { return particleManager; }
+
 	void OnTransitionIn();
 	void OnTransitionOut();
 
@@ -62,6 +66,8 @@ private:
 	
 	CollisionDispatcher collisionDispatcher;
 	CollisionWorld collisionWorld;
+
+	ParticleManager particleManager;
 
 	std::vector<SystemFunction> updateSystems;
 	std::vector<SystemFunction> renderSystems;
