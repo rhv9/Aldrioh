@@ -9,6 +9,8 @@ struct ParticleTemplate
 	float beginSize = 1, endSize = 1;
 	float life = 1.0f;
 	std::pair<float, float> rotationRange{ 0, 0 };
+
+	int count = 1;
 };
 
 struct Particle

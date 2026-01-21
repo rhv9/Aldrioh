@@ -16,9 +16,34 @@
 
 #include <Math/Math.h>
 
+ParticleTemplate particleTemplate_asteroidDestroyed = []() {
+	ParticleTemplate pt;
+	pt.beginColour = glm::vec4(0.25f, 0.25f, 0.25f, 1.0f);
+	pt.endColour = glm::vec4(0.25f, 0.25f, 0.25f, 0.2f);
+	pt.beginSize = 0.3f;
+	pt.endSize = 0.3f;
+	pt.life = 1.1f;
+	pt.velocity = { 0.0f, 0.0f };
+	pt.velocityVariation = { 2.0f, 2.0f };
+	pt.rotationRange = { Math::degreesToRad(-100), Math::degreesToRad(100) };
+	pt.count = 10;
+	return pt;
+	}();
+
 auto OnDestroy_Player = [](Entity player) -> void {
 	GlobalLayers::game->QueueTransitionTo(GlobalLayers::gameOver);
 	};
+
+auto OnDestroy_AsteroidParticles = [](Entity e) -> void {
+	if (e.GetComponent<HealthComponent>().health <= 0.0f)
+	{
+		ParticleTemplate pt = particleTemplate_asteroidDestroyed;
+		pt.startPos = e.GetTransformComponent().position;
+		e.getScene()->GetParticleManager().Emit(pt);
+	}
+	};
+
+
 
 Entity PlayerPrefab::create(Scene& scene)
 {
@@ -181,6 +206,7 @@ Entity AsteroidPrefab::create(Scene& scene)
 	asteroid.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	asteroid.AddComponent<HealthComponent>(maxHealth);
 	asteroid.AddComponent<CoreEnemyStateComponent>();
+	asteroid.AddComponent<OnDestroyComponent>(OnDestroy_AsteroidParticles);
 	return asteroid;
 }
 
@@ -197,6 +223,42 @@ Entity FreeRoamCameraPrefab::create(Scene& scene)
 
 Entity DroneEnemyPrefab::create(Scene& scene)
 {
+	static ParticleTemplate particleTemplate_droneDestroyed = []() {
+		ParticleTemplate pt;
+		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
+		pt.beginSize = 0.25f;
+		pt.endSize = 0.25f;
+		pt.life = 1.1f;
+		pt.velocity = { 0.0f, 0.0f };
+		pt.velocityVariation = { 2.0f, 2.0f };
+		pt.rotationRange = { Math::degreesToRad(-100), Math::degreesToRad(100) };
+		pt.count = 7;
+		return pt;
+		}();
+
+	static ParticleTemplate particleTemplate_droneDestroyedRed = []() {
+		ParticleTemplate pt = particleTemplate_droneDestroyed;
+		pt.beginColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		pt.endColour = glm::vec4(0.4f, 0.0f, 0.0f, 1.0f);
+		pt.count = 1;
+		return pt;
+		}();
+
+	static auto OnDestroy_DroneParticles = [](Entity e) -> void {
+		if (e.GetComponent<HealthComponent>().health <= 0.0f)
+		{
+			glm::vec2 pos = e.GetTransformComponent().position;
+			ParticleTemplate pt = particleTemplate_droneDestroyed;
+			pt.startPos = pos;
+			e.getScene()->GetParticleManager().Emit(pt);
+
+			pt = particleTemplate_droneDestroyedRed;
+			pt.startPos = pos;
+			e.getScene()->GetParticleManager().Emit(pt);
+		}
+		};
+
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
 	tc.position = glm::vec3{ spawnPos, 0.4f };
@@ -209,6 +271,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();
+	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneParticles);
 
 	return Entity();
 }

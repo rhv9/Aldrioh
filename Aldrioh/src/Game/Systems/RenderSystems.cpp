@@ -48,8 +48,6 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 
 		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
 
-
-
 		RenderQueue::EnQueue(visual.renderLayer, drawTransform, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
 	}
 }

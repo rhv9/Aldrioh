@@ -13,20 +13,23 @@
 
 void ParticleManager::Emit(const ParticleTemplate& pt)
 {
-	Particle& p = particlePool[poolIndex];
+	for (int i = 0; i < pt.count; ++i)
+	{
+		Particle& p = particlePool[poolIndex];
 
-	p.position = pt.startPos;
-	p.lifeRemaining = pt.life;
-	p.beginSize = pt.beginSize;
-	p.endSize = pt.endSize;
-	p.beginColour = pt.beginColour;
-	p.endColour = pt.endColour;
-	p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
-	p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
+		p.position = pt.startPos;
+		p.lifeRemaining = pt.life;
+		p.beginSize = pt.beginSize;
+		p.endSize = pt.endSize;
+		p.beginColour = pt.beginColour;
+		p.endColour = pt.endColour;
+		p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
+		p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
 	
-	p.active = true;
-	poolIndex = (poolIndex + 1) % MAX_PARTICLES;
-	++activeCount;
+		p.active = true;
+		poolIndex = (poolIndex + 1) % MAX_PARTICLES;
+		++activeCount;
+	}
 }
 
 ParticleManager::ParticleManager()

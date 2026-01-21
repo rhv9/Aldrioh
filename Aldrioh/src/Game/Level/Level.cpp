@@ -21,6 +21,40 @@
 
 float zoomLevel = 10;
 
+ParticleTemplate particleTemplate_playerTakingDamage = []() {
+	ParticleTemplate pt;
+	pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	pt.endColour = glm::vec4(0.8f, 0.8f, 1.0f, 0.9f);
+	pt.beginSize = 0.35f;
+	pt.endSize = 0.15f;
+	pt.life = 0.2f;
+	pt.velocity = { 0.0f, 0.0f };
+	pt.velocityVariation = { 5.0f, 5.0f };
+	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+	pt.count = 4;
+	return pt;
+	}();
+
+ParticleTemplate particleTemplate_fireballImpact = []() {
+	ParticleTemplate pt;
+	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
+	pt.beginSize = 0.25f;
+	pt.endSize = 0.05f;
+	pt.life = 0.2f;
+	pt.velocity = { 0.0f, 0.0f };
+	pt.velocityVariation = { 5.0f, 5.0f };
+	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+	pt.count = 3;
+	return pt;
+	}();
+
+auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
+	ParticleTemplate pt = particleTemplate_fireballImpact;
+	pt.startPos = fireball.GetTransformComponent().position;
+	fireball.getScene()->GetParticleManager().Emit(pt);
+	};
+
 Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 {
 	// collisionDispatcher
@@ -28,6 +62,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
+			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 			hc.health -= 0.5f;
@@ -40,6 +75,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Asteroid, [](CollisionEvent& fireball, CollisionEvent& asteroid)
 		{
+			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
 			HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
 			hc.health -= 0.5f;
@@ -54,6 +90,9 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
 		{
 			auto& hc = player.e.GetComponent<HealthComponent>();
 			hc.health -= 0.03f;
+			ParticleTemplate pt = particleTemplate_playerTakingDamage;
+			pt.startPos = player.e.GetTransformComponent().position;
+			player.e.getScene()->GetParticleManager().Emit(pt);
 		});
 
 
@@ -105,7 +144,7 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (false && elapsedTime >= asteroidSpawnSpeed )
+	if (elapsedTime >= asteroidSpawnSpeed )
 	{
 		elapsedTime -= asteroidSpawnSpeed;
 
