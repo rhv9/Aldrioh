@@ -17,6 +17,7 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 	{
 		Particle& p = particlePool[poolIndex];
 
+		p.prevPosition = pt.startPos;
 		p.position = pt.startPos;
 		p.lifeRemaining = pt.life;
 		p.beginSize = pt.beginSize;
@@ -48,8 +49,9 @@ void ParticleManager::OnUpdate(Timestep ts)
 		if (!particle.active)
 			continue;
 
+		particle.prevPosition = particle.position;
 		particle.position += particle.velocity * (float)ts;
-
+		
 		particle.lifeRemaining -= ts;
 
 		if (particle.lifeRemaining <= 0.0f)
@@ -72,9 +74,9 @@ void ParticleManager::OnRender(Timestep ts)
 		float size = glm::mix(p.endSize, p.beginSize, percentLife);
 		glm::vec4 colour = glm::mix(p.endColour, p.beginColour, percentLife);
 		p.rotation += p.rotation * Game::Instance().GetDelta();
+		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 
 		//LOG_CORE_INFO("Particle colour {}", glm::to_string(colour));
-
-		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ p.position - size/2.0f, 0.4f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, RenderDepth::PARTICLE);
+		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ pos, 0.4f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, RenderDepth::PARTICLE);
 	}
 }

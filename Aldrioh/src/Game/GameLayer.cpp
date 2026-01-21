@@ -62,25 +62,24 @@ struct LevelEditorData
 static ImGuiSettings imGuiSettings;
 static LevelEditorData levelEditorData;
 
-static Level* currentLevel = nullptr;
 
 void GameLayer::OnBegin()
 {
 	Renderer::SetClearColour({ 0.0f, 0.0f, 0.0f, 1.0f });
 
-	scene = std::make_shared<Scene>();
+	scene = std::make_unique<Scene>();
 	scene->InitCollisionWorldSize(100, 100);
+
+	// Level system
+	currentLevel = std::make_unique<Level>(*scene);
+	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
+	levelEntity.AddComponent<LevelComponent>(currentLevel.get());
+	currentLevel->UpdateLevelArea();
 
 	// UI Component has to be before level
 	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
 	UIManagerComponent& uimc = uiEntity.AddComponent<UIManagerComponent>();
 	uimc.uiManager = std::make_unique<UIManager>();
-
-	// Level system
-	currentLevel = new Level(*scene);
-	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
-	levelEntity.AddComponent<LevelComponent>(currentLevel);
-	currentLevel->UpdateLevelArea();
 
 	// UI
 	uiScoreText = new UIText("Score", { 2, 2 }, glm::vec2{ 0 });
@@ -145,11 +144,6 @@ void GameLayer::OnBegin()
 
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
-
-	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
-	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.05f);
-	SoundManager::LoadSound(SoundCategory::SFX, "bullet_impact", "assets/audio/General\ Sounds/Impacts/sfx_sounds_impact1.wav", 0.05f);
-
 }
 
 void GameLayer::OnUpdate(Timestep delta)
@@ -197,6 +191,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 			GameImGuiWindows::ShowGameInfo();
 			GameImGuiWindows::ShowImGuiInfo();
 			GameImGuiWindows::ShowRendererInfo();
+			scene->OnImGuiDebugRender(delta);
 
 			if (ImGui::CollapsingHeader("Level"))
 			{

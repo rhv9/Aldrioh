@@ -23,6 +23,8 @@ public:
 	void OnRender(Timestep ts);
 	void OnUIRender(Timestep ts);
 
+	void OnImGuiDebugRender(Timestep ts);
+
 	void SetPlayer(const Entity& e);
 	Entity* GetPlayer() { return player; }
 
@@ -61,6 +63,7 @@ public:
 	}
 
 private:
+	int entityCount = 0;
 	entt::registry registry;
 	Entity* player = nullptr;
 	

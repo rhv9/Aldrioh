@@ -17,6 +17,7 @@
 #include <Scene/Entity.h>
 
 #include <Game/GlobalLayers.h>
+#include <Audio/SoundManager.h>
 
 void MainMenuLayer::OnBegin()
 {
@@ -51,6 +52,7 @@ void MainMenuLayer::OnBegin()
 	startButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	startButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_INFO("MainMenu - switching to game layer");
+		GlobalLayers::game = new GameLayer("Game Layer");
 		this->QueueTransitionTo(GlobalLayers::game);
 		});
 	uiManager->AddUIObject(startButton);
@@ -66,6 +68,12 @@ void MainMenuLayer::OnBegin()
 		Game::Instance().Shutdown();
 		});
 	uiManager->AddUIObject(exitButton);
+
+
+	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
+	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.05f);
+	SoundManager::LoadSound(SoundCategory::SFX, "bullet_impact", "assets/audio/General\ Sounds/Impacts/sfx_sounds_impact1.wav", 0.05f);
+
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
@@ -105,6 +113,7 @@ void MainMenuLayer::OnKey(KeyEventArg& e)
 
 void MainMenuLayer::OnTransitionIn()
 {
+	delete GlobalLayers::game;
 	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKey);
 	if (uiManager != nullptr)
 		uiManager->AttachEventListeners();

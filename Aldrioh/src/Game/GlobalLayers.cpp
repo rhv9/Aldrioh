@@ -12,9 +12,9 @@ Layer* LayerInitialiser::PushFirstLayer()
 std::vector<Layer*> LayerInitialiser::OtherLayers()
 {
 	//GlobalLayers::levelEditor = new LevelEditorLayer();
-	GlobalLayers::game = new GameLayer("Game Layer");
+	GlobalLayers::game = nullptr;
 	GlobalLayers::pauseMenu = new PauseMenuLayer("Pause Menu Layer");
 	GlobalLayers::gameOver = new GameOverLayer("Game Over Layer");
 
-	return { GlobalLayers::game, GlobalLayers::pauseMenu, GlobalLayers::gameOver };
+	return { GlobalLayers::pauseMenu, GlobalLayers::gameOver };
 }

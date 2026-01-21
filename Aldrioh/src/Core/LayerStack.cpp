@@ -76,6 +76,8 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 		{
 			first->OnTransitionOut();
 			layerVector[i] = second;
+			if (!second->Initialized())
+				second->OnBegin();
 			second->OnTransitionIn();
 			return;
 		}

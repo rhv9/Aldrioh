@@ -1,6 +1,5 @@
 #pragma once
 
-
 struct ParticleTemplate
 {
 	glm::vec2 startPos{ 0.0 };
@@ -15,7 +14,7 @@ struct ParticleTemplate
 
 struct Particle
 {
-	glm::vec2 position;
+	glm::vec2 prevPosition, position;
 	glm::vec2 velocity, velocityVariation;
 	glm::vec4 beginColour, endColour;
 	float beginSize, endSize;

@@ -7,7 +7,7 @@
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
 
-class Level;
+#include <Game/Level/Level.h>
 
 class GameLayer : public Layer
 {
@@ -29,14 +29,13 @@ public:
 	virtual void OnPushedLayerAboveEvent() override;
 	virtual void OnPoppedLayerIntoEvent() override;
 
-
-
 	UIText* GetUIScoreText() { return uiScoreText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 	UIText* GetUITimerText() { return uiTimerText; }
 
 private:
-	std::shared_ptr<Scene> scene;
+	std::unique_ptr<Scene> scene = nullptr;
+	std::unique_ptr<Level> currentLevel = nullptr;
 
 	UIManager* uiManager = nullptr;
 	UIText* uiScoreText = nullptr;

@@ -18,6 +18,8 @@
 
 #include <Game/Systems/PlayerControllerSystems.h>
 
+#include <imgui.h>
+
 Scene::Scene() : collisionWorld(*this)
 {
 }
@@ -29,6 +31,7 @@ Scene::~Scene()
 
 Entity Scene::CreateEntity(const std::string& name)
 {
+	++entityCount;
 	Entity e = { registry.create(), this };
 	e.AddComponent<NameComponent>(name);
 	e.AddComponent<TransformComponent>();
@@ -37,6 +40,7 @@ Entity Scene::CreateEntity(const std::string& name)
 
 Entity Scene::CreateEntityNoTransform(const std::string& name)
 {
+	++entityCount;
 	Entity e = { registry.create(), this };
 	e.AddComponent<NameComponent>(name);
 	return e;
@@ -44,6 +48,7 @@ Entity Scene::CreateEntityNoTransform(const std::string& name)
 
 void Scene::DestroyEntity(Entity& e)
 {
+	--entityCount;
 	registry.destroy(e.entityHandle);
 	e.entityHandle = entt::null;
 }
@@ -93,6 +98,16 @@ void Scene::OnUIRender(Timestep ts)
 		system(ts, *this);
 
 	Renderer::EndUIScene();
+}
+
+void Scene::OnImGuiDebugRender(Timestep ts)
+{
+	if (ImGui::CollapsingHeader("Scene"))
+	{
+		ImGui::Text("Particle Count: %d", particleManager.GetActiveCount());
+		ImGui::Text("Entity Count: %d", entityCount);
+	}
+	
 }
 
 Entity Scene::WrapEntityHandle(entt::entity entityHandle)
