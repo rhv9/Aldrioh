@@ -97,18 +97,18 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 {
 	LOG_CORE_INFO("Pause menu - popping pause menu");
 	Game::Instance().GetLayerStack().PopLayer(this);
-	GlobalLayers::game->OnTransitionIn();
 }
 
 void PauseMenuLayer::OnTransitionIn()
 {
+	LOG_CORE_INFO("Pause menu - Transition In");
 	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(PauseMenuLayer::OnKey);
 	uiManager->AttachEventListeners();
 }
 
 void PauseMenuLayer::OnTransitionOut()
 {
-	LOG_CORE_INFO("Detaching!");
+	LOG_CORE_INFO("Pause menu - Transition Out");
 	callbackKeyID.~EventCallbackID();
 	uiManager->DetachEventListeners();
 }

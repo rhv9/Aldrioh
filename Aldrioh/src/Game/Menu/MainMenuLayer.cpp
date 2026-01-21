@@ -34,7 +34,7 @@ void MainMenuLayer::OnBegin()
 
 	Renderer::SetUIPixelHeight(100);
 	uiManager = new UIManager();
-	uiManager->AttachEventListeners();
+	uiManager->DetachEventListeners();
 
 	UIText* title = new UIText("Title", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);

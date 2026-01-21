@@ -70,12 +70,12 @@ void Game::Init()
 
 void Game::Start()
 {
-    for (Layer* layer : layerStack)
-        layer->OnBegin();
-
     std::vector<Layer*> otherLayers = LayerInitialiser::OtherLayers();
     for (Layer* layer : otherLayers)
+    {
         layer->OnBegin();
+        layer->SetInitialized(true);
+    }
 
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop

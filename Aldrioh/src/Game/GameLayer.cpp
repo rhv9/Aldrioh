@@ -310,8 +310,6 @@ void GameLayer::OnKey(KeyEventArg& e)
 	{
 		LOG_INFO("Pushing pause menu layer");
 		Game::Instance().GetLayerStack().PushLayer(GlobalLayers::pauseMenu);
-		SetShouldUpdate(false);
-		OnTransitionOut();
 	}
 
 	if (e.IsPressed(Input::KEY_P))
@@ -340,6 +338,7 @@ void GameLayer::OnMouseButton(MouseButtonEventArg& e)
 
 void GameLayer::OnTransitionIn()
 {
+	LOG_CORE_INFO("Game Layer - Transition In");
 	SetShouldUpdate(true);
 	SetShouldRender(true);
 	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKey);
@@ -351,8 +350,28 @@ void GameLayer::OnTransitionIn()
 
 void GameLayer::OnTransitionOut()
 {
+	LOG_CORE_INFO("Game Layer - Transition Out");
 	callbackKeyID.~EventCallbackID();
 	windowResizeID.~EventCallbackID();
 	callbackMouseButtonID.~EventCallbackID();
 	scene->OnTransitionOut();
+}
+
+void GameLayer::OnPushedLayerAboveEvent()
+{
+	LOG_CORE_INFO("Game Layer - PushedLayerAboveEvent");
+	SetShouldUpdate(false);
+	OnTransitionOut();
+}
+
+void GameLayer::OnPoppedLayerIntoEvent()
+{
+	LOG_CORE_INFO("Game Layer - PoppedLayerAboveEvent");
+	SetShouldUpdate(true);
+	SetShouldRender(true);
+	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKey);
+	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
+	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnMouseButton);
+
+	scene->OnTransitionIn();
 }

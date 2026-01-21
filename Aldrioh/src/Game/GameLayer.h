@@ -26,6 +26,10 @@ public:
 	void OnMouseButton(MouseButtonEventArg& e);
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
+	virtual void OnPushedLayerAboveEvent() override;
+	virtual void OnPoppedLayerIntoEvent() override;
+
+
 
 	UIText* GetUIScoreText() { return uiScoreText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }

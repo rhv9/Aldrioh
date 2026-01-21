@@ -16,6 +16,15 @@ LayerStack::~LayerStack()
 
 void LayerStack::PushLayer(Layer* layer)
 {
+	if (!layer->Initialized())
+	{
+		layer->OnBegin();
+		layer->SetInitialized(true);
+	}
+	
+	if (layerVector.size() != 0)
+		layerVector[layerVector.size() - 1]->OnPushedLayerAboveEvent();
+
 	layerVector.push_back(layer);
 	layer->OnTransitionIn();
 }
@@ -28,6 +37,8 @@ void LayerStack::PopLayer(Layer* layer)
 	{
 		layer->OnTransitionOut();
 		layerVector.erase(it);
+		if (layerVector.size() != 0)
+			layerVector[layerVector.size() - 1]->OnPoppedLayerIntoEvent();
 	}
 }
 
