@@ -48,6 +48,6 @@ protected:
 	Entity playerEntity;
 	WaveManager waveManager;
 
-	float levelStartTime = 0.0f;
+	float levelTimeElapsed = 0.0f;
 };
 

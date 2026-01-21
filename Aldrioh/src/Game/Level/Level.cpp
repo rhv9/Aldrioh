@@ -135,9 +135,9 @@ static float asteroidSpawnSpeed = 0.4f;
 void Level::OnUpdate(Timestep ts)
 {
 	waveManager.OnUpdate(ts);
-
+	levelTimeElapsed += ts;
 	// TODO: does not necessarily have to update every tick.
-	UpdateTimerText(Platform::GetElapsedTime() - levelStartTime);
+	UpdateTimerText(levelTimeElapsed);
 	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
 	auto& hc = playerEntity.GetComponent<HealthComponent>();
 	uiPlayerHealthBar->SetProgress(hc.health / hc.maxHealth);
