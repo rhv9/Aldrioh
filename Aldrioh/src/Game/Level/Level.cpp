@@ -105,7 +105,7 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (elapsedTime >= asteroidSpawnSpeed)
+	if (false && elapsedTime >= asteroidSpawnSpeed )
 	{
 		elapsedTime -= asteroidSpawnSpeed;
 

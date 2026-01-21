@@ -39,6 +39,20 @@ glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
 	return { newX, newY };
 }
 
+auto playerExhaustParticleFunc = []() -> ParticleTemplate {
+		ParticleTemplate pt;
+		pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 1.0f);
+		pt.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
+		pt.beginSize = 0.2f;
+		pt.endSize = 0.2f;
+		pt.life = 1.0f;
+		pt.velocity = { 0.0f, 0.0f };
+		pt.velocityVariation = { 1.4f, 1.4f };
+		pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+		return pt;
+	};
+ParticleTemplate playerExhaustParticle = playerExhaustParticleFunc();
+
 
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
@@ -66,9 +80,12 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		playerMove.updateMoveVec(move);
 
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
+		glm::vec2 mousePos = scene.GetMousePosInScene();
+
+		float angleBetweenPlayerAndMouse = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
 
 		if (pcc.dirLock == DIRLOCK_FREE)
-			player.GetComponent<VisualComponent>().rotation = Math::angleBetween2d(playerTransform.position, { player.getScene()->GetMousePosInScene(), 0.0f });
+			player.GetComponent<VisualComponent>().rotation = angleBetweenPlayerAndMouse;
 		else
 			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 
@@ -100,19 +117,11 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 		if (move.x != 0 || move.y != 0)
 		{
-			ParticleTemplate particleTemplate;
-			particleTemplate.startPos = playerTransform.position;
-			particleTemplate.beginColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			particleTemplate.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
-			particleTemplate.beginSize = 0.2f;
-			particleTemplate.endSize = 0.2f;
-			particleTemplate.life = 1.0f;
-			particleTemplate.velocity = { 0.0f, 0.0f };
-			particleTemplate.velocityVariation = { 2.0f, 2.0f };
-			particleTemplate.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+			glm::vec2 posOffset = glm::normalize(glm::vec2{ playerTransform.position } - mousePos) * 0.6f;
 
-			for (int i = 0; i < 1; i++)
-				scene.GetParticleManager().Emit(particleTemplate);
+			ParticleTemplate pt = playerExhaustParticle;
+			pt.startPos = glm::vec2{ playerTransform.position } + posOffset;
+			scene.GetParticleManager().Emit(pt);
 		}
 
 	}

@@ -8,6 +8,8 @@
 #include <Game/SpriteCollection.h>
 #include <Game.h>
 
+#include <Game/RenderDepth.h>
+
 
 void ParticleManager::Emit(const ParticleTemplate& pt)
 {
@@ -70,6 +72,6 @@ void ParticleManager::OnRender(Timestep ts)
 
 		//LOG_CORE_INFO("Particle colour {}", glm::to_string(colour));
 
-		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ p.position, 0.99f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, 1);
+		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ p.position - size/2.0f, 0.4f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, RenderDepth::PARTICLE);
 	}
 }

@@ -68,7 +68,7 @@ void Scene::OnRender(Timestep ts)
 {
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	cameraController->OnUpdate(ts);
-
+	
 	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
 	Renderer::ClearDepthBuffer();
 	RenderQueue::Reset();

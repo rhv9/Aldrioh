@@ -30,7 +30,6 @@ Entity PlayerPrefab::create(Scene& scene)
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
 	player.AddComponent<EntityTypeComponent>(EntityTypes::Player);
-	player.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
