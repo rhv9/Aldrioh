@@ -304,7 +304,7 @@ void GameLayer::OnKey(KeyEventArg& e)
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_INFO("Pushing pause menu layer");
-		Game::Instance().GetLayerStack().PushLayer(GlobalLayers::pauseMenu);
+		Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::pauseMenu);
 	}
 
 	if (e.IsPressed(Input::KEY_P))

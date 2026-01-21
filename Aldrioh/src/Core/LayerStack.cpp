@@ -88,17 +88,32 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 
 void LayerStack::QueueSwapLayers(Layer* first, Layer* second)
 {
-	layerSwapStack.push_back({ first, second });
+	layerSwapStack.push_back({ LayerTask::SWAP, first, second });
+}
+
+void LayerStack::QueuePushLayer(Layer* layer)
+{
+	layerSwapStack.push_back({ LayerTask::PUSH, layer, nullptr });
+}
+
+void LayerStack::QueuePopLayer(Layer* layer)
+{
+	layerSwapStack.push_back({ LayerTask::POP, layer, nullptr });
 }
 
 bool LayerStack::HandleQueuedTasks()
 {
-	ASSERT(layerSwapStack.size() < 2, "Why is there two transitions queued? Maybe it is valid");
 	bool doneSwap = false;
-	for (std::pair<Layer*, Layer*>& pair : layerSwapStack)
+	for (LayerTaskData& job : layerSwapStack)
 	{
 		doneSwap = true;
-		SwapLayers(pair.first, pair.second);
+		if (job.task == LayerTask::SWAP)
+			SwapLayers(job.first, job.second);
+		else if (job.task == LayerTask::PUSH)
+			PushLayer(job.first);
+		else if (job.task == LayerTask::POP)
+			PopLayer(job.first);
+
 	}
 	if (doneSwap)
 		layerSwapStack.clear();

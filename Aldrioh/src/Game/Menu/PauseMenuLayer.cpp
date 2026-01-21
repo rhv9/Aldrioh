@@ -56,8 +56,7 @@ void PauseMenuLayer::OnBegin()
 	exitButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	exitButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_CORE_INFO("Pause menu - Switching to main menu");
-		Game::Instance().GetLayerStack().PopLayer(this);
-		GlobalLayers::game->OnTransitionIn();
+		Game::Instance().GetLayerStack().QueuePopLayer(this);
 		GlobalLayers::game->QueueTransitionTo(GlobalLayers::mainMenu);
 		});
 	uiManager->AddUIObject(exitButton);
@@ -96,7 +95,7 @@ void PauseMenuLayer::OnKey(KeyEventArg& e)
 void PauseMenuLayer::ExitPauseMenuToGame()
 {
 	LOG_CORE_INFO("Pause menu - popping pause menu");
-	Game::Instance().GetLayerStack().PopLayer(this);
+	Game::Instance().GetLayerStack().QueuePopLayer(this);
 }
 
 void PauseMenuLayer::OnTransitionIn()
