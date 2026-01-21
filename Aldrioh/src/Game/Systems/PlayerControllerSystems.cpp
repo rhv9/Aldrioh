@@ -27,7 +27,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball);
 	glm::vec2 collisionSize{ 0.3f };
-	fireball.AddComponent<CollisionBox>(glm::vec3{ collisionSize/-2.0f, 0.0f }, collisionSize);
+	fireball.AddComponent<CollisionBox>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 }
 
 
@@ -64,7 +64,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			move.x = 1.0f;
 
 		playerMove.updateMoveVec(move);
-		
+
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 
 		if (pcc.dirLock == DIRLOCK_FREE)
@@ -90,26 +90,29 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 					dir = pcc.dirLock;
 				shoot(player, playerPos, dir);
 				scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
-				
+
 			}
 			shootTimer += ts;
 		}
 		else
 			shootTimer = 0.0f;
 
-		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
+
+		if (move.x != 0 || move.y != 0)
 		{
 			ParticleTemplate particleTemplate;
 			particleTemplate.startPos = playerTransform.position;
-			particleTemplate.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-			particleTemplate.endColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			particleTemplate.beginSize = 1.0f;
+			particleTemplate.beginColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			particleTemplate.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
+			particleTemplate.beginSize = 0.2f;
+			particleTemplate.endSize = 0.2f;
 			particleTemplate.life = 1.0f;
-			particleTemplate.velocity = { 0.0f, -1.0f };
+			particleTemplate.velocity = { 0.0f, 0.0f };
+			particleTemplate.velocityVariation = { 2.0f, 2.0f };
+			particleTemplate.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
 
 			for (int i = 0; i < 1; i++)
 				scene.GetParticleManager().Emit(particleTemplate);
-
 		}
 
 	}

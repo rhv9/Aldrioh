@@ -3,12 +3,12 @@
 
 struct ParticleTemplate
 {
-	glm::vec2 startPos;
-	glm::vec2 velocity, velocityVariation;
+	glm::vec2 startPos{ 0.0 };
+	glm::vec2 velocity{ 0.0f }, velocityVariation{ 0.0f };
 	glm::vec4 beginColour, endColour;
-	float beginSize, endSize;
+	float beginSize = 1, endSize = 1;
 	float life = 1.0f;
-	float rotation = 0.0f;
+	std::pair<float, float> rotationRange{ 0, 0 };
 };
 
 struct Particle
@@ -35,9 +35,12 @@ public:
 
 	void Emit(const ParticleTemplate& particleTemplate);
 
+	int GetActiveCount() { return activeCount; }
+
 private:
 	static constexpr uint32_t MAX_PARTICLES = 1000;
 	std::array<Particle, MAX_PARTICLES> particlePool;
 	int poolIndex = 0;
+	int activeCount = 0;
 
 };

@@ -4,22 +4,27 @@
 #include <Graphics/Renderer.h>
 #include <Graphics/RenderQueue.h>
 
+#include <Math/Math.h>
 #include <Game/SpriteCollection.h>
+#include <Game.h>
 
-void ParticleManager::Emit(const ParticleTemplate& particleTemplate)
+
+void ParticleManager::Emit(const ParticleTemplate& pt)
 {
-	Particle& particle = particlePool[poolIndex];
+	Particle& p = particlePool[poolIndex];
 
-	particle.position = particleTemplate.startPos;
-	particle.lifeRemaining = particleTemplate.life;
-	particle.beginSize = particleTemplate.beginSize;
-	particle.endSize = particleTemplate.endSize;
-	particle.beginColour = particleTemplate.beginColour;
-	particle.endColour = particle.endColour;
-	particle.rotation = particleTemplate.rotation;
-	particle.velocity = particleTemplate.velocity;
-	particle.active = true;
+	p.position = pt.startPos;
+	p.lifeRemaining = pt.life;
+	p.beginSize = pt.beginSize;
+	p.endSize = pt.endSize;
+	p.beginColour = pt.beginColour;
+	p.endColour = pt.endColour;
+	p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
+	p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
+	
+	p.active = true;
 	poolIndex = (poolIndex + 1) % MAX_PARTICLES;
+	++activeCount;
 }
 
 ParticleManager::ParticleManager()
@@ -38,29 +43,33 @@ void ParticleManager::OnUpdate(Timestep ts)
 		if (!particle.active)
 			continue;
 
-		LOG_CORE_INFO("Particle postion {}", glm::to_string(particle.position));
 		particle.position += particle.velocity * (float)ts;
 
 		particle.lifeRemaining -= ts;
 
 		if (particle.lifeRemaining <= 0.0f)
+		{
 			particle.active = false;
+			--activeCount;
+		}
 	}
 }
 
 void ParticleManager::OnRender(Timestep ts)
 {
-	for (Particle& particle : particlePool)
+
+	for (Particle& p : particlePool)
 	{
-		if (!particle.active)
+		if (!p.active)
 			continue;
 
-		float size = particle.beginSize;
-		glm::vec4 colour = particle.beginColour;
-		float rotation = particle.rotation;
+		float percentLife = p.lifeRemaining / p.life;
+		float size = glm::mix(p.endSize, p.beginSize, percentLife);
+		glm::vec4 colour = glm::mix(p.endColour, p.beginColour, percentLife);
+		p.rotation += p.rotation * Game::Instance().GetDelta();
 
-		//LOG_CORE_INFO("Particle postion {}", glm::to_string(particle.position));
+		//LOG_CORE_INFO("Particle colour {}", glm::to_string(colour));
 
-		RenderQueue::EnQueue(RenderLayer::TWO, glm::vec3{ particle.position, 0.8f }, Sprites::drone_mini, colour, glm::vec2{size, size}, rotation, 1);
+		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ p.position, 0.99f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, 1);
 	}
 }

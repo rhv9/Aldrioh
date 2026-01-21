@@ -50,7 +50,7 @@ void Sprites::Init()
 
 	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
 	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
-	spriteMap[box = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
+	spriteMap[square = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
 
 	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 15 }, Sprites::TileSize };
 	spriteMap[asteroid_small = spriteCounter++] = { spritesheet, glm::vec2{ 0, 14 }, Sprites::TileSize };
