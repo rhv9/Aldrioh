@@ -245,7 +245,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 		return pt;
 		}();
 
-	static auto OnDestroy_DroneParticles = [](Entity e) -> void {
+	static auto OnDestroy_DroneDeath = [](Entity e) -> void {
 		if (e.GetComponent<HealthComponent>().health <= 0.0f)
 		{
 			glm::vec2 pos = e.GetTransformComponent().position;
@@ -256,7 +256,16 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 			pt = particleTemplate_droneDestroyedRed;
 			pt.startPos = pos;
 			e.getScene()->GetParticleManager().Emit(pt);
+
+			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
+			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
+			CollectableCell& cell = level->GetCollectableManager().GetChunk(mapping).GetCell(mapping);
+			uint8_t xOffset = (pos.x - (int)pos.x) * CCellData::MAX_POINT_VALUE;
+			uint8_t yOffset = (pos.y - (int)pos.y) * CCellData::MAX_POINT_VALUE;
+			//LOG_CORE_INFO("Offset: {},{}", xOffset, yOffset);
+			cell.AddCollectable(xOffset, yOffset, CollectableType::JEWEL1);
 		}
+		
 		};
 
 	Entity enemy = scene.CreateEntity("Drone");
@@ -271,7 +280,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneParticles);
+	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneDeath);
 
 	return Entity();
 }

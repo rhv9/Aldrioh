@@ -3,6 +3,7 @@
 #include <Scene/Entity.h>
 
 #include <Game/Waves/WaveManager.h>
+#include <Game/Level/CollectableManager.h>
 
 struct BoundingArea
 {
@@ -38,6 +39,8 @@ public:
 
 	BoundingArea GetDeathArea();
 
+	CollectableManager& GetCollectableManager() { return collectableManager; }
+
 	Scene& scene;
 
 	// debugging related
@@ -47,6 +50,7 @@ protected:
 	Entity playerCamera, debugCamera;
 	Entity playerEntity;
 	WaveManager waveManager;
+	CollectableManager collectableManager;
 
 	float levelTimeElapsed = 0.0f;
 };

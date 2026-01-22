@@ -8,6 +8,8 @@
 #include <Collision/Collision.h>
 #include <Game/Entity/EntityType.h>
 #include <Game/Components/EntityComponents.h>
+#include <Game/Level/CollectableManager.h>
+#include <Game/Components/LevelComponents.h>
 
 #include <Math/Math.h>
 
@@ -122,6 +124,24 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			pt.startPos = glm::vec2{ playerTransform.position } + posOffset;
 			scene.GetParticleManager().Emit(pt);
 		}
+
+		Level* level = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
+
+		CollectableManager& collectableManager = level->GetCollectableManager();
+		CollectableMapping mapping = collectableManager.GetMapping(playerTransform.position);
+		CollectableChunk& chunk = collectableManager.GetChunk(mapping.chunkX, mapping.chunkY);
+		CollectableCell& cell = chunk.GetCell(mapping.cellX, mapping.cellY);
+		for (int i = 0; i < cell.count; ++i)
+		{
+			CCellData data = cell.cellArray[i];
+			if (data.type == CollectableType::JEWEL1)
+			{
+				LOG_CORE_INFO("YIPEEE!");
+			}
+		}
+		cell.Clear();
+		
+
 
 	}
 }

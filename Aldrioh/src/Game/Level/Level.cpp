@@ -8,6 +8,8 @@
 #include <Game.h>
 
 #include <Graphics/Renderer.h>
+#include <Graphics/RenderQueue.h>
+#include <Game/RenderDepth.h>
 
 #include <Math/Math.h>
 
@@ -55,10 +57,11 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene)
 {
-	// collisionDispatcher
 	waveManager.Init();
+	scene.InitCollisionWorldSize(100, 100);
+	collectableManager.Init(100, 100);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -144,7 +147,7 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (elapsedTime >= asteroidSpawnSpeed )
+	if (elapsedTime >= asteroidSpawnSpeed)
 	{
 		elapsedTime -= asteroidSpawnSpeed;
 
@@ -184,6 +187,36 @@ void Level::OnRender(Timestep ts)
 	barPos.y *= cameraToUIMapping.y;
 
 	uiPlayerHealthBar->SetRelativePos(barPos);
+
+	// Rendering jewels in the screen
+	int startX = (int)levelArea.bottomLeft.x + playerPos.x;
+	int startY = (int)levelArea.bottomLeft.y + playerPos.y;
+	int endX = (int)levelArea.topRight.x + playerPos.x;
+	int endY = (int)levelArea.topRight.y + playerPos.y;
+
+	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
+
+	// Goes through each horizontal cell, then shift down and repeat for whole level area.
+	for (int x = startX; x < endX; ++x)
+	{
+		for (int y = startY; y < endY; ++y)
+		{
+			CollectableMapping mapping = collectableManager.GetMapping({ x, y });
+			CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
+			for (int i = 0; i < cell.count; ++i)
+			{
+				const glm::vec2 size{ 1.0f };
+				glm::vec2 renderPos = glm::vec2{x, y} + glm::vec2{(float)cell.cellArray[i].x / CCellData::MAX_POINT_VALUE, (float)cell.cellArray[i].y / CCellData::MAX_POINT_VALUE} - size/2.0f;
+
+				//LOG_CORE_INFO("Rendering jewel at: {}", glm::to_string(glm::vec3{ renderPos, RenderDepth::COLLECTABLES }));
+				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, Sprites::bullet_white, glm::vec4(1), size);
+			}
+
+			// Uncommenting this looks cool :D
+			//RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ glm::vec2{x, y}, RenderDepth::COLLECTABLES }, Sprites::bullet_white, glm::vec4(1), { 0.5f, 0.5f });
+		}
+	}
+
 }
 
 BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)

@@ -3,17 +3,25 @@
 #include <Scene/Scene.h>
 
 
-CollisionChunk::CollisionChunk(Scene& scene) : scene(scene)
+void CollectableChunk::Clear()
 {
-}
-
-void CollisionChunk::Clear()
-{
-	for (Cell& cell : grid)
+	for (CollectableCell& cell : grid)
 		cell.count = 0;
 }
 
-void CollectableCell::AddCollectable(uint8_t x, uint8_t y, CCellType type)
+void CollectableCell::AddCollectable(uint8_t x, uint8_t y, CollectableType type)
 {
 	cellArray[count++] = { x, y, type };
 }
+
+
+std::string CollectableMapping::ToString() const
+{
+	return std::format("Chunk:({},{}), Cell({},{})", chunkX, chunkY, cellX, cellY);
+}
+
+bool CollectableMapping::operator==(const CollectableMapping& other)
+{
+	return chunkX == other.chunkX && chunkY == other.chunkY && cellX == other.cellX && cellY == other.cellY;
+}
+

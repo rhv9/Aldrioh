@@ -68,7 +68,6 @@ void GameLayer::OnBegin()
 	Renderer::SetClearColour({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 	scene = std::make_unique<Scene>();
-	scene->InitCollisionWorldSize(100, 100);
 
 	// Level system
 	currentLevel = std::make_unique<Level>(*scene);

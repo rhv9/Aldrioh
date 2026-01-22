@@ -6,4 +6,6 @@ public:
 	static float TILE;
 	static float ENTITY;
 	static float PARTICLE;
+	static float COLLECTABLES;
+
 };

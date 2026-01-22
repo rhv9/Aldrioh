@@ -3,7 +3,7 @@
 class Scene;
 class Entity;
 
-enum class CCellType : uint8_t
+enum class CollectableType : uint8_t
 {
 	JEWEL1 = 0,
 	JEWEL2,
@@ -14,7 +14,9 @@ enum class CCellType : uint8_t
 struct CCellData
 {
 	uint8_t x, y;
-	CCellType type;
+	CollectableType type;
+
+	static constexpr uint8_t MAX_POINT_VALUE = 255;
 };
 
 struct CollectableCell
@@ -22,9 +24,19 @@ struct CollectableCell
 	std::array<CCellData, 32> cellArray;
 	int count = 0;
 
-	void AddCollectable(uint8_t x, uint8_t y, CCellType type);
+	void AddCollectable(uint8_t x, uint8_t y, CollectableType type);
+	void Clear() { count = 0; }
 };
 
+struct CollectableMapping
+{
+	int chunkX = 0, chunkY = 0;
+	int cellX = 0, cellY = 0;
+
+	std::string ToString() const;
+
+	bool operator==(const CollectableMapping& other);
+};
 
 struct CollectableChunk
 {
@@ -33,8 +45,10 @@ struct CollectableChunk
 	Scene& scene;
 	std::array<CollectableCell, SIZE* SIZE> grid;
 
-	CollectableChunk(Scene& scene);
+	CollectableChunk(Scene& scene) : scene(scene) {}
 
 	inline CollectableCell& GetCell(int x, int y) { return grid[y * SIZE + x]; }
+	inline CollectableCell& GetCell(const CollectableMapping& mapping) { return grid[mapping.cellY * SIZE + mapping.cellX]; }
+
 	void Clear();
 };

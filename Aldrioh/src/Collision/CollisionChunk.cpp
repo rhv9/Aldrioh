@@ -9,6 +9,9 @@ void Cell::AddEntity(entt::entity handle)
 		if (handle == entities[i])
 			return;
 
+	if (count >= 16)
+		return;
+
 	entities[count++] = handle;
 }
 
