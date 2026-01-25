@@ -63,6 +63,6 @@ void EntitySystem::CollisionRenderSystem(Timestep ts, Scene& scene)
 	{
 		auto [tc, cb] = view.get<TransformComponent, CollisionBox>(e);
 		glm::vec3 offset = tc.position + cb.position;
-		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::redBox, Colour::RED, cb.size);
+		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::borderBox, Colour::RED, cb.size);
 	}
 }

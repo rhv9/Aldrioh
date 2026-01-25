@@ -57,6 +57,7 @@ protected:
 	struct DebugState
 	{
 		bool spawnEntites = true;
+		bool renderCollectableCells = false;
 	};
 
 	DebugState debugState;

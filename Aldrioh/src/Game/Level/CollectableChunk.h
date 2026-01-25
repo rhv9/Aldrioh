@@ -16,6 +16,9 @@ struct CCellData
 	uint8_t x, y;
 	CollectableType type;
 
+	glm::vec2 GetFloatPos() const;
+	void SetPosOnDecimalValue(const glm::vec2 pos);
+
 	static constexpr uint8_t MAX_POINT_VALUE = 255;
 };
 
@@ -24,7 +27,9 @@ struct CollectableCell
 	std::array<CCellData, 32> cellArray;
 	int count = 0;
 
-	void AddCollectable(uint8_t x, uint8_t y, CollectableType type);
+	void AddCollectable(const glm::vec2& untrimmedPos, CollectableType type);
+	void AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type);
+
 	void Clear() { count = 0; }
 };
 

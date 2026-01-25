@@ -9,9 +9,16 @@ void CollectableChunk::Clear()
 		cell.count = 0;
 }
 
-void CollectableCell::AddCollectable(uint8_t x, uint8_t y, CollectableType type)
+void CollectableCell::AddCollectable(const glm::vec2& untrimmedPos, CollectableType type)
 {
-	cellArray[count++] = { x, y, type };
+	uint8_t offsetX = (untrimmedPos.x - (int)untrimmedPos.x) * CCellData::MAX_POINT_VALUE;
+	uint8_t offsetY = (untrimmedPos.y - (int)untrimmedPos.y) * CCellData::MAX_POINT_VALUE;
+	cellArray[count++] = { offsetX, offsetY, type };
+}
+
+void CollectableCell::AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type)
+{
+	cellArray[count++] = { xOffset, yOffset, type };
 }
 
 
@@ -25,3 +32,13 @@ bool CollectableMapping::operator==(const CollectableMapping& other)
 	return chunkX == other.chunkX && chunkY == other.chunkY && cellX == other.cellX && cellY == other.cellY;
 }
 
+glm::vec2 CCellData::GetFloatPos() const
+{
+	return glm::vec2{ (float)x / CCellData::MAX_POINT_VALUE, (float)y / CCellData::MAX_POINT_VALUE };
+}
+
+void CCellData::SetPosOnDecimalValue(const glm::vec2 pos)
+{
+	x = (pos.x - (int)pos.x) * CCellData::MAX_POINT_VALUE;
+	y = (pos.y - (int)pos.y) * CCellData::MAX_POINT_VALUE;
+}

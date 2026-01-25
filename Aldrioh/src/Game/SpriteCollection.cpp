@@ -50,7 +50,7 @@ void Sprites::Init()
 	spriteMap[target = spriteCounter++] = { spritesheet, glm::vec2{ 2, 2 }, Sprites::TileSize };
 	spriteMap[spawner = spriteCounter++] = { spritesheet, glm::vec2{ 3, 2 }, Sprites::TileSize };
 
-	spriteMap[redBox = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
+	spriteMap[borderBox = spriteCounter++] = { spritesheet, glm::vec2{ 0, 0 }, Sprites::TileSize };
 	spriteMap[greenBox = spriteCounter++] = { spritesheet, glm::vec2{ 1, 0 }, Sprites::TileSize };
 	spriteMap[square = spriteCounter++] = { spritesheet, glm::vec2{ 2, 0 }, Sprites::TileSize };
 

@@ -260,10 +260,8 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
 			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
 			CollectableCell& cell = level->GetCollectableManager().GetChunk(mapping).GetCell(mapping);
-			uint8_t xOffset = (pos.x - (int)pos.x) * CCellData::MAX_POINT_VALUE;
-			uint8_t yOffset = (pos.y - (int)pos.y) * CCellData::MAX_POINT_VALUE;
 			//LOG_CORE_INFO("Offset: {},{}", xOffset, yOffset);
-			cell.AddCollectable(xOffset, yOffset, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
+			cell.AddCollectable(pos, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
 		}
 		
 		};

@@ -191,10 +191,10 @@ void Level::OnRender(Timestep ts)
 	uiPlayerHealthBar->SetRelativePos(barPos);
 
 	// Rendering jewels in the screen
-	int startX = (int)levelArea.bottomLeft.x + playerCameraPos.x;
+	int startX = (int)levelArea.bottomLeft.x + playerCameraPos.x - 1;
 	int startY = (int)levelArea.bottomLeft.y + playerCameraPos.y;
-	int endX = (int)levelArea.topRight.x + playerCameraPos.x;
-	int endY = (int)levelArea.topRight.y + playerCameraPos.y;
+	int endX = (int)levelArea.topRight.x + playerCameraPos.x + 2;
+	int endY = (int)levelArea.topRight.y + playerCameraPos.y + 1;
 
 	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
 
@@ -208,10 +208,10 @@ void Level::OnRender(Timestep ts)
 			for (int i = 0; i < cell.count; ++i)
 			{
 				CCellData& cellData = cell.cellArray[i];
-				static glm::vec4 JEWEL_COLOURS[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
+				static const glm::vec4 JEWEL_COLOURS[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
 
 				const glm::vec2 size{ 1.0f };
-				glm::vec2 renderPos = glm::vec2{ x, y } + glm::vec2{ (float)cellData.x / CCellData::MAX_POINT_VALUE, (float)cellData.y / CCellData::MAX_POINT_VALUE } - size / 2.0f;
+				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatPos() - size / 2.0f;
 
 				int spriteId = cellData.type == CollectableType::COIN ? Sprites::coin : Sprites::jewel;
 
@@ -223,11 +223,27 @@ void Level::OnRender(Timestep ts)
 		}
 	}
 
+	if (debugState.renderCollectableCells)
+	{
+		for (int x = startX; x < endX; ++x)
+		{
+			for (int y = startY; y < endY; ++y)
+			{
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
+			}
+		}
+	}
+
 }
 
 void Level::ImGuiLevelBar()
 {
-	ImGui::Checkbox("Spawn Enemies", &debugState.spawnEntites);
+	if (ImGui::Checkbox("Spawn Enemies", &debugState.spawnEntites))
+		elapsedTime = 0;
+	
+	ImGui::SeparatorText("Debugging");
+	ImGui::Checkbox("Collectable Cells", &debugState.renderCollectableCells);
+
 }
 
 BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)

@@ -188,7 +188,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
-	ImGui::Begin("Main Window", &open);
+	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_NoFocusOnAppearing);
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
 	{
@@ -320,8 +320,6 @@ void GameLayer::OnKey(KeyEventArg& e)
 	}
 	if (e.IsPressed(Input::KEY_GRAVE_ACCENT))
 		imGuiSettings.enabledImGui = !imGuiSettings.enabledImGui;
-
-	LOG_CORE_INFO("Nice {}", e.Key);
 }
 
 void GameLayer::OnWindowResize(WindowResizeEventArg& e)
