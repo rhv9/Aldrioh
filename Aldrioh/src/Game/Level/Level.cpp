@@ -175,7 +175,8 @@ void Level::OnRender(Timestep ts)
 	// Update player health bar position
 	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
 	auto& playerCameraController = playerCamera.GetComponent<CameraComponent>().cameraController;
-	glm::vec2 barPos = playerPos - playerCameraController->GetPosition();
+	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
+	glm::vec2 barPos = playerPos - playerCameraPos;
 	barPos.y -= 0.7f;
 
 	// TODO this does not need to be calculated every frame
@@ -189,10 +190,10 @@ void Level::OnRender(Timestep ts)
 	uiPlayerHealthBar->SetRelativePos(barPos);
 
 	// Rendering jewels in the screen
-	int startX = (int)levelArea.bottomLeft.x + playerPos.x;
-	int startY = (int)levelArea.bottomLeft.y + playerPos.y;
-	int endX = (int)levelArea.topRight.x + playerPos.x;
-	int endY = (int)levelArea.topRight.y + playerPos.y;
+	int startX = (int)levelArea.bottomLeft.x + playerCameraPos.x;
+	int startY = (int)levelArea.bottomLeft.y + playerCameraPos.y;
+	int endX = (int)levelArea.topRight.x + playerCameraPos.x;
+	int endY = (int)levelArea.topRight.y + playerCameraPos.y;
 
 	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
 
