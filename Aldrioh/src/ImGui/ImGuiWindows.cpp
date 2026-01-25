@@ -12,18 +12,19 @@
 #include <Audio/SoundManager.h>
 void GameImGuiWindows::ShowGameInfo()
 {
-	if (ImGui::CollapsingHeader("Game"))
+	if (ImGui::CollapsingHeader("Game", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		auto engineStats = Statistics::EngineStats::GetStats();
-		ImGui::Text("frame time: %.2f (%dfps)", engineStats.delta.GetMilliSeconds(), engineStats.fps);
+		ImGui::Text("Frame time: %.2f (%dfps)", engineStats.delta.GetMilliSeconds(), engineStats.fps);
 		ImGui::Text("Ticks/second: %d", engineStats.ticksPerSecond);
 		ImGui::Text("Delta since update: %.2f", engineStats.deltaSinceUpdate);
 		ImGui::Text("Elapsed time: %.2f", Platform::GetElapsedTime());
 		ImGui::Text("Layer Count: %d", engineStats.layerCount);
 	}
 
-	if (ImGui::CollapsingHeader("Audio"))
+	if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		ImGui::PushItemWidth(100);
 		float audio = SoundManager::GetVolume(SoundCategory::MASTER);
 		if (ImGui::SliderFloat("Master", &audio, 0, 1))
 			SoundManager::SetVolume(SoundCategory::MASTER, audio);
@@ -31,13 +32,14 @@ void GameImGuiWindows::ShowGameInfo()
 		audio = SoundManager::GetVolume(SoundCategory::SFX);
 		if (ImGui::SliderFloat("SFX", &audio, 0, 1))
 			SoundManager::SetVolume(SoundCategory::SFX, audio);
+		ImGui::PopItemWidth();
 	}
 
 }
 
 void GameImGuiWindows::ShowRendererInfo()
 {
-	if (ImGui::CollapsingHeader("Renderer"))
+	if (ImGui::CollapsingHeader("Renderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		auto& game = Game::Instance();
 		bool vsync = game.GetWindow()->GetVsync();

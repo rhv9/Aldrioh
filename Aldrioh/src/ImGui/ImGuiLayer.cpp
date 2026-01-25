@@ -53,7 +53,7 @@ void ImGuiLayer::OnBegin()
 
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
     io.ConfigFlags |= !ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
     // Setup Dear ImGui style
@@ -75,8 +75,12 @@ void ImGuiLayer::OnBegin()
 #endif
     ImGui_ImplOpenGL3_Init("#version 430");
 
-    //ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    // Styling
+    ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 0.0f; // Honestly I couldn't figure out how to set background transparent so I am manipulating the state directly.
+    ImGui::GetStyle().Colors[ImGuiCol_Border].w = 0.0f;
+    ImGui::GetStyle().FramePadding.y = 4;
+
+    ImGui::GetIO().FontGlobalScale = 1.5f;
 }
 
 void ImGuiLayer::OnRemove()

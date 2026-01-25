@@ -47,6 +47,8 @@
 
 struct ImGuiSettings
 {
+	bool enabledImGui = false;
+
 	bool shouldUpdateScene = true;
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
@@ -180,8 +182,13 @@ void GameLayer::OnRender(Timestep delta)
 void GameLayer::OnImGuiRender(Timestep delta)
 {
 	static bool open = false;
-	ImGui::SetNextWindowBgAlpha(0.6f);
-	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_AlwaysAutoResize);
+
+	if (!imGuiSettings.enabledImGui)
+		return;
+
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	ImGui::Begin("Main Window", &open);
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))
 	{
@@ -192,17 +199,18 @@ void GameLayer::OnImGuiRender(Timestep delta)
 			GameImGuiWindows::ShowRendererInfo();
 			scene->OnImGuiDebugRender(delta);
 
-			if (ImGui::CollapsingHeader("Level"))
+			if (ImGui::CollapsingHeader("Level", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				// From level
 				auto& cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 
 				ImGui::SeparatorText("Camera");
-				if (ImGui::DragFloat2("relativePos##1", (float*)&cameraController->GetPosition()))
+				ImGui::PushItemWidth(100);
+				if (ImGui::DragFloat2(" RelativePos##1", (float*)&cameraController->GetPosition()))
 					cameraController->SetPosition(cameraController->GetPosition());
-				if (ImGui::DragFloat("zoom", (float*)&cameraController->GetZoomLevel()))
+				if (ImGui::DragFloat(" Zoom", (float*)&cameraController->GetZoomLevel()))
 					cameraController->SetZoomLevel(cameraController->GetZoomLevel());
-
+				ImGui::PopItemWidth();
 				ImGui::Text("Bounds: (%.1f, %.1f)", cameraController->GetBounds().Right * 2, cameraController->GetBounds().Top * 2);
 
 				glm::vec2 mousePos = scene->GetMousePosInScene();
@@ -216,6 +224,8 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		}
 		if (ImGui::BeginTabItem("Level"))
 		{
+			currentLevel->ImGuiLevelBar();
+
 			if (ImGui::Checkbox("Debugging Camera", &imGuiSettings.EnabledDebugCamera))
 				currentLevel->SetEnableDebugCamera(imGuiSettings.EnabledDebugCamera);
 
@@ -289,8 +299,6 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	}
 
 	ImGui::End();
-	ImGui::SetNextWindowBgAlpha(1.0f);
-
 	//ImGui::ShowDemoWindow();
 }
 
@@ -310,6 +318,10 @@ void GameLayer::OnKey(KeyEventArg& e)
 	{
 		SoundManager::Play("sfx");
 	}
+	if (e.IsPressed(Input::KEY_GRAVE_ACCENT))
+		imGuiSettings.enabledImGui = !imGuiSettings.enabledImGui;
+
+	LOG_CORE_INFO("Nice {}", e.Key);
 }
 
 void GameLayer::OnWindowResize(WindowResizeEventArg& e)

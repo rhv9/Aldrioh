@@ -23,6 +23,8 @@ public:
 	void OnUpdate(Timestep ts);
 	void OnRender(Timestep ts);
 
+	void ImGuiLevelBar();
+
 	void UpdateLevelArea();
 	// Gives the bottom left and top right offset for screen to world position
 	const BoundingArea& GetScreenBorderOffset() const { return levelArea; }
@@ -51,6 +53,13 @@ protected:
 	Entity playerEntity;
 	WaveManager waveManager;
 	CollectableManager collectableManager;
+
+	struct DebugState
+	{
+		bool spawnEntites = true;
+	};
+
+	DebugState debugState;
 
 	float levelTimeElapsed = 0.0f;
 };

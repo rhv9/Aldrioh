@@ -66,7 +66,6 @@ void Scene::OnUpdate(Timestep ts)
 		system(ts, *this);
 
 	particleManager.OnUpdate(ts);
-
 }
 
 void Scene::OnRender(Timestep ts)

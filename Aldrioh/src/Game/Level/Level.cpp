@@ -20,6 +20,7 @@
 #include <Game/Entity/GameEntityPrefab.h>
 
 #include <Game/Systems/RenderSystems.h>
+#include <imgui.h>
 
 float zoomLevel = 10;
 
@@ -147,7 +148,7 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (elapsedTime >= asteroidSpawnSpeed)
+	if (debugState.spawnEntites && elapsedTime >= asteroidSpawnSpeed)
 	{
 		elapsedTime -= asteroidSpawnSpeed;
 
@@ -218,6 +219,11 @@ void Level::OnRender(Timestep ts)
 		}
 	}
 
+}
+
+void Level::ImGuiLevelBar()
+{
+	ImGui::Checkbox("Spawn Enemies", &debugState.spawnEntites);
 }
 
 BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
