@@ -207,11 +207,15 @@ void Level::OnRender(Timestep ts)
 			CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
 			for (int i = 0; i < cell.count; ++i)
 			{
-				const glm::vec2 size{ 1.0f };
-				glm::vec2 renderPos = glm::vec2{x, y} + glm::vec2{(float)cell.cellArray[i].x / CCellData::MAX_POINT_VALUE, (float)cell.cellArray[i].y / CCellData::MAX_POINT_VALUE} - size/2.0f;
+				CCellData& cellData = cell.cellArray[i];
+				static glm::vec4 JEWEL_COLOURS[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
 
-				//LOG_CORE_INFO("Rendering jewel at: {}", glm::to_string(glm::vec3{ renderPos, RenderDepth::COLLECTABLES }));
-				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, Sprites::bullet_white, glm::vec4(1), size);
+				const glm::vec2 size{ 1.0f };
+				glm::vec2 renderPos = glm::vec2{ x, y } + glm::vec2{ (float)cellData.x / CCellData::MAX_POINT_VALUE, (float)cellData.y / CCellData::MAX_POINT_VALUE } - size / 2.0f;
+
+				int spriteId = cellData.type == CollectableType::COIN ? Sprites::coin : Sprites::jewel;
+
+				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, spriteId, JEWEL_COLOURS[static_cast<int>(cellData.type)], size);
 			}
 
 			// Uncommenting this looks cool :D

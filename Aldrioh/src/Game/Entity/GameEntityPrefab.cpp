@@ -263,7 +263,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 			uint8_t xOffset = (pos.x - (int)pos.x) * CCellData::MAX_POINT_VALUE;
 			uint8_t yOffset = (pos.y - (int)pos.y) * CCellData::MAX_POINT_VALUE;
 			//LOG_CORE_INFO("Offset: {},{}", xOffset, yOffset);
-			cell.AddCollectable(xOffset, yOffset, CollectableType::JEWEL1);
+			cell.AddCollectable(xOffset, yOffset, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
 		}
 		
 		};

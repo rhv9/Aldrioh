@@ -42,7 +42,8 @@ void Sprites::Init()
 	spriteMap[bullet_fire = spriteCounter++] = { spritesheet, glm::vec2{ 0, 1 }, Sprites::TileSize };
 	spriteMap[bullet_red = spriteCounter++] = { spritesheet, glm::vec2{ 1, 1 }, Sprites::TileSize };
 	spriteMap[bullet_white = spriteCounter++] = { spritesheet, glm::vec2{ 2, 1 }, Sprites::TileSize };
-	spriteMap[bullet_white = spriteCounter++] = { spritesheet, glm::vec2{ 3, 1 }, Sprites::TileSize };
+	spriteMap[coin = spriteCounter++] = { spritesheet, glm::vec2{ 3, 1 }, Sprites::TileSize };
+	spriteMap[jewel = spriteCounter++] = { spritesheet, glm::vec2{ 4, 1 }, Sprites::TileSize };
 
 	spriteMap[player_head = spriteCounter++] = { spritesheet, glm::vec2{ 0, 2 }, Sprites::TileSize };
 	spriteMap[slime = spriteCounter++] = { spritesheet, glm::vec2{ 1, 2 }, Sprites::TileSize };

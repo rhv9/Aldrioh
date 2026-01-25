@@ -21,7 +21,7 @@ namespace Sprites {
 	SPRITES_EXTERN int sand_rock;
 	SPRITES_EXTERN int sand_cactus;
 	SPRITES_EXTERN int bullet_fire, bullet_red, bullet_white;
-	SPRITES_EXTERN int coin;
+	SPRITES_EXTERN int coin, jewel;
 
 
 	SPRITES_EXTERN int player_head;
