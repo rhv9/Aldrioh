@@ -11,6 +11,7 @@ constexpr DIR DIRLOCK_RIGHT { 1, 0 };
 struct PlayerControllerComponent
 {
 	DIR dirLock = DIRLOCK_FREE;
+	float radius = 2.5f;
 	
 	PlayerControllerComponent() = default;
 	PlayerControllerComponent(const PlayerControllerComponent&) = default;

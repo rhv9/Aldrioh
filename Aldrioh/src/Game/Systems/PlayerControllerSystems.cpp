@@ -125,23 +125,34 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			scene.GetParticleManager().Emit(pt);
 		}
 
-		Level* level = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
 
+		// Simple brute force algorithm to select cells that are within radius from center of cell
+		Level* level = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
 		CollectableManager& collectableManager = level->GetCollectableManager();
-		CollectableMapping mapping = collectableManager.GetMapping(playerTransform.position);
-		CollectableChunk& chunk = collectableManager.GetChunk(mapping.chunkX, mapping.chunkY);
-		CollectableCell& cell = chunk.GetCell(mapping.cellX, mapping.cellY);
-		for (int i = 0; i < cell.count; ++i)
+
+		int startX = playerTransform.position.x - pcc.radius;
+		int startY = playerTransform.position.y - pcc.radius;
+		int endX = playerTransform.position.x + pcc.radius;
+		int endY = playerTransform.position.y + pcc.radius;
+
+		for (int y = startY; y < endY; ++y)
 		{
-			CCellData data = cell.cellArray[i];
-			if (data.type == CollectableType::JEWEL1)
+			for (int x = startX; x < endX; ++x)
 			{
-				LOG_CORE_INFO("YIPEEE!");
+				if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f },  glm::vec2(playerTransform.position)) <= pcc.radius)
+				{
+					glm::vec2 chunkPos = { x, y };
+					CollectableMapping mapping = collectableManager.GetMapping(chunkPos);
+					CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
+					
+					for (int i = 0; i < cell.count; ++i)
+					{
+						CCellData& cellData = cell.cellArray[i];
+						LOG_CORE_INFO("YIPEEE!");
+					}
+					cell.Clear();
+				}
 			}
 		}
-		cell.Clear();
-		
-
-
 	}
 }

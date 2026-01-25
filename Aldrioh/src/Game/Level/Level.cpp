@@ -199,9 +199,9 @@ void Level::OnRender(Timestep ts)
 	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
 
 	// Goes through each horizontal cell, then shift down and repeat for whole level area.
-	for (int x = startX; x < endX; ++x)
+	for (int y = startY; y < endY; ++y)
 	{
-		for (int y = startY; y < endY; ++y)
+		for (int x = startX; x < endX; ++x)
 		{
 			CollectableMapping mapping = collectableManager.GetMapping({ x, y });
 			CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
@@ -225,14 +225,34 @@ void Level::OnRender(Timestep ts)
 
 	if (debugState.renderCollectableCells)
 	{
-		for (int x = startX; x < endX; ++x)
+		for (int y = startY; y < endY; ++y)
 		{
-			for (int y = startY; y < endY; ++y)
+			for (int x = startX; x < endX; ++x)
 			{
 				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
 			}
 		}
+		{
+			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
+			int startX = playerPos.x - pcc.radius;
+			int startY = playerPos.y - pcc.radius;
+			int endX = playerPos.x + pcc.radius;
+			int endY = playerPos.y + pcc.radius;
+
+			for (int y = startY; y < endY; ++y)
+			{
+				for (int x = startX; x < endX; ++x)
+				{
+					if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, playerPos) <= pcc.radius)
+					{
+						glm::vec2 chunkPos = { x, y };
+						RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ chunkPos, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
+					}
+				}
+			}
+		}
 	}
+
 
 }
 
@@ -240,7 +260,7 @@ void Level::ImGuiLevelBar()
 {
 	if (ImGui::Checkbox("Spawn Enemies", &debugState.spawnEntites))
 		elapsedTime = 0;
-	
+
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Collectable Cells", &debugState.renderCollectableCells);
 

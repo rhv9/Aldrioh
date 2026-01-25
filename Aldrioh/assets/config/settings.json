@@ -1,6 +1,6 @@
 {
     "volume" : {
-        "master" : 0.9,
+        "master" : 0.2,
         "sfx" : 0.9,
         "music" : 0.5,
         "menu" : 0.5

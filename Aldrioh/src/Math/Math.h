@@ -25,6 +25,8 @@ namespace Math {
 	float arcTan(float x);
 	float angle(const glm::vec2& pos);
 
+	float dist(const glm::vec2& left, const glm::vec2& right);
+
 	glm::vec2 angleToNormalizedVector(float angle);
 
 	float degreesToRad(float val);

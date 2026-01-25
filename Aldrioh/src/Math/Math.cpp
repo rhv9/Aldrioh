@@ -62,6 +62,11 @@ float Math::angle(const glm::vec2& pos)
 	return atan2f(pos.y, pos.x) - Math::PI / 2.0f;
 }
 
+float Math::dist(const glm::vec2& left, const glm::vec2& right)
+{
+	return glm::length(left - right);
+}
+
 glm::vec2 Math::angleToNormalizedVector(float angle)
 {
 	return glm::vec2(cosRad(angle), sinRad(angle));
