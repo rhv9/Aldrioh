@@ -41,4 +41,7 @@ namespace Math {
 	float triangleWave(float t);
 
 	float gradient(const glm::vec2& p1, const glm::vec2& p2);
+
+	glm::vec2 bezier3(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2, float t);
+
 }

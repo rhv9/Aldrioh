@@ -91,6 +91,14 @@ float Math::gradient(const glm::vec2& p1, const glm::vec2& p2)
 	return dy / dx;
 }
 
+glm::vec2 Math::bezier3(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2, float t)
+{
+	// Q0 = (1-t)p0 + tp1
+	// Q1 = (1-t)p1 + tp2
+	// (1-t)Q0 + tQ1
+	return  (1 - t) * ((1 - t) * p0 + t * p1) + t * ((1 - t) * p1 + t * p2);
+}
+
 float Math::abs(float val)
 {
 	return (val < 0) ? -val : val;

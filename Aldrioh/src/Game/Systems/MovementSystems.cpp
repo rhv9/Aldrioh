@@ -38,6 +38,28 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 	}
 }
 
+void EntitySystem::ItemMovementSystem(Timestep ts, Scene& scene)
+{
+	auto view = scene.getRegistry().view<TransformComponent, ItemAnimationComponent, MoveComponent>();
+
+	glm::vec2 playerPos = scene.GetPlayer().GetTransformComponent().position;
+
+	for (entt::entity e : view)
+	{
+		auto [tc, iac, mc] = view.get(e);
+		Entity entityWrapped = scene.WrapEntityHandle(e);
+		
+		iac.duration -= ts;
+		glm::vec2 force{ 0 };
+		if (iac.duration > 0)
+		{
+			force = iac.force;
+		}
+		//glm::vec2 unitVectorToPlayer = 
+
+	}
+}
+
 void EntitySystem::JumpSystem(Timestep ts, Scene& scene)
 {
 

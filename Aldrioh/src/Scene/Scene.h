@@ -26,7 +26,7 @@ public:
 	void OnImGuiDebugRender(Timestep ts);
 
 	void SetPlayer(const Entity& e);
-	Entity* GetPlayer() { return player; }
+	Entity& GetPlayer() { return *player; }
 
 	void AddUpdateSystem(const SystemFunction& callback) { updateSystems.push_back(callback); }
 	void AddRenderSystem(const SystemFunction& callback) { renderSystems.push_back(callback); }

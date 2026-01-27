@@ -14,7 +14,7 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 
 	// DumbAIComponent
 	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveComponent>();
-	auto& player_mc = scene.GetPlayer()->GetComponent<TransformComponent>();
+	auto& player_mc = scene.GetPlayer().GetComponent<TransformComponent>();
 	for (entt::entity e : view)
 	{
 		auto [dac, tc, mc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveComponent>(e);

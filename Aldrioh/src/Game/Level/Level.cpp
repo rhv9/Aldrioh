@@ -166,6 +166,10 @@ void Level::OnUpdate(Timestep ts)
 
 }
 
+glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };
+float tdelta = 0.1f;
+bool renderBezierCurve = false;
+
 void Level::OnRender(Timestep ts)
 {
 	Renderer::DrawQuad({ levelArea.bottomLeft, 0.5f }, Font::DEFAULT->GetCharSubTexture('a'), { 1, 1 }, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
@@ -253,7 +257,16 @@ void Level::OnRender(Timestep ts)
 		}
 	}
 
+	if (renderBezierCurve)
+	{
+		for (float t = 0; t < 1.0f; t += tdelta)
+		{
+			glm::vec2 size{ 0.09f };
+			glm::vec2 p = Math::bezier3(p0, p1, p2, t) + playerPos - size / 2.0f;
 
+			RenderQueue::EnQueue(RenderLayer::FOUR, { p, 1.0f }, Sprites::square, Colour::RED, size);
+		}
+	}
 }
 
 void Level::ImGuiLevelBar()
@@ -263,6 +276,17 @@ void Level::ImGuiLevelBar()
 
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Collectable Cells", &debugState.renderCollectableCells);
+
+	ImGui::Checkbox("Bezier tool", &renderBezierCurve);
+
+	if (renderBezierCurve)
+	{
+		ImGui::DragFloat2("p0", (float*)&p0, 0.1f);
+		ImGui::DragFloat2("p1", (float*)&p1, 0.1f);
+		ImGui::DragFloat2("p2", (float*)&p2, 0.1f);
+		ImGui::DragFloat("t delta", &tdelta, 0.02f, 0.02f, 1.0f);
+	}
+
 
 }
 

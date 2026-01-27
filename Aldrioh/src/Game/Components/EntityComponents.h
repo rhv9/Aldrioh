@@ -97,3 +97,13 @@ struct RandomMovementComponent
 	RandomMovementComponent(const RandomMovementComponent&) = default;
 };
 
+struct ItemAnimationComponent
+{
+	glm::vec2 force{ 0 };
+	float duration = 0.4f;
+
+	ItemAnimationComponent(const glm::vec2& force) : force(force) {}
+	ItemAnimationComponent() = default;
+	ItemAnimationComponent(const ItemAnimationComponent&) = default;
+};
+
