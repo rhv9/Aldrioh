@@ -32,6 +32,15 @@ glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity,
 		entityTransform.y -= diff.y * (1.0f - ts);
 	}
 
+	if (entity.HasComponent<BezierPathComponent>())
+	{
+		BezierPathComponent& bezier = entity.GetComponent<BezierPathComponent>();
+		Timestep delta = Game::Instance().GetFixedTickTimestep();
+		const glm::vec2& diff = entityTransform - bezier.prevPos;
+		entityTransform.x -= diff.x * (1.0f - ts);
+		entityTransform.y -= diff.y * (1.0f - ts);
+	}
+
 	return entityTransform;
 }
 

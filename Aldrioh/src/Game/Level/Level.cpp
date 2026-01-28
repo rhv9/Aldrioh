@@ -211,15 +211,12 @@ void Level::OnRender(Timestep ts)
 			CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
 			for (int i = 0; i < cell.count; ++i)
 			{
-				CCellData& cellData = cell.cellArray[i];
-				static const glm::vec4 JEWEL_COLOURS[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
+				CellItem& cellData = cell.cellArray[i];
+				CellItem::RenderData renderData = cellData.GetRenderData();
 
-				const glm::vec2 size{ 1.0f };
-				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatPos() - size / 2.0f;
+				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatOffset() - renderData.size / 2.0f;
 
-				int spriteId = cellData.type == CollectableType::COIN ? Sprites::coin : Sprites::jewel;
-
-				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, spriteId, JEWEL_COLOURS[static_cast<int>(cellData.type)], size);
+				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, renderData.spriteId, renderData.colour, renderData.size);
 			}
 
 			// Uncommenting this looks cool :D

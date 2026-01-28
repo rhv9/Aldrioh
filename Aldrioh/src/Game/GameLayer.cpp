@@ -25,6 +25,7 @@
 #include <Game/Systems/PlayerControllerSystems.h>
 #include <Game/Systems/TestSystems.h>
 #include <Game/Systems/CoreEntitySystems.h>
+#include <Game/Systems/ControllerSystems.h>
 #include <Systems/UISystems.h>
 #include <Systems/SoundSystems.h>
 #include <Systems/PathSystems.h>
@@ -109,6 +110,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
+	scene->AddUpdateSystem(&EntitySystem::ControllerSystems);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
 
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);

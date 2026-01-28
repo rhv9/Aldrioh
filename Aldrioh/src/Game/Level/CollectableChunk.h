@@ -11,20 +11,28 @@ enum class CollectableType : uint8_t
 	COIN,
 };
 
-struct CCellData
+struct CellItem
 {
+	struct RenderData
+	{
+		int spriteId = 0;
+		glm::vec4 colour{ 0 };
+		glm::vec2 size{ 1.0f };
+	};
+
 	uint8_t x, y;
 	CollectableType type;
 
-	glm::vec2 GetFloatPos() const;
+	glm::vec2 GetFloatOffset() const;
 	void SetPosOnDecimalValue(const glm::vec2 pos);
+	RenderData GetRenderData() const;
 
 	static constexpr uint8_t MAX_POINT_VALUE = 255;
 };
 
 struct CollectableCell
 {
-	std::array<CCellData, 32> cellArray;
+	std::array<CellItem, 32> cellArray;
 	int count = 0;
 
 	void AddCollectable(const glm::vec2& untrimmedPos, CollectableType type);

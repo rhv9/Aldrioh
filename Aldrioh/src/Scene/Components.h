@@ -104,6 +104,18 @@ struct MoveComponent
 	void zero() { moveVec = ZERO_VEC; }
 };
 
+struct BezierPathComponent
+{
+	float t = 0;
+	glm::vec2 p0{ 0 }, p1{ 0 }, p2{ 0 };
+	std::function<void(Entity e)> onCompletionCallback;
+	bool completionHandled = false;
+	glm::vec2 prevPos { 0 };
+
+	BezierPathComponent(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2) : p0(p0), p1(p1), p2(p2) {}
+	BezierPathComponent(const BezierPathComponent&) = default;
+};
+
 struct RotationComponent
 {
 	float angle = 0.0f;

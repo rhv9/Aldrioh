@@ -139,16 +139,29 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		{
 			for (int x = startX; x < endX; ++x)
 			{
-				if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f },  glm::vec2(playerTransform.position)) <= pcc.radius)
+				if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, glm::vec2(playerTransform.position)) <= pcc.radius)
 				{
 					glm::vec2 chunkPos = { x, y };
 					CollectableMapping mapping = collectableManager.GetMapping(chunkPos);
 					CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
-					
+
 					for (int i = 0; i < cell.count; ++i)
 					{
-						CCellData& cellData = cell.cellArray[i];
-						LOG_CORE_INFO("YIPEEE!");
+						CellItem& cellData = cell.cellArray[i];
+						CellItem::RenderData itemRenderData = cellData.GetRenderData();
+						Entity itemEntity = scene.CreateEntity("Item");
+						VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
+						vc.scale = itemRenderData.size;
+						vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
+						vc.colour = itemRenderData.colour;
+						glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
+						itemEntity.GetTransformComponent().position = { p0, 0.0f };
+						BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
+						bezier.onCompletionCallback = [](Entity e) {
+							e.QueueDestroy();
+							LOG_INFO("YIPEEE!");
+							};
+						itemEntity.AddComponent<ItemAnimationControllerComponent>();
 					}
 					cell.Clear();
 				}
