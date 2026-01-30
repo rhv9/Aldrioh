@@ -31,12 +31,15 @@ PositionMapping CollisionWorld::GetMapping(const glm::vec2& pos)
 	return mapping;
 }
 
-bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& dispatcher)
+bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionDispatcher& dispatcher)
 {
 	bool hasCollided = false;
-	glm::vec2 pos1 = glm::vec2(e1.GetTransformComponent().position);
-	CollisionBox& cb1 = e1.GetComponent<CollisionComponent>().collisionBox;
-	glm::vec2 collisionMidPos1 = cb1.OffsetNew({ pos1, 0.0f }).GetMidpoint();
+	TransformComponent& transform1 = e1.GetTransformComponent();
+	MoveComponent& moveComponent1 = e1.GetComponent<MoveComponent>();
+	glm::vec2 movedPos1 = glm::vec2(transform1.position + moveComponent1.CalculateActualMoveOffsetVec3(ts));
+	CollisionComponent& cc1 = e1.GetComponent<CollisionComponent>();
+	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
+	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
 
 	glm::vec2 maxActualPos = GetMaxActualPosition();
 
@@ -74,14 +77,27 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 					continue;
 
 				glm::vec3 pos2 = e2.GetTransformComponent().position;
-				CollisionBox& cb2 = e2.GetComponent<CollisionComponent>().collisionBox;
+				CollisionComponent& cc2 = e2.GetComponent<CollisionComponent>();
 
-				CollisionBox cb2Collision = cb2.OffsetNew(pos2);
-				bool collides = cb1.OffsetNew(glm::vec3{ pos1, 0.0f }).CollidesWith(&cb2Collision);
+				CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(pos2);
+				bool collides = cb1Offseted.CollidesWith(&cb2Offseted);
+				
+				// Debug data
+				++collisionCheckCount;
 
 				if (collides)
 				{
 					hasCollided = true;
+
+					// if both are rigid objects, then need to solve overlap
+					if (cc1.rigid && cc2.rigid)
+					{
+
+					}
+					else
+					{
+						transform1.position += moveComponent1.CalculateActualMoveOffsetVec3(ts);
+					}
 
 					CollisionEvent eventEntity1{ e1, false };
 					CollisionEvent eventEntity2{ e2, false };

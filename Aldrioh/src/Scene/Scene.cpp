@@ -101,10 +101,11 @@ void Scene::OnUIRender(Timestep ts)
 
 void Scene::OnImGuiDebugRender(Timestep ts)
 {
-	if (ImGui::CollapsingHeader("Scene"))
+	if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("Particle Count: %d", particleManager.GetActiveCount());
 		ImGui::Text("Entity Count: %d", entityCount);
+		ImGui::Text("Collision Check Count: %d", collisionWorld.GetCollisionCheckCount());
 	}
 	
 }
@@ -210,8 +211,8 @@ void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight)
 	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight);
 }
 
-bool Scene::DispatchCollisions(Entity e)
+bool Scene::DispatchCollisions(Timestep ts, Entity e)
 {
-	return collisionWorld.FindAndDispatchCollisions(e, collisionDispatcher);
+	return collisionWorld.FindAndDispatchCollisions(ts, e, collisionDispatcher);
 }
 

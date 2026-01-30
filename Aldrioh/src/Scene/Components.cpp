@@ -14,6 +14,11 @@ void AnimatedMovementComponent::update(float delta)
 	}
 }
 
+glm::vec3 MoveComponent::CalculateActualMoveOffsetVec3(Timestep ts)
+{
+	return glm::vec3{ moveVec * speed * (float)ts, 0.0f };
+}
+
 void MoveComponent::updateMoveVec(const glm::vec2& newMoveVec)
 {
 	moveVec = newMoveVec;

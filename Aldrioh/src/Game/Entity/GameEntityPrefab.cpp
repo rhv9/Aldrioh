@@ -274,7 +274,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<MoveComponent>(speed);
 	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	glm::vec2 collisionSize{ 0.5f };
-	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
+	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
 	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();

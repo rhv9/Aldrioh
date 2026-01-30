@@ -53,10 +53,14 @@ void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 {
+
+
 	CollisionWorld& collisionWorld = scene.GetCollisionWorld();
 	BoundingArea deathArea = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetDeathArea();
 	glm::vec2 maxActualPos = collisionWorld.GetMaxActualPosition();
 
+	// Debug
+	collisionWorld.ResetCollisionCheckCount();
 	// Reset 
 	{
 		glm::vec2 bottomLeft, topRight;

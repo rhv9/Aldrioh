@@ -18,16 +18,20 @@ public:
 	void Init(int numOfChunkWidth, int numOfChunkHeight);
 	PositionMapping GetMapping(const glm::vec2& pos);
 	inline CollisionChunk& GetChunk(int x, int y) { return chunks[y * width + x]; }
-	bool FindAndDispatchCollisions(Entity e, CollisionDispatcher& dispatcher);
+	bool FindAndDispatchCollisions(Timestep ts, Entity e, CollisionDispatcher& dispatcher);
 
 	int GetNumChunkWidth() const { return width; }
 	int GetNumChunkHeight() const { return height; }
 
 	glm::vec2 GetMaxActualPosition() const;
 
+	int GetCollisionCheckCount() const { return collisionCheckCount; }
+	void ResetCollisionCheckCount() { collisionCheckCount = 0; }
+
 private:
 	Scene& scene;
 	int width = 1, height = 1;
 	float cellSize = 1.0f;
 	std::vector<CollisionChunk> chunks;
+	int collisionCheckCount = 0;
 };

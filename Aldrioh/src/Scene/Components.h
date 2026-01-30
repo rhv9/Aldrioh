@@ -92,6 +92,8 @@ struct MoveComponent
 	MoveComponent() : speed(16.0f) {}
 	MoveComponent(const MoveComponent&) = default;
 
+	glm::vec3 CalculateActualMoveOffsetVec3(Timestep ts);
+
 	bool isMoving() const { return moveVec != ZERO_VEC; }
 	bool isMovingUp() const { return moveVec.y > 0; }
 	bool isMovingDown() const { return moveVec.y < 0; }
@@ -209,7 +211,7 @@ struct CollisionComponent
 	bool rigid = false;
 
 	CollisionComponent(const CollisionBox& collisionBox) : collisionBox(collisionBox) {}
-	CollisionComponent(const glm::vec3& pos, const glm::vec2& size) : collisionBox(pos, size) {}
+	CollisionComponent(const glm::vec3& pos, const glm::vec2& size, bool rigid = false) : collisionBox(pos, size), rigid(rigid) {}
 	CollisionComponent(const CollisionComponent&) = default;
 };
 
