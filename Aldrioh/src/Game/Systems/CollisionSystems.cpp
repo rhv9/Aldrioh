@@ -49,18 +49,6 @@ void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 			}
 		}
 	}
-
-	// Remove all handled collision components
-	{
-		auto view = scene.getRegistry().view<CollisionHandledComponent>();
-
-		for (auto e : view)
-			scene.WrapEntityHandle(e).RemoveComponent<CollisionHandledComponent>();
-	}
-
-
-
-
 }
 
 void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
@@ -102,16 +90,16 @@ void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 	// Add collisions
 
 	{
-		auto view = scene.getRegistry().view<TransformComponent, CollisionBox>();
+		auto view = scene.getRegistry().view<TransformComponent, CollisionComponent>();
 
 
 		for (auto eHandle : view)
 		{
-			auto [tc, cb] = view.get<TransformComponent, CollisionBox>(eHandle);
+			auto [tc, cb] = view.get<TransformComponent, CollisionComponent>(eHandle);
 
 
 			// Get collision centre pos and use that.
-			glm::vec2 midPos = cb.OffsetNew(tc.position).GetMidpoint();
+			glm::vec2 midPos = cb.collisionBox.OffsetNew(tc.position).GetMidpoint();
 
 			// if within Death area, then do things with collision
 			if (midPos.x < deathArea.bottomLeft.x || midPos.y < deathArea.bottomLeft.y ||

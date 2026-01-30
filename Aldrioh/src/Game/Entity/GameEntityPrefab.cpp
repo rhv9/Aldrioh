@@ -55,7 +55,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
 	player.AddComponent<EntityTypeComponent>(EntityTypes::Player);
-	player.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
 	player.AddComponent<HealthComponent>(maxHealth);
@@ -150,7 +150,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<MoveComponent>(1.0f);
 	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	enemy.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
 	dac.enemyManager = enemyManager;
 	enemy.AddComponent<HealthComponent>(maxHealth);
@@ -173,7 +173,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	vc.rotation = Math::angle(dirFacing);
 	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	enemy.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	enemy.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 
@@ -203,7 +203,7 @@ Entity AsteroidPrefab::create(Scene& scene)
 	rc.skipTicks = 5;
 
 	asteroid.AddComponent<EntityTypeComponent>(EntityTypes::Asteroid);
-	asteroid.AddComponent<CollisionBox>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
+	asteroid.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	asteroid.AddComponent<HealthComponent>(maxHealth);
 	asteroid.AddComponent<CoreEnemyStateComponent>();
 	asteroid.AddComponent<OnDestroyComponent>(OnDestroy_AsteroidParticles);
@@ -274,7 +274,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	enemy.AddComponent<MoveComponent>(speed);
 	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
 	glm::vec2 collisionSize{ 0.5f };
-	enemy.AddComponent<CollisionBox>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
+	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 	enemy.AddComponent<HealthComponent>(maxHealth);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();

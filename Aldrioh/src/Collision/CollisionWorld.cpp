@@ -35,7 +35,7 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 {
 	bool hasCollided = false;
 	glm::vec2 pos1 = glm::vec2(e1.GetTransformComponent().position);
-	CollisionBox& cb1 = e1.GetComponent<CollisionBox>();
+	CollisionBox& cb1 = e1.GetComponent<CollisionComponent>().collisionBox;
 	glm::vec2 collisionMidPos1 = cb1.OffsetNew({ pos1, 0.0f }).GetMidpoint();
 
 	glm::vec2 maxActualPos = GetMaxActualPosition();
@@ -74,7 +74,7 @@ bool CollisionWorld::FindAndDispatchCollisions(Entity e1, CollisionDispatcher& d
 					continue;
 
 				glm::vec3 pos2 = e2.GetTransformComponent().position;
-				CollisionBox& cb2 = e2.GetComponent<CollisionBox>();
+				CollisionBox& cb2 = e2.GetComponent<CollisionComponent>().collisionBox;
 
 				CollisionBox cb2Collision = cb2.OffsetNew(pos2);
 				bool collides = cb1.OffsetNew(glm::vec3{ pos1, 0.0f }).CollidesWith(&cb2Collision);

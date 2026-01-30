@@ -66,12 +66,12 @@ void EntitySystem::CollisionRenderSystem(Timestep ts, Scene& scene)
 	if (!GameDebugState::showCollisionBox)
 		return;
 
-	auto view = scene.getRegistry().view<TransformComponent, CollisionBox>();
+	auto view = scene.getRegistry().view<TransformComponent, CollisionComponent>();
 	
 	for (entt::entity e : view)
 	{
-		auto [tc, cb] = view.get<TransformComponent, CollisionBox>(e);
-		glm::vec3 offset = tc.position + cb.position;
-		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::borderBox, Colour::RED, cb.size);
+		auto [tc, cc] = view.get<TransformComponent, CollisionComponent>(e);
+		glm::vec3 offset = tc.position + cc.collisionBox.position;
+		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::borderBox, Colour::RED, cc.collisionBox.size);
 	}
 }

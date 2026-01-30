@@ -3,6 +3,7 @@
 #include <Scene/CameraController.h>
 #include <Scene/Entity.h>
 #include <Graphics/RenderQueue.h>
+#include <Collision/Collision.h>
 
 class UIManager;
 struct UIManagerComponent
@@ -201,6 +202,16 @@ struct CollisionHandledComponent
 	CollisionHandledComponent(const CollisionHandledComponent&) = default;
 };
 
+
+struct CollisionComponent
+{
+	CollisionBox collisionBox;
+	bool rigid = false;
+
+	CollisionComponent(const CollisionBox& collisionBox) : collisionBox(collisionBox) {}
+	CollisionComponent(const glm::vec3& pos, const glm::vec2& size) : collisionBox(pos, size) {}
+	CollisionComponent(const CollisionComponent&) = default;
+};
 
 
 

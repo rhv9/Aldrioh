@@ -92,11 +92,19 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Player, [](CollisionEvent& enemy, CollisionEvent& player)
 		{
-			auto& hc = player.e.GetComponent<HealthComponent>();
-			hc.health -= 0.03f;
-			ParticleTemplate pt = particleTemplate_playerTakingDamage;
-			pt.startPos = player.e.GetTransformComponent().position;
-			player.e.getScene()->GetParticleManager().Emit(pt);
+			if (false)
+			{
+				auto& hc = player.e.GetComponent<HealthComponent>();
+				hc.health -= 0.03f;
+				ParticleTemplate pt = particleTemplate_playerTakingDamage;
+				pt.startPos = player.e.GetTransformComponent().position;
+				player.e.getScene()->GetParticleManager().Emit(pt);
+			}
+		});
+
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Enemy, [](CollisionEvent& e1, CollisionEvent& e2)
+		{
+
 		});
 
 

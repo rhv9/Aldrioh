@@ -31,10 +31,18 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 		Entity entityWrapped = scene.WrapEntityHandle(e);
 
 
-		if (entityWrapped.HasComponent<CollisionBox>())
+		if (entityWrapped.HasComponent<CollisionComponent>())
 		{
 			scene.DispatchCollisions(entityWrapped);
 		}
+	}
+
+	// Remove all handled collision components
+	{
+		auto view = scene.getRegistry().view<CollisionHandledComponent>();
+
+		for (auto e : view)
+			scene.WrapEntityHandle(e).RemoveComponent<CollisionHandledComponent>();
 	}
 }
 
