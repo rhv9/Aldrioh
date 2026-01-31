@@ -21,7 +21,7 @@ glm::vec3 MoveComponent::CalculateActualMoveOffsetVec3(Timestep ts)
 
 void MoveComponent::updateMoveVec(const glm::vec2& newMoveVec)
 {
-	moveVec = newMoveVec;
+	moveVec += newMoveVec;
 
 	if (moveVec.x > 0)
 		dir = MoveDir::RIGHT;

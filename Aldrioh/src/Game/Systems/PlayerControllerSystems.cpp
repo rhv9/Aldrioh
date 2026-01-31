@@ -20,7 +20,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
 	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	auto& mc = fireball.AddComponent<MoveComponent>(10.0f);
+	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
 	mc.moveVec = normalizedDir;
 	mc.locked = true;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
@@ -96,7 +96,6 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			{
 				shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 
-
 				glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
 
 				glm::vec2 dir;
@@ -107,6 +106,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 				else
 					dir = pcc.dirLock;
 				shoot(player, playerPos, dir);
+
 				scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 
 			}

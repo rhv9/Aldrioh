@@ -36,7 +36,10 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 	bool hasCollided = false;
 	TransformComponent& transform1 = e1.GetTransformComponent();
 	MoveComponent& moveComponent1 = e1.GetComponent<MoveComponent>();
-	glm::vec2 movedPos1 = glm::vec2(transform1.position + moveComponent1.CalculateActualMoveOffsetVec3(ts));
+
+	transform1.position += moveComponent1.CalculateActualMoveOffsetVec3(ts);
+	glm::vec2 movedPos1 = transform1.position;
+
 	CollisionComponent& cc1 = e1.GetComponent<CollisionComponent>();
 	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
 	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
@@ -76,7 +79,8 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 				if (e2.HasComponent<CollisionHandledComponent>())
 					continue;
 
-				glm::vec3 pos2 = e2.GetTransformComponent().position;
+				TransformComponent& transform2 = e2.GetTransformComponent();
+				glm::vec3 pos2 = transform2.position;
 				CollisionComponent& cc2 = e2.GetComponent<CollisionComponent>();
 
 				CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(pos2);
@@ -89,14 +93,17 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 				{
 					hasCollided = true;
 
-					// if both are rigid objects, then need to solve overlap
+					// if both are rigid objects, then do push out effect
 					if (cc1.rigid && cc2.rigid)
 					{
+						float pushout = 0.3f;
+						glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
+						glm::vec2 normalizedDirection = glm::normalize(direction);
 
-					}
-					else
-					{
-						transform1.position += moveComponent1.CalculateActualMoveOffsetVec3(ts);
+						transform2.position.x += -pushout * normalizedDirection.x * ts;
+						transform2.position.y += -pushout * normalizedDirection.y * ts;
+						transform1.position.x += pushout * normalizedDirection.x * ts;
+						transform1.position.y += pushout * normalizedDirection.y * ts;
 					}
 
 					CollisionEvent eventEntity1{ e1, false };

@@ -32,8 +32,6 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 		if (entityWrapped.HasComponent<CollisionComponent>())
 		{
 			bool collided = scene.DispatchCollisions(ts, entityWrapped);
-			if (!collided)
-				transform.position += move.CalculateActualMoveOffsetVec3(ts);
 		}
 		else
 			transform.position += move.CalculateActualMoveOffsetVec3(ts);

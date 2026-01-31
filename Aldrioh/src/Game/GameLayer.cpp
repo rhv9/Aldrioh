@@ -107,6 +107,7 @@ void GameLayer::OnBegin()
 	uimc.uiManager->AddUIObject(uiTimerText);
 
 	// On Update Systems
+	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
