@@ -35,10 +35,10 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 {
 	bool hasCollided = false;
 	TransformComponent& transform1 = e1.GetTransformComponent();
-	MoveComponent& moveComponent1 = e1.GetComponent<MoveComponent>();
+	MoveComponent& move1 = e1.GetComponent<MoveComponent>();
 
-	transform1.position += moveComponent1.CalculateActualMoveOffsetVec3(ts);
-	glm::vec2 movedPos1 = transform1.position;
+
+	glm::vec2 movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
 
 	CollisionComponent& cc1 = e1.GetComponent<CollisionComponent>();
 	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
@@ -80,6 +80,7 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 					continue;
 
 				TransformComponent& transform2 = e2.GetTransformComponent();
+				MoveComponent& move2 = e2.GetComponent<MoveComponent>();
 				glm::vec3 pos2 = transform2.position;
 				CollisionComponent& cc2 = e2.GetComponent<CollisionComponent>();
 
@@ -96,14 +97,17 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 					// if both are rigid objects, then do push out effect
 					if (cc1.rigid && cc2.rigid)
 					{
-						float pushout = 0.3f;
+						float pushout = 0.30f;
 						glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
 						glm::vec2 normalizedDirection = glm::normalize(direction);
 
-						transform2.position.x += -pushout * normalizedDirection.x * ts;
-						transform2.position.y += -pushout * normalizedDirection.y * ts;
-						transform1.position.x += pushout * normalizedDirection.x * ts;
-						transform1.position.y += pushout * normalizedDirection.y * ts;
+						move1.updateMoveVec({ pushout * normalizedDirection.x ,pushout * normalizedDirection.y });
+						move2.updateMoveVec({ -pushout * normalizedDirection.x, -pushout * normalizedDirection.y });
+
+						movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
+
+						collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
+						cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
 					}
 
 					CollisionEvent eventEntity1{ e1, false };

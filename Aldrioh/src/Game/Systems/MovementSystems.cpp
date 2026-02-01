@@ -26,15 +26,15 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 	for (entt::entity e : view)
 	{
 		auto [transform, move] = view.get(e);
-
 		Entity entityWrapped = scene.WrapEntityHandle(e);
-
 		if (entityWrapped.HasComponent<CollisionComponent>())
-		{
-			bool collided = scene.DispatchCollisions(ts, entityWrapped);
-		}
-		else
-			transform.position += move.CalculateActualMoveOffsetVec3(ts);
+			scene.DispatchCollisions(ts, entityWrapped);
+	}
+
+	for (entt::entity e : view)
+	{
+		auto [transform, move] = view.get(e);
+		transform.position += move.CalculateActualMoveOffsetVec3(ts);
 	}
 
 	// Remove all handled collision components
