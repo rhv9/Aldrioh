@@ -22,5 +22,7 @@ void PlayerStats::AddExp(float value)
 		level.OnLevelUp();
 	}
 
+	level.OnExpGain();
+
 	LOG_INFO("Level: {} Exp: {}", levelCount, exp);
 }

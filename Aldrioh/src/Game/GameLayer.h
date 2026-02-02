@@ -29,9 +29,10 @@ public:
 	virtual void OnPushedLayerAboveEvent() override;
 	virtual void OnPoppedLayerIntoEvent() override;
 
-	UIText* GetUIScoreText() { return uiScoreText; }
+	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 	UIText* GetUITimerText() { return uiTimerText; }
+	UIProgressBar* GetExpProgressBar() { return expProgressBar; }
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 	Level* GetCurrentLevel() { return currentLevel.get(); }
 
@@ -40,8 +41,10 @@ private:
 	std::unique_ptr<Level> currentLevel = nullptr;
 
 	UIManager* uiManager = nullptr;
-	UIText* uiScoreText = nullptr;
+	UIText* uiLevelCountText = nullptr;
+
 	UIProgressBar* uiPlayerHealthBar = nullptr;
+	UIProgressBar* expProgressBar = nullptr;
 	UIText* uiTimerText = nullptr;
 
 	EventCallbackID<KeyEventArg> callbackKeyID;

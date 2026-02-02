@@ -84,18 +84,25 @@ void GameLayer::OnBegin()
 	uimc.uiManager = std::make_unique<UIManager>();
 
 	// UI
-	uiScoreText = new UIText("Score", { 2, 2 }, glm::vec2{ 0 });
-	uiScoreText->SetText("Score: 0");
-	uiScoreText->SetAnchorPoint(AnchorPoint::LEFT_TOP);
-	uiScoreText->GetFontStyle().colour = Colour::WHITE;
-	uiScoreText->SetFontSize(4);
-	uimc.uiManager->AddUIObject(uiScoreText);
+	uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });
+	uiLevelCountText->SetText("Level: 0");
+	uiLevelCountText->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+	uiLevelCountText->GetFontStyle().colour = Colour::WHITE;
+	uiLevelCountText->SetFontSize(4);
+	uimc.uiManager->AddUIObject(uiLevelCountText);
 
 	uiPlayerHealthBar = new UIProgressBar("Player Health", { 2, 2 }, { 7, 0.4f });
 	uiPlayerHealthBar->SetAnchorPoint(AnchorPoint::CENTER);
 	uiPlayerHealthBar->SetBackgroundColour(Colour::GREY);
-	uiPlayerHealthBar->SetProgress(0.5f);
+	uiPlayerHealthBar->SetProgress(1);
 	uimc.uiManager->AddUIObject(uiPlayerHealthBar);
+
+
+	expProgressBar = new UIProgressBar("Exp bar", { 0, 0 }, { 50, 2 });
+	expProgressBar->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+	expProgressBar->SetBackgroundColour(Colour::GREY);
+	expProgressBar->SetProgress(0);
+	uimc.uiManager->AddUIObject(expProgressBar);
 
 	// UI
 	uiTimerText = new UIText("Timer", { 0, 4 }, glm::vec2{ 4, 4 });
@@ -105,6 +112,8 @@ void GameLayer::OnBegin()
 	uiTimerText->GetFontStyle().charSpacingPercent = 0.9f;
 	uiTimerText->SetFontSize(4);
 	uimc.uiManager->AddUIObject(uiTimerText);
+
+
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);

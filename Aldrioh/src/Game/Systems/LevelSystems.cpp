@@ -28,38 +28,6 @@ void EntitySystem::LevelRenderSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::ScoreSystems(Timestep ts, Scene& scene)
 {
-	{
-		auto view = scene.getRegistry().view<AddScoreComponent>();
-		for (auto e : view)
-		{
-			AddScoreComponent& asc = view.get<AddScoreComponent>(e);
-		
-			{
-				auto view = scene.getRegistry().view<ScoreComponent>();
-				for (auto e : view)
-				{
-					ScoreComponent& sc = view.get<ScoreComponent>(e);
-					sc.score += asc.points;
-					sc.updated = true;
-				}
-			}
-
-			scene.WrapEntityHandle(e).QueueDestroy();
-		}
-	}
-
-	{
-		auto view = scene.getRegistry().view<ScoreComponent>();
-		for (auto e : view)
-		{
-			ScoreComponent& sc = view.get<ScoreComponent>(e);
-			if (sc.updated)
-			{
-				sc.updated = false;
-				sc.onScoreUpdate(sc.score);
-			}
-		}
-	}
 }
 
 

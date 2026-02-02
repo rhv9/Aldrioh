@@ -128,12 +128,6 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
-	// Add score entity
-	Entity scoreEntity = scene.CreateEntityNoTransform("Score");
-	scoreEntity.AddComponent<ScoreComponent>([this](float newScore)
-		{
-			this->UpdateScore(newScore);
-		});
 	LOG_CORE_INFO("Test {}", scene.GetCollisionWorld().GetMapping({ 15.0f, 16.0f }).ToString());
 }
 
@@ -301,11 +295,6 @@ BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
 	return { offset + screenOffset.bottomLeft, offset + screenOffset.topRight };
 }
 
-void Level::UpdateScore(float newScore)
-{
-	GlobalLayers::game->GetUIScoreText()->SetText("Score: " + std::to_string(int(newScore)));
-}
-
 void Level::UpdateTimerText(float elapsedTime)
 {
 	int mins = static_cast<int>(elapsedTime / 60.0f);
@@ -375,7 +364,12 @@ BoundingArea Level::GetDeathArea()
 
 void Level::OnLevelUp()
 {
-	LOG_INFO("LEVELED UP!!!");
+	GlobalLayers::game->GetUILevelCountText()->SetText(std::format("Level: {}", playerStats.GetLevelCount()));
+}
+
+void Level::OnExpGain()
+{
+	GlobalLayers::game->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
 }
 
 void Level::SetEnableDebugCamera(bool enable)

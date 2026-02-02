@@ -32,7 +32,6 @@ public:
 	const BoundingArea& GetScreenBorderOffset() const { return levelArea; }
 	BoundingArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
 
-	void UpdateScore(float newScore);
 	void UpdateTimerText(float elapsedTime);
 
 	// Algorithm to generate the spawn coords for enemies/asteroids
@@ -47,6 +46,7 @@ public:
 
 	PlayerStats& GetPlayerStats() { return playerStats; }
 	void OnLevelUp();
+	void OnExpGain();
 
 	Scene& scene;
 

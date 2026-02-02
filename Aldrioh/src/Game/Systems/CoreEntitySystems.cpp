@@ -8,11 +8,6 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Components/LevelComponents.h>
 
-static auto OnDestroy_AddScore = [](Entity e) {
-	Entity scoreEntity = e.getScene()->CreateEntity("Add Score");
-	scoreEntity.AddComponent<AddScoreComponent>(1.0f);
-	};
-
 void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 {
 	// Destroy Entity
@@ -34,14 +29,6 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 					EnemyManagerComponent& emc = aic.enemyManager.GetComponent<EnemyManagerComponent>();
 					emc.entityCount--;
 				}
-			}
-
-			if (entity.HasComponent<CoreEnemyStateComponent>())
-			{
-				CoreEnemyStateComponent& cesc = entity.GetComponent<CoreEnemyStateComponent>();
-				
-				if (cesc.addScoreOnDeath)
-					OnDestroy_AddScore(entity);
 			}
 
 			scene.DestroyEntity(entity);
