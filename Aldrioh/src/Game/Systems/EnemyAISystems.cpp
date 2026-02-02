@@ -25,7 +25,7 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 			auto& emmc = dac.enemyManager.GetComponent<MoveComponent>();
 
 			mc.speed = emmc.speed;
-			mc.updateMoveVec(emmc.moveVec);
+			mc.addMoveVec(emmc.moveVec);
 
 			if (dac.firstUpdate)
 			{
@@ -62,6 +62,6 @@ void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 
 		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
 		vc.rotation = Math::angle(dir);
-		mc.updateMoveVec(dir);
+		mc.addMoveVec(dir);
 	}
 }

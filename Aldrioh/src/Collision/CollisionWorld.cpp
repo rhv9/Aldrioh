@@ -101,8 +101,8 @@ bool CollisionWorld::FindAndDispatchCollisions(Timestep ts, Entity e1, Collision
 						glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
 						glm::vec2 normalizedDirection = glm::normalize(direction);
 
-						move1.updateMoveVec({ pushout * normalizedDirection.x ,pushout * normalizedDirection.y });
-						move2.updateMoveVec({ -pushout * normalizedDirection.x, -pushout * normalizedDirection.y });
+						move1.addMoveVec({ normalizedDirection.x ,normalizedDirection.y }, pushout);
+						move2.addMoveVec({ normalizedDirection.x, normalizedDirection.y }, -pushout);
 
 						movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
 

@@ -21,7 +21,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
 	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
 	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.moveVec = normalizedDir;
+	mc.addMoveVec(normalizedDir);
 	mc.locked = true;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(mc.moveVec);
@@ -78,7 +78,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		if (Input::IsKeyPressed(Input::KEY_D))
 			move.x = 1.0f;
 
-		playerMove.updateMoveVec(move);
+		playerMove.addMoveVec(move);
 
 		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 		glm::vec2 mousePos = scene.GetMousePosInScene();

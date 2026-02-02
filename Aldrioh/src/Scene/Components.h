@@ -101,10 +101,13 @@ struct MoveComponent
 	bool isMovingRight() const { return moveVec.x > 0; }
 	MoveDir getMoveDir() const { return dir; }
 
-	void updateMoveVec(const glm::vec2& newMoveVec);
+	void addMoveVec(const glm::vec2& newMoveVec, float speed);
+	void addMoveVec(const glm::vec2& newMoveVec) { addMoveVec(newMoveVec, speed); }
+
 
 	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
 	void zero() { moveVec = ZERO_VEC; }
+
 };
 
 struct BezierPathComponent

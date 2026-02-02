@@ -18,8 +18,8 @@ glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity,
 	{
 		MoveComponent& mc = entity.GetComponent<MoveComponent>();
 		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		entityTransform.x -= mc.moveVec.x * mc.speed * delta * (1.0f - ts);
-		entityTransform.y -= mc.moveVec.y * mc.speed * delta * (1.0f - ts);
+		entityTransform.x -= mc.moveVec.x * delta * (1.0f - ts);
+		entityTransform.y -= mc.moveVec.y * delta * (1.0f - ts);
 
 	}
 

@@ -16,12 +16,12 @@ void AnimatedMovementComponent::update(float delta)
 
 glm::vec3 MoveComponent::CalculateActualMoveOffsetVec3(Timestep ts)
 {
-	return glm::vec3{ moveVec * speed * (float)ts, 0.0f };
+	return glm::vec3{ moveVec * (float)ts, 0.0f };
 }
 
-void MoveComponent::updateMoveVec(const glm::vec2& newMoveVec)
+void MoveComponent::addMoveVec(const glm::vec2& newMoveVec, float speed)
 {
-	moveVec += newMoveVec;
+	moveVec += newMoveVec * speed;
 
 	if (moveVec.x > 0)
 		dir = MoveDir::RIGHT;

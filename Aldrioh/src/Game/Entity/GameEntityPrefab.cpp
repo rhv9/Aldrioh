@@ -98,7 +98,7 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 
 	glm::vec2 moveBy = Math::perpendicularClockwise(dirFacing);
 	auto& mc = manager.AddComponent<MoveComponent>(speed);
-	mc.updateMoveVec(moveBy);
+	mc.addMoveVec(moveBy);
 
 	bool alreadyFlipped = false;
 	emc.OnUpdateFunc = [distance = distance, alreadyFlipped, dirFacing = dirFacing * 1.0f](Timestep ts, Entity enemyManager) mutable
@@ -106,7 +106,7 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 			auto& tc = enemyManager.GetComponent<TransformComponent>();
 			auto& mc = enemyManager.GetComponent<MoveComponent>();
 
-			glm::vec2 move = mc.moveVec;
+			glm::vec2 move = mc.moveVec / mc.speed;
 			glm::vec2 newPos = glm::vec2{ tc.position.x, tc.position.y };
 			float length = glm::length(newPos);
 			if (!alreadyFlipped && length > distance)
@@ -119,7 +119,7 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 
 			move = glm::normalize(move + dirFacing);
 
-			mc.updateMoveVec(move);
+			mc.addMoveVec(move);
 		};
 
 	for (int y = 0; y < count.y; ++y)
@@ -197,7 +197,8 @@ Entity AsteroidPrefab::create(Scene& scene)
 	VisualComponent& vc = asteroid.AddComponent<VisualComponent>(Sprites::asteroid_small);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	MoveComponent& mc = asteroid.AddComponent<MoveComponent>(speed);
-	mc.moveVec = Math::angleToNormalizedVector(angle);
+	mc.addMoveVec(Math::angleToNormalizedVector(angle));
+	mc.locked = true;
 	int rand = Math::Random::linearInt(-45, 45);
 	RotationComponent& rc = asteroid.AddComponent<RotationComponent>(Math::degreesToRad(rand));
 	rc.skipTicks = 5;
