@@ -58,7 +58,7 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene), playerStats(*this)
 {
 	waveManager.Init();
 	scene.InitCollisionWorldSize(100, 100);
@@ -71,7 +71,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 			hc.health -= 0.5f;
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
-			cesc.hitVisualTimer = 0.1;
+			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 			fireball.handled = true;
@@ -84,7 +84,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 			HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
 			hc.health -= 0.5f;
 			auto& cesc = asteroid.e.GetComponent<CoreEnemyStateComponent>();
-			cesc.hitVisualTimer = 0.1;
+			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 			fireball.handled = true;
@@ -163,7 +163,7 @@ void Level::OnUpdate(Timestep ts)
 		AsteroidPrefab prefab;
 		prefab.spawnPos = GenerateRandomSpawnCoords();
 		prefab.speed = Math::Random::linearFloat(1.0f, 5.0f);
-		prefab.angle = Math::degreesToRad(Math::Random::linearInt(0, 360));
+		prefab.angle = Math::degreesToRad((float)Math::Random::linearInt(0, 360));
 		prefab.create(scene);
 
 		DroneEnemyPrefab dronePrefab;
@@ -203,10 +203,10 @@ void Level::OnRender(Timestep ts)
 	uiPlayerHealthBar->SetRelativePos(barPos);
 
 	// Rendering jewels in the screen
-	int startX = (int)levelArea.bottomLeft.x + playerCameraPos.x - 1;
-	int startY = (int)levelArea.bottomLeft.y + playerCameraPos.y;
-	int endX = (int)levelArea.topRight.x + playerCameraPos.x + 2;
-	int endY = (int)levelArea.topRight.y + playerCameraPos.y + 1;
+	int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x - 1);
+	int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
+	int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 2);
+	int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
 
 	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
 
@@ -243,10 +243,10 @@ void Level::OnRender(Timestep ts)
 		}
 		{
 			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
-			int startX = playerPos.x - pcc.radius;
-			int startY = playerPos.y - pcc.radius;
-			int endX = playerPos.x + pcc.radius;
-			int endY = playerPos.y + pcc.radius;
+			int startX = static_cast<int>(playerPos.x - pcc.radius);
+			int startY = static_cast<int>(playerPos.y - pcc.radius);
+			int endX = static_cast<int>(playerPos.x + pcc.radius);
+			int endY = static_cast<int>(playerPos.y + pcc.radius);
 
 			for (int y = startY; y < endY; ++y)
 			{
@@ -308,8 +308,8 @@ void Level::UpdateScore(float newScore)
 
 void Level::UpdateTimerText(float elapsedTime)
 {
-	int mins = elapsedTime / 60.0f;
-	int seconds = (int)elapsedTime % 60;
+	int mins = static_cast<int>(elapsedTime / 60.0f);
+	int seconds = static_cast<int>(elapsedTime) % 60;
 
 	std::string timerText = std::format("{}:{:02}", mins, seconds);
 	GlobalLayers::game->GetUITimerText()->SetText(timerText);
@@ -371,6 +371,11 @@ BoundingArea Level::GetDeathArea()
 	boundingArea.bottomLeft = bottomLeft;
 	boundingArea.topRight = topRight;
 	return boundingArea;
+}
+
+void Level::OnLevelUp()
+{
+	LOG_INFO("LEVELED UP!!!");
 }
 
 void Level::SetEnableDebugCamera(bool enable)

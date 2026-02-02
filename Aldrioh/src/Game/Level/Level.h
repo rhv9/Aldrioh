@@ -5,6 +5,8 @@
 #include <Game/Waves/WaveManager.h>
 #include <Game/Level/CollectableManager.h>
 
+#include "PlayerStats.h"
+
 struct BoundingArea
 {
 	glm::vec2 bottomLeft{ 0 };
@@ -43,6 +45,9 @@ public:
 
 	CollectableManager& GetCollectableManager() { return collectableManager; }
 
+	PlayerStats& GetPlayerStats() { return playerStats; }
+	void OnLevelUp();
+
 	Scene& scene;
 
 	// debugging related
@@ -51,15 +56,16 @@ protected:
 	BoundingArea levelArea;
 	Entity playerCamera, debugCamera;
 	Entity playerEntity;
+
 	WaveManager waveManager;
 	CollectableManager collectableManager;
+	PlayerStats playerStats;
 
 	struct DebugState
 	{
 		bool spawnEntites = true;
 		bool renderCollectableCells = false;
 	};
-
 	DebugState debugState;
 
 	float levelTimeElapsed = 0.0f;

@@ -13,6 +13,8 @@
 
 #include <Math/Math.h>
 
+#include <Game/GlobalLayers.h>
+
 float shootTimer = 0.0f;
 
 void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
@@ -159,7 +161,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 						BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
 						bezier.onCompletionCallback = [](Entity e) {
 							e.QueueDestroy();
-							LOG_INFO("YIPEEE!");
+							GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
 							};
 						itemEntity.AddComponent<ItemAnimationControllerComponent>();
 					}

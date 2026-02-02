@@ -32,6 +32,8 @@ public:
 	UIText* GetUIScoreText() { return uiScoreText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 	UIText* GetUITimerText() { return uiTimerText; }
+	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
+	Level* GetCurrentLevel() { return currentLevel.get(); }
 
 private:
 	std::unique_ptr<Scene> scene = nullptr;
