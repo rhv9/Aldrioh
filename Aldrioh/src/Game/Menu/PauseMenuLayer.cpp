@@ -27,7 +27,7 @@ void PauseMenuLayer::OnBegin()
 	uiManager = new UIManager();
 
 	UIObject* uiBackground = new UIObject("Background", { 0,0 }, Renderer::UIGetWindowSize());
-	uiBackground->SetBackgroundColour(glm::vec4{ 0.5f, 0, 0, 0.5f });
+	uiBackground->SetBackgroundColour(glm::vec4{ 0.3f, 0.3f, 0.3f, 0.5f });
 	uiBackground->SetScalingBasedWidth(1.0f);
 	uiManager->AddUIObject(uiBackground);
 

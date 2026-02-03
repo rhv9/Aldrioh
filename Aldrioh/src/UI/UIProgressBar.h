@@ -12,6 +12,8 @@ public:
 	void SetProgress(float percentage) { this->percentage = percentage; }
 	float GetProgress() const { return percentage; }
 
+	void SetBarColour(const glm::vec4& colour) { barColour = colour; }
+
 private:
 	float percentage = 0.75f;
 	glm::vec4 barColour = Colour::RED;
