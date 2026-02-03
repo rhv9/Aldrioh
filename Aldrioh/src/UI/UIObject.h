@@ -48,9 +48,12 @@ public:
 	float GetWidth() const { return size.x; }
 	float GetHeight() const { return size.y; }
 	const glm::vec2& GetSize() const { return size; }
-	void SetSize(const glm::vec2& size) { this->size = size; RecalculateRenderPos(); }
+	void SetSize(const glm::vec2& size) { this->size = size; RecalculateInternalState(); }
+	void SetScalingBasedWidth(const float percentage);
+	void SetScalingBasedHeight(const float percentage);
 
-	void SetRelativePos(const glm::vec2& newRelativePos) { relativePos = newRelativePos; RecalculateRenderPos(); }
+
+	void SetRelativePos(const glm::vec2& newRelativePos) { relativePos = newRelativePos; RecalculateInternalState(); }
 	const glm::vec2& GetRelativePos() const { return relativePos; }
 	float GetRelativePosX() const { return relativePos.x; }
 	float GetRelativePosY() const { return relativePos.y; }
@@ -64,7 +67,7 @@ public:
 	void SetParent(UIObject* parent) { this->parent = parent; }
 
 	AnchorPoint GetAnchorPoint() const { return anchorPoint; }
-	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateRenderPos(); }
+	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateInternalState(); }
 
 	UIManager* GetUIManager();
 
@@ -79,7 +82,7 @@ public:
 private:
 	void RenderChildren(Timestep ts);
 
-	void RecalculateRenderPos();
+	void RecalculateInternalState();
 	void SetUIManager(UIManager* uiManager);
 
 
@@ -88,6 +91,8 @@ protected:
 
 	glm::vec2 relativePos{ 0 }, renderPos{ 0 };
 	glm::vec2 size{ 0 };
+	// When set as minimum, it means scaling based size is disabled
+	glm::vec2 scalingSize{ std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
 	glm::vec4 backgroundColour{ 0 };
 

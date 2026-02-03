@@ -36,7 +36,21 @@ void UIObject::AddChild(UIObject* child)
 {
 	child->SetParent(this);
 	children.push_back(child);
-	child->RecalculateRenderPos();
+	child->RecalculateInternalState();
+}
+
+void UIObject::SetScalingBasedWidth(const float percentage)
+{
+	ASSERT(percentage >= 0 && percentage <= 1.0f, "Scaling is out of bounds");
+	scalingSize.x = percentage;
+	RecalculateInternalState();
+}
+
+void UIObject::SetScalingBasedHeight(const float percentage)
+{
+	ASSERT(percentage >= 0 && percentage <= 1.0f, "Scaling is out of bounds");
+	scalingSize.y = percentage;
+	RecalculateInternalState();
 }
 
 UIManager* UIObject::GetUIManager()
@@ -59,7 +73,7 @@ void UIObject::RenderChildren(Timestep ts)
 	}
 }
 
-void UIObject::RecalculateRenderPos()
+void UIObject::RecalculateInternalState()
 {
 	glm::vec2 offset = parent != nullptr ? parent->GetRenderPos() : glm::vec2(0);
 	glm::vec2 containerSize = parent != nullptr ? parent->size : (uiManager != nullptr ? uiManager->GetUIArea() : glm::vec2(1));
@@ -67,16 +81,21 @@ void UIObject::RecalculateRenderPos()
 	glm::vec2 anchorPos = anchorPoint.ConvertPos(relativePos, size, containerSize);
 	renderPos = offset + anchorPos;
 
+	if (scalingSize.x != std::numeric_limits<float>::min())
+		size.x = scalingSize.x * containerSize.x;
+	if (scalingSize.y != std::numeric_limits<float>::min())
+		size.y = scalingSize.y * containerSize.y;
+
 	for (UIObject* obj : children)
 	{
-		obj->RecalculateRenderPos();
+		obj->RecalculateInternalState();
 	}
 }
 
 void UIObject::SetUIManager(UIManager* uiManager)
 {
 	this->uiManager = uiManager;
-	RecalculateRenderPos();
+	RecalculateInternalState();
 }
 
 bool UIObject::IsMouseHovering()

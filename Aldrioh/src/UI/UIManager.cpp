@@ -112,7 +112,7 @@ void UIManager::PollAndUpdateWindowSize()
 	windowSizeCached = Game::Instance().GetWindow()->GetSize();
 
 	for (UIObject* obj : uiObjects)
-		obj->RecalculateRenderPos();
+		obj->RecalculateInternalState();
 }
 
 

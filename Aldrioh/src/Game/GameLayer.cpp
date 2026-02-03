@@ -101,6 +101,7 @@ void GameLayer::OnBegin()
 	expProgressBar = new UIProgressBar("Exp bar", { 0, 0 }, { 50, 2 });
 	expProgressBar->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 	expProgressBar->SetBackgroundColour(Colour::GREY);
+	expProgressBar->SetScalingBasedWidth(1.0f);
 	expProgressBar->SetProgress(0);
 	uimc.uiManager->AddUIObject(expProgressBar);
 
@@ -112,8 +113,6 @@ void GameLayer::OnBegin()
 	uiTimerText->GetFontStyle().charSpacingPercent = 0.9f;
 	uiTimerText->SetFontSize(4);
 	uimc.uiManager->AddUIObject(uiTimerText);
-
-
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
