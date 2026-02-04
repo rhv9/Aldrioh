@@ -36,7 +36,7 @@
 
 #include <Game/Components/LevelComponents.h>
 
-#include <Debug/GameDebugState.h>
+#include <Game/Debug/GameDebugState.h>
 #include <Debug/Statistics.h>
 
 #include <ImGui/ImGuiWindows.h>
@@ -153,7 +153,7 @@ void GameLayer::OnBegin()
 	scene->AddRenderSystem(&EntitySystem::TestRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
-
+	scene->AddRenderSystem(&EntitySystem::DebugRenderCollisionWorldVisualisation);
 
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);

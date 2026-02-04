@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "CollisionSystems.h"
 #include <Systems/HeadersUpdateSystems.h>
+#include <Systems/HeadersRenderSystems.h>
 #include <Collision/Collision.h>
 #include <Game/Components/LevelComponents.h>
 
 #include <Math/Math.h>
+
+#include <Game/Debug/GameDebugState.h>
 
 void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 {
@@ -53,8 +56,6 @@ void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 {
-
-
 	CollisionWorld& collisionWorld = scene.GetCollisionWorld();
 	BoundingArea deathArea = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetDeathArea();
 	glm::vec2 maxActualPos = collisionWorld.GetMaxActualPosition();
@@ -123,4 +124,31 @@ void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 
 		}
 	}
+}
+
+void EntitySystem::DebugRenderCollisionWorldVisualisation(Timestep ts, Scene& scene)
+{
+	if (GameDebugState::showCollisionWorldVisualisation)
+	{
+		CollisionWorld& collisionWorld = scene.GetCollisionWorld();
+		Level* level = scene.GetFirstComponent<LevelComponent>().level;
+		BoundingArea deathArea = level->GetDeathArea();
+		glm::vec2 playerCameraPos = level->GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition();
+
+		// Rendering jewels in the screen
+		int startX = static_cast<int>(deathArea.bottomLeft.x);
+		int startY = static_cast<int>(deathArea.bottomLeft.y);
+		int endX = static_cast<int>(deathArea.topRight.x);
+		int endY = static_cast<int>(deathArea.topRight.y);
+
+		for (int y = startY; y < endY; ++y)
+		{
+			for (int x = startX; x < endX; ++x)
+			{
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
+			}
+		}
+	}
+
+
 }

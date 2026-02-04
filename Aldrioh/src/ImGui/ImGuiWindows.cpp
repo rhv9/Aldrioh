@@ -6,7 +6,7 @@
 
 #include <Graphics/Renderer.h>
 #include <Debug/Statistics.h>
-#include <Debug/GameDebugState.h>
+#include <Game/Debug/GameDebugState.h>
 #include <Input/Input.h>
 
 #include <Audio/SoundManager.h>

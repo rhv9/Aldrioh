@@ -35,7 +35,7 @@
 #include <Game/Level/TestLevel.h>
 #include <Game/Components/LevelComponents.h>
 
-#include <Debug/GameDebugState.h>
+#include <Game/Debug/GameDebugState.h>
 #include <Debug/Statistics.h>
 
 #include <ImGui/ImGuiWindows.h>

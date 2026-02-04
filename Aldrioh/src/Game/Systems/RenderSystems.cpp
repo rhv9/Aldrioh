@@ -4,7 +4,7 @@
 #include <Collision/Collision.h>
 #include <Components/Path/PathComponent.h>
 
-#include <Debug/GameDebugState.h>
+#include <Game/Debug/GameDebugState.h>
 #include <Game.h>
 
 glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity, Timestep ts)

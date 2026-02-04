@@ -14,5 +14,6 @@
 namespace GameDebugState {
 
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionBox, false);
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionWorldVisualisation, false);
 
 }

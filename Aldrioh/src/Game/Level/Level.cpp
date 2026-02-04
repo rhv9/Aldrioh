@@ -22,6 +22,8 @@
 #include <Game/Systems/RenderSystems.h>
 #include <imgui.h>
 
+#include <Game/Debug/GameDebugState.h>
+
 float zoomLevel = 10;
 
 ParticleTemplate particleTemplate_playerTakingDamage = []() {
@@ -106,7 +108,6 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 		{
 
 		});
-
 
 	// Create player
 	PlayerPrefab playerPrefab;
@@ -272,6 +273,7 @@ void Level::ImGuiLevelBar()
 
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Collectable Cells", &debugState.renderCollectableCells);
+	ImGui::Checkbox("Collision World Visualisation", &GameDebugState::showCollisionWorldVisualisation);
 
 	ImGui::Checkbox("Bezier tool", &renderBezierCurve);
 

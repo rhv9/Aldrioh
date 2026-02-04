@@ -62,6 +62,18 @@ public:
 		return Entity{};
 	}
 
+	template<typename T>
+	T& GetFirstComponent()
+	{
+		auto view = registry.view<T>();
+
+		for (entt::entity e : view)
+			return view.get<T>(e);
+
+		ASSERT(false, "No entity found with component T");
+		return registry.get<T>(entt::null); // I don't like this tbh but I am hoping this would never need to run. Otherwise could use ptr or std::optional
+	}
+
 private:
 	int entityCount = 0;
 	entt::registry registry;
