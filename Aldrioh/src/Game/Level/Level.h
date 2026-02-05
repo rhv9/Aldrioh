@@ -6,6 +6,7 @@
 #include <Game/Level/CollectableManager.h>
 
 #include "PlayerStats.h"
+#include <Core/Window.h>
 
 struct BoundingArea
 {
@@ -51,7 +52,9 @@ public:
 	Scene& scene;
 
 	// debugging related
-	void SetEnableDebugCamera(bool enable);
+	void Debug_SetEnableDebugCamera(bool enable);
+	void Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e);
+
 protected:
 	BoundingArea levelArea;
 	Entity playerCamera, debugCamera;
@@ -60,6 +63,8 @@ protected:
 	WaveManager waveManager;
 	CollectableManager collectableManager;
 	PlayerStats playerStats;
+
+	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
 
 	float levelTimeElapsed = 0.0f;
 };

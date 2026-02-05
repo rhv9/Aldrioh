@@ -14,7 +14,7 @@ void CollisionCell::AddEntity(entt::entity handle)
 		if (handle == entities[i])
 			return;
 
-	if (count >= 16)
+	if (count >= MAX_ENTITIES)
 		return;
 
 	entities[count++] = handle;

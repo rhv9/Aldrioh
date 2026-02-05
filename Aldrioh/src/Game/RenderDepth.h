@@ -7,5 +7,5 @@ public:
 	static float ENTITY;
 	static float PARTICLE;
 	static float COLLECTABLES;
-
+	static float DEBUG_TOP;
 };

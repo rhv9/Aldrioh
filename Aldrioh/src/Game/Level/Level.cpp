@@ -23,6 +23,7 @@
 #include <imgui.h>
 
 #include <Game/Debug/GameDebugState.h>
+#include <Input/Input.h>
 
 float zoomLevel = 10;
 
@@ -65,7 +66,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 	GameDebugState::level_spawnEntites = false;
 
 	waveManager.Init();
-	scene.GetCollisionZone().Init(5, 5, 1);
+	scene.GetCollisionZone().Init(15, 15, 1);
 	collectableManager.Init(100, 100);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
@@ -267,10 +268,28 @@ void Level::OnRender(Timestep ts)
 	}
 }
 
+void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
+{
+	if (e.IsPressed(Input::MOUSE_BUTTON_1))
+	{
+		DroneEnemyPrefab dronePrefab;
+		dronePrefab.maxHealth = 1.0f;
+		dronePrefab.spawnPos = scene.GetMousePosInScene();
+		dronePrefab.create(scene);
+	}
+}
+
 void Level::ImGuiLevelBar()
 {
 	if (ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites))
 		elapsedTime = 0;
+	if (ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies))
+	{
+		if (GameDebugState::clickToSpawnEnemies)
+			mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
+		else
+			mouseButtonCallbackID.~EventCallbackID();
+	}
 
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Collectable Cells", &GameDebugState::renderCollectableCells);
@@ -285,8 +304,6 @@ void Level::ImGuiLevelBar()
 		ImGui::DragFloat2("p2", (float*)&p2, 0.1f);
 		ImGui::DragFloat("t delta", &tdelta, 0.02f, 0.02f, 1.0f);
 	}
-
-
 }
 
 BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
@@ -372,7 +389,7 @@ void Level::OnExpGain()
 	GlobalLayers::game->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
 }
 
-void Level::SetEnableDebugCamera(bool enable)
+void Level::Debug_SetEnableDebugCamera(bool enable)
 {
 	if (enable)
 	{
@@ -382,6 +399,7 @@ void Level::SetEnableDebugCamera(bool enable)
 	else
 		scene.SetPrimaryCameraEntity(playerCamera);
 }
+
 
 void Level::UpdateLevelArea()
 {

@@ -5,7 +5,9 @@ class Scene;
 
 struct CollisionCell
 {
-	std::array<entt::entity, 16> entities;
+	static constexpr int MAX_ENTITIES = 16;
+
+	std::array<entt::entity, MAX_ENTITIES> entities;
 	int count = 0;
 
 	void AddEntity(entt::entity handle);

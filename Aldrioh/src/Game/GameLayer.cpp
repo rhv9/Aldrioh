@@ -235,7 +235,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 			currentLevel->ImGuiLevelBar();
 
 			if (ImGui::Checkbox("Debugging Camera", &imGuiSettings.EnabledDebugCamera))
-				currentLevel->SetEnableDebugCamera(imGuiSettings.EnabledDebugCamera);
+				currentLevel->Debug_SetEnableDebugCamera(imGuiSettings.EnabledDebugCamera);
 
 			if (ImGui::Button(imGuiSettings.shouldUpdateScene ? "Pause" : "Play"))
 				imGuiSettings.shouldUpdateScene = !imGuiSettings.shouldUpdateScene;

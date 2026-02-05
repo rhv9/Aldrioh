@@ -102,8 +102,6 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 {
 	if (GameDebugState::showCollisionZoneVisualisation)
 	{
-
-
 		CollisionZone& collisionZone = scene.GetCollisionZone();
 		Level* level = scene.GetFirstComponent<LevelComponent>().level;
 		BoundingArea deathArea = level->GetDeathArea();
@@ -117,22 +115,23 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 
 		glm::vec2 cellSize{ collisionZone.GetCellSize(), collisionZone.GetCellSize() };
 
-		LOG_CORE_INFO("BRUH-------------");
 		for (int y = startY; y < endY; ++y)
 		{
 			for (int x = startX; x < endX; ++x)
 			{
-				// Render collision Cells
-				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE, cellSize);
-
 				static FontStyle fontStyle = FontStyle{}.WithSize(0.4f).WithColour({ 0.8f,0.8f, 0.8f, 1.0f });
-
 				CollisionPositionMapping mapping = collisionZone.GetCollisionPositionMapping({ x, y });
 				std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(mapping);
 				CollisionCell* cell = cellOptional.value();
+
+				// Render collision Cells
+				glm::vec4 colour = glm::mix(Colour::BLUE, Colour::RED, (float)cell->count / CollisionCell::MAX_ENTITIES);
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::DEBUG_TOP }, Sprites::borderBox, colour, cellSize);
+
+				// Rendering num of entities in a cell
 				std::string text = std::to_string(cell->count);
 				float numWidth = fontStyle.CalculateTextWidth(text);
-				RenderQueue::EnQueueText(RenderLayer::FOUR, { x + 0.5f - numWidth / 2, y + 0.5f - fontStyle.size / 2, RenderDepth::COLLECTABLES }, &fontStyle, text, Colour::WHITE, { fontStyle.size, fontStyle.size });
+				RenderQueue::EnQueueText(RenderLayer::FOUR, { x + 0.5f - numWidth / 2, y + 0.5f - fontStyle.size / 2, RenderDepth::DEBUG_TOP }, &fontStyle, text, Colour::WHITE, { fontStyle.size, fontStyle.size });
 
 			}
 		}
