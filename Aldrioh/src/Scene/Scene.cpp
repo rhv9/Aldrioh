@@ -20,7 +20,7 @@
 
 #include <imgui.h>
 
-Scene::Scene() : collisionWorld(*this)
+Scene::Scene() : collisionWorld(*this), collisionZone(*this)
 {
 }
 
@@ -213,6 +213,6 @@ void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight)
 
 bool Scene::DispatchCollisions(Timestep ts, Entity e)
 {
-	return collisionWorld.FindAndDispatchCollisions(ts, e, collisionDispatcher);
+	return collisionZone.FindAndDispatchCollisions(ts, e, collisionDispatcher);
 }
 

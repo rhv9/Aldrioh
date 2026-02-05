@@ -131,7 +131,9 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
 
 	// After rest of updates are done
-	scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionWorld);
+	//scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionWorld);
+	scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionZone);
+
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	//scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);

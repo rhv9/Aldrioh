@@ -126,6 +126,49 @@ void EntitySystem::ResetAndAddCollisionWorld(Timestep ts, Scene& scene)
 	}
 }
 
+void EntitySystem::ResetAndAddCollisionZone(Timestep ts, Scene& scene)
+{
+	// Reset
+	{
+		scene.GetCollisionZone().Clear();
+	}
+
+	scene.GetCollisionZone().SetPlayerOffset(scene.GetPlayer().GetTransformComponent().position);
+
+	BoundingArea deathArea = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetDeathArea();
+
+	// Add collisions
+	{
+		auto view = scene.getRegistry().view<TransformComponent, CollisionComponent>();
+
+
+		for (auto eHandle : view)
+		{
+			auto [tc, cb] = view.get<TransformComponent, CollisionComponent>(eHandle);
+
+
+			// Get collision centre pos and use that.
+			glm::vec2 midPos = cb.collisionBox.OffsetNew(tc.position).GetMidpoint();
+
+			// if within Death area, then do things with collision
+			if (midPos.x < deathArea.bottomLeft.x || midPos.y < deathArea.bottomLeft.y ||
+				midPos.x > deathArea.topRight.x || midPos.y > deathArea.topRight.y)
+				continue;
+
+			CollisionZone& collisionZone = scene.GetCollisionZone();
+			CollisionPositionMapping positionMapping = collisionZone.GetCollisionPositionMapping(midPos);
+
+			std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(positionMapping);
+			if (!cellOptional.has_value())
+				continue;
+
+			CollisionCell* cell = cellOptional.value();
+			cell->AddEntity(eHandle);
+
+		}
+	}
+}
+
 void EntitySystem::DebugRenderCollisionWorldVisualisation(Timestep ts, Scene& scene)
 {
 	if (GameDebugState::showCollisionWorldVisualisation)
@@ -141,13 +184,16 @@ void EntitySystem::DebugRenderCollisionWorldVisualisation(Timestep ts, Scene& sc
 		int endX = static_cast<int>(deathArea.topRight.x);
 		int endY = static_cast<int>(deathArea.topRight.y);
 
+		// Render collision Cells
 		for (int y = startY; y < endY; ++y)
 		{
 			for (int x = startX; x < endX; ++x)
 			{
-				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
 			}
 		}
+
+		// Render collision chunks
 	}
 
 

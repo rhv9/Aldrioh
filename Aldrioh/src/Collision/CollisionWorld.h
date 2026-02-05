@@ -28,10 +28,15 @@ public:
 	int GetCollisionCheckCount() const { return collisionCheckCount; }
 	void ResetCollisionCheckCount() { collisionCheckCount = 0; }
 
+
+
 private:
 	Scene& scene;
 	int width = 1, height = 1;
 	float cellSize = 1.0f;
 	std::vector<CollisionChunk> chunks;
+
+	std::vector<Cell> cellMap;
+
 	int collisionCheckCount = 0;
 };

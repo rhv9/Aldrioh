@@ -63,7 +63,7 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene), playerStats(*this)
 {
 	waveManager.Init();
-	scene.InitCollisionWorldSize(100, 100);
+	scene.GetCollisionZone().Init(100, 100, 1);
 	collectableManager.Init(100, 100);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
@@ -129,7 +129,6 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
-	LOG_CORE_INFO("Test {}", scene.GetCollisionWorld().GetMapping({ 15.0f, 16.0f }).ToString());
 }
 
 Level::~Level()

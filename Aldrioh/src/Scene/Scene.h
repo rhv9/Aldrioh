@@ -2,6 +2,7 @@
 #include <entt.hpp>
 #include <Collision/CollisionDispatcher.h>
 #include <Collision/CollisionWorld.h>
+#include <Collision/CollisionZone.h>
 #include <UI/UIManager.h>
 
 #include "ParticleManager.h"
@@ -38,8 +39,10 @@ public:
 
 	CollisionDispatcher& GetCollisionDispatcher();
 	void InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight);
+
 	bool DispatchCollisions(Timestep ts, Entity e);
 	CollisionWorld& GetCollisionWorld() { return collisionWorld; }
+	CollisionZone& GetCollisionZone() { return collisionZone; }
 
 	Entity GetPrimaryCameraEntity();
 	void SetPrimaryCameraEntity(Entity primaryEntity);
@@ -81,6 +84,7 @@ private:
 	
 	CollisionDispatcher collisionDispatcher;
 	CollisionWorld collisionWorld;
+	CollisionZone collisionZone;
 
 	ParticleManager particleManager;
 

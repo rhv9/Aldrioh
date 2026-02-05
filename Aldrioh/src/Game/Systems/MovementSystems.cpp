@@ -28,7 +28,10 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 		auto [transform, move] = view.get(e);
 		Entity entityWrapped = scene.WrapEntityHandle(e);
 		if (entityWrapped.HasComponent<CollisionComponent>())
+		{
 			scene.DispatchCollisions(ts, entityWrapped);
+
+		}
 	}
 
 	for (entt::entity e : view)
