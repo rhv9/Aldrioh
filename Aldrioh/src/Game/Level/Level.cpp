@@ -63,7 +63,7 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene), playerStats(*this)
 {
 	waveManager.Init();
-	scene.GetCollisionZone().Init(100, 100, 1);
+	scene.GetCollisionZone().Init(40, 40, 1);
 	collectableManager.Init(100, 100);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)

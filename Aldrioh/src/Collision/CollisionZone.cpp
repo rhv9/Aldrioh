@@ -27,8 +27,8 @@ void CollisionCell::AddEntity(entt::entity handle)
 void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 {
 	// x and y needs to be odd so that center is simple.
-	int width = static_cast<int>(widthMax / cellSize + 0.5f);
-	int height = static_cast<int>(heightMax / cellSize + 0.5f);
+	width = static_cast<int>(widthMax / cellSize + 0.5f);
+	height = static_cast<int>(heightMax / cellSize + 0.5f);
 	
 	if (width % 2 == 0)
 		++width;
@@ -53,20 +53,21 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
 	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
 
+	CollisionPositionMapping mapping = GetCollisionPositionMapping(collisionMidPos1);
+
 	for (int y = -1; y < 2; ++y)
 	{
 		for (int x = -1; x < 2; ++x)
 		{
-			// offset pos is moving entity pos by cellSize to be able to find the bordering cells, irregardless of chunks, making it easier.
-			glm::vec2 offsetPos = collisionMidPos1;
-			offsetPos.x += x;
-			offsetPos.y += y;
-
-			CollisionPositionMapping mapping = GetCollisionPositionMapping(offsetPos);
+			CollisionPositionMapping mappingOffset;
+			mappingOffset.cellX = mapping.cellX + x;
+			mappingOffset.cellY = mapping.cellY + y;
+			
 			// get cell
-			std::optional<CollisionCell*> cellOptional = GetCell(mapping);
+			std::optional<CollisionCell*> cellOptional = GetCell(mappingOffset);
 			if (!cellOptional.has_value())
 				continue;
+
 			CollisionCell* cell = cellOptional.value();
 
 			for (int i = 0; i < cell->count; ++i)

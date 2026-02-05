@@ -63,7 +63,7 @@ protected:
 
 	struct DebugState
 	{
-		bool spawnEntites = true;
+		bool spawnEntites = false;
 		bool renderCollectableCells = false;
 	};
 	DebugState debugState;
