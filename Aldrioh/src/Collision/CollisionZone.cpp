@@ -158,8 +158,7 @@ void CollisionZone::Clear()
 		total += cell.count;
 		cell.count = 0;
 	}
-
-	LOG_CORE_INFO("Total: {}", total);
+	//LOG_CORE_INFO("Total: {}", total);
 }
 
 

@@ -28,7 +28,7 @@ public:
 	bool FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionDispatcher& dispatcher);
 	CollisionPositionMapping GetCollisionPositionMapping(const glm::vec2& pos);
 
-	void SetPlayerOffset(const glm::vec2& pos) { playerOffset = pos; }
+	void SetPlayerOffset(const glm::vec2& pos) { playerOffset.x = static_cast<int>(pos.x); playerOffset.y = static_cast<int>(pos.y); }
 	glm::vec2 GetPlayerOffset() const { return playerOffset; }
 	int GetCenterXCellPos() const { return centerX; }
 	int GetCenterYCellPos() const { return centerY; }

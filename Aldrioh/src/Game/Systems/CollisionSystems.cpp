@@ -117,6 +117,7 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 
 		glm::vec2 cellSize{ collisionZone.GetCellSize(), collisionZone.GetCellSize() };
 
+		LOG_CORE_INFO("BRUH-------------");
 		for (int y = startY; y < endY; ++y)
 		{
 			for (int x = startX; x < endX; ++x)
@@ -126,7 +127,8 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 
 				static FontStyle fontStyle = FontStyle{}.WithSize(0.4f).WithColour({ 0.8f,0.8f, 0.8f, 1.0f });
 
-				std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(collisionZone.GetCollisionPositionMapping({ x, y }));
+				CollisionPositionMapping mapping = collisionZone.GetCollisionPositionMapping({ x, y });
+				std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(mapping);
 				CollisionCell* cell = cellOptional.value();
 				std::string text = std::to_string(cell->count);
 				float numWidth = fontStyle.CalculateTextWidth(text);
