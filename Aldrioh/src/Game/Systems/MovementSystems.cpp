@@ -4,7 +4,6 @@
 #include <Systems/HeadersUpdateSystems.h>
 
 #include <Collision/CollisionDispatcher.h>
-#include <Collision/CollisionWorld.h>
 #include <Collision/Collision.h>
 
 void EntitySystem::ResetMovementSystem(Timestep ts, Scene& scene)

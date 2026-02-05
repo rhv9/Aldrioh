@@ -61,13 +61,6 @@ protected:
 	CollectableManager collectableManager;
 	PlayerStats playerStats;
 
-	struct DebugState
-	{
-		bool spawnEntites = false;
-		bool renderCollectableCells = false;
-	};
-	DebugState debugState;
-
 	float levelTimeElapsed = 0.0f;
 };
 

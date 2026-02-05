@@ -62,6 +62,8 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 
 Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene), playerStats(*this)
 {
+	GameDebugState::level_spawnEntites = false;
+
 	waveManager.Init();
 	scene.GetCollisionZone().Init(40, 40, 1);
 	collectableManager.Init(100, 100);
@@ -150,7 +152,7 @@ void Level::OnUpdate(Timestep ts)
 
 	elapsedTime += ts;
 
-	if (debugState.spawnEntites && elapsedTime >= asteroidSpawnSpeed)
+	if (GameDebugState::level_spawnEntites && elapsedTime >= asteroidSpawnSpeed)
 	{
 		elapsedTime -= asteroidSpawnSpeed;
 
@@ -223,7 +225,7 @@ void Level::OnRender(Timestep ts)
 		}
 	}
 
-	if (debugState.renderCollectableCells)
+	if (GameDebugState::renderCollectableCells)
 	{
 		for (int y = startY; y < endY; ++y)
 		{
@@ -267,12 +269,12 @@ void Level::OnRender(Timestep ts)
 
 void Level::ImGuiLevelBar()
 {
-	if (ImGui::Checkbox("Spawn Enemies", &debugState.spawnEntites))
+	if (ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites))
 		elapsedTime = 0;
 
 	ImGui::SeparatorText("Debugging");
-	ImGui::Checkbox("Collectable Cells", &debugState.renderCollectableCells);
-	ImGui::Checkbox("Collision World Visualisation", &GameDebugState::showCollisionWorldVisualisation);
+	ImGui::Checkbox("Collectable Cells", &GameDebugState::renderCollectableCells);
+	ImGui::Checkbox("Collision World Visualisation", &GameDebugState::showCollisionZoneVisualisation);
 
 	ImGui::Checkbox("Bezier tool", &renderBezierCurve);
 

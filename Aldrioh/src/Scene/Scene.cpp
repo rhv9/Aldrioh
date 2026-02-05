@@ -20,7 +20,7 @@
 
 #include <imgui.h>
 
-Scene::Scene() : collisionWorld(*this), collisionZone(*this)
+Scene::Scene() : collisionZone(*this)
 {
 }
 
@@ -204,11 +204,6 @@ glm::vec2 Scene::GetMousePosInScene()
 CollisionDispatcher& Scene::GetCollisionDispatcher()
 {
 	return collisionDispatcher;
-}
-
-void Scene::InitCollisionWorldSize(int numOfChunkWidth, int numOfChunkHeight)
-{
-	collisionWorld.Init(numOfChunkWidth, numOfChunkHeight);
 }
 
 bool Scene::DispatchCollisions(Timestep ts, Entity e)

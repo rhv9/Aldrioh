@@ -1,6 +1,7 @@
 #pragma once
-#include "CollisionChunk.h"
 #include <Collision/CollisionDispatcher.h>
+
+class Scene;
 
 struct CollisionCell
 {
@@ -28,6 +29,7 @@ public:
 	CollisionPositionMapping GetCollisionPositionMapping(const glm::vec2& pos);
 
 	void SetPlayerOffset(const glm::vec2& pos) { playerOffset = pos; }
+	glm::vec2 GetPlayerOffset() const { return playerOffset; }
 
 	std::optional<CollisionCell*> GetCell(const CollisionPositionMapping& mapping);
 

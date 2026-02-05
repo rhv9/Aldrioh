@@ -155,7 +155,7 @@ void GameLayer::OnBegin()
 	scene->AddRenderSystem(&EntitySystem::TestRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::EntityRenderSystem);
 	scene->AddRenderSystem(&EntitySystem::CollisionRenderSystem);
-	scene->AddRenderSystem(&EntitySystem::DebugRenderCollisionWorldVisualisation);
+	scene->AddRenderSystem(&EntitySystem::DebugRenderCollisionZoneVisualisation);
 
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
