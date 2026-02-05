@@ -218,6 +218,8 @@ Entity FreeRoamCameraPrefab::create(Scene& scene)
 	Entity cameraEntity = scene.CreateEntityNoTransform("Debugging Camera");
 	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<FreeCameraController>(aspectRatio, 1.0f));
 	static_cast<FreeCameraController*>(cc.cameraController.get())->SetSpeed(speed);
+	static_cast<FreeCameraController*>(cc.cameraController.get())->SetEnabledWASDMovement(false);
+
 	cc.cameraController->SetZoomLevel(zoomLevel);
 	return cameraEntity;
 }

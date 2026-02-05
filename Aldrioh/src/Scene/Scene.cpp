@@ -105,7 +105,7 @@ void Scene::OnImGuiDebugRender(Timestep ts)
 	{
 		ImGui::Text("Particle Count: %d", particleManager.GetActiveCount());
 		ImGui::Text("Entity Count: %d", entityCount);
-		ImGui::Text("Collision Check Count: %d", collisionWorld.GetCollisionCheckCount());
+		ImGui::Text("Collision Check Count: %d", collisionZone.GetCollisionCheckCount());
 	}
 	
 }

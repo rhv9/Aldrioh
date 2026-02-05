@@ -15,8 +15,11 @@ public:
 	void SetSpeed(float val) { speed = val; }
 	float GetSpeed() const { return speed; }
 
+	void SetEnabledWASDMovement(bool val) { enabledWASDMovement = val; }
+
 private:
 	float speed = 1.0f;
+	bool enabledWASDMovement = true;
 
 	virtual void OnMouseButtonCallback(MouseButtonEventArg& e) override;
 	virtual void OnMouseMoveCallback(MouseMoveEventArg& e) override;
