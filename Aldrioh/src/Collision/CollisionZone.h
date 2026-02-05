@@ -30,6 +30,14 @@ public:
 
 	void SetPlayerOffset(const glm::vec2& pos) { playerOffset = pos; }
 	glm::vec2 GetPlayerOffset() const { return playerOffset; }
+	int GetCenterXCellPos() const { return centerX; }
+	int GetCenterYCellPos() const { return centerY; }
+
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
+
+	float GetCellSize() const { return cellSize; }
+
 
 	std::optional<CollisionCell*> GetCell(const CollisionPositionMapping& mapping);
 
@@ -42,12 +50,8 @@ private:
 	Scene& scene;
 	int width = 1, height = 1;
 	float cellSize = 1.0f;
-
 	int centerX = 0, centerY = 0;
-
 	glm::vec2 playerOffset{ 0 };
-
 	std::vector<CollisionCell> cellMap;
-
 	int collisionCheckCount = 0;
 };

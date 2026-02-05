@@ -31,7 +31,7 @@ Font::~Font()
 	delete[] charSubTextures;
 }
 
-const SubTexture* Font::GetCharSubTexture(const char c)
+SubTexture* Font::GetCharSubTexture(const char c)
 {
 	int ascii = int(c);
 	if (c == ' ')
@@ -43,7 +43,7 @@ const SubTexture* Font::GetCharSubTexture(const char c)
 	return &charSubTextures[ascii - int('!') + 1];
 }
 
-const SubTexture* Font::GetBlockSubTexture()
+SubTexture* Font::GetBlockSubTexture()
 {
 	return &charSubTextures['c'];
 }
@@ -53,7 +53,7 @@ const SubTexture* Font::GetBlockSubTexture()
 
 // FONT STYLE
 
-float FontStyle::CalculateTextWidth(const std::string& text)
+float FontStyle::CalculateTextWidth(const std::string& text) const
 {
 	return text.size() * size * charSpacingPercent;
 }

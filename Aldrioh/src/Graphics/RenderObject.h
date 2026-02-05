@@ -1,5 +1,7 @@
 #pragma once
 
+class SubTexture;
+
 class RenderObject
 {
 public:
@@ -13,6 +15,6 @@ public:
 class SpriteRenderObject : public RenderObject
 {
 public:
-	int spriteId;
+	SubTexture* subTexturePtr;
 
 };

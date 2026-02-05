@@ -9,6 +9,9 @@
 
 #include <Game/Debug/GameDebugState.h>
 
+#include <UI/Font.h>
+#include <Graphics/SubTexture.h>
+
 void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 {
 	{
@@ -107,16 +110,29 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 		glm::vec2 playerCameraPos = level->GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition();
 		glm::vec2 collisionZoneOffset = collisionZone.GetPlayerOffset();
 
-		int startX = static_cast<int>(collisionZoneOffset.x);
-		int startY = static_cast<int>(collisionZoneOffset.y);
-		int endX = static_cast<int>(deathArea.topRight.x);
-		int endY = static_cast<int>(deathArea.topRight.y);
+		int startX = static_cast<int>(collisionZoneOffset.x) - collisionZone.GetCenterXCellPos();
+		int startY = static_cast<int>(collisionZoneOffset.y) - collisionZone.GetCenterYCellPos();
+		int endX = startX + collisionZone.GetWidth();
+		int endY = startY + collisionZone.GetHeight();
 
+		glm::vec2 cellSize{ collisionZone.GetCellSize(), collisionZone.GetCellSize() };
 
+		for (int y = startY; y < endY; ++y)
+		{
+			for (int x = startX; x < endX; ++x)
+			{
+				// Render collision Cells
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE, cellSize);
 
-		// Render collision Cells
-		RenderQueue::EnQueue(RenderLayer::FOUR, { startX, startY, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
+				static FontStyle fontStyle = FontStyle{}.WithSize(0.4f).WithColour({ 0.8f,0.8f, 0.8f, 1.0f });
+
+				std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(collisionZone.GetCollisionPositionMapping({ x, y }));
+				CollisionCell* cell = cellOptional.value();
+				std::string text = std::to_string(cell->count);
+				float numWidth = fontStyle.CalculateTextWidth(text);
+				RenderQueue::EnQueueText(RenderLayer::FOUR, { x + 0.5f - numWidth / 2, y + 0.5f - fontStyle.size / 2, RenderDepth::COLLECTABLES }, &fontStyle, text, Colour::WHITE, { fontStyle.size, fontStyle.size });
+
+			}
+		}
 	}
-
-
 }

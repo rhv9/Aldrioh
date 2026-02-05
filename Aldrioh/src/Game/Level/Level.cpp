@@ -65,7 +65,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 	GameDebugState::level_spawnEntites = false;
 
 	waveManager.Init();
-	scene.GetCollisionZone().Init(40, 40, 1);
+	scene.GetCollisionZone().Init(10, 10, 1);
 	collectableManager.Init(100, 100);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)

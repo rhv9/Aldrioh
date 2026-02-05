@@ -39,6 +39,8 @@ void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 	centerY = static_cast<int>((float)height / 2.0f);
 
 	cellMap.resize(width * height);
+
+	LOG_CORE_INFO("Init: Collision Zone Size: ({},{})", width, height);
 }
 
 bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionDispatcher& dispatcher)

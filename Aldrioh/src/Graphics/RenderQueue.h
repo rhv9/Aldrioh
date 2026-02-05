@@ -1,6 +1,8 @@
 #pragma once
 #include "RenderObject.h"
 
+struct FontStyle;
+
 enum RenderLayer
 {
 	ZERO  = 0,
@@ -21,7 +23,10 @@ public:
 
 
 	static void Reset();
+	static void EnQueue(RenderLayer layer, const glm::vec3& pos, SubTexture* subTexture, const glm::vec4& colour = glm::vec4(1.0f), const glm::vec2& scale = { 1.0f, 1.0f }, float rotation = 0.0f, float flags = 0);
 	static void EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec4& colour = glm::vec4(1.0f), const glm::vec2& scale = {1.0f, 1.0f}, float rotation = 0.0f, float flags = 0);
+	static void EnQueueText(RenderLayer layer, const glm::vec3& pos, const FontStyle* fontStyle, const std::string& text, const glm::vec4& colour = glm::vec4(1.0f), const glm::vec2& scale = { 1.0f, 1.0f });
+
 	static void Flush();
 	static void FlushAndReset();
 
