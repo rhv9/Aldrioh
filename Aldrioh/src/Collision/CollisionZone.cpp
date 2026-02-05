@@ -152,8 +152,14 @@ std::optional<CollisionCell*> CollisionZone::GetCell(const CollisionPositionMapp
 
 void CollisionZone::Clear()
 {
+	int total = 0;
 	for (CollisionCell& cell : cellMap)
+	{
+		total += cell.count;
 		cell.count = 0;
+	}
+
+	LOG_CORE_INFO("Total: {}", total);
 }
 
 
