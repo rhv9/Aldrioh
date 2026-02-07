@@ -61,7 +61,7 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectableManager(scene), playerStats(*this)
+Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), playerStats(*this)
 {
 	GameDebugState::level_spawnEntites = false;
 
@@ -144,6 +144,7 @@ static float asteroidSpawnSpeed = 0.4f;
 void Level::OnUpdate(Timestep ts)
 {
 	waveManager.OnUpdate(ts);
+
 	levelTimeElapsed += ts;
 	// TODO: does not necessarily have to update every tick.
 	UpdateTimerText(levelTimeElapsed);
@@ -206,8 +207,8 @@ void Level::OnRender(Timestep ts)
 
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
 	CollectableMapping topRightMapping = collectableManager.GetMapping  (levelArea.topRight + playerCameraPos);
-	++topRightMapping.chunkX;
-	++topRightMapping.chunkY;
+
+	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
 
 	collectableManager.RenderChunks(bottomLeftMapping, topRightMapping);
 	
@@ -221,9 +222,9 @@ void Level::OnRender(Timestep ts)
 
 	if (GameDebugState::renderChunkBordersBeingRendered)
 	{
-		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY; ++y)
+		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY + 1; ++y)
 		{
-			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX; ++x)
+			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX + 1; ++x)
 			{
 				CollectableChunk& chunk = collectableManager.GetChunk(x, y);
 				chunk.Render({ x * chunk.SIZE , y * chunk.SIZE });

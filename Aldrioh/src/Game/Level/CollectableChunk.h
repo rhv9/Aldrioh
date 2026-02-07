@@ -11,7 +11,7 @@ enum class CollectableType : uint8_t
 	COIN,
 };
 
-struct CellItem
+struct CollectableItem
 {
 	struct RenderData
 	{
@@ -30,17 +30,6 @@ struct CellItem
 	static constexpr uint8_t MAX_POINT_VALUE = 255;
 };
 
-struct CollectableCell
-{
-	std::array<CellItem, 32> cellArray;
-	int count = 0;
-
-	void AddCollectable(const glm::vec2& untrimmedPos, CollectableType type);
-	void AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type);
-
-	void Clear() { count = 0; }
-};
-
 struct CollectableMapping
 {
 	int chunkX = 0, chunkY = 0;
@@ -51,19 +40,46 @@ struct CollectableMapping
 	bool operator==(const CollectableMapping& other);
 };
 
-struct CollectableChunk
+struct CachedCollectableBlock
 {
+	std::vector<CollectableItem> cellVector;
+	int x = 0, y = 0;
+
+	CachedCollectableBlock() = default;
+	CachedCollectableBlock(int x, int y) : x(x), y(y) {}
+};
+
+struct CollectableBlock
+{
+	std::array<CollectableItem, 32> cellArray;
+	int count = 0;
+
+	void AddCollectable(const glm::vec2& untrimmedPos, CollectableType type);
+	void AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type);
+
+	void Clear() { count = 0; }
+};
+
+class CollectableChunk
+{
+public:
 	static constexpr int SIZE = 8;
-	float cellSize = 1.0f;
-	Scene& scene;
-	std::array<CollectableCell, SIZE * SIZE> grid;
+	static constexpr float REFRESH_TIMER = 10.0f;
 
-	CollectableChunk(Scene& scene) : scene(scene) {}
+	CollectableChunk() = default;
+	CollectableChunk(const std::vector<CachedCollectableBlock>& blocks);
 
-	inline CollectableCell& GetCell(int x, int y) { return grid[y * SIZE + x]; }
-	inline CollectableCell& GetCell(const CollectableMapping& mapping) { return grid[mapping.cellY * SIZE + mapping.cellX]; }
+	inline CollectableBlock& GetBlock(int x, int y) { return grid[y * SIZE + x]; }
+	inline CollectableBlock& GetBlock(const CollectableMapping& mapping) { return grid[mapping.cellY * SIZE + mapping.cellX]; }
 
 	void Render(const glm::vec2& offset);
-
 	void Clear();
+
+	void ResetTimer() { timeRemaining = REFRESH_TIMER; }
+	void RemoveTime(Timestep ts) { timeRemaining -= ts; }
+	bool ShouldUnload() const { return timeRemaining < 0.0f; };
+private:
+	float cellSize = 1.0f;
+	std::array<CollectableBlock, SIZE * SIZE> grid;
+	float timeRemaining = REFRESH_TIMER;
 };

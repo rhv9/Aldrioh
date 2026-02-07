@@ -145,12 +145,12 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 				{
 					glm::vec2 chunkPos = { x, y };
 					CollectableMapping mapping = collectableManager.GetMapping(chunkPos);
-					CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
+					CollectableBlock& cell = collectableManager.GetChunk(mapping).GetBlock(mapping);
 
 					for (int i = 0; i < cell.count; ++i)
 					{
-						CellItem& cellData = cell.cellArray[i];
-						CellItem::RenderData itemRenderData = cellData.GetRenderData();
+						CollectableItem& cellData = cell.cellArray[i];
+						CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
 						Entity itemEntity = scene.CreateEntity("Item");
 						VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
 						vc.scale = itemRenderData.size;

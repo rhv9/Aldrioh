@@ -6,17 +6,30 @@
 #include <Graphics/RenderQueue.h>
 #include <Game/RenderDepth.h>
 
+// Collectable Chunk
+
+CollectableChunk::CollectableChunk(const std::vector<CachedCollectableBlock>& cachedBlocks)
+{
+	for (const CachedCollectableBlock& cachedBlock : cachedBlocks)
+	{
+		CollectableBlock& block = GetBlock(cachedBlock.x, cachedBlock.y);
+		block.count = cachedBlock.cellVector.size();
+		for (int i = 0; i < block.count; ++i)
+			block.cellArray[i] = cachedBlock.cellVector[i];
+	}
+}
+
 void CollectableChunk::Render(const glm::vec2& offset)
 {
 	for (int y = 0; y < SIZE; ++y)
 	{
 		for (int x = 0; x < SIZE; ++x)
 		{
-			CollectableCell& cell = GetCell(x, y);
+			CollectableBlock& cell = GetBlock(x, y);
 			for (int i = 0; i < cell.count; ++i)
 			{
-				CellItem& cellData = cell.cellArray[i];
-				CellItem::RenderData renderData = cellData.GetRenderData();
+				CollectableItem& cellData = cell.cellArray[i];
+				CollectableItem::RenderData renderData = cellData.GetRenderData();
 
 				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatOffset() - renderData.size / 2.0f + offset;
 
@@ -24,28 +37,16 @@ void CollectableChunk::Render(const glm::vec2& offset)
 			}
 		}
 	}
-
-
 }
 
 void CollectableChunk::Clear()
 {
-	for (CollectableCell& cell : grid)
+	for (CollectableBlock& cell : grid)
 		cell.count = 0;
 }
 
-void CollectableCell::AddCollectable(const glm::vec2& untrimmedPos, CollectableType type)
-{
-	uint8_t offsetX = (untrimmedPos.x - (int)untrimmedPos.x) * CellItem::MAX_POINT_VALUE;
-	uint8_t offsetY = (untrimmedPos.y - (int)untrimmedPos.y) * CellItem::MAX_POINT_VALUE;
-	cellArray[count++] = { offsetX, offsetY, type };
-}
 
-void CollectableCell::AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type)
-{
-	cellArray[count++] = { xOffset, yOffset, type };
-}
-
+// Cell Mapping
 
 std::string CollectableMapping::ToString() const
 {
@@ -57,18 +58,33 @@ bool CollectableMapping::operator==(const CollectableMapping& other)
 	return chunkX == other.chunkX && chunkY == other.chunkY && cellX == other.cellX && cellY == other.cellY;
 }
 
-glm::vec2 CellItem::GetFloatOffset() const
+
+// Cell Item
+
+void CollectableBlock::AddCollectable(const glm::vec2& untrimmedPos, CollectableType type)
 {
-	return glm::vec2{ (float)x / CellItem::MAX_POINT_VALUE, (float)y / CellItem::MAX_POINT_VALUE };
+	uint8_t offsetX = (untrimmedPos.x - (int)untrimmedPos.x) * CollectableItem::MAX_POINT_VALUE;
+	uint8_t offsetY = (untrimmedPos.y - (int)untrimmedPos.y) * CollectableItem::MAX_POINT_VALUE;
+	cellArray[count++] = { offsetX, offsetY, type };
 }
 
-void CellItem::SetPosOnDecimalValue(const glm::vec2 pos)
+void CollectableBlock::AddCollectable(uint8_t xOffset, uint8_t yOffset, CollectableType type)
 {
-	x = (pos.x - (int)pos.x) * CellItem::MAX_POINT_VALUE;
-	y = (pos.y - (int)pos.y) * CellItem::MAX_POINT_VALUE;
+	cellArray[count++] = { xOffset, yOffset, type };
 }
 
-CellItem::RenderData CellItem::GetRenderData() const
+glm::vec2 CollectableItem::GetFloatOffset() const
+{
+	return glm::vec2{ (float)x / CollectableItem::MAX_POINT_VALUE, (float)y / CollectableItem::MAX_POINT_VALUE };
+}
+
+void CollectableItem::SetPosOnDecimalValue(const glm::vec2 pos)
+{
+	x = (pos.x - (int)pos.x) * CollectableItem::MAX_POINT_VALUE;
+	y = (pos.y - (int)pos.y) * CollectableItem::MAX_POINT_VALUE;
+}
+
+CollectableItem::RenderData CollectableItem::GetRenderData() const
 {
 	static const glm::vec4 JEWEL_COLOURS_ARRAY[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
 	return RenderData{ type == CollectableType::COIN ? Sprites::coin : Sprites::jewel, JEWEL_COLOURS_ARRAY[static_cast<int>(type)] };

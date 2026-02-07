@@ -262,7 +262,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 
 			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
 			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
-			CollectableCell& cell = level->GetCollectableManager().GetChunk(mapping).GetCell(mapping);
+			CollectableBlock& cell = level->GetCollectableManager().GetChunk(mapping).GetBlock(mapping);
 			//LOG_CORE_INFO("Offset: {},{}", xOffset, yOffset);
 			cell.AddCollectable(pos, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
 		}
