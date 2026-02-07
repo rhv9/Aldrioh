@@ -66,8 +66,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), playerStat
 	GameDebugState::level_spawnEntites = false;
 
 	waveManager.Init();
-	scene.GetCollisionZone().Init(15, 15, 1);
-	collectableManager.Init(200, 200);
+	scene.GetCollisionZone().Init(60, 40, 1);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -169,7 +168,11 @@ void Level::OnUpdate(Timestep ts)
 		dronePrefab.spawnPos = GenerateRandomSpawnCoords();
 		dronePrefab.create(scene);
 	}
+	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
+	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
+	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
+	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };
@@ -197,21 +200,11 @@ void Level::OnRender(Timestep ts)
 
 	uiPlayerHealthBar->SetRelativePos(barPos);
 
-	// Rendering jewels in the screen
-	int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x);
-	int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
-	int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 1);
-	int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
-
-	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
-
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
-	CollectableMapping topRightMapping = collectableManager.GetMapping  (levelArea.topRight + playerCameraPos);
-
-	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
+	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.RenderChunks(bottomLeftMapping, topRightMapping);
-	
+
 	if (GameDebugState::renderLevelArea)
 	{
 		glm::vec2 levelOffsetBottomLeft = levelArea.bottomLeft + playerCameraPos;
@@ -223,24 +216,28 @@ void Level::OnRender(Timestep ts)
 	if (GameDebugState::renderChunkBordersBeingRendered)
 	{
 		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY + 1; ++y)
-		{
 			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX + 1; ++x)
-			{
-				CollectableChunk& chunk = collectableManager.GetChunk(x, y);
-				chunk.Render({ x * chunk.SIZE , y * chunk.SIZE });
-				RenderQueue::EnQueue(RenderLayer::FOUR, { x * chunk.SIZE, y * chunk.SIZE, 0.8f }, Sprites::borderBox, Colour::WHITE, { chunk.SIZE, chunk.SIZE });
-			}
-		}
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x * CollectableChunk::SIZE, y * CollectableChunk::SIZE, 0.8f }, Sprites::borderBox, Colour::WHITE, { CollectableChunk::SIZE, CollectableChunk::SIZE });
 	}
+
+	if (GameDebugState::showLoadedAndUnloadedCollectableChunks)
+	{
+		collectableManager.Debug_RenderChunkBorders(ts);
+	}
+
 	if (GameDebugState::renderCollectableCells)
 	{
+		// Rendering jewels in the screen
+		int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x);
+		int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
+		int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 1);
+		int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
+
 		for (int y = startY; y < endY; ++y)
-		{
 			for (int x = startX; x < endX; ++x)
-			{
 				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
-			}
-		}
+
+		// Render cells that player is collecting from
 		{
 			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
 			int startX = static_cast<int>(playerPos.x - pcc.radius);
@@ -249,16 +246,9 @@ void Level::OnRender(Timestep ts)
 			int endY = static_cast<int>(playerPos.y + pcc.radius);
 
 			for (int y = startY; y < endY; ++y)
-			{
 				for (int x = startX; x < endX; ++x)
-				{
 					if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, playerPos) <= pcc.radius)
-					{
-						glm::vec2 chunkPos = { x, y };
-						RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ chunkPos, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
-					}
-				}
-			}
+						RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
 		}
 	}
 	if (renderBezierCurve)
@@ -300,6 +290,8 @@ void Level::ImGuiLevelBar()
 	ImGui::Checkbox("Level Area", &GameDebugState::renderLevelArea);
 	ImGui::Checkbox("Collectable Cells", &GameDebugState::renderCollectableCells);
 	ImGui::Checkbox("Collectable Chunks", &GameDebugState::renderChunkBordersBeingRendered);
+	ImGui::Checkbox("Loaded/Unloaded Chunks", &GameDebugState::showLoadedAndUnloadedCollectableChunks);
+
 	ImGui::Checkbox("Collision World Visualisation", &GameDebugState::showCollisionZoneVisualisation);
 	ImGui::Checkbox("Bezier tool", &renderBezierCurve);
 

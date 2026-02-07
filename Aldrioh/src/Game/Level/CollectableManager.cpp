@@ -3,12 +3,12 @@
 
 #include <Math/Math.h>
 #include <Game.h>
-
 #include <Game/Level/Level.h>
 
-void CollectableManager::Init(int numOfChunkWidth, int numOfChunkHeight)
-{
-}
+#include <Graphics/RenderQueue.h>
+#include <Game/SpriteCollection.h>
+#include <UI/Colour.h>
+#include <Game/RenderDepth.h>
 
 CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 {
@@ -39,13 +39,11 @@ inline CollectableChunk& CollectableManager::GetChunk(int x, int y)
 		if (unloadedChunks.find(val) != unloadedChunks.end())
 		{
 			loadedChunks[val] = CollectableChunk{ unloadedChunks[val] };
-			LOG_INFO("Loaded Chunk from cache: {},{}, size: ", x, y, unloadedChunks[val].size());
 			unloadedChunks.erase(val);
 			return loadedChunks[val];
 		}
 		else
 		{
-			LOG_INFO("New Chunk: {},{}", x, y);
 			loadedChunks.insert({ val, CollectableChunk{} });
 			return loadedChunks[val];
 		}
@@ -56,14 +54,9 @@ inline CollectableChunk& CollectableManager::GetChunk(int x, int y)
 
 void CollectableManager::RenderChunks(CollectableMapping& bottomLeft, CollectableMapping& topRight)
 {
-	for (int y = bottomLeft.chunkY; y < topRight.chunkY; ++y)
-	{
-		for (int x = bottomLeft.chunkX; x < topRight.chunkX; ++x)
-		{
-			CollectableChunk& chunk = GetChunk(x, y);
-			chunk.Render({ x * chunk.SIZE , y * chunk.SIZE });
-		}
-	}
+	for (int y = bottomLeft.chunkY; y < topRight.chunkY + 1; ++y)
+		for (int x = bottomLeft.chunkX; x < topRight.chunkX + 1; ++x)
+			GetChunk(x, y).Render({ x * CollectableChunk::SIZE , y * CollectableChunk::SIZE });
 }
 
 void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping)
@@ -73,24 +66,22 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 		return;
 
 	auto iter = loadedChunks.begin();
+	//LOG_INFO("Chunk X, Y ({}-{}, {}-{})", bottomLeftMapping.chunkX, topRightMapping.chunkX, bottomLeftMapping.chunkY, topRightMapping.chunkY);
 	for (auto& iter : loadedChunks)
 	{
 		CollectableChunk& chunk = iter.second;
+		
+		auto [x, y] = GetXY(iter.first);
 
-		int x = static_cast<int>(iter.first >> 32);
-		int y = static_cast<int>((iter.first << 32) >> 32);
-
-		if (x < bottomLeftMapping.chunkX || x > topRightMapping.chunkX || y < bottomLeftMapping.chunkY || y > topRightMapping.chunkY)
+		if (x >= bottomLeftMapping.chunkX && x <= topRightMapping.chunkX && y >= bottomLeftMapping.chunkY && y <= topRightMapping.chunkY)
 		{
 			chunk.ResetTimer();
 			continue;
 		}
-
 		chunk.RemoveTime(1);
 
 		if (chunk.ShouldUnload())
 		{
-			LOG_CORE_INFO("LSDKJFLKSDJF");
 			std::vector<CachedCollectableBlock> cachedBlocks;
 			for (int y = 0; y < chunk.SIZE; ++y)
 			{
@@ -107,14 +98,40 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 					}
 				}
 			}
-			unloadedChunks.insert({ iter.first, cachedBlocks });
+			if (cachedBlocks.size() > 0)
+				unloadedChunks.insert({ iter.first, cachedBlocks });
 			toDeleteChunks.push_back(iter.first);
 		}
 	}
+	//LOG_INFO("------------- count: {}", loadedChunks.size());
 
 	for (auto val : toDeleteChunks)
 	{
 		loadedChunks.erase(val);
 	}
 	toDeleteChunks.clear();
+}
+
+std::pair<int, int> CollectableManager::GetXY(uint64_t hashKey)
+{
+	int x = static_cast<int>(hashKey >> 32);
+	int y = static_cast<int>((hashKey << 32) >> 32);
+	return { x, y };
+}
+
+void CollectableManager::Debug_RenderChunkBorders(Timestep ts)
+{
+	// Loaded
+	for (auto& [xy, _] : loadedChunks)
+	{
+		auto [x, y] = GetXY(xy);
+		RenderQueue::EnQueue(RenderLayer::FOUR, { x * CollectableChunk::SIZE, y * CollectableChunk::SIZE, RenderDepth::DEBUG_TOP }, Sprites::borderBox, Colour::RED, glm::vec2{ CollectableChunk::SIZE });
+	}
+
+	// Unloaded
+	for (auto& [xy, _] : unloadedChunks)
+	{
+		auto [x, y] = GetXY(xy);
+		RenderQueue::EnQueue(RenderLayer::FOUR, { x * CollectableChunk::SIZE, y * CollectableChunk::SIZE, RenderDepth::DEBUG_TOP }, Sprites::borderBox, Colour::BLUE, glm::vec2{ CollectableChunk::SIZE });
+	}
 }

@@ -18,6 +18,7 @@ namespace GameDebugState {
 
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderCollectableCells, false);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderChunkBordersBeingRendered, false);
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showLoadedAndUnloadedCollectableChunks, false);
 
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderLevelArea, false);
 

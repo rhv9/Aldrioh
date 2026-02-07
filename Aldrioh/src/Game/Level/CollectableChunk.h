@@ -64,7 +64,7 @@ class CollectableChunk
 {
 public:
 	static constexpr int SIZE = 8;
-	static constexpr float REFRESH_TIMER = 10.0f;
+	static constexpr float REFRESH_TIMER = 5;
 
 	CollectableChunk() = default;
 	CollectableChunk(const std::vector<CachedCollectableBlock>& blocks);
@@ -78,6 +78,7 @@ public:
 	void ResetTimer() { timeRemaining = REFRESH_TIMER; }
 	void RemoveTime(Timestep ts) { timeRemaining -= ts; }
 	bool ShouldUnload() const { return timeRemaining < 0.0f; };
+	float GetTimeRemaining() const { return timeRemaining; }
 private:
 	float cellSize = 1.0f;
 	std::array<CollectableBlock, SIZE * SIZE> grid;
