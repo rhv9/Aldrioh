@@ -113,7 +113,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), playerStat
 
 	// Create player
 	PlayerPrefab playerPrefab;
-	playerPrefab.startPos = { 200, 200 };
+	playerPrefab.startPos = { 0, 0 };
 	playerEntity = playerPrefab.create(scene);
 
 	// Camera

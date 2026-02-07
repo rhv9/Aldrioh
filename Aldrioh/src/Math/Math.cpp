@@ -114,6 +114,16 @@ float Math::floatMod(float lhs, float rhs)
 	return fmodf(lhs, rhs);
 }
 
+float Math::floatModNegative(float lhs, float rhs)
+{
+	return fmodf(fmodf(lhs, rhs) + rhs, rhs);
+}
+
+int Math::ffloor(float val)
+{
+	return floorf(val);
+}
+
 float Math::min(float x, float y)
 {
 	return x < y ? x : y;

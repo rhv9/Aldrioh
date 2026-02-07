@@ -3,6 +3,16 @@
 
 struct BoundingArea;
 
+
+struct XY
+{
+	union
+	{
+		std::pair<int, int> pair{ 0,0 };
+		uint64_t hashValue;
+	};
+};
+
 class CollectableManager
 {
 public:

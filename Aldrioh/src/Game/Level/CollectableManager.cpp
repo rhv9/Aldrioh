@@ -15,10 +15,10 @@ CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 	float chunkSize = CollectableChunk::SIZE;
 	glm::vec2 dividedPos = pos / chunkSize;
 	CollectableMapping mapping;
-	mapping.chunkX = static_cast<int>(dividedPos.x);
-	mapping.chunkY = static_cast<int>(dividedPos.y);
-	mapping.cellX = static_cast<int>(Math::floatMod(pos.x, chunkSize));
-	mapping.cellY = static_cast<int>(Math::floatMod(pos.y, chunkSize));
+	mapping.chunkX = Math::ffloor(dividedPos.x);
+	mapping.chunkY = Math::ffloor(dividedPos.y);
+	mapping.cellX = static_cast<int>(Math::floatModNegative(pos.x, chunkSize));
+	mapping.cellY = static_cast<int>(Math::floatModNegative(pos.y, chunkSize));
 
 	return mapping;
 }
@@ -26,7 +26,9 @@ CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 
 inline CollectableChunk& CollectableManager::GetChunk(int x, int y)
 {
-	uint64_t val = static_cast<uint64_t>(x) << 32 | static_cast<uint64_t>(y);
+	XY xy;
+	xy.pair = { y, x };
+	uint64_t val = xy.hashValue;
 
 	if (loadedChunks.find(val) != loadedChunks.end())
 	{
