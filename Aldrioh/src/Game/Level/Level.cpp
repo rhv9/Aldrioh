@@ -67,7 +67,7 @@ Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), collectabl
 
 	waveManager.Init();
 	scene.GetCollisionZone().Init(15, 15, 1);
-	collectableManager.Init(100, 100);
+	collectableManager.Init(200, 200);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -197,35 +197,40 @@ void Level::OnRender(Timestep ts)
 	uiPlayerHealthBar->SetRelativePos(barPos);
 
 	// Rendering jewels in the screen
-	int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x - 1);
+	int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x);
 	int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
-	int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 2);
+	int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 1);
 	int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
 
 	//LOG_CORE_INFO("start: {},{}   end: {},{}", startX, startY, endX, endY);
 
-	// Goes through each horizontal cell, then shift down and repeat for whole level area.
-	for (int y = startY; y < endY; ++y)
+	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
+	CollectableMapping topRightMapping = collectableManager.GetMapping  (levelArea.topRight + playerCameraPos);
+	++topRightMapping.chunkX;
+	++topRightMapping.chunkY;
+
+	collectableManager.RenderChunks(bottomLeftMapping, topRightMapping);
+	
+	if (GameDebugState::renderLevelArea)
 	{
-		for (int x = startX; x < endX; ++x)
-		{
-			CollectableMapping mapping = collectableManager.GetMapping({ x, y });
-			CollectableCell& cell = collectableManager.GetChunk(mapping).GetCell(mapping);
-			for (int i = 0; i < cell.count; ++i)
-			{
-				CellItem& cellData = cell.cellArray[i];
-				CellItem::RenderData renderData = cellData.GetRenderData();
-
-				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatOffset() - renderData.size / 2.0f;
-
-				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, renderData.spriteId, renderData.colour, renderData.size);
-			}
-
-			// Uncommenting this looks cool :D
-			//RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ glm::vec2{x, y}, RenderDepth::COLLECTABLES }, Sprites::bullet_white, glm::vec4(1), { 0.5f, 0.5f });
-		}
+		glm::vec2 levelOffsetBottomLeft = levelArea.bottomLeft + playerCameraPos;
+		glm::vec2 levelOffsetTopRight = levelArea.topRight + playerCameraPos;
+		glm::vec2 size{ levelOffsetTopRight.x - levelOffsetBottomLeft.x, levelOffsetTopRight.y - levelOffsetBottomLeft.y };
+		RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ levelOffsetBottomLeft, 0.8f }, Sprites::borderBox, Colour::RED, size);
 	}
 
+	if (GameDebugState::renderChunkBordersBeingRendered)
+	{
+		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY; ++y)
+		{
+			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX; ++x)
+			{
+				CollectableChunk& chunk = collectableManager.GetChunk(x, y);
+				chunk.Render({ x * chunk.SIZE , y * chunk.SIZE });
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x * chunk.SIZE, y * chunk.SIZE, 0.8f }, Sprites::borderBox, Colour::WHITE, { chunk.SIZE, chunk.SIZE });
+			}
+		}
+	}
 	if (GameDebugState::renderCollectableCells)
 	{
 		for (int y = startY; y < endY; ++y)
@@ -255,7 +260,6 @@ void Level::OnRender(Timestep ts)
 			}
 		}
 	}
-
 	if (renderBezierCurve)
 	{
 		for (float t = 0; t < 1.0f; t += tdelta)
@@ -292,9 +296,10 @@ void Level::ImGuiLevelBar()
 	}
 
 	ImGui::SeparatorText("Debugging");
+	ImGui::Checkbox("Level Area", &GameDebugState::renderLevelArea);
 	ImGui::Checkbox("Collectable Cells", &GameDebugState::renderCollectableCells);
+	ImGui::Checkbox("Collectable Chunks", &GameDebugState::renderChunkBordersBeingRendered);
 	ImGui::Checkbox("Collision World Visualisation", &GameDebugState::showCollisionZoneVisualisation);
-
 	ImGui::Checkbox("Bezier tool", &renderBezierCurve);
 
 	if (renderBezierCurve)

@@ -53,15 +53,17 @@ struct CollectableMapping
 
 struct CollectableChunk
 {
-	static constexpr int SIZE = 16;
+	static constexpr int SIZE = 8;
 	float cellSize = 1.0f;
 	Scene& scene;
-	std::array<CollectableCell, SIZE* SIZE> grid;
+	std::array<CollectableCell, SIZE * SIZE> grid;
 
 	CollectableChunk(Scene& scene) : scene(scene) {}
 
 	inline CollectableCell& GetCell(int x, int y) { return grid[y * SIZE + x]; }
 	inline CollectableCell& GetCell(const CollectableMapping& mapping) { return grid[mapping.cellY * SIZE + mapping.cellX]; }
+
+	void Render(const glm::vec2& offset);
 
 	void Clear();
 };

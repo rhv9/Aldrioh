@@ -3,6 +3,30 @@
 #include <Scene/Scene.h>
 
 #include <Game/SpriteCollection.h>
+#include <Graphics/RenderQueue.h>
+#include <Game/RenderDepth.h>
+
+void CollectableChunk::Render(const glm::vec2& offset)
+{
+	for (int y = 0; y < SIZE; ++y)
+	{
+		for (int x = 0; x < SIZE; ++x)
+		{
+			CollectableCell& cell = GetCell(x, y);
+			for (int i = 0; i < cell.count; ++i)
+			{
+				CellItem& cellData = cell.cellArray[i];
+				CellItem::RenderData renderData = cellData.GetRenderData();
+
+				glm::vec2 renderPos = glm::vec2{ x, y } + cellData.GetFloatOffset() - renderData.size / 2.0f + offset;
+
+				RenderQueue::EnQueue(RenderLayer::ZERO, glm::vec3{ renderPos, RenderDepth::COLLECTABLES }, renderData.spriteId, renderData.colour, renderData.size);
+			}
+		}
+	}
+
+
+}
 
 void CollectableChunk::Clear()
 {

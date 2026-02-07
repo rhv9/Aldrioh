@@ -14,7 +14,7 @@ public:
 	int GetNumChunkWidth() const { return width; }
 	int GetNumChunkHeight() const { return height; }
 
-	glm::vec2 GetMaxActualPosition() const;
+	void RenderChunks(CollectableMapping& bottomLeft, CollectableMapping& topRight);
 
 private:
 	Scene& scene;

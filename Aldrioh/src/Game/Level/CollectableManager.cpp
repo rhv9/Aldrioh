@@ -27,3 +27,14 @@ CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 	return mapping;
 }
 
+void CollectableManager::RenderChunks(CollectableMapping& bottomLeft, CollectableMapping& topRight)
+{
+	for (int y = bottomLeft.chunkY; y < topRight.chunkY; ++y)
+	{
+		for (int x = bottomLeft.chunkX; x < topRight.chunkX; ++x)
+		{
+			CollectableChunk& chunk = GetChunk(x, y);
+			chunk.Render({ x * chunk.SIZE , y * chunk.SIZE });
+		}
+	}
+}

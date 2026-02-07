@@ -15,8 +15,13 @@ namespace GameDebugState {
 
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionBox, false);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionZoneVisualisation, false);
-	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(level_spawnEntites, true);
+
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderCollectableCells, false);
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderChunkBordersBeingRendered, false);
+
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderLevelArea, false);
+
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(level_spawnEntites, true);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(clickToSpawnEnemies, false);
 
 
