@@ -11,6 +11,10 @@ struct XY
 		std::pair<int, int> pair{ 0,0 };
 		uint64_t hashValue;
 	};
+
+	XY() = default;
+	XY(uint64_t hash) : hashValue(hash) {}
+	XY(const std::pair<int, int>& pair) : pair(pair) {}
 };
 
 class CollectableManager
@@ -24,7 +28,9 @@ public:
 
 	void RenderChunks(CollectableMapping& bottomLeft, CollectableMapping& topRight);
 	void OnUpdate(Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping);
-	static std::pair<int, int> GetXY(uint64_t hashKey);
+	
+	static std::pair<int, int> GetXY(uint64_t hashKey) { return XY{ hashKey }.pair; }
+	static uint64_t GetHashKey(const std::pair<int, int>& pair) { return XY{ pair }.hashValue; }
 
 	void Debug_RenderChunkBorders(Timestep ts);
 

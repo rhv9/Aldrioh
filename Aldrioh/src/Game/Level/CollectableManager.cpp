@@ -26,9 +26,7 @@ CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 
 inline CollectableChunk& CollectableManager::GetChunk(int x, int y)
 {
-	XY xy;
-	xy.pair = { y, x };
-	uint64_t val = xy.hashValue;
+	uint64_t val = GetHashKey({ x, y });
 
 	if (loadedChunks.find(val) != loadedChunks.end())
 	{
@@ -112,13 +110,6 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 		loadedChunks.erase(val);
 	}
 	toDeleteChunks.clear();
-}
-
-std::pair<int, int> CollectableManager::GetXY(uint64_t hashKey)
-{
-	int x = static_cast<int>(hashKey >> 32);
-	int y = static_cast<int>((hashKey << 32) >> 32);
-	return { x, y };
 }
 
 void CollectableManager::Debug_RenderChunkBorders(Timestep ts)
