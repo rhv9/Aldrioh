@@ -109,8 +109,6 @@ void WindowsWindow::Init(const WindowProps& windowProps)
 			windowData->WindowObj->MouseScrolledEventHandler.Invoke(mouseScrollEventArg);
 		});
 
-
-
 	// TODO: This should not be here
 	success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	ASSERT(success, "Failed to initialize GLAD");

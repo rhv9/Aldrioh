@@ -1,6 +1,8 @@
 #pragma once
 #include "Layer.h"
 
+#include <Events/Events.h>
+
 namespace Statistics {
 	struct EngineStats;
 }
@@ -22,6 +24,13 @@ public:
 	void QueuePopLayer(Layer* layer);
 	// Does the queued swap layers, if it does do one, will return true
 	bool HandleQueuedTasks();
+
+	void OnKeyEvent(KeyEventArg& arg);
+	void OnMouseButtonEvent(MouseButtonEventArg& arg);
+	void OnMouseScrolledEvent(MouseScrolledEventArg& arg);
+	void OnMouseMoveEvent(MouseMoveEventArg& arg);
+	void OnWindowCloseEvent(WindowCloseEventArg& arg);
+	void OnWindowResizeEvent(WindowResizeEventArg& arg);
 
 	std::vector<Layer*>::iterator begin() { return layerVector.begin(); }
 	std::vector<Layer*>::iterator end() { return layerVector.end(); }

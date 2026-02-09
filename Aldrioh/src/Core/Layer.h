@@ -1,4 +1,5 @@
 #pragma once
+#include <Events/Events.h>
 
 class Layer
 {
@@ -30,6 +31,13 @@ public:
 
 	inline bool Initialized() const { return initialized; }
 	inline void SetInitialized(bool val) { initialized = val; }
+
+	virtual void OnKeyEvent(KeyEventArg& arg) {}
+	virtual void OnMouseButtonEvent(MouseButtonEventArg& arg) {}
+	virtual void OnMouseScrolledEvent(MouseScrolledEventArg& arg) {}
+	virtual void OnMouseMoveEvent(MouseMoveEventArg& arg) {}
+	virtual void OnWindowCloseEvent(WindowCloseEventArg& arg) {}
+	virtual void OnWindowResizeEvent(WindowResizeEventArg& arg) {}
 
 private:
 	std::string name{""};

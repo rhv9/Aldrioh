@@ -120,3 +120,63 @@ bool LayerStack::HandleQueuedTasks()
 	return doneSwap;
 }
 
+void LayerStack::OnKeyEvent(KeyEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnKeyEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+
+void LayerStack::OnMouseButtonEvent(MouseButtonEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnMouseButtonEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+
+void LayerStack::OnMouseScrolledEvent(MouseScrolledEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnMouseScrolledEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+
+void LayerStack::OnMouseMoveEvent(MouseMoveEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnMouseMoveEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+
+void LayerStack::OnWindowCloseEvent(WindowCloseEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnWindowCloseEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+
+void LayerStack::OnWindowResizeEvent(WindowResizeEventArg& arg)
+{
+	for (auto it = layerVector.rbegin(); it != layerVector.rend(); ++it)
+	{
+		(*it)->OnWindowResizeEvent(arg);
+		if (arg.isHandled)
+			break;
+	}
+}
+

@@ -53,7 +53,12 @@ public:
 	
 	const GameStats& gameStats = i_gameStats;
 private:
-	void OnWindowClose(WindowCloseEventArg arg);
+	void OnWindowCloseEvent(WindowCloseEventArg& arg);
+	void OnWindowResizeEvent(WindowResizeEventArg& arg);
+	void OnMouseButtonEvent(MouseButtonEventArg& arg);
+	void OnMouseMoveEvent(MouseMoveEventArg& arg);
+	void OnMouseScrolledEvent(MouseScrolledEventArg& arg);
+	void OnKeyEvent(KeyEventArg& arg);
 
 private:
 	std::chrono::system_clock::time_point previousTime = std::chrono::system_clock::now();
@@ -70,7 +75,13 @@ private:
 	ImGuiLayer* imGuiLayer;
 	LayerStack layerStack;
 
+	EventCallbackID<KeyEventArg> callbackKeyID;
+	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
+	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
+	EventCallbackID<MouseScrolledEventArg> callbackMouseScrolledID;
 	EventCallbackID<WindowCloseEventArg> callbackWindowCloseID;
+	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
+
 
 	friend Statistics::EngineStats;
 };
