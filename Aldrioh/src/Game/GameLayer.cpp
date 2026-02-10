@@ -82,6 +82,7 @@ void GameLayer::OnBegin()
 	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
 	UIManagerComponent& uimc = uiEntity.AddComponent<UIManagerComponent>();
 	uimc.uiManager = std::make_unique<UIManager>();
+	uiManager = uimc.uiManager.get(); // TODO: This could be bad 
 
 	// UI
 	uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });
@@ -314,7 +315,7 @@ void GameLayer::OnRemove()
 {
 }
 
-void GameLayer::OnKey(KeyEventArg& e)
+void GameLayer::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
@@ -330,14 +331,10 @@ void GameLayer::OnKey(KeyEventArg& e)
 		imGuiSettings.enabledImGui = !imGuiSettings.enabledImGui;
 }
 
-void GameLayer::OnWindowResize(WindowResizeEventArg& e)
-{
-	if (currentLevel != nullptr)
-		currentLevel->UpdateLevelArea();
-}
 
-void GameLayer::OnMouseButton(MouseButtonEventArg& e)
+void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
+	uiManager->OnMouseButton(e);
 	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
 	{
 		if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
@@ -347,25 +344,31 @@ void GameLayer::OnMouseButton(MouseButtonEventArg& e)
 	}
 }
 
+void GameLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	uiManager->OnMouseMove(e);
+}
+
+void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
+{
+	uiManager->OnWindowResize(e);
+	if (currentLevel != nullptr)
+		currentLevel->UpdateLevelArea();
+}
+
 
 void GameLayer::OnTransitionIn()
 {
-	LOG_CORE_INFO("Game Layer - Transition In");
+	LOG_INFO("Game Layer - Transition In");
 	SetShouldUpdate(true);
 	SetShouldRender(true);
-	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKey);
-	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
-	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnMouseButton);
 
 	scene->OnTransitionIn();
 }
 
 void GameLayer::OnTransitionOut()
 {
-	LOG_CORE_INFO("Game Layer - Transition Out");
-	callbackKeyID.~EventCallbackID();
-	windowResizeID.~EventCallbackID();
-	callbackMouseButtonID.~EventCallbackID();
+	LOG_INFO("Game Layer - Transition Out");
 	scene->OnTransitionOut();
 }
 
@@ -381,9 +384,5 @@ void GameLayer::OnPoppedLayerIntoEvent()
 	LOG_CORE_INFO("Game Layer - PoppedLayerAboveEvent");
 	SetShouldUpdate(true);
 	SetShouldRender(true);
-	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnKey);
-	windowResizeID = Game::Instance().GetWindow()->WindowResizeEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnWindowResize);
-	callbackMouseButtonID = Game::Instance().GetWindow()->MouseButtonEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameLayer::OnMouseButton);
-
 	scene->OnTransitionIn();
 }

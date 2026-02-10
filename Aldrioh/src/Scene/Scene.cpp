@@ -115,28 +115,12 @@ Entity Scene::WrapEntityHandle(entt::entity entityHandle)
 	return { entityHandle, this };
 }
 
-// Temporarily hard coded for simplicity
 void Scene::OnTransitionIn()
 {
-	auto view = getRegistry().view<UIManagerComponent>();
-
-	for (entt::entity e : view)
-	{
-		UIManagerComponent& uimc = view.get<UIManagerComponent>(e);
-		uimc.uiManager->AttachEventListeners();
-	}
 }
 
-// Temporarily hard coded for simplicity
 void Scene::OnTransitionOut()
 {
-	auto view = getRegistry().view<UIManagerComponent>();
-
-	for (entt::entity e : view)
-	{
-		UIManagerComponent& uimc = view.get<UIManagerComponent>(e);
-		uimc.uiManager->DetachEventListeners();
-	}
 }
 
 Entity Scene::GetPrimaryCameraEntity()

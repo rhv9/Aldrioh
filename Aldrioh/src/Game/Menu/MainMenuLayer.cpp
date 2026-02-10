@@ -35,7 +35,6 @@ void MainMenuLayer::OnBegin()
 
 	Renderer::SetUIPixelHeight(100);
 	uiManager = new UIManager();
-	uiManager->DetachEventListeners();
 
 	UIText* title = new UIText("Title", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);
@@ -73,7 +72,6 @@ void MainMenuLayer::OnBegin()
 	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
 	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.05f);
 	SoundManager::LoadSound(SoundCategory::SFX, "bullet_impact", "assets/audio/General\ Sounds/Impacts/sfx_sounds_impact1.wav", 0.05f);
-
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
@@ -94,7 +92,6 @@ void MainMenuLayer::OnRender(Timestep delta)
 
 void MainMenuLayer::OnImGuiRender(Timestep delta)
 {
-
 }
 
 void MainMenuLayer::OnRemove()
@@ -102,26 +99,36 @@ void MainMenuLayer::OnRemove()
 	delete uiManager;
 }
 
-void MainMenuLayer::OnKey(KeyEventArg& e)
+void MainMenuLayer::OnTransitionIn()
+{
+	delete GlobalLayers::game;
+}
+
+void MainMenuLayer::OnTransitionOut()
+{
+	LOG_CORE_INFO("Detaching!");
+}
+
+void MainMenuLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
+{
+	uiManager->OnMouseButton(e);
+}
+
+void MainMenuLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	uiManager->OnMouseMove(e);
+}
+
+void MainMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
+{
+	uiManager->OnWindowResize(e);
+}
+
+void MainMenuLayer::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_CORE_INFO("Shutdown");
 		Game::Instance().Shutdown();
 	}
-}
-
-void MainMenuLayer::OnTransitionIn()
-{
-	delete GlobalLayers::game;
-	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(MainMenuLayer::OnKey);
-	if (uiManager != nullptr)
-		uiManager->AttachEventListeners();
-}
-
-void MainMenuLayer::OnTransitionOut()
-{
-	LOG_CORE_INFO("Detaching!");
-	callbackKeyID.~EventCallbackID();
-	uiManager->DetachEventListeners();
 }

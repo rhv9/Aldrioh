@@ -13,23 +13,24 @@ public:
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
 	virtual void OnRender(Timestep delta) override;
-	virtual void OnImGuiRender(Timestep delta) override;
+	virtual void OnImGuiRender(Timestep delta) override {}
 
-	virtual void OnRemove() override;
+	virtual void OnRemove() override {}
 
-	virtual void OnTransitionIn() override;
-	virtual void OnTransitionOut() override;
+	virtual void OnTransitionIn() override {}
+	virtual void OnTransitionOut() override {}
 
-	void OnKey(KeyEventArg& e);
+	virtual void OnMouseButtonEvent(MouseButtonEventArg& e);
+	virtual void OnMouseMoveEvent(MouseMoveEventArg& e);
+	virtual void OnWindowResizeEvent(WindowResizeEventArg& e);
+	virtual void OnKeyEvent(KeyEventArg& e);
 
 private:
-	std::shared_ptr<Scene> scene;
+	std::unique_ptr<Scene> scene;
 	float timeElapsed = 0.0f;
 	bool displayTitle = true;
 	bool currentDisplayTitleState = true;
 
-	UIManager* uiManager = nullptr;
+	std::unique_ptr<UIManager> uiManager = nullptr;
 	UIText* title = nullptr;
-
-	EventCallbackID<KeyEventArg> callbackKeyID;
 };

@@ -85,14 +85,6 @@ void PauseMenuLayer::OnRemove()
 	delete uiManager;
 }
 
-void PauseMenuLayer::OnKey(KeyEventArg& e)
-{
-	if (e.IsPressed(Input::KEY_ESCAPE))
-	{
-		ExitPauseMenuToGame();
-	}
-}
-
 void PauseMenuLayer::ExitPauseMenuToGame()
 {
 	LOG_CORE_INFO("Pause menu - popping pause menu");
@@ -102,13 +94,36 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 void PauseMenuLayer::OnTransitionIn()
 {
 	LOG_CORE_INFO("Pause menu - Transition In");
-	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(PauseMenuLayer::OnKey);
-	uiManager->AttachEventListeners();
 }
 
 void PauseMenuLayer::OnTransitionOut()
 {
 	LOG_CORE_INFO("Pause menu - Transition Out");
-	callbackKeyID.~EventCallbackID();
-	uiManager->DetachEventListeners();
+}
+
+void PauseMenuLayer::OnKeyEvent(KeyEventArg& e)
+{
+	if (e.IsPressed(Input::KEY_ESCAPE))
+	{
+		ExitPauseMenuToGame();
+	}
+	e.isHandled = true;
+}
+
+void PauseMenuLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
+{
+	uiManager->OnMouseButton(e);
+	e.isHandled = true;
+}
+
+void PauseMenuLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	uiManager->OnMouseMove(e);
+	e.isHandled = true;
+}
+
+void PauseMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
+{
+	uiManager->OnWindowResize(e);
+	e.isHandled = true;
 }

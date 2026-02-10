@@ -22,7 +22,7 @@
 
 void GameOverLayer::OnBegin()
 {
-	scene = std::make_shared<Scene>();
+	scene = std::make_unique<Scene>();
 
 	// Camera
 	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
@@ -35,8 +35,7 @@ void GameOverLayer::OnBegin()
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	Renderer::SetUIPixelHeight(100);
-	uiManager = new UIManager();
-	uiManager->AttachEventListeners();
+	uiManager = std::make_unique<UIManager>();
 
 	title = new UIText("Game Over", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);
@@ -58,7 +57,6 @@ void GameOverLayer::OnBegin()
 		});
 
 	uiManager->AddUIObject(mainMenuButton);
-	uiManager->DetachEventListeners();
 }
 
 void GameOverLayer::OnUpdate(Timestep delta)
@@ -90,35 +88,27 @@ void GameOverLayer::OnRender(Timestep delta)
 	Renderer::EndUIScene();
 }
 
-void GameOverLayer::OnImGuiRender(Timestep delta)
-{
 
+void GameOverLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
+{
+	uiManager->OnMouseButton(e);
 }
 
-void GameOverLayer::OnRemove()
+void GameOverLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
 {
-	delete uiManager;
+	uiManager->OnMouseMove(e);
 }
 
-void GameOverLayer::OnKey(KeyEventArg& e)
+void GameOverLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
+{
+	uiManager->OnWindowResize(e);
+}
+
+void GameOverLayer::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_INFO("MainMenu - switching to main menu layer");
 		QueueTransitionTo(GlobalLayers::mainMenu);
 	}
-}
-
-void GameOverLayer::OnTransitionIn()
-{
-	callbackKeyID = Game::Instance().GetWindow()->KeyEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameOverLayer::OnKey);
-	if (uiManager != nullptr)
-		uiManager->AttachEventListeners();
-}
-
-void GameOverLayer::OnTransitionOut()
-{
-	LOG_CORE_INFO("Detaching!");
-	callbackKeyID.~EventCallbackID();
-	uiManager->DetachEventListeners();
 }

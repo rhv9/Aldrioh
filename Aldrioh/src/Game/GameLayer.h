@@ -21,13 +21,15 @@ public:
 
 	virtual void OnRemove();
 
-	void OnKey(KeyEventArg& e);
-	void OnWindowResize(WindowResizeEventArg& e);
-	void OnMouseButton(MouseButtonEventArg& e);
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 	virtual void OnPushedLayerAboveEvent() override;
 	virtual void OnPoppedLayerIntoEvent() override;
+
+	virtual void OnKeyEvent(KeyEventArg& e);
+	virtual void OnMouseButtonEvent(MouseButtonEventArg& e);
+	virtual void OnMouseMoveEvent(MouseMoveEventArg& e);
+	virtual void OnWindowResizeEvent(WindowResizeEventArg& e);
 
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
@@ -46,9 +48,4 @@ private:
 	UIProgressBar* uiPlayerHealthBar = nullptr;
 	UIProgressBar* expProgressBar = nullptr;
 	UIText* uiTimerText = nullptr;
-
-	EventCallbackID<KeyEventArg> callbackKeyID;
-	EventCallbackID<WindowResizeEventArg> windowResizeID;
-	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
-
 };
