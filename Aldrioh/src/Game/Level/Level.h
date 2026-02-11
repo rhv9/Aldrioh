@@ -2,7 +2,6 @@
 #include <Scene/Scene.h>
 #include <Scene/Entity.h>
 
-#include <Game/Waves/WaveManager.h>
 #include <Game/Level/CollectableManager.h>
 
 #include "PlayerStats.h"
@@ -60,7 +59,6 @@ protected:
 	Entity playerCamera, debugCamera;
 	Entity playerEntity;
 
-	WaveManager waveManager;
 	CollectableManager collectableManager;
 	PlayerStats playerStats;
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <queue>
 
 // Mine
 #include <Core/Core.h>

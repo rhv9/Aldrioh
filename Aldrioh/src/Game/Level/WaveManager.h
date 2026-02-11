@@ -1,22 +1,24 @@
 #pragma once
 
-#include "Objective.h"
-
-class Scene;
 class Level;
+class Scene;
+
+class Wave
+{
+	float durationSeconds;
+};
 
 class WaveManager
 {
 public:
 	WaveManager(Scene& scene, Level& level);
 
-	void Init();
+	void InitWaveConfig();
 	void OnUpdate(Timestep ts);
-	
+
 private:
 	Scene& scene;
 	Level& level;
 
-	std::vector<Objective> objectives;
-	int currentObjIndex = 0;
+	std::queue<Wave> waveQueue;
 };

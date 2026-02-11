@@ -61,11 +61,10 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), waveManager(scene, *this), playerStats(*this)
+Level::Level(Scene& scene) : scene(scene), playerStats(*this)
 {
 	GameDebugState::level_spawnEntites = false;
 
-	waveManager.Init();
 	scene.GetCollisionZone().Init(60, 40, 1);
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
@@ -142,7 +141,6 @@ static float asteroidSpawnSpeed = 0.4f;
 
 void Level::OnUpdate(Timestep ts)
 {
-	waveManager.OnUpdate(ts);
 
 	levelTimeElapsed += ts;
 	// TODO: does not necessarily have to update every tick.
