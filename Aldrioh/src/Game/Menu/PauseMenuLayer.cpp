@@ -24,7 +24,7 @@ void PauseMenuLayer::OnBegin()
 	Renderer::SetClearColour(Colour::BLACK);
 
 	Renderer::SetUIPixelHeight(100);
-	uiManager = new UIManager();
+	uiManager = std::make_unique<UIManager>();
 
 	UIObject* uiBackground = new UIObject("Background", { 0,0 }, Renderer::UIGetWindowSize());
 	uiBackground->SetBackgroundColour(glm::vec4{ 0.3f, 0.3f, 0.3f, 0.5f });
@@ -80,11 +80,6 @@ void PauseMenuLayer::OnImGuiRender(Timestep delta)
 {
 }
 
-void PauseMenuLayer::OnRemove()
-{
-	delete uiManager;
-}
-
 void PauseMenuLayer::ExitPauseMenuToGame()
 {
 	LOG_CORE_INFO("Pause menu - popping pause menu");
@@ -94,11 +89,19 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 void PauseMenuLayer::OnTransitionIn()
 {
 	LOG_CORE_INFO("Pause menu - Transition In");
+	if (GlobalLayers::game != nullptr) 
+		GlobalLayers::game->SetShouldUpdate(false);
+	uiManager->OnTransitionIn();
+	gamePaused = true;
 }
 
 void PauseMenuLayer::OnTransitionOut()
 {
 	LOG_CORE_INFO("Pause menu - Transition Out");
+	if (GlobalLayers::game != nullptr)
+		GlobalLayers::game->SetShouldUpdate(true);
+
+	gamePaused = false;
 }
 
 void PauseMenuLayer::OnKeyEvent(KeyEventArg& e)
@@ -113,17 +116,14 @@ void PauseMenuLayer::OnKeyEvent(KeyEventArg& e)
 void PauseMenuLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
 	uiManager->OnMouseButton(e);
-	e.isHandled = true;
 }
 
 void PauseMenuLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
 {
 	uiManager->OnMouseMove(e);
-	e.isHandled = true;
 }
 
 void PauseMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
 	uiManager->OnWindowResize(e);
-	e.isHandled = true;
 }

@@ -19,6 +19,8 @@ public:
 	const glm::vec2& GetUIArea() { return uiArea; }
 	const glm::vec2 GetMousePos() const;
 
+	void OnTransitionIn() { PollAndUpdateWindowSize(); }
+
 	void OnWindowResize(WindowResizeEventArg& e);
 	void OnMouseMove(MouseMoveEventArg& e);
 	void OnMouseButton(MouseButtonEventArg& e);

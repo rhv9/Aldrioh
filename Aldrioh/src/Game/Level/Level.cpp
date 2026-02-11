@@ -147,7 +147,7 @@ void Level::OnUpdate(Timestep ts)
 	levelTimeElapsed += ts;
 	// TODO: does not necessarily have to update every tick.
 	UpdateTimerText(levelTimeElapsed);
-	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
+	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
 	auto& hc = playerEntity.GetComponent<HealthComponent>();
 	uiPlayerHealthBar->SetProgress(hc.health / hc.maxHealth);
 
@@ -184,7 +184,7 @@ void Level::OnRender(Timestep ts)
 	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
 
 	// Update player health bar position
-	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUIHealthProgressBar();
+	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
 	auto& playerCameraController = playerCamera.GetComponent<CameraComponent>().cameraController;
 	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
 	glm::vec2 barPos = playerPos - playerCameraPos;
@@ -316,7 +316,7 @@ void Level::UpdateTimerText(float elapsedTime)
 	int seconds = static_cast<int>(elapsedTime) % 60;
 
 	std::string timerText = std::format("{}:{:02}", mins, seconds);
-	GlobalLayers::game->GetUITimerText()->SetText(timerText);
+	GlobalLayers::game->GetUILayer()->GetUITimerText()->SetText(timerText);
 }
 
 // TODO See if can improve efficiency
@@ -379,12 +379,12 @@ BoundingArea Level::GetDeathArea()
 
 void Level::OnLevelUp()
 {
-	GlobalLayers::game->GetUILevelCountText()->SetText(std::format("Level: {}", playerStats.GetLevelCount()));
+	GlobalLayers::game->GetUILayer()->GetUILevelCountText()->SetText(std::format("Level: {}", playerStats.GetLevelCount()));
 }
 
 void Level::OnExpGain()
 {
-	GlobalLayers::game->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
+	GlobalLayers::game->GetUILayer()->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
 }
 
 void Level::Debug_SetEnableDebugCamera(bool enable)

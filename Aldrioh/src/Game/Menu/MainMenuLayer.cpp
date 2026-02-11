@@ -102,6 +102,7 @@ void MainMenuLayer::OnRemove()
 void MainMenuLayer::OnTransitionIn()
 {
 	delete GlobalLayers::game;
+	uiManager->OnTransitionIn();
 }
 
 void MainMenuLayer::OnTransitionOut()

@@ -88,35 +88,37 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 
 void LayerStack::QueueSwapLayers(Layer* first, Layer* second)
 {
-	layerSwapStack.push_back({ LayerTask::SWAP, first, second });
+	layerSwapStack.push({ LayerTask::SWAP, first, second });
 }
 
 void LayerStack::QueuePushLayer(Layer* layer)
 {
-	layerSwapStack.push_back({ LayerTask::PUSH, layer, nullptr });
+	layerSwapStack.push({ LayerTask::PUSH, layer, nullptr });
 }
 
 void LayerStack::QueuePopLayer(Layer* layer)
 {
-	layerSwapStack.push_back({ LayerTask::POP, layer, nullptr });
+	layerSwapStack.push({ LayerTask::POP, layer, nullptr });
 }
 
 bool LayerStack::HandleQueuedTasks()
 {
 	bool doneSwap = false;
-	for (LayerTaskData& job : layerSwapStack)
+	while (!layerSwapStack.empty())
 	{
 		doneSwap = true;
+		LayerTaskData& job = layerSwapStack.front();
+
 		if (job.task == LayerTask::SWAP)
 			SwapLayers(job.first, job.second);
 		else if (job.task == LayerTask::PUSH)
 			PushLayer(job.first);
 		else if (job.task == LayerTask::POP)
 			PopLayer(job.first);
-
+		
+		layerSwapStack.pop();
 	}
-	if (doneSwap)
-		layerSwapStack.clear();
+
 	return doneSwap;
 }
 

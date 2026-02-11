@@ -6,6 +6,7 @@ class Layer
 public:
 
 	Layer(const std::string& name) : name(name) {}
+	virtual ~Layer() {}
 
 	virtual void OnBegin() = 0;
 

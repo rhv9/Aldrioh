@@ -2,6 +2,7 @@
 #include "Layer.h"
 
 #include <Events/Events.h>
+#include <queue>
 
 namespace Statistics {
 	struct EngineStats;
@@ -51,7 +52,7 @@ private:
 	void PopLayer(Layer* layer);
 
 	std::vector<Layer*> layerVector;
-	std::vector<LayerTaskData> layerSwapStack;
+	std::queue<LayerTaskData> layerSwapStack;
 
 	friend Statistics::EngineStats;
 	friend Game;

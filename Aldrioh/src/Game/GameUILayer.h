@@ -4,34 +4,39 @@
 
 #include <UI/UIManager.h>
 #include <UI/UIText.h>
+#include <UI/UIProgressBar.h>
 
-class GameOverLayer : public Layer
+class GameUILayer : public Layer
 {
 public:
-	GameOverLayer(const std::string& name) : Layer(name) {}
-	virtual ~GameOverLayer() override {}
+	GameUILayer(const std::string& name) : Layer(name) {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
 	virtual void OnRender(Timestep delta) override;
 	virtual void OnImGuiRender(Timestep delta) override {}
-
 	virtual void OnRemove() override {}
 
-	virtual void OnTransitionIn() override {}
+	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override {}
 
 	virtual void OnMouseButtonEvent(MouseButtonEventArg& e) override;
 	virtual void OnMouseMoveEvent(MouseMoveEventArg& e) override;
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
-	virtual void OnKeyEvent(KeyEventArg& e) override;
+
+	UIText* GetUILevelCountText() { return uiLevelCountText; }
+	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
+	UIText* GetUITimerText() { return uiTimerText; }
+	UIProgressBar* GetExpProgressBar() { return expProgressBar; }
+	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 
 private:
 	std::unique_ptr<Scene> scene;
-	float timeElapsed = 0.0f;
-	bool displayTitle = true;
-	bool currentDisplayTitleState = true;
-
 	std::unique_ptr<UIManager> uiManager = nullptr;
-	UIText* title = nullptr;
+
+	UIText* uiLevelCountText = nullptr;
+	UIText* uiTimerText = nullptr;
+	UIProgressBar* uiPlayerHealthBar = nullptr;
+	UIProgressBar* expProgressBar = nullptr;
+
 };

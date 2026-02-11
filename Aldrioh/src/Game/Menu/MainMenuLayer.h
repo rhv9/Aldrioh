@@ -8,6 +8,7 @@ class MainMenuLayer : public Layer
 {
 public:
 	MainMenuLayer(const std::string& name) : Layer(name) {}
+	virtual ~MainMenuLayer() override {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;

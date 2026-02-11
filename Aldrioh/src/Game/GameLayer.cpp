@@ -65,13 +65,18 @@ struct LevelEditorData
 static ImGuiSettings imGuiSettings;
 static LevelEditorData levelEditorData;
 
+GameLayer::~GameLayer()
+{
+	Game::Instance().GetLayerStack().QueuePopLayer(GlobalLayers::gameUILayer);
+}
 
 void GameLayer::OnBegin()
 {
 	Renderer::SetClearColour({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 	scene = std::make_unique<Scene>();
-
+	Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::gameUILayer);
+	
 	// Level system
 	currentLevel = std::make_unique<Level>(*scene);
 	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
@@ -80,41 +85,6 @@ void GameLayer::OnBegin()
 
 	// UI Component has to be before level
 	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
-	UIManagerComponent& uimc = uiEntity.AddComponent<UIManagerComponent>();
-	uimc.uiManager = std::make_unique<UIManager>();
-	uiManager = uimc.uiManager.get(); // TODO: This could be bad 
-
-	// UI
-	uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });
-	uiLevelCountText->SetText("Level: 0");
-	uiLevelCountText->SetAnchorPoint(AnchorPoint::LEFT_TOP);
-	uiLevelCountText->GetFontStyle().colour = Colour::WHITE;
-	uiLevelCountText->SetFontSize(4);
-	uimc.uiManager->AddUIObject(uiLevelCountText);
-
-	uiPlayerHealthBar = new UIProgressBar("Player Health", { 2, 2 }, { 7, 0.4f });
-	uiPlayerHealthBar->SetAnchorPoint(AnchorPoint::CENTER);
-	uiPlayerHealthBar->SetBackgroundColour(Colour::GREY);
-	uiPlayerHealthBar->SetProgress(1);
-	uimc.uiManager->AddUIObject(uiPlayerHealthBar);
-
-
-	expProgressBar = new UIProgressBar("Exp bar", { 0, 0 }, { 50, 2 });
-	expProgressBar->SetAnchorPoint(AnchorPoint::LEFT_TOP);
-	expProgressBar->SetBackgroundColour(Colour::GREY);
-	expProgressBar->SetBarColour(Colour::GREEN);
-	expProgressBar->SetScalingBasedWidth(1.0f);
-	expProgressBar->SetProgress(0);
-	uimc.uiManager->AddUIObject(expProgressBar);
-
-	// UI
-	uiTimerText = new UIText("Timer", { 0, 4 }, glm::vec2{ 4, 4 });
-	uiTimerText->SetText("");
-	uiTimerText->SetAnchorPoint(AnchorPoint::CENTER_TOP);
-	uiTimerText->GetFontStyle().colour = Colour::WHITE;
-	uiTimerText->GetFontStyle().charSpacingPercent = 0.9f;
-	uiTimerText->SetFontSize(4);
-	uimc.uiManager->AddUIObject(uiTimerText);
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
@@ -311,10 +281,6 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	//ImGui::ShowDemoWindow();
 }
 
-void GameLayer::OnRemove()
-{
-}
-
 void GameLayer::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.IsPressed(Input::KEY_ESCAPE))
@@ -334,7 +300,6 @@ void GameLayer::OnKeyEvent(KeyEventArg& e)
 
 void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
-	uiManager->OnMouseButton(e);
 	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
 	{
 		if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
@@ -344,45 +309,37 @@ void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 	}
 }
 
-void GameLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
-{
-	uiManager->OnMouseMove(e);
-}
-
 void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
-	uiManager->OnWindowResize(e);
-	if (currentLevel != nullptr)
-		currentLevel->UpdateLevelArea();
+	currentLevel->UpdateLevelArea();
 }
 
+void GameLayer::OnPlayerDeath()
+{
+	GlobalLayers::game->QueueTransitionTo(GlobalLayers::gameOver);
+}
+
+GameUILayer* GameLayer::GetUILayer()
+{
+	return GlobalLayers::gameUILayer;
+}
 
 void GameLayer::OnTransitionIn()
 {
-	LOG_INFO("Game Layer - Transition In");
-	SetShouldUpdate(true);
-	SetShouldRender(true);
-
 	scene->OnTransitionIn();
 }
 
 void GameLayer::OnTransitionOut()
 {
-	LOG_INFO("Game Layer - Transition Out");
 	scene->OnTransitionOut();
 }
 
 void GameLayer::OnPushedLayerAboveEvent()
 {
-	LOG_CORE_INFO("Game Layer - PushedLayerAboveEvent");
-	SetShouldUpdate(false);
 	OnTransitionOut();
 }
 
 void GameLayer::OnPoppedLayerIntoEvent()
 {
-	LOG_CORE_INFO("Game Layer - PoppedLayerAboveEvent");
-	SetShouldUpdate(true);
-	SetShouldRender(true);
 	scene->OnTransitionIn();
 }

@@ -31,7 +31,7 @@ ParticleTemplate particleTemplate_asteroidDestroyed = []() {
 	}();
 
 auto OnDestroy_Player = [](Entity player) -> void {
-	GlobalLayers::game->QueueTransitionTo(GlobalLayers::gameOver);
+	GlobalLayers::game->OnPlayerDeath();
 	};
 
 auto OnDestroy_AsteroidParticles = [](Entity e) -> void {
@@ -42,8 +42,6 @@ auto OnDestroy_AsteroidParticles = [](Entity e) -> void {
 		e.getScene()->GetParticleManager().Emit(pt);
 	}
 	};
-
-
 
 Entity PlayerPrefab::create(Scene& scene)
 {

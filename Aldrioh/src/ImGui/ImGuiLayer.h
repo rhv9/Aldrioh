@@ -7,6 +7,7 @@ class ImGuiLayer : public Layer
 {
 public:
 	ImGuiLayer();
+	virtual ~ImGuiLayer() override {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override {}

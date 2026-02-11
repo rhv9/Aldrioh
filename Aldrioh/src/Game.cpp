@@ -47,22 +47,20 @@ void Game::Init()
     //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
     window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
 
-    callbackWindowCloseID = window->WindowCloseEventHandler.RegisterCallback(std::bind(&Game::OnWindowCloseEvent, this, std::placeholders::_1));
-    callbackWindowResizeID = window->WindowResizeEventHandler.RegisterCallback(std::bind(&Game::OnWindowResizeEvent, this, std::placeholders::_1));
-
-    callbackMouseMoveID = window->MouseMoveEventHandler.RegisterCallback(std::bind(&Game::OnMouseMoveEvent, this, std::placeholders::_1));
-    callbackMouseScrolledID = window->MouseScrolledEventHandler.RegisterCallback(std::bind(&Game::OnMouseScrolledEvent, this, std::placeholders::_1));
-    callbackMouseButtonID = window->MouseButtonEventHandler.RegisterCallback(std::bind(&Game::OnMouseButtonEvent, this, std::placeholders::_1));
-
-    callbackKeyID = window->KeyEventHandler.RegisterCallback(std::bind(&Game::OnKeyEvent, this, std::placeholders::_1));
-
-
     ShaderManager::Get().LoadShaders();
     Renderer::Init();
     RenderQueue::Init();
     Font::InitGlobalFonts();
     Sprites::Init();
     SoundManager::Init();
+
+    callbackWindowCloseID = window->WindowCloseEventHandler.RegisterCallback(std::bind(&Game::OnWindowCloseEvent, this, std::placeholders::_1));
+    callbackWindowResizeID = window->WindowResizeEventHandler.RegisterCallback(std::bind(&Game::OnWindowResizeEvent, this, std::placeholders::_1));
+
+    callbackMouseMoveID = window->MouseMoveEventHandler.RegisterCallback(std::bind(&Game::OnMouseMoveEvent, this, std::placeholders::_1));
+    callbackMouseScrolledID = window->MouseScrolledEventHandler.RegisterCallback(std::bind(&Game::OnMouseScrolledEvent, this, std::placeholders::_1));
+    callbackMouseButtonID = window->MouseButtonEventHandler.RegisterCallback(std::bind(&Game::OnMouseButtonEvent, this, std::placeholders::_1));
+    callbackKeyID = window->KeyEventHandler.RegisterCallback(std::bind(&Game::OnKeyEvent, this, std::placeholders::_1));
 
     Settings::Get().LoadOrCreate();
     Settings::Get().Apply();
