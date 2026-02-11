@@ -6,6 +6,7 @@
 
 #include <Scene/Components.h>
 #include <Game/Components/EntityComponents.h>
+#include <Game/Systems/RenderSystems.h>
 
 #include <Game.h>
 
@@ -70,7 +71,7 @@ void GameUILayer::OnRender(Timestep delta)
 	// Update player health bar position
 	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
 	auto& playerCameraController = GlobalLayers::game->GetCurrentLevel()->GetPlayerCamera().GetComponent<CameraComponent>().cameraController;
-	glm::vec2 playerPos = GlobalLayers::game->GetCurrentLevel()->GetPlayer().GetTransformComponent().position;
+	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(GlobalLayers::game->GetCurrentLevel()->GetPlayer(), delta);
 	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
 	glm::vec2 barPos = playerPos - playerCameraPos;
 	barPos.y -= 0.7f;

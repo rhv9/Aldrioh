@@ -27,6 +27,24 @@
 
 float zoomLevel = 10;
 
+struct ImGuiSettings
+{
+	bool enabledImGui = false;
+
+	bool shouldUpdateScene = true;
+	bool shouldPathRecord = false;
+	bool pathStartStopHovered = false;
+
+	bool EnabledDebugCamera = false;
+};
+struct LevelEditorData
+{
+	std::vector<glm::vec2> points;
+};
+
+static LevelEditorData levelEditorData;
+static ImGuiSettings imGuiSettings;
+
 ParticleTemplate particleTemplate_playerTakingDamage = []() {
 	ParticleTemplate pt;
 	pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -130,6 +148,8 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
+	// Debugging
+	mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
 }
 
 Level::~Level()
@@ -138,8 +158,8 @@ Level::~Level()
 
 void Level::OnUpdate(Timestep ts)
 {
-
-	levelTimeElapsed += ts;
+	if (GameDebugState::level_spawnEntites)
+		levelTimeElapsed += ts;
 
 	waveManager.OnUpdate(ts);
 
@@ -163,7 +183,7 @@ void Level::OnRender(Timestep ts)
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.RenderChunks(bottomLeftMapping, topRightMapping);
-	collectableManager.Debug_Render(*this, ts);
+	collectableManager.Debug_Render(*this, ts, bottomLeftMapping, topRightMapping);
 
 	if (GameDebugState::renderLevelArea)
 	{
@@ -172,7 +192,7 @@ void Level::OnRender(Timestep ts)
 		glm::vec2 size{ levelOffsetTopRight.x - levelOffsetBottomLeft.x, levelOffsetTopRight.y - levelOffsetBottomLeft.y };
 		RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ levelOffsetBottomLeft, 0.8f }, Sprites::borderBox, Colour::RED, size);
 	}
-	
+
 	if (renderBezierCurve)
 	{
 		for (float t = 0; t < 1.0f; t += tdelta)
@@ -183,11 +203,26 @@ void Level::OnRender(Timestep ts)
 			RenderQueue::EnQueue(RenderLayer::FOUR, { p, 1.0f }, Sprites::square, Colour::RED, size);
 		}
 	}
+
+	int i = 0;
+	for (const glm::vec2& point : levelEditorData.points)
+	{
+		constexpr glm::vec2 size = { 0.45f, 0.45f };
+		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ point - size / 2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), size, 0, 1);
+	}
 }
 
 void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 {
-	if (e.IsPressed(Input::MOUSE_BUTTON_1))
+	if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
+	{
+		if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
+		{
+			levelEditorData.points.push_back(scene.GetMousePosInScene());
+		}
+	}
+
+	if (GameDebugState::clickToSpawnEnemies && e.IsPressed(Input::MOUSE_BUTTON_1))
 	{
 		DroneEnemyPrefab dronePrefab;
 		dronePrefab.maxHealth = 1.0f;
@@ -196,17 +231,11 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	}
 }
 
-void Level::ImGuiLevelBar()
+void Level::ImGuiLevelBar(Timestep delta)
 {
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
 
-	if (ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies))
-	{
-		if (GameDebugState::clickToSpawnEnemies)
-			mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
-		else
-			mouseButtonCallbackID.~EventCallbackID();
-	}
+	ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies);
 
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Level Area", &GameDebugState::renderLevelArea);
@@ -223,6 +252,73 @@ void Level::ImGuiLevelBar()
 		ImGui::DragFloat2("p1", (float*)&p1, 0.1f);
 		ImGui::DragFloat2("p2", (float*)&p2, 0.1f);
 		ImGui::DragFloat("t delta", &tdelta, 0.02f, 0.02f, 1.0f);
+	}
+
+	if (ImGui::Checkbox("Debugging Camera", &GameDebugState::enabledDebugCamera))
+		Debug_SetEnableDebugCamera(GameDebugState::enabledDebugCamera);
+
+	if (ImGui::Button(GameDebugState::shouldUpdateScene ? "Pause" : "Play"))
+		GameDebugState::shouldUpdateScene = !GameDebugState::shouldUpdateScene;
+
+	ImGui::SeparatorText("Entity Pathing");
+
+	if (ImGui::Button(imGuiSettings.shouldPathRecord ? "Stop recording path" : "Start recording path"))
+		imGuiSettings.shouldPathRecord = !imGuiSettings.shouldPathRecord;
+
+	if (ImGui::IsItemHovered())
+		imGuiSettings.pathStartStopHovered = true;
+	else
+		imGuiSettings.pathStartStopHovered = false;
+
+	if (ImGui::Button("Reset Path"))
+		levelEditorData.points.clear();
+
+	static float pathEnemySpeed = 1.0f;
+	ImGui::DragFloat("Initial Speed", &pathEnemySpeed);
+
+
+	if (ImGui::Button("Create enemy"))
+	{
+		LOG_INFO("Creating a path enemy!");
+		EnemyPathPrefab epp;
+		epp.points = levelEditorData.points;
+		epp.speed = pathEnemySpeed;
+		epp.create(scene);
+	}
+
+	static bool keepCreating = false;
+	static float interval = 1.0f;
+	static float elapsedTime = 0.0f;
+	elapsedTime += delta;
+
+	ImGui::DragFloat("Interval", &interval);
+
+	if (ImGui::Button(keepCreating ? "Stop  da centipede" : "Begin epicness"))
+		keepCreating = !keepCreating;
+
+	if (elapsedTime >= interval)
+	{
+		elapsedTime -= interval;
+		if (keepCreating)
+		{
+			EnemyPathPrefab epp;
+			epp.points = levelEditorData.points;
+			epp.speed = pathEnemySpeed;
+			epp.create(scene);
+		}
+	}
+
+	if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
+	{
+		std::string text;
+		text.reserve(512);
+
+		for (const glm::vec2& point : levelEditorData.points)
+		{
+			text.append(std::format(",({:.1f},{:.1f})", point.x, point.y));
+		}
+
+		ImGui::Text(std::format("Path: {}", text).c_str());
 	}
 }
 

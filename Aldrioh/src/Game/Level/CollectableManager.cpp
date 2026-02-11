@@ -117,16 +117,12 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 	toDeleteChunks.clear();
 }
 
-void CollectableManager::Debug_Render(Level& level, Timestep ts)
+void CollectableManager::Debug_Render(Level& level, Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping)
 {
-	auto& playerCameraController = level.GetPlayerCamera().GetComponent<CameraComponent>().cameraController;
-	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
-	Entity playerEntity = level.GetPlayer();
-	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
+	glm::vec2 playerCameraPos = level.GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition();
+	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(level.GetPlayer(), ts);
 
 	auto& levelArea = level.GetScreenBorderOffset();
-	CollectableMapping bottomLeftMapping = GetMapping(levelArea.bottomLeft + playerCameraPos);
-	CollectableMapping topRightMapping = GetMapping(levelArea.topRight + playerCameraPos);
 
 	if (GameDebugState::renderChunkBordersBeingRendered)
 	{
@@ -154,7 +150,7 @@ void CollectableManager::Debug_Render(Level& level, Timestep ts)
 
 		// Render cells that player is collecting from
 		{
-			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
+			auto& pcc = level.GetPlayer().GetComponent<PlayerControllerComponent>();
 			int startX = static_cast<int>(playerPos.x - pcc.radius);
 			int startY = static_cast<int>(playerPos.y - pcc.radius);
 			int endX = static_cast<int>(playerPos.x + pcc.radius);

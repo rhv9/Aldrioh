@@ -32,7 +32,7 @@ public:
 	static std::pair<int, int> GetXY(uint64_t hashKey) { return XY{ hashKey }.pair; }
 	static uint64_t GetHashKey(const std::pair<int, int>& pair) { return XY{ pair }.hashValue; }
 
-	void Debug_Render(Level& level, Timestep ts);
+	void Debug_Render(Level& level, Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping);
 	void Debug_RenderChunkBorders(Timestep ts);
 
 private:

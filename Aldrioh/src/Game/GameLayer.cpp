@@ -46,24 +46,7 @@
 
 #include <Game/Entity/GameEntityPrefab.h>
 
-struct ImGuiSettings
-{
-	bool enabledImGui = false;
 
-	bool shouldUpdateScene = true;
-	bool shouldPathRecord = false;
-	bool pathStartStopHovered = false;
-
-	bool EnabledDebugCamera = false;
-};
-
-struct LevelEditorData
-{
-	std::vector<glm::vec2> points;
-};
-
-static ImGuiSettings imGuiSettings;
-static LevelEditorData levelEditorData;
 
 GameLayer::~GameLayer()
 {
@@ -134,7 +117,7 @@ void GameLayer::OnBegin()
 
 void GameLayer::OnUpdate(Timestep delta)
 {
-	if (imGuiSettings.shouldUpdateScene)
+	if (GameDebugState::shouldUpdateScene)
 		scene->OnUpdate(delta);
 }
 
@@ -143,26 +126,13 @@ void GameLayer::OnRender(Timestep delta)
 	//Renderer::DrawBackgroundPass();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
-
-	// Render Pass for drawing LevelEditing pointers
-	auto& cameraController = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
-	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
-
-	int i = 0;
-	for (const glm::vec2& point : levelEditorData.points)
-	{
-		constexpr glm::vec2 size = { 0.45f, 0.45f };
-		Renderer::DrawQuad(glm::vec3{ point - size/2.0f, 1.0f }, Font::DEFAULT->GetCharSubTexture(i++ + '0'), size, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 0, 1);
-	}
-
-	Renderer::EndScene();
 }
 
 void GameLayer::OnImGuiRender(Timestep delta)
 {
 	static bool open = false;
 
-	if (!imGuiSettings.enabledImGui)
+	if (!GameDebugState::enabledImGui)
 		return;
 
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
@@ -203,75 +173,12 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		}
 		if (ImGui::BeginTabItem("Level"))
 		{
-			currentLevel->ImGuiLevelBar();
-
-			if (ImGui::Checkbox("Debugging Camera", &imGuiSettings.EnabledDebugCamera))
-				currentLevel->Debug_SetEnableDebugCamera(imGuiSettings.EnabledDebugCamera);
-
-			if (ImGui::Button(imGuiSettings.shouldUpdateScene ? "Pause" : "Play"))
-				imGuiSettings.shouldUpdateScene = !imGuiSettings.shouldUpdateScene;
-
-			ImGui::SeparatorText("Entity Pathing");
-
-			if (ImGui::Button(imGuiSettings.shouldPathRecord ? "Stop recording path" : "Start recording path"))
-				imGuiSettings.shouldPathRecord = !imGuiSettings.shouldPathRecord;
-
-			if (ImGui::IsItemHovered())
-				imGuiSettings.pathStartStopHovered = true;
-			else
-				imGuiSettings.pathStartStopHovered = false;
-
-			if (ImGui::Button("Reset Path"))
-				levelEditorData.points.clear();
-
-			static float pathEnemySpeed = 1.0f;
-			ImGui::DragFloat("Initial Speed", &pathEnemySpeed);
-
-
-			if (ImGui::Button("Create enemy"))
-			{
-				LOG_INFO("Creating a path enemy!");
-				EnemyPathPrefab epp;
-				epp.points = levelEditorData.points;
-				epp.speed = pathEnemySpeed;
-				epp.create(currentLevel->scene);
-			}
-
-			static bool keepCreating = false;
-			static float interval = 1.0f;
-			static float elapsedTime = 0.0f;
-			elapsedTime += delta;
-
-			ImGui::DragFloat("Interval", &interval);
-
-			if (ImGui::Button(keepCreating ? "Stop  da centipede" : "Begin epicness"))
-				keepCreating = !keepCreating;
-
-			if (elapsedTime >= interval)
-			{
-				elapsedTime -= interval;
-				if (keepCreating)
-				{
-					EnemyPathPrefab epp;
-					epp.points = levelEditorData.points;
-					epp.speed = pathEnemySpeed;
-					epp.create(currentLevel->scene);
-				}
-			}
-
-			if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
-			{
-				std::string text;
-				text.reserve(512);
-
-				for (const glm::vec2& point : levelEditorData.points)
-				{
-					text.append(std::format(",({:.1f},{:.1f})", point.x, point.y));
-				}
-
-				ImGui::Text(std::format("Path: {}", text).c_str());
-			}
-
+			currentLevel->ImGuiLevelBar(delta);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("Waves"))
+		{
+			currentLevel->GetWaveManager().OnImGuiDebugging();
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();
@@ -295,20 +202,13 @@ void GameLayer::OnKeyEvent(KeyEventArg& e)
 		SoundManager::Play("sfx");
 	}
 	if (e.IsPressed(Input::KEY_GRAVE_ACCENT))
-		imGuiSettings.enabledImGui = !imGuiSettings.enabledImGui;
+		GameDebugState::enabledImGui = !GameDebugState::enabledImGui;
 }
 
 
 void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
 	scene->OnMouseButtonEvent(e);
-	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
-	{
-		if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
-		{
-			levelEditorData.points.push_back(scene->GetMousePosInScene());
-		}
-	}
 }
 
 void GameLayer::OnMouseMoveEvent(MouseMoveEventArg& e)

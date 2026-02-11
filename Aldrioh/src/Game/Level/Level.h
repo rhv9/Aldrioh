@@ -26,7 +26,7 @@ public:
 	void OnUpdate(Timestep ts);
 	void OnRender(Timestep ts);
 
-	void ImGuiLevelBar();
+	void ImGuiLevelBar(Timestep delta);
 
 	void UpdateLevelArea();
 	// Gives the bottom left and top right offset for screen to world position
@@ -41,6 +41,7 @@ public:
 	Entity GetPlayer() { return playerEntity; }
 
 	CollectableManager& GetCollectableManager() { return collectableManager; }
+	WaveManager& GetWaveManager() { return waveManager; }
 
 	PlayerStats& GetPlayerStats() { return playerStats; }
 	Timestep GetElapsedTime() const { return levelTimeElapsed; }
