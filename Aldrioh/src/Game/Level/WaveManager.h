@@ -5,6 +5,7 @@ class Scene;
 
 class Wave
 {
+public:
 	float durationSeconds;
 };
 

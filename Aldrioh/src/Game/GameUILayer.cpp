@@ -4,6 +4,11 @@
 #include <Graphics/Renderer.h>
 #include <Game/GlobalLayers.h>
 
+#include <Scene/Components.h>
+#include <Game/Components/EntityComponents.h>
+
+#include <Game.h>
+
 void GameUILayer::OnBegin()
 {
 	uiManager = std::make_unique<UIManager>();
@@ -42,11 +47,44 @@ void GameUILayer::OnBegin()
 
 void GameUILayer::OnUpdate(Timestep delta)
 {
+	if (GlobalLayers::game == nullptr)
+		return;
+
+	// Update health bar
+	Level* level = GlobalLayers::game->GetCurrentLevel();
+	auto& hc = level->GetPlayer().GetComponent<HealthComponent>();
+	uiPlayerHealthBar->SetProgress(hc.health / hc.maxHealth);
+	
+	// Update timer bar
+	float elapsedTime = level->GetElapsedTime();
+	int mins = static_cast<int>(elapsedTime / 60.0f);
+	int seconds = static_cast<int>(elapsedTime) % 60;
+	std::string timerText = std::format("{}:{:02}", mins, seconds);
+	uiTimerText->SetText(timerText);
+	
 	uiManager->OnUpdate(delta);
 }
 
 void GameUILayer::OnRender(Timestep delta)
 {
+	// Update player health bar position
+	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
+	auto& playerCameraController = GlobalLayers::game->GetCurrentLevel()->GetPlayerCamera().GetComponent<CameraComponent>().cameraController;
+	glm::vec2 playerPos = GlobalLayers::game->GetCurrentLevel()->GetPlayer().GetTransformComponent().position;
+	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
+	glm::vec2 barPos = playerPos - playerCameraPos;
+	barPos.y -= 0.7f;
+
+	// TODO this does not need to be calculated every frame
+	glm::vec2 uiArea = uiPlayerHealthBar->GetUIManager()->GetUIArea();
+	glm::vec2 cameraArea = playerCameraController->GetBounds().GetSize();
+	glm::vec2 cameraToUIMapping{ uiArea.x / cameraArea.x, uiArea.y / cameraArea.y };
+
+	barPos.x *= cameraToUIMapping.x;
+	barPos.y *= cameraToUIMapping.y;
+
+	uiPlayerHealthBar->SetRelativePos(barPos);
+
 	Renderer::StartUIScene();
 	uiManager->OnRender(delta);
 	Renderer::EndUIScene();

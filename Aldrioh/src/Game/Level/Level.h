@@ -6,6 +6,7 @@
 
 #include "PlayerStats.h"
 #include <Core/Window.h>
+#include "WaveManager.h"
 
 struct BoundingArea
 {
@@ -31,8 +32,7 @@ public:
 	// Gives the bottom left and top right offset for screen to world position
 	const BoundingArea& GetScreenBorderOffset() const { return levelArea; }
 	BoundingArea GetScreenBorderOffsetByCamera(const glm::vec2& offset);
-
-	void UpdateTimerText(float elapsedTime);
+	BoundingArea GetDeathArea();
 
 	// Algorithm to generate the spawn coords for enemies/asteroids
 	glm::vec2 GenerateRandomSpawnCoords();
@@ -40,11 +40,10 @@ public:
 	Entity GetPlayerCamera() { return playerCamera; }
 	Entity GetPlayer() { return playerEntity; }
 
-	BoundingArea GetDeathArea();
-
 	CollectableManager& GetCollectableManager() { return collectableManager; }
 
 	PlayerStats& GetPlayerStats() { return playerStats; }
+	Timestep GetElapsedTime() const { return levelTimeElapsed; }
 	void OnLevelUp();
 	void OnExpGain();
 
@@ -60,6 +59,7 @@ protected:
 	Entity playerEntity;
 
 	CollectableManager collectableManager;
+	WaveManager waveManager;
 	PlayerStats playerStats;
 
 	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;

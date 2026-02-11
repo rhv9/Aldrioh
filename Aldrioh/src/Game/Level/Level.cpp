@@ -61,11 +61,12 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), playerStats(*this)
+Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene, *this)
 {
 	GameDebugState::level_spawnEntites = false;
 
 	scene.GetCollisionZone().Init(60, 40, 1);
+	waveManager.InitWaveConfig();
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -107,7 +108,6 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this)
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Enemy, [](CollisionEvent& e1, CollisionEvent& e2)
 		{
-
 		});
 
 	// Create player
@@ -136,36 +136,13 @@ Level::~Level()
 {
 }
 
-static float elapsedTime = 0.0f;
-static float asteroidSpawnSpeed = 0.4f;
-
 void Level::OnUpdate(Timestep ts)
 {
 
 	levelTimeElapsed += ts;
-	// TODO: does not necessarily have to update every tick.
-	UpdateTimerText(levelTimeElapsed);
-	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
-	auto& hc = playerEntity.GetComponent<HealthComponent>();
-	uiPlayerHealthBar->SetProgress(hc.health / hc.maxHealth);
 
-	elapsedTime += ts;
+	waveManager.OnUpdate(ts);
 
-	if (GameDebugState::level_spawnEntites && elapsedTime >= asteroidSpawnSpeed)
-	{
-		elapsedTime -= asteroidSpawnSpeed;
-
-		AsteroidPrefab prefab;
-		prefab.spawnPos = GenerateRandomSpawnCoords();
-		prefab.speed = Math::Random::linearFloat(1.0f, 5.0f);
-		prefab.angle = Math::degreesToRad((float)Math::Random::linearInt(0, 360));
-		prefab.create(scene);
-
-		DroneEnemyPrefab dronePrefab;
-		dronePrefab.maxHealth = 1.0f;
-		dronePrefab.spawnPos = GenerateRandomSpawnCoords();
-		dronePrefab.create(scene);
-	}
 	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
@@ -180,28 +157,13 @@ bool renderBezierCurve = false;
 void Level::OnRender(Timestep ts)
 {
 	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
-
-	// Update player health bar position
-	UIProgressBar* uiPlayerHealthBar = GlobalLayers::game->GetUILayer()->GetUIHealthProgressBar();
-	auto& playerCameraController = playerCamera.GetComponent<CameraComponent>().cameraController;
-	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
-	glm::vec2 barPos = playerPos - playerCameraPos;
-	barPos.y -= 0.7f;
-
-	// TODO this does not need to be calculated every frame
-	glm::vec2 uiArea = uiPlayerHealthBar->GetUIManager()->GetUIArea();
-	glm::vec2 cameraArea = playerCameraController->GetBounds().GetSize();
-	glm::vec2 cameraToUIMapping{ uiArea.x / cameraArea.x, uiArea.y / cameraArea.y };
-
-	barPos.x *= cameraToUIMapping.x;
-	barPos.y *= cameraToUIMapping.y;
-
-	uiPlayerHealthBar->SetRelativePos(barPos);
+	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
 
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.RenderChunks(bottomLeftMapping, topRightMapping);
+	collectableManager.Debug_Render(*this, ts);
 
 	if (GameDebugState::renderLevelArea)
 	{
@@ -210,45 +172,7 @@ void Level::OnRender(Timestep ts)
 		glm::vec2 size{ levelOffsetTopRight.x - levelOffsetBottomLeft.x, levelOffsetTopRight.y - levelOffsetBottomLeft.y };
 		RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ levelOffsetBottomLeft, 0.8f }, Sprites::borderBox, Colour::RED, size);
 	}
-
-	if (GameDebugState::renderChunkBordersBeingRendered)
-	{
-		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY + 1; ++y)
-			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX + 1; ++x)
-				RenderQueue::EnQueue(RenderLayer::FOUR, { x * CollectableChunk::SIZE, y * CollectableChunk::SIZE, 0.8f }, Sprites::borderBox, Colour::WHITE, { CollectableChunk::SIZE, CollectableChunk::SIZE });
-	}
-
-	if (GameDebugState::showLoadedAndUnloadedCollectableChunks)
-	{
-		collectableManager.Debug_RenderChunkBorders(ts);
-	}
-
-	if (GameDebugState::renderCollectableCells)
-	{
-		// Rendering jewels in the screen
-		int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x);
-		int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
-		int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 1);
-		int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
-
-		for (int y = startY; y < endY; ++y)
-			for (int x = startX; x < endX; ++x)
-				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
-
-		// Render cells that player is collecting from
-		{
-			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
-			int startX = static_cast<int>(playerPos.x - pcc.radius);
-			int startY = static_cast<int>(playerPos.y - pcc.radius);
-			int endX = static_cast<int>(playerPos.x + pcc.radius);
-			int endY = static_cast<int>(playerPos.y + pcc.radius);
-
-			for (int y = startY; y < endY; ++y)
-				for (int x = startX; x < endX; ++x)
-					if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, playerPos) <= pcc.radius)
-						RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
-		}
-	}
+	
 	if (renderBezierCurve)
 	{
 		for (float t = 0; t < 1.0f; t += tdelta)
@@ -274,8 +198,8 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 
 void Level::ImGuiLevelBar()
 {
-	if (ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites))
-		elapsedTime = 0;
+	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
+
 	if (ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies))
 	{
 		if (GameDebugState::clickToSpawnEnemies)
@@ -306,15 +230,6 @@ BoundingArea Level::GetScreenBorderOffsetByCamera(const glm::vec2& offset)
 {
 	auto& screenOffset = GetScreenBorderOffset();
 	return { offset + screenOffset.bottomLeft, offset + screenOffset.topRight };
-}
-
-void Level::UpdateTimerText(float elapsedTime)
-{
-	int mins = static_cast<int>(elapsedTime / 60.0f);
-	int seconds = static_cast<int>(elapsedTime) % 60;
-
-	std::string timerText = std::format("{}:{:02}", mins, seconds);
-	GlobalLayers::game->GetUILayer()->GetUITimerText()->SetText(timerText);
 }
 
 // TODO See if can improve efficiency

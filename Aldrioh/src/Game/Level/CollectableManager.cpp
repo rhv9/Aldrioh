@@ -10,6 +10,11 @@
 #include <UI/Colour.h>
 #include <Game/RenderDepth.h>
 
+#include <Game/Debug/GameDebugState.h>
+#include <Scene/Components.h>
+#include <Game/Components/ControllerComponents.h>
+#include <Game/Systems/RenderSystems.h>
+
 CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 {
 	float chunkSize = CollectableChunk::SIZE;
@@ -110,6 +115,57 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 		loadedChunks.erase(val);
 	}
 	toDeleteChunks.clear();
+}
+
+void CollectableManager::Debug_Render(Level& level, Timestep ts)
+{
+	auto& playerCameraController = level.GetPlayerCamera().GetComponent<CameraComponent>().cameraController;
+	glm::vec2 playerCameraPos = playerCameraController->GetPosition();
+	Entity playerEntity = level.GetPlayer();
+	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
+
+	auto& levelArea = level.GetScreenBorderOffset();
+	CollectableMapping bottomLeftMapping = GetMapping(levelArea.bottomLeft + playerCameraPos);
+	CollectableMapping topRightMapping = GetMapping(levelArea.topRight + playerCameraPos);
+
+	if (GameDebugState::renderChunkBordersBeingRendered)
+	{
+		for (int y = bottomLeftMapping.chunkY; y < topRightMapping.chunkY + 1; ++y)
+			for (int x = bottomLeftMapping.chunkX; x < topRightMapping.chunkX + 1; ++x)
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x * CollectableChunk::SIZE, y * CollectableChunk::SIZE, 0.8f }, Sprites::borderBox, Colour::WHITE, { CollectableChunk::SIZE, CollectableChunk::SIZE });
+	}
+
+	if (GameDebugState::showLoadedAndUnloadedCollectableChunks)
+	{
+		Debug_RenderChunkBorders(ts);
+	}
+
+	if (GameDebugState::renderCollectableCells)
+	{
+		// Rendering jewels in the screen
+		int startX = static_cast<int>(levelArea.bottomLeft.x + playerCameraPos.x);
+		int startY = static_cast<int>(levelArea.bottomLeft.y + playerCameraPos.y);
+		int endX = static_cast<int>(levelArea.topRight.x + playerCameraPos.x + 1);
+		int endY = static_cast<int>(levelArea.topRight.y + playerCameraPos.y + 1);
+
+		for (int y = startY; y < endY; ++y)
+			for (int x = startX; x < endX; ++x)
+				RenderQueue::EnQueue(RenderLayer::FOUR, { x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::GREEN);
+
+		// Render cells that player is collecting from
+		{
+			auto& pcc = playerEntity.GetComponent<PlayerControllerComponent>();
+			int startX = static_cast<int>(playerPos.x - pcc.radius);
+			int startY = static_cast<int>(playerPos.y - pcc.radius);
+			int endX = static_cast<int>(playerPos.x + pcc.radius);
+			int endY = static_cast<int>(playerPos.y + pcc.radius);
+
+			for (int y = startY; y < endY; ++y)
+				for (int x = startX; x < endX; ++x)
+					if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, playerPos) <= pcc.radius)
+						RenderQueue::EnQueue(RenderLayer::FOUR, glm::vec3{ x, y, RenderDepth::COLLECTABLES }, Sprites::borderBox, Colour::BLUE);
+		}
+	}
 }
 
 void CollectableManager::Debug_RenderChunkBorders(Timestep ts)
