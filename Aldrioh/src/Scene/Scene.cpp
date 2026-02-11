@@ -123,6 +123,41 @@ void Scene::OnTransitionOut()
 {
 }
 
+void Scene::OnMouseButtonEvent(MouseButtonEventArg& e)
+{
+	auto view = registry.view<CameraComponent>();
+	for (entt::entity eHandle : view)
+		view.get<CameraComponent>(eHandle).cameraController->OnMouseButtonCallback(e);
+
+}
+
+void Scene::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	auto view = registry.view<CameraComponent>();
+	for (entt::entity eHandle : view)
+		view.get<CameraComponent>(eHandle).cameraController->OnMouseMoveCallback(e);
+
+}
+
+void Scene::OnMouseScrollEvent(MouseScrolledEventArg& e)
+{
+	auto view = registry.view<CameraComponent>();
+	for (entt::entity eHandle : view)
+		view.get<CameraComponent>(eHandle).cameraController->OnMouseScrollCallback(e);
+
+}
+
+void Scene::OnWindowResizeEvent(WindowResizeEventArg& e)
+{
+	auto view = registry.view<CameraComponent>();
+	for (entt::entity eHandle : view)
+		view.get<CameraComponent>(eHandle).cameraController->OnWindowResizeCallback(e);
+}
+
+void Scene::OnKeyEvent(KeyEventArg& e)
+{
+}
+
 Entity Scene::GetPrimaryCameraEntity()
 {
 	auto view = registry.view<CameraComponent>();

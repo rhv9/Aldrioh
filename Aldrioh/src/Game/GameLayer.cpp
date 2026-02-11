@@ -283,6 +283,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 void GameLayer::OnKeyEvent(KeyEventArg& e)
 {
+	scene->OnKeyEvent(e);
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_INFO("Pushing pause menu layer");
@@ -300,6 +301,7 @@ void GameLayer::OnKeyEvent(KeyEventArg& e)
 
 void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
+	scene->OnMouseButtonEvent(e);
 	if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
 	{
 		if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
@@ -309,8 +311,19 @@ void GameLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 	}
 }
 
+void GameLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	scene->OnMouseMoveEvent(e);
+}
+
+void GameLayer::OnMouseScrolledEvent(MouseScrolledEventArg& e)
+{
+	scene->OnMouseScrollEvent(e);
+}
+
 void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
+	scene->OnWindowResizeEvent(e);
 	currentLevel->UpdateLevelArea();
 }
 

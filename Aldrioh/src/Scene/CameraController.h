@@ -23,7 +23,6 @@ public:
 	virtual ~CameraController() {}
 	virtual void OnUpdate(Timestep delta);
 
-
 	void SetPosition(const glm::vec2& pos);
 	void OnResize(uint32_t width, uint32_t height);
 
@@ -40,18 +39,11 @@ public:
 
 	void SetFlipOnYAxis(bool flip) { this->flipOnYAxis = flip; }
 
-
-protected:
 	virtual void OnMouseButtonCallback(MouseButtonEventArg& e) {}
 	virtual void OnMouseMoveCallback(MouseMoveEventArg& e) {}
 	virtual void OnMouseScrollCallback(MouseScrolledEventArg& e) {}
 	virtual void OnWindowResizeCallback(WindowResizeEventArg& e);
 	virtual void CalculateView();
-
-	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;
-	EventCallbackID<MouseMoveEventArg> callbackMouseMoveID;
-	EventCallbackID<MouseScrolledEventArg> callbackMouseScrolledID;
-	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
 
 	glm::vec2 m_Position = { 0.0f, 0.0f };
 	float zoomLevel = 1, aspectRatio = 1;

@@ -51,6 +51,12 @@ public:
 	void OnTransitionIn();
 	void OnTransitionOut();
 
+	void OnMouseButtonEvent(MouseButtonEventArg& e);
+	void OnMouseMoveEvent(MouseMoveEventArg& e);
+	void OnMouseScrollEvent(MouseScrolledEventArg& e);
+	void OnWindowResizeEvent(WindowResizeEventArg& e);
+	void OnKeyEvent(KeyEventArg& e);
+
 	template<typename T>
 	Entity GetFirstEntity()
 	{

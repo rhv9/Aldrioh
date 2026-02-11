@@ -9,8 +9,6 @@
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
 
-
-
 class GameLayer : public Layer
 {
 public:
@@ -30,7 +28,8 @@ public:
 
 	virtual void OnKeyEvent(KeyEventArg& e) override;
 	virtual void OnMouseButtonEvent(MouseButtonEventArg& e) override;
-	virtual void OnMouseMoveEvent(MouseMoveEventArg& e) override {}
+	virtual void OnMouseMoveEvent(MouseMoveEventArg& e) override;
+	virtual void OnMouseScrolledEvent(MouseScrolledEventArg& e) override;
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 
 	void OnPlayerDeath();
