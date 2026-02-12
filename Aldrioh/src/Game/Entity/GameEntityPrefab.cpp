@@ -15,6 +15,7 @@
 #include <Game/GlobalLayers.h>
 
 #include <Math/Math.h>
+#include <Game/Entity/GameEntities.h>
 
 ParticleTemplate particleTemplate_asteroidDestroyed = []() {
 	ParticleTemplate pt;
@@ -52,7 +53,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
-	player.AddComponent<EntityTypeComponent>(EntityTypes::Player);
+	player.AddComponent<EntityTypeComponent>(EntityTypes::Player->entityId);
 	player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f }, true);
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
@@ -146,7 +147,7 @@ Entity EnemyPrefab::create(Scene& scene)
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	vc.rotation = Math::angle(dirFacing);
 	enemy.AddComponent<MoveComponent>(1.0f);
-	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
+	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
@@ -169,7 +170,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	vc.rotation = Math::angle(dirFacing);
-	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
+	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);
 	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	enemy.AddComponent<HealthComponent>(maxHealth);
@@ -198,10 +199,10 @@ Entity AsteroidPrefab::create(Scene& scene)
 	mc.addMoveVec(Math::angleToNormalizedVector(angle));
 	mc.locked = true;
 	int rand = Math::Random::linearInt(-45, 45);
-	RotationComponent& rc = asteroid.AddComponent<RotationComponent>(Math::degreesToRad(rand));
+	RotationComponent& rc = asteroid.AddComponent<RotationComponent>(Math::degreesToRad(static_cast<float>(rand)));
 	rc.skipTicks = 5;
 
-	asteroid.AddComponent<EntityTypeComponent>(EntityTypes::Asteroid);
+	asteroid.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Asteroid->entityId);
 	asteroid.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
 	asteroid.AddComponent<HealthComponent>(maxHealth);
 	asteroid.AddComponent<CoreEnemyStateComponent>();
@@ -259,9 +260,9 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 			e.getScene()->GetParticleManager().Emit(pt);
 
 			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
+
 			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
 			CollectableBlock& cell = level->GetCollectableManager().GetChunk(mapping).GetBlock(mapping);
-			//LOG_CORE_INFO("Offset: {},{}", xOffset, yOffset);
 			cell.AddCollectable(pos, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
 		}
 		
@@ -273,7 +274,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_mini);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	enemy.AddComponent<MoveComponent>(speed);
-	enemy.AddComponent<EntityTypeComponent>(EntityTypes::Enemy);
+	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);
 	glm::vec2 collisionSize{ 0.5f };
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
 	enemy.AddComponent<HealthComponent>(maxHealth);

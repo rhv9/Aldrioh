@@ -19,8 +19,11 @@
 #include <Game/GlobalLayers.h>
 #include <Audio/SoundManager.h>
 
+#include <Game/Entity/GameEntities.h>
+
 void MainMenuLayer::OnBegin()
 {
+	EntityTypes::InitGlobal(); //TODO: What if I am destroying main menu and reinitializing? It should only run once!
 	scene = std::make_shared<Scene>();
 
 	// Camera

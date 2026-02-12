@@ -3,6 +3,7 @@
 #include <Scene/EntityPrefab.h>
 #include <Game/Components/EntityComponents.h>
 #include <Game/Components/ControllerComponents.h>
+#include "EntityType.h"
 
 struct PlayerPrefab : public EntityPrefab
 {

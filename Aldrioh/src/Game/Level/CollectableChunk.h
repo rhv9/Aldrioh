@@ -5,7 +5,8 @@ class Entity;
 
 enum class CollectableType : uint8_t
 {
-	JEWEL1 = 0,
+	NONE = 0,
+	JEWEL1,
 	JEWEL2,
 	JEWEL3,
 	COIN,

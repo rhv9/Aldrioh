@@ -8,6 +8,8 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Components/LevelComponents.h>
 
+#include <Game/Entity/GameEntities.h>
+
 void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 {
 	// Destroy Entity
@@ -118,7 +120,7 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 	{
 		auto [tc, etc] = view.get<TransformComponent, EntityTypeComponent>(e);
 
-		if (etc.type == EntityTypes::Asteroid || etc.type.category == EntityCategory::Enemy)
+		if (etc.type == EnemyEntityTypes::Asteroid->entityId || etc.type.category == EntityCategory::Enemy)
 		{
 			// if outside boundaries then queue to delete
 			if (tc.position.x < bottomLeft.x || tc.position.y < bottomLeft.y ||

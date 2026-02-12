@@ -16,11 +16,11 @@ struct UIManagerComponent
 
 struct EntityTypeComponent
 {
-	EntityType type;
+	EntityID type;
 
 	EntityTypeComponent() = default;
 	EntityTypeComponent(const EntityTypeComponent&) = default;
-	EntityTypeComponent(EntityType type) : type(type) {}
+	EntityTypeComponent(EntityID entityId) : type(entityId) {}
 };
 
 struct TransformComponent

@@ -12,7 +12,7 @@ CollisionDispatcher::CollisionDispatcher()
 			map[y][x] = { emptyCallback, false };
 }
 
-void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, CollisionCallbackFunction callback)
+void CollisionDispatcher::AddCallback(EntityID type1, EntityID type2, CollisionCallbackFunction callback)
 {
 	ASSERT(type1.id <= SIZE && type2.id <= SIZE, "Size is out of bounds of map");
 
@@ -22,11 +22,11 @@ void CollisionDispatcher::AddCallback(EntityType type1, EntityType type2, Collis
 
 void CollisionDispatcher::Dispatch(CollisionEvent& e1, CollisionEvent& e2)
 {
-	EntityType type1 = e1.e.GetComponent<EntityTypeComponent>().type;
-	EntityType type2 = e2.e.GetComponent<EntityTypeComponent>().type;
+	EntityID type1 = e1.e.GetComponent<EntityTypeComponent>().type;
+	EntityID type2 = e2.e.GetComponent<EntityTypeComponent>().type;
 
 	if (map[type1.id][type2.id].reverseArguments)
 		map[type1.id][type2.id].callback(e2, e1);
-	else
+	else				   
 		map[type1.id][type2.id].callback(e1, e2);
 }

@@ -7,7 +7,7 @@ struct ParticleTemplate
 	glm::vec4 beginColour, endColour;
 	float beginSize = 1, endSize = 1;
 	float life = 1.0f;
-	std::pair<float, float> rotationRange{ 0, 0 };
+	std::pair<float, float> rotationRange{ 0.0f, 0.0f };
 
 	int count = 1;
 };

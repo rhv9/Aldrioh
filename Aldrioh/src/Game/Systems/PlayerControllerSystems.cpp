@@ -14,6 +14,7 @@
 #include <Math/Math.h>
 
 #include <Game/GlobalLayers.h>
+#include <Game/Entity/GameEntities.h>
 
 float shootTimer = 0.0f;
 
@@ -29,7 +30,7 @@ void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 	vc.rotation = Math::angle(mc.moveVec);
 	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
-	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball);
+	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
 	glm::vec2 collisionSize{ 0.3f };
 	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 }

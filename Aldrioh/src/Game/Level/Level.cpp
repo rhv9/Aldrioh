@@ -18,6 +18,7 @@
 #include <Game/GlobalLayers.h>
 
 #include <Game/Entity/GameEntityPrefab.h>
+#include <Game/Entity/GameEntities.h>
 
 #include <Game/Systems/RenderSystems.h>
 #include <imgui.h>
@@ -86,7 +87,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 	scene.GetCollisionZone().Init(60, 40, 1);
 	waveManager.InitWaveConfig();
 
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Enemy->entityId, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
 			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
@@ -99,7 +100,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 			fireball.handled = true;
 		});
 
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball, EntityTypes::Asteroid, [](CollisionEvent& fireball, CollisionEvent& asteroid)
+	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
 		{
 			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
@@ -112,7 +113,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 			fireball.handled = true;
 		});
 
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Player, [](CollisionEvent& enemy, CollisionEvent& player)
+	scene.GetCollisionDispatcher().AddCallback(EnemyEntityTypes::Enemy->entityId, EntityTypes::Player->entityId, [](CollisionEvent& enemy, CollisionEvent& player)
 		{
 			if (false)
 			{
@@ -124,7 +125,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 			}
 		});
 
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Enemy, EntityTypes::Enemy, [](CollisionEvent& e1, CollisionEvent& e2)
+	scene.GetCollisionDispatcher().AddCallback(EnemyEntityTypes::Enemy->entityId, EnemyEntityTypes::Enemy->entityId, [](CollisionEvent& e1, CollisionEvent& e2)
 		{
 		});
 
