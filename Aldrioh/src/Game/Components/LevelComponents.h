@@ -1,5 +1,5 @@
 #pragma once
-#include <Game/Level/TestLevel.h>
+#include <Game/Level/Level.h>
 
 struct LevelComponent
 {

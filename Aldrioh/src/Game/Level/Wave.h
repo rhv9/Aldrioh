@@ -14,5 +14,4 @@ public:
 	float durationSeconds;
 	int maxEntities;
 	int burstUntil;
-
 };

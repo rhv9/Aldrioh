@@ -2,6 +2,7 @@
 
 class Scene;
 class Entity;
+#include <Game/SpriteCollection.h>
 
 enum class CollectableType : uint8_t
 {
@@ -16,7 +17,7 @@ struct CollectableItem
 {
 	struct RenderData
 	{
-		int spriteId = 0;
+		spriteid_t spriteId = 0;
 		glm::vec4 colour{ 0 };
 		glm::vec2 size{ 1.0f };
 	};

@@ -271,7 +271,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
 	tc.position = glm::vec3{ spawnPos, 0.4f };
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_mini);
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_normal);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	enemy.AddComponent<MoveComponent>(speed);
 	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);

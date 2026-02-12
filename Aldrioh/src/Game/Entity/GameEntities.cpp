@@ -74,7 +74,7 @@ static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2&
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
 	tc.position = glm::vec3{ pos, 0.4f };
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_mini);
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(type.spriteId);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	enemy.AddComponent<MoveComponent>(type.speed);
 	enemy.AddComponent<EntityTypeComponent>(type.entityId);
@@ -125,12 +125,14 @@ void EnemyInitGlobal()
 	Drone_Normal->maxHp = 1.0f;
 	Drone_Normal->speed = 2.6f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
+	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->createFunc = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
-	Drone_Tank->maxHp = 1.0f;
+	Drone_Tank->maxHp = 10.0f;
 	Drone_Tank->speed = 0.5f;
 	Drone_Tank->collectableDrop = CollectableType::JEWEL2;
+	Drone_Tank->spriteId = Sprites::drone_tank;
 	Drone_Tank->createFunc = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
@@ -138,7 +140,6 @@ void EnemyInitGlobal()
 	Drone_Colourful->speed = 0.6f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
 	Drone_Tank->createFunc = drone_create;
-
 }
 
 EnemyEntityType* EnemyEntityTypes::GetEnemyEntityType(entitytypeid_t id)

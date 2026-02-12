@@ -12,14 +12,14 @@ static SubTexture* spriteMap;
 static constexpr uint32_t size = 256;
 static int spriteCounter = 0;
 
-std::vector<int> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int animationLength)
+std::vector<spriteid_t> CreateAnimSprites(const std::shared_ptr<Texture>& spriteSheet, const glm::vec2 pos, int animationLength)
 {
 	std::vector<int> sprites;
 	sprites.reserve(animationLength);
 
 	for (int i = 0; i < animationLength; ++i)
 	{
-		int spriteId = spriteCounter++;
+		spriteid_t spriteId = spriteCounter++;
 		spriteMap[spriteId] = {spriteSheet, pos + glm::vec2{i, 0.0f}, Sprites::TileSize};
 		sprites.push_back(spriteId);
 	}
@@ -56,8 +56,8 @@ void Sprites::Init()
 
 	spriteMap[player_ship = spriteCounter++] = { spritesheet, glm::vec2{ 0, 15 }, Sprites::TileSize };
 	spriteMap[asteroid_small = spriteCounter++] = { spritesheet, glm::vec2{ 0, 14 }, Sprites::TileSize };
-	spriteMap[drone_mini = spriteCounter++] = { spritesheet, glm::vec2{ 0, 13 }, Sprites::TileSize };
-
+	spriteMap[drone_normal = spriteCounter++] = { spritesheet, glm::vec2{ 0, 13 }, Sprites::TileSize };
+	spriteMap[drone_tank = spriteCounter++] = { spritesheet, glm::vec2{ 1, 13 }, Sprites::TileSize };
 
 
 
@@ -106,7 +106,7 @@ void Sprites::Init()
 	}
 }
 
-SubTexture* Sprites::get(int index)
+SubTexture* Sprites::get(spriteid_t index)
 {
 	return &spriteMap[index];
 }

@@ -2,6 +2,7 @@
 #include "EntityType.h"
 #include <Game/Level/CollectableChunk.h>
 #include <Scene/Entity.h>
+#include <Game/SpriteCollection.h>
 
 #ifdef GAMEENTITIES_CPP
 #define GE_GLOBAL_VARIABLE(VAR_NAME) VAR_NAME = nullptr
@@ -17,6 +18,8 @@ struct EnemyEntityType : public EntityType
 	float speed = 1.0f;
 	CollectableType collectableDrop = CollectableType::NONE;
 	float dmg = 1.0f;
+	spriteid_t spriteId;
+
 	std::function<Entity(EnemyEntityType& entityType, Scene& scene, const glm::vec2& pos, int lvl)> createFunc;
 
 	EnemyEntityType(EntityCategory category, const std::string& name);

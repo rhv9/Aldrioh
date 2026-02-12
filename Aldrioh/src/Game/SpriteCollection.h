@@ -8,6 +8,8 @@
 	#define SPRITES_EXTERN extern
 #endif
 
+using spriteid_t = int;
+
 namespace Sprites {
 
 	void Init();
@@ -15,27 +17,26 @@ namespace Sprites {
 	constexpr glm::vec2 TileSize { 16.0f, 16.0f };
 
 	// Subtextures
-	SPRITES_EXTERN int null;
-	SPRITES_EXTERN int shadow;
-	SPRITES_EXTERN int sand_1;
-	SPRITES_EXTERN int sand_rock;
-	SPRITES_EXTERN int sand_cactus;
-	SPRITES_EXTERN int bullet_fire, bullet_red, bullet_white;
-	SPRITES_EXTERN int coin, jewel;
+	SPRITES_EXTERN spriteid_t null;
+	SPRITES_EXTERN spriteid_t shadow;
+	SPRITES_EXTERN spriteid_t sand_1;
+	SPRITES_EXTERN spriteid_t sand_rock;
+	SPRITES_EXTERN spriteid_t sand_cactus;
+	SPRITES_EXTERN spriteid_t bullet_fire, bullet_red, bullet_white;
+	SPRITES_EXTERN spriteid_t coin, jewel;
 
 
-	SPRITES_EXTERN int player_head;
-	SPRITES_EXTERN int slime;
-	SPRITES_EXTERN int target;
-	SPRITES_EXTERN int spawner;
+	SPRITES_EXTERN spriteid_t player_head;
+	SPRITES_EXTERN spriteid_t slime;
+	SPRITES_EXTERN spriteid_t target;
+	SPRITES_EXTERN spriteid_t spawner;
 
-	SPRITES_EXTERN int player_ship;
+	SPRITES_EXTERN spriteid_t player_ship;
 
-	SPRITES_EXTERN int asteroid_small;
-	SPRITES_EXTERN int drone_mini;
+	SPRITES_EXTERN spriteid_t asteroid_small;
+	SPRITES_EXTERN spriteid_t drone_normal, drone_tank;
 
-
-	SPRITES_EXTERN int borderBox, greenBox, square;
+	SPRITES_EXTERN spriteid_t borderBox, greenBox, square;
 	
 	SPRITES_EXTERN std::vector<int> animPlayerUp, animPlayerDown, animPlayerLeft, animPlayerRight;
 	SPRITES_EXTERN std::vector<int> animBossUp, animBossDown, animBossLeft, animBossRight;
@@ -43,6 +44,6 @@ namespace Sprites {
 	// Textures
 	SPRITES_EXTERN Texture* squareTileTexture;
 
-	SubTexture* get(int index);
+	SubTexture* get(spriteid_t index);
 
 }

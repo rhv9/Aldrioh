@@ -1,6 +1,6 @@
 #pragma once
 
-class SubTexture;
+struct SubTexture;
 
 class RenderObject
 {

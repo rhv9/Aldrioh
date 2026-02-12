@@ -30,13 +30,12 @@ float zoomLevel = 10;
 
 struct ImGuiSettings
 {
-	bool enabledImGui = false;
-
 	bool shouldUpdateScene = true;
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
 
-	bool EnabledDebugCamera = false;
+	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank };
+	int option = 0;
 };
 struct LevelEditorData
 {
@@ -44,7 +43,7 @@ struct LevelEditorData
 };
 
 static LevelEditorData levelEditorData;
-static ImGuiSettings imGuiSettings;
+static std::unique_ptr<ImGuiSettings> imGuiSettings;
 
 ParticleTemplate particleTemplate_playerTakingDamage = []() {
 	ParticleTemplate pt;
@@ -82,7 +81,9 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene, *this)
 {
+	// Debugging
 	GameDebugState::level_spawnEntites = false;
+	imGuiSettings = std::make_unique<ImGuiSettings>();
 
 	scene.GetCollisionZone().Init(60, 40, 1);
 	waveManager.InitWaveConfig();
@@ -216,7 +217,7 @@ void Level::OnRender(Timestep ts)
 
 void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 {
-	if (imGuiSettings.shouldPathRecord && !imGuiSettings.pathStartStopHovered)
+	if (imGuiSettings->shouldPathRecord && !imGuiSettings->pathStartStopHovered)
 	{
 		if (e.IsReleased(Input::MOUSE_BUTTON_LEFT))
 		{
@@ -227,8 +228,9 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	if (GameDebugState::clickToSpawnEnemies && e.IsPressed(Input::MOUSE_BUTTON_1))
 	{
 		glm::vec2 spawnPos = scene.GetMousePosInScene();
-		EnemyEntityTypes::Drone_Normal->create(scene, spawnPos, 1);
-		LOG_CORE_INFO("{}", EntityType::GetEntityType(EnemyEntityTypes::Drone_Normal->entityId.id)->name);
+		EnemyEntityType* entityType = imGuiSettings->entityTypes[imGuiSettings->option];
+		entityType->create(scene, spawnPos, 1);
+		LOG_CORE_INFO("{}", EntityType::GetEntityType(entityType->entityId.id)->name);
 	}
 }
 
@@ -237,6 +239,16 @@ void Level::ImGuiLevelBar(Timestep delta)
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
 
 	ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies);
+
+	if (GameDebugState::clickToSpawnEnemies)
+	{
+		for (int i = 0; i < imGuiSettings->entityTypes.size(); ++i)
+		{
+			ImGui::PushID(i);
+			ImGui::RadioButton(imGuiSettings->entityTypes[i]->name.c_str(), &imGuiSettings->option, i);
+			ImGui::PopID();
+		}
+	}
 
 	ImGui::SeparatorText("Debugging");
 	ImGui::Checkbox("Level Area", &GameDebugState::renderLevelArea);
@@ -263,13 +275,13 @@ void Level::ImGuiLevelBar(Timestep delta)
 
 	ImGui::SeparatorText("Entity Pathing");
 
-	if (ImGui::Button(imGuiSettings.shouldPathRecord ? "Stop recording path" : "Start recording path"))
-		imGuiSettings.shouldPathRecord = !imGuiSettings.shouldPathRecord;
+	if (ImGui::Button(imGuiSettings->shouldPathRecord ? "Stop recording path" : "Start recording path"))
+		imGuiSettings->shouldPathRecord = !imGuiSettings->shouldPathRecord;
 
 	if (ImGui::IsItemHovered())
-		imGuiSettings.pathStartStopHovered = true;
+		imGuiSettings->pathStartStopHovered = true;
 	else
-		imGuiSettings.pathStartStopHovered = false;
+		imGuiSettings->pathStartStopHovered = false;
 
 	if (ImGui::Button("Reset Path"))
 		levelEditorData.points.clear();
@@ -309,7 +321,7 @@ void Level::ImGuiLevelBar(Timestep delta)
 		}
 	}
 
-	if (levelEditorData.points.size() != 0 || imGuiSettings.shouldPathRecord)
+	if (levelEditorData.points.size() != 0 || imGuiSettings->shouldPathRecord)
 	{
 		std::string text;
 		text.reserve(512);

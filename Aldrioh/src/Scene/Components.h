@@ -34,7 +34,7 @@ struct TransformComponent
 
 struct VisualComponent
 {
-	int spriteId;
+	spriteid_t spriteId;
 	glm::vec3 localTransform;
 	glm::vec2 scale;
 	float rotation = 0.0f;
@@ -42,9 +42,9 @@ struct VisualComponent
 	float flags = 0;
 	RenderLayer renderLayer = RenderLayer::TWO;
 
-	VisualComponent(const int spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}
-	VisualComponent(const int spriteId, const glm::vec3& localTransform) : VisualComponent(spriteId, localTransform, DEFAULT_SCALE) {}
-	VisualComponent(const int spriteId) : VisualComponent(spriteId, DEFAULT_LOCAL_TRANSFORM, DEFAULT_SCALE) {}
+	VisualComponent(const spriteid_t spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}
+	VisualComponent(const spriteid_t spriteId, const glm::vec3& localTransform) : VisualComponent(spriteId, localTransform, DEFAULT_SCALE) {}
+	VisualComponent(const spriteid_t spriteId) : VisualComponent(spriteId, DEFAULT_LOCAL_TRANSFORM, DEFAULT_SCALE) {}
 	VisualComponent() : VisualComponent(DEFAULT_SPRITE_ID, DEFAULT_LOCAL_TRANSFORM, DEFAULT_SCALE) {}
 
 	VisualComponent(const VisualComponent&) = default;
@@ -136,17 +136,17 @@ struct RotationComponent
 
 struct AnimateVisualComponent
 {
-	std::vector<int> spriteIds;
+	std::vector<spriteid_t> spriteIds;
 
 	float ts = 0.0f;
 	float speed;
 	int frame = 0;
 
-	AnimateVisualComponent(const std::vector<int> spriteIds, float speed) : spriteIds(spriteIds), speed(speed) {}
+	AnimateVisualComponent(const std::vector<spriteid_t> spriteIds, float speed) : spriteIds(spriteIds), speed(speed) {}
 	AnimateVisualComponent() : AnimateVisualComponent({ 0 }, 1.0f) {}
 	AnimateVisualComponent(const AnimateVisualComponent&) = default;
 
-	int getCurrentSprite() { return spriteIds[frame]; }
+	spriteid_t getCurrentSprite() { return spriteIds[frame]; }
 	void reset() { ts = 0.0f; }
 };
 

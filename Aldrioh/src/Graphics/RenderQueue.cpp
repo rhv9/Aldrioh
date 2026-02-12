@@ -37,7 +37,7 @@ void RenderQueue::Reset()
 	rqData.renderCount = 0;
 }
 
-void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, int spriteId, const glm::vec4& colour, const glm::vec2& scale, float rotation, float flags)
+void RenderQueue::EnQueue(RenderLayer layer, const glm::vec3& pos, spriteid_t spriteId, const glm::vec4& colour, const glm::vec2& scale, float rotation, float flags)
 {
 	EnQueue(layer, pos, Sprites::get(spriteId), colour, scale, rotation, flags);
 }
