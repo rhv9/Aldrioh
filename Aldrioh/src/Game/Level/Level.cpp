@@ -87,7 +87,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene
 	scene.GetCollisionZone().Init(60, 40, 1);
 	waveManager.InitWaveConfig();
 
-	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Enemy->entityId, [](CollisionEvent& fireball, CollisionEvent& enemy)
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Bullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
 			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
@@ -169,6 +169,7 @@ void Level::OnUpdate(Timestep ts)
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
+
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };
@@ -225,10 +226,9 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 
 	if (GameDebugState::clickToSpawnEnemies && e.IsPressed(Input::MOUSE_BUTTON_1))
 	{
-		DroneEnemyPrefab dronePrefab;
-		dronePrefab.maxHealth = 1.0f;
-		dronePrefab.spawnPos = scene.GetMousePosInScene();
-		dronePrefab.create(scene);
+		glm::vec2 spawnPos = scene.GetMousePosInScene();
+		EnemyEntityTypes::Drone_Normal->create(scene, spawnPos, 1);
+		LOG_CORE_INFO("{}", EntityType::GetEntityType(EnemyEntityTypes::Drone_Normal->entityId.id)->name);
 	}
 }
 

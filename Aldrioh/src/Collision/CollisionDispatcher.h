@@ -19,6 +19,7 @@ public:
 	CollisionDispatcher();
 	
 	void AddCallback(EntityID type1, EntityID type2, CollisionCallbackFunction callback);
+	void AddCallbackCategory(EntityCategory category1, EntityCategory category2, CollisionCallbackFunction callback);
 	void Dispatch(CollisionEvent& e1, CollisionEvent& e2);
 
 private:
@@ -31,6 +32,8 @@ private:
 		CollisionHandle(const CollisionCallbackFunction& callback, const bool reverse) : callback(callback), reverseArguments(reverse) {}
 	};
 
-	static constexpr uint32_t SIZE = 30;
+	static constexpr uint32_t SIZE = 48;
 	CollisionHandle map[SIZE][SIZE] = {};
+	CollisionHandle categoryMap[SIZE][SIZE] = {};
+
 };

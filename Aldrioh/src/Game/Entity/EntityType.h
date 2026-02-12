@@ -1,7 +1,10 @@
 #pragma once
 #include <Game/Level/CollectableChunk.h>
 
-enum EntityCategory : uint8_t
+using entitycategorytype_t = uint8_t;
+using entitytypeid_t = uint16_t;
+
+enum EntityCategory : entitycategorytype_t
 {
 	Player = 0,
 	Enemy,
@@ -9,7 +12,6 @@ enum EntityCategory : uint8_t
 	Bullet,
 };
 
-using entitytypeid_t = uint16_t;
 
 struct EntityID
 {
