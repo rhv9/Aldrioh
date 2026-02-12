@@ -27,17 +27,17 @@ void WaveManager::OnUpdate(Timestep ts)
 
 	if (!waveQueue.empty())
 	{
+		// Updating waveIndex
 		float levelTime = level.GetElapsedTime();
-
 		if (levelTime >= finishTime)
 		{
 			++waveIndex;
 			if (waveIndex >= waveQueue.size())
 				return;
-
-			Wave& wave = waveQueue[waveIndex];
-			finishTime += wave.durationSeconds;
+			finishTime += waveQueue[waveIndex].durationSeconds;
 		}
+
+
 	}
 }
 

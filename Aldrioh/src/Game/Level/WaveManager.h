@@ -1,14 +1,8 @@
 #pragma once
+#include "Wave.h"
 
 class Level;
 class Scene;
-
-class Wave
-{
-public:
-	std::string name{ "" };
-	float durationSeconds;
-};
 
 class WaveManager
 {
