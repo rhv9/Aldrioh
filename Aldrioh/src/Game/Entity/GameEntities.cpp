@@ -62,12 +62,13 @@ static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2&
 			e.getScene()->GetParticleManager().Emit(pt);
 
 			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
+			EntityID entityId = e.GetComponent<EntityTypeComponent>().typeId;
 
-			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
-			CollectableBlock& cell = level->GetCollectableManager().GetChunk(mapping).GetBlock(mapping);
-			LOG_CORE_INFO("{}", EntityType::GetEntityType(e.GetComponent<EntityTypeComponent>().type.id)->name);
-			CollectableType collectableType = EnemyEntityTypes::GetEnemyEntityType(e.GetComponent<EntityTypeComponent>().type.id)->collectableDrop;
-			cell.AddCollectable(pos, collectableType);
+			// Add item
+			CollectableType collectableType = EnemyEntityTypes::GetEnemyEntityType(entityId.id)->collectableDrop;
+			level->GetCollectableManager().AddCollectable(pos, collectableType);
+
+			level->GetLevelStats().incrementEnemyDeath(entityId);
 		}
 		};
 

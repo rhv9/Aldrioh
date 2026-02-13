@@ -23,8 +23,11 @@ public:
 	CollectableManager() = default;
 
 	CollectableMapping GetMapping(const glm::vec2& pos);
-	inline CollectableChunk& GetChunk(const CollectableMapping& mapping) { return GetChunk(mapping.chunkX, mapping.chunkY); }
-	inline CollectableChunk& GetChunk(int x, int y);
+	CollectableChunk& GetChunk(int x, int y);
+	CollectableChunk& GetChunk(const CollectableMapping& mapping) { return GetChunk(mapping.chunkX, mapping.chunkY); }
+	CollectableBlock& GetBlock(const CollectableMapping& mapping) { return GetChunk(mapping.chunkX, mapping.chunkY).GetBlock(mapping); }
+	CollectableBlock& GetBlock(const glm::vec2& pos) { return GetBlock(GetMapping(pos)); }
+	void AddCollectable(const glm::vec2& pos, CollectableType collectableType) { GetBlock(pos).AddCollectable(pos, collectableType); }
 
 	void RenderChunks(CollectableMapping& bottomLeft, CollectableMapping& topRight);
 	void OnUpdate(Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping);

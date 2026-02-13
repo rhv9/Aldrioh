@@ -120,7 +120,7 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 	{
 		auto [tc, etc] = view.get<TransformComponent, EntityTypeComponent>(e);
 
-		if (etc.type == EnemyEntityTypes::Asteroid->entityId || etc.type.category == EntityCategory::Enemy)
+		if (etc.typeId == EnemyEntityTypes::Asteroid->entityId || etc.typeId.category == EntityCategory::Enemy)
 		{
 			// if outside boundaries then queue to delete
 			if (tc.position.x < bottomLeft.x || tc.position.y < bottomLeft.y ||

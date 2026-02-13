@@ -234,8 +234,21 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	}
 }
 
-void Level::ImGuiLevelBar(Timestep delta)
+void Level::ImGuiRender(Timestep delta)
 {
+	if (ImGui::CollapsingHeader("Level Stats"))
+	{
+		int i = 0;
+		for (auto [typeId, count] : levelStats.enemyDeaths)
+		{
+
+			ImGui::PushID(i);
+			ImGui::Text("%s: %d", EntityType::GetEntityType(typeId)->name.c_str(), count);
+			ImGui::PopID();
+			++i;
+		}
+	}
+
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
 
 	ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies);

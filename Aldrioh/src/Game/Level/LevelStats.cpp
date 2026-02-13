@@ -1,7 +1,7 @@
 #include <pch.h>
-#include "LevelCounter.h"
+#include "LevelStats.h"
 
-void LevelCounter::incrementEnemyDeath(EntityID eType)
+void LevelStats::incrementEnemyDeath(EntityID eType)
 {
 	if (enemyDeaths.find(eType.id) == enemyDeaths.end())
 		enemyDeaths.insert({ eType.id, 0 });

@@ -35,8 +35,8 @@ void CollisionDispatcher::AddCallbackCategory(EntityCategory category1, EntityCa
 
 void CollisionDispatcher::Dispatch(CollisionEvent& e1, CollisionEvent& e2)
 {
-	EntityID type1 = e1.e.GetComponent<EntityTypeComponent>().type;
-	EntityID type2 = e2.e.GetComponent<EntityTypeComponent>().type;
+	EntityID type1 = e1.e.GetComponent<EntityTypeComponent>().typeId;
+	EntityID type2 = e2.e.GetComponent<EntityTypeComponent>().typeId;
 
 	if (categoryMap[type1.category][type2.category].reverseArguments)
 		categoryMap[type1.category][type2.category].callback(e2, e1);

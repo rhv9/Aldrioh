@@ -135,8 +135,8 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 
 CollisionPositionMapping CollisionZone::GetCollisionPositionMapping(const glm::vec2& pos)
 {
-	int cellX = static_cast<int>((pos.x - playerOffset.x) / cellSize) + centerX;
-	int cellY = static_cast<int>((pos.y - playerOffset.y) / cellSize) + centerY;
+	int cellX = Math::ffloor((pos.x - playerOffset.x) / cellSize) + centerX;
+	int cellY = Math::ffloor((pos.y - playerOffset.y) / cellSize) + centerY;
 
 	return CollisionPositionMapping{ cellX, cellY };
 }

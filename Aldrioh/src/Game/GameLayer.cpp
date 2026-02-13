@@ -173,7 +173,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		}
 		if (ImGui::BeginTabItem("Level"))
 		{
-			currentLevel->ImGuiLevelBar(delta);
+			currentLevel->ImGuiRender(delta);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("Waves"))
