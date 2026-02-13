@@ -79,14 +79,14 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-Level::Level(Scene& scene) : scene(scene), playerStats(*this), waveManager(scene, *this)
+Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
 	// Debugging
 	GameDebugState::level_spawnEntites = false;
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
 	scene.GetCollisionZone().Init(60, 40, 1);
-	waveManager.InitWaveConfig();
+	fixedWaveManager.InitWaveConfig();
 
 	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Bullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -163,14 +163,13 @@ void Level::OnUpdate(Timestep ts)
 	if (GameDebugState::level_spawnEntites)
 		levelTimeElapsed += ts;
 
-	waveManager.OnUpdate(ts);
+	fixedWaveManager.OnUpdate(ts);
 
 	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
-
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };
@@ -229,8 +228,8 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	{
 		glm::vec2 spawnPos = scene.GetMousePosInScene();
 		EnemyEntityType* entityType = imGuiSettings->entityTypes[imGuiSettings->option];
-		entityType->create(scene, *this, spawnPos, 1);
-		LOG_CORE_INFO("{}", EntityType::GetEntityType(entityType->entityId.id)->name);
+		entityType->create(*this, spawnPos, 1);
+		LOG_INFO("Click to spawn: {}", EntityType::GetEntityType(entityType->entityId.id)->name);
 	}
 }
 

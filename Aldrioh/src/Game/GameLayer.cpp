@@ -178,7 +178,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 		}
 		if (ImGui::BeginTabItem("Waves"))
 		{
-			currentLevel->GetWaveManager().OnImGuiDebugging();
+			currentLevel->GetFixedWaveManager().OnImGuiDebugging();
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

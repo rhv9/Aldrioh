@@ -1,19 +1,19 @@
 #pragma once
-#include "Wave.h"
+#include "WaveGroup.h"
 
 class Level;
 class Scene;
 
-class WaveManager
+class FixedWaveManager
 {
 public:
-	WaveManager(Scene& scene, Level& level);
+	FixedWaveManager(Scene& scene, Level& level);
 
 	void InitWaveConfig();
 	void OnUpdate(Timestep ts);
 
 	void SetWave(int index);
-	const std::vector<Wave>& GetWaveQueue() const { return waveQueue; }
+	const std::vector<WaveGroup>& GetWaveQueue() const { return waveQueue; }
 	int GetWaveIndex() const { return waveIndex; }
 	float GetFinishTime() const { return finishTime; }
 
@@ -25,7 +25,7 @@ private:
 
 	float finishTime = 0.0f;
 	int waveIndex = 0;
-	std::vector<Wave> waveQueue;
+	std::vector<WaveGroup> waveQueue;
 
 	
 };

@@ -6,7 +6,7 @@
 
 #include "PlayerStats.h"
 #include <Core/Window.h>
-#include "WaveManager.h"
+#include "FixedWaveManager.h"
 #include "LevelStats.h"
 
 struct BoundingArea
@@ -40,9 +40,10 @@ public:
 
 	Entity GetPlayerCamera() { return playerCamera; }
 	Entity GetPlayer() { return playerEntity; }
+	Scene& GetScene() { return scene; }
 
 	CollectableManager& GetCollectableManager() { return collectableManager; }
-	WaveManager& GetWaveManager() { return waveManager; }
+	FixedWaveManager& GetFixedWaveManager() { return fixedWaveManager; }
 	LevelStats& GetLevelStats() { return levelStats; }
 	PlayerStats& GetPlayerStats() { return playerStats; }
 
@@ -53,14 +54,14 @@ public:
 	void Debug_SetEnableDebugCamera(bool enable);
 	void Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e);
 
-	Scene& scene;
 protected:
+	Scene& scene;
 	BoundingArea levelArea;
 	Entity playerCamera, debugCamera;
 	Entity playerEntity;
 
 	CollectableManager collectableManager;
-	WaveManager waveManager;
+	FixedWaveManager fixedWaveManager;
 	PlayerStats playerStats;
 	LevelStats levelStats;
 

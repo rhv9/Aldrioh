@@ -25,7 +25,7 @@
 //======================
 // Entity factories
 //======================
-static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2& pos, int lvl)
+static Entity drone_create(EnemyEntityType& type, Level& level, const glm::vec2& pos, int lvl)
 {
 	static ParticleTemplate particleTemplate_droneDestroyed = []() {
 		ParticleTemplate pt;
@@ -71,6 +71,8 @@ static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2&
 			level->GetLevelStats().onEnemyKilled(entityId);
 		}
 		};
+
+	Scene& scene = level.GetScene();
 
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
@@ -131,20 +133,20 @@ void EnemyInitGlobal()
 	Drone_Normal->speed = 1.5f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
-	Drone_Normal->createFunc = drone_create;
+	Drone_Normal->onCreateCallback = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
 	Drone_Tank->maxHp = 10.0f;
 	Drone_Tank->speed = 0.5f;
 	Drone_Tank->collectableDrop = CollectableType::JEWEL2;
 	Drone_Tank->spriteId = Sprites::drone_tank;
-	Drone_Tank->createFunc = drone_create;
+	Drone_Tank->onCreateCallback = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
 	Drone_Colourful->maxHp = 1.0f;
 	Drone_Colourful->speed = 2.9f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
-	Drone_Colourful->createFunc = drone_create;
+	Drone_Colourful->onCreateCallback = drone_create;
 }
 
 EnemyEntityType* EnemyEntityTypes::GetEnemyEntityType(entitytypeid_t id)
@@ -159,10 +161,10 @@ void EnemyEntityType::OnPostCreate(Level& level, Entity e)
 
 EnemyEntityType::EnemyEntityType(EntityCategory category, const std::string& name) : EntityType(category, name)
 {
-	static auto default_create = [](EnemyEntityType& type, Scene&, const glm::vec2& pos, int lvl) -> Entity
+	static auto default_create = [](EnemyEntityType&, Level&, const glm::vec2&, int) -> Entity
 		{
 			ASSERT(false, "No creation method has been placed!")
 				return Entity::Null;
 		};
-	createFunc = default_create;
+	onCreateCallback = default_create;
 }
