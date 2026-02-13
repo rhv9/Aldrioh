@@ -130,6 +130,8 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 				if (eWrapped.HasComponent<CoreEnemyStateComponent>())
 					eWrapped.GetComponent<CoreEnemyStateComponent>().addScoreOnDeath = false;
 
+				// TODO: I don't think this should do it for all wiped enemies since it may not be an enemy
+				lc.level->GetLevelStats().onEnemyWipedByBorder(etc.typeId);
 				eWrapped.QueueDestroy();
 			}
 		}

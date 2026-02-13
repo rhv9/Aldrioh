@@ -13,6 +13,13 @@ float Math::Random::linearFloat(float min, float max)
 	return glm::linearRand(min, max);
 }
 
+float Math::Random::normalized()
+{
+	return glm::linearRand(0.0f, 1.0f);
+}
+
+
+
 float Math::sinRad(float val)
 {
 	return sinf(val);

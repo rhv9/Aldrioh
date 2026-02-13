@@ -229,7 +229,7 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	{
 		glm::vec2 spawnPos = scene.GetMousePosInScene();
 		EnemyEntityType* entityType = imGuiSettings->entityTypes[imGuiSettings->option];
-		entityType->create(scene, spawnPos, 1);
+		entityType->create(scene, *this, spawnPos, 1);
 		LOG_CORE_INFO("{}", EntityType::GetEntityType(entityType->entityId.id)->name);
 	}
 }
@@ -238,8 +238,23 @@ void Level::ImGuiRender(Timestep delta)
 {
 	if (ImGui::CollapsingHeader("Level Stats"))
 	{
+		
+		ImGui::SeparatorText("Alive Enemy");
+		ImGui::Text("Total: %d", levelStats.totalLiveEnemyCount);
 		int i = 0;
-		for (auto [typeId, count] : levelStats.enemyDeaths)
+		for (auto [typeId, count] : levelStats.aliveEnemy)
+		{
+
+			ImGui::PushID(i);
+			ImGui::Text("%s: %d", EntityType::GetEntityType(typeId)->name.c_str(), count);
+			ImGui::PopID();
+			++i;
+		}
+
+		ImGui::SeparatorText("Enemy killed");
+		ImGui::Text("Total: %d", levelStats.totalEnemyKilled);
+		i = 0;
+		for (auto [typeId, count] : levelStats.enemyKilled)
 		{
 
 			ImGui::PushID(i);

@@ -12,18 +12,21 @@
 #define EXTERN_GAMEENTITIES extern
 #endif
 
+class Level;
+
 struct EnemyEntityType : public EntityType
 {
 	float maxHp = 1.0f;
 	float speed = 1.0f;
 	CollectableType collectableDrop = CollectableType::NONE;
 	float dmg = 1.0f;
-	spriteid_t spriteId;
+	spriteid_t spriteId = 0;
 
 	std::function<Entity(EnemyEntityType& entityType, Scene& scene, const glm::vec2& pos, int lvl)> createFunc;
+	void OnPostCreate(Level& level, Entity e);
 
 	EnemyEntityType(EntityCategory category, const std::string& name);
-	Entity create(Scene& scene, const glm::vec2& pos, int lvl) { return createFunc(*this, scene, pos, lvl); }
+	Entity create(Scene& scene, Level& level, const glm::vec2& pos, int lvl) { Entity e = createFunc(*this, scene, pos, lvl); OnPostCreate(level, e); return e; }
 };
 
 namespace EntityTypes

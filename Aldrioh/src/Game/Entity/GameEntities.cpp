@@ -68,7 +68,7 @@ static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2&
 			CollectableType collectableType = EnemyEntityTypes::GetEnemyEntityType(entityId.id)->collectableDrop;
 			level->GetCollectableManager().AddCollectable(pos, collectableType);
 
-			level->GetLevelStats().incrementEnemyDeath(entityId);
+			level->GetLevelStats().onEnemyKilled(entityId);
 		}
 		};
 
@@ -77,6 +77,10 @@ static Entity drone_create(EnemyEntityType& type, Scene& scene, const glm::vec2&
 	tc.position = glm::vec3{ pos, 0.4f };
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(type.spriteId);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)
+	{
+		vc.colour = Colour::Random();
+	}
 	enemy.AddComponent<MoveComponent>(type.speed);
 	enemy.AddComponent<EntityTypeComponent>(type.entityId);
 	glm::vec2 collisionSize{ 0.5f };
@@ -124,7 +128,7 @@ void EnemyInitGlobal()
 
 	Drone_Normal = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Normal" };
 	Drone_Normal->maxHp = 1.0f;
-	Drone_Normal->speed = 2.6f;
+	Drone_Normal->speed = 1.5f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->createFunc = drone_create;
@@ -138,14 +142,19 @@ void EnemyInitGlobal()
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
 	Drone_Colourful->maxHp = 1.0f;
-	Drone_Colourful->speed = 0.6f;
+	Drone_Colourful->speed = 2.9f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
-	Drone_Tank->createFunc = drone_create;
+	Drone_Colourful->createFunc = drone_create;
 }
 
 EnemyEntityType* EnemyEntityTypes::GetEnemyEntityType(entitytypeid_t id)
 {
 	return (EnemyEntityType*)(EntityType::GetEntityType(id));
+}
+
+void EnemyEntityType::OnPostCreate(Level& level, Entity e)
+{
+	level.GetLevelStats().addEntityCount(entityId);
 }
 
 EnemyEntityType::EnemyEntityType(EntityCategory category, const std::string& name) : EntityType(category, name)

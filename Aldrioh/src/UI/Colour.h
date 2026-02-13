@@ -11,6 +11,6 @@ namespace Colour {
 	CONSTEXPR_VEC4 BLUE  { 0.0f, 0.0f, 1.0f, 1.0f };
 	CONSTEXPR_VEC4 GREEN { 0.0f, 1.0f, 0.0f, 1.0f };
 
-
+	glm::vec4 Random();
 
 }

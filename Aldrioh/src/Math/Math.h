@@ -10,6 +10,8 @@ namespace Math {
 		uint32_t linearInt(int min, int max);
 		// Min/max inclusive
 		float linearFloat(float min, float max);
+		float normalized();
+
 	}
 
 	float abs(float val);
