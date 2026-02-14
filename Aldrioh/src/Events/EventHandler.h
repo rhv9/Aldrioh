@@ -109,7 +109,6 @@ public:
 	}
 
 private:
-	std::vector<Callback> Callbacks;
 	entt::registry registry;
 };
 

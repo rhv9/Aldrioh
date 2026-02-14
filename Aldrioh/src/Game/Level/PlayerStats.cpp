@@ -12,6 +12,7 @@ void PlayerStats::Init(float maxExp, float expMultiplier)
 void PlayerStats::AddExp(float value)
 {
 	exp += value * expMultiplier;
+	PlayerStatsEventArg e{ level };
 	if (exp >= maxExp)
 	{
 		levelCount += 1;
@@ -19,8 +20,7 @@ void PlayerStats::AddExp(float value)
 		maxExp *= maxExpGrowth;
 		expMultiplier += 0.1f;
 
-		level.OnLevelUp();
+		lvlUpEventHandler.Invoke(e);
 	}
-
-	level.OnExpGain();
+	expGainEventHandler.Invoke(e);
 }

@@ -21,9 +21,12 @@ struct BoundingArea
 class Level
 {
 public:
-
 	Level(Scene& scene);
 	~Level();
+
+	Level(Level& other) = delete;
+	Level& operator=(Level& other) = delete;
+
 	void OnUpdate(Timestep ts);
 	void OnRender(Timestep ts);
 	void ImGuiRender(Timestep delta);
@@ -47,8 +50,8 @@ public:
 	LevelStats& GetLevelStats() { return levelStats; }
 	PlayerStats& GetPlayerStats() { return playerStats; }
 
-	void OnLevelUp();
-	void OnExpGain();
+	void OnLevelUp(PlayerStatsEventArg& e);
+	void OnExpGain(PlayerStatsEventArg& e);
 
 	// debugging related
 	void Debug_SetEnableDebugCamera(bool enable);
@@ -66,6 +69,8 @@ protected:
 	LevelStats levelStats;
 
 	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
+	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
+	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
 
 	float levelTimeElapsed = 0.0f;
 };

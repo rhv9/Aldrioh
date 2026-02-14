@@ -34,7 +34,7 @@ struct ImGuiSettings
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
 
-	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank };
+	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful };
 	int option = 0;
 };
 struct LevelEditorData
@@ -87,6 +87,9 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	scene.GetCollisionZone().Init(60, 40, 1);
 	fixedWaveManager.InitWaveConfig();
+
+	expGainCallbackId = playerStats.expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnExpGain);
+	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUp);
 
 	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Bullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -237,7 +240,6 @@ void Level::ImGuiRender(Timestep delta)
 {
 	if (ImGui::CollapsingHeader("Level Stats"))
 	{
-		
 		ImGui::SeparatorText("Alive Enemy");
 		ImGui::Text("Total: %d", levelStats.totalLiveEnemyCount);
 		int i = 0;
@@ -426,12 +428,12 @@ BoundingArea Level::GetDeathArea()
 	return boundingArea;
 }
 
-void Level::OnLevelUp()
+void Level::OnLevelUp(PlayerStatsEventArg& e)
 {
 	GlobalLayers::game->GetUILayer()->GetUILevelCountText()->SetText(std::format("Level: {}", playerStats.GetLevelCount()));
 }
 
-void Level::OnExpGain()
+void Level::OnExpGain(PlayerStatsEventArg& e)
 {
 	GlobalLayers::game->GetUILayer()->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
 }

@@ -143,9 +143,10 @@ void EnemyInitGlobal()
 	Drone_Tank->onCreateCallback = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
-	Drone_Colourful->maxHp = 1.0f;
+	Drone_Colourful->maxHp = 0.1f;
 	Drone_Colourful->speed = 2.9f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
+	Drone_Colourful->spriteId = Sprites::drone_normal;
 	Drone_Colourful->onCreateCallback = drone_create;
 }
 

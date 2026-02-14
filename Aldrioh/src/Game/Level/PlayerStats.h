@@ -1,6 +1,13 @@
 #pragma once
+#include <Events/EventHandler.h>
 
 class Level;
+
+struct PlayerStatsEventArg : EventArg
+{
+	Level& level;
+	PlayerStatsEventArg(Level& level) : level(level) {}
+};
 
 class PlayerStats
 {
@@ -14,6 +21,8 @@ public:
 	float GetExpPercent() const { return exp / maxExp; }
 	uint16_t GetLevelCount() const { return levelCount; }
 
+	EventHandler<PlayerStatsEventArg> expGainEventHandler;
+	EventHandler<PlayerStatsEventArg> lvlUpEventHandler;
 private:
 	Level& level;
 	float exp = 0;
