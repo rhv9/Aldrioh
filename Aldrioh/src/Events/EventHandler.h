@@ -18,13 +18,14 @@ class EventCallbackID
 {
 public:
 	EventCallbackID() = default;
-	EventCallbackID(entt::entity id, EventHandler<T>* eventHandler) : id(id), eventHandler(eventHandler) {}
+	EventCallbackID(EventHandler<T>::key_t id, EventHandler<T>* eventHandler) : id(id), eventHandler(eventHandler) {}
 	~EventCallbackID();
 	EventCallbackID(const EventCallbackID& other) = delete;
 	EventCallbackID& operator=(const EventCallbackID& other) = delete;
 
 	EventCallbackID(EventCallbackID&& other) noexcept
 	{
+
 		this->id = other.id;
 		this->eventHandler = eventHandler;
 		other.eventHandler = nullptr;
@@ -37,7 +38,7 @@ public:
 		return *this;
 	}
 
-	entt::entity id = entt::null;
+	EventHandler<T>::key_t id = 0;
 	EventHandler<T>* eventHandler = nullptr;
 
 	friend EventHandler<T>;
@@ -47,29 +48,22 @@ public:
 template <class T>
 class EventHandler
 {
+public:
 	static_assert(std::is_base_of<EventArg, T>::value, "T must inherit from EventArg!");
 
 	using Callback = std::function<void(T&)>;
+	using key_t = uint16_t;
 
 	struct CallbackComponent
 	{
 		Callback callback;
-		float time = FLT_MAX;
-
-		CallbackComponent() = default;
-		CallbackComponent(Callback callback, float time) : callback(callback), time(time) {}
 	};
 
-public:
 	void Invoke(T& arg)
 	{
-		auto view = registry.view<CallbackComponent>();
-
-		for (entt::entity e : view)
+		for (auto& [_, cc] : callbackHashMap)
 		{
-			CallbackComponent& cc = view.get<CallbackComponent>(e);
 			cc.callback(arg);
-
 			if (arg.isHandled)
 				break;
 		}
@@ -77,24 +71,16 @@ public:
 
 	EventCallbackID<T> RegisterCallback(Callback callbackFunction)
 	{
-		entt::entity id = registry.create();
-		registry.emplace<CallbackComponent>(id, callbackFunction, Platform::GetElapsedTime());
-
-		// TODO: Quickest fix I could think of to keep callbacks sorted based on order it is added. This must be the worst way to ensure this... but it works for now
-		registry.sort<CallbackComponent>([](const CallbackComponent& lhs, const CallbackComponent& rhs) {
-			return lhs.time < rhs.time;
-			});
-		EventCallbackID<T> callbackID{ id, this };
+		callbackHashMap.insert({ counter, CallbackComponent{ callbackFunction }});
+		EventCallbackID<T> callbackID{ counter++, this };
 		return callbackID;
 	}
 
-	void RemoveCallback(entt::entity id)
+	void RemoveCallback(key_t id)
 	{
-		if (registry.valid(id))
+		if (callbackHashMap.find(id) != callbackHashMap.end())
 		{
-			//LOG_CORE_TRACE("Removing callback");
-			registry.destroy(id);
-
+			callbackHashMap.erase(id);
 		}
 	}
 
@@ -109,7 +95,8 @@ public:
 	}
 
 private:
-	entt::registry registry;
+	key_t counter;
+	std::unordered_map<key_t, CallbackComponent> callbackHashMap;
 };
 
 
