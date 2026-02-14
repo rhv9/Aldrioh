@@ -18,7 +18,7 @@ class EventCallbackID
 {
 public:
 	EventCallbackID() = default;
-	EventCallbackID(EventHandler<T>::key_t id, EventHandler<T>* eventHandler) : id(id), eventHandler(eventHandler) {}
+	EventCallbackID(EventHandler<T>::key_t id, EventHandler<T>* eventHandler) : id(id), eventHandler(eventHandler), refForChecking(eventHandler->ref) {}
 	~EventCallbackID();
 	EventCallbackID(const EventCallbackID& other) = delete;
 	EventCallbackID& operator=(const EventCallbackID& other) = delete;
@@ -28,18 +28,23 @@ public:
 
 		this->id = other.id;
 		this->eventHandler = eventHandler;
+		this->refForChecking = refForChecking;
+		other.id = 6969;
 		other.eventHandler = nullptr;
 	}
 	EventCallbackID& operator=(EventCallbackID&& other) noexcept
 	{
 		this->id = other.id;
 		this->eventHandler = other.eventHandler;
+		this->refForChecking = refForChecking;
 		other.eventHandler = nullptr;
+		other.id = 6969;
 		return *this;
 	}
 
-	EventHandler<T>::key_t id = 0;
+	EventHandler<T>::key_t id = 9000;
 	EventHandler<T>* eventHandler = nullptr;
+	std::weak_ptr<int> refForChecking;
 
 	friend EventHandler<T>;
 };
@@ -53,11 +58,12 @@ public:
 
 	using Callback = std::function<void(T&)>;
 	using key_t = uint16_t;
-
 	struct CallbackComponent
 	{
 		Callback callback;
 	};
+
+	~EventHandler();
 
 	void Invoke(T& arg)
 	{
@@ -80,6 +86,7 @@ public:
 	{
 		if (callbackHashMap.find(id) != callbackHashMap.end())
 		{
+			LOG_CORE_INFO("Succeeded in removing callback id: {}!", id);
 			callbackHashMap.erase(id);
 		}
 	}
@@ -94,8 +101,9 @@ public:
 		RemoveCallback(callbackID.id);
 	}
 
+	std::shared_ptr<int> ref = std::make_shared<int>(69);
 private:
-	key_t counter;
+	key_t counter = 0;
 	std::unordered_map<key_t, CallbackComponent> callbackHashMap;
 };
 
@@ -104,9 +112,21 @@ private:
 template<typename T>
 inline EventCallbackID<T>::~EventCallbackID()
 {
+	LOG_CORE_INFO("Event Callback ID being removed: {}!", id);
+
+	ASSERT(id != 9000, "WHY!!");
+
 	if (eventHandler != nullptr)
 	{
-		eventHandler->RemoveCallback(id);
+		if (!refForChecking.expired())
+		{
+			eventHandler->RemoveCallback(id);
+		}
 	}
 }
 
+template<class T>
+inline EventHandler<T>::~EventHandler()
+{
+	LOG_CORE_INFO("Destroying Event Handler!");
+}

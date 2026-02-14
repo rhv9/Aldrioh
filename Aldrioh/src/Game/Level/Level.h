@@ -70,7 +70,6 @@ protected:
 	LevelStats levelStats;
 
 	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
-	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
 
 	float levelTimeElapsed = 0.0f;
