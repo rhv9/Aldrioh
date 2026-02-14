@@ -90,6 +90,8 @@ void Game::Start()
     {
         Iterate();
         Statistics::ResetStats();
+
+        //LOG_CORE_INFO("MouseButtonEventHandler size: {}", window->MouseButtonEventHandler.size());
     }
 
     OnClosing();
@@ -196,9 +198,8 @@ void Game::BlockEvents(bool val)
 
 void Game::OnWindowCloseEvent(WindowCloseEventArg& arg)
 {
-    layerStack.OnWindowCloseEvent(arg);
-
     LOG_CORE_INFO("Window Closing...");
+    layerStack.OnWindowCloseEvent(arg);
     Shutdown();
 }
 

@@ -27,22 +27,22 @@ public:
 	{
 
 		this->id = other.id;
-		this->eventHandler = eventHandler;
-		this->refForChecking = refForChecking;
-		other.id = 6969;
+		this->eventHandler = other.eventHandler;
+		this->refForChecking = other.refForChecking;
 		other.eventHandler = nullptr;
+		other.id = std::numeric_limits<EventHandler<T>::key_t>::max();
 	}
 	EventCallbackID& operator=(EventCallbackID&& other) noexcept
 	{
 		this->id = other.id;
 		this->eventHandler = other.eventHandler;
-		this->refForChecking = refForChecking;
+		this->refForChecking = other.refForChecking;
 		other.eventHandler = nullptr;
-		other.id = 6969;
+		other.id = std::numeric_limits<EventHandler<T>::key_t>::max();
 		return *this;
 	}
 
-	EventHandler<T>::key_t id = 9000;
+	EventHandler<T>::key_t id = std::numeric_limits<EventHandler<T>::key_t>::max()-1;
 	EventHandler<T>* eventHandler = nullptr;
 	std::weak_ptr<int> refForChecking;
 
@@ -62,8 +62,6 @@ public:
 	{
 		Callback callback;
 	};
-
-	~EventHandler();
 
 	void Invoke(T& arg)
 	{
@@ -86,7 +84,6 @@ public:
 	{
 		if (callbackHashMap.find(id) != callbackHashMap.end())
 		{
-			LOG_CORE_INFO("Succeeded in removing callback id: {}!", id);
 			callbackHashMap.erase(id);
 		}
 	}
@@ -101,6 +98,8 @@ public:
 		RemoveCallback(callbackID.id);
 	}
 
+	int size() const { return callbackHashMap.size(); }
+
 	std::shared_ptr<int> ref = std::make_shared<int>(69);
 private:
 	key_t counter = 0;
@@ -112,10 +111,6 @@ private:
 template<typename T>
 inline EventCallbackID<T>::~EventCallbackID()
 {
-	LOG_CORE_INFO("Event Callback ID being removed: {}!", id);
-
-	ASSERT(id != 9000, "WHY!!");
-
 	if (eventHandler != nullptr)
 	{
 		if (!refForChecking.expired())
@@ -125,8 +120,3 @@ inline EventCallbackID<T>::~EventCallbackID()
 	}
 }
 
-template<class T>
-inline EventHandler<T>::~EventHandler()
-{
-	LOG_CORE_INFO("Destroying Event Handler!");
-}
