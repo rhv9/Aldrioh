@@ -15,7 +15,6 @@ std::vector<Layer*> LayerInitialiser::OtherLayers()
 	GlobalLayers::game = nullptr;
 	GlobalLayers::pauseMenu = new PauseMenuLayer("Pause Menu Layer");
 	GlobalLayers::gameOver = new GameOverLayer("Game Over Layer");
-	GlobalLayers::gameUILayer = new GameUILayer("Game UI Layer");
 
-	return { GlobalLayers::pauseMenu, GlobalLayers::gameOver, GlobalLayers::gameUILayer };
+	return { GlobalLayers::pauseMenu, GlobalLayers::gameOver };
 }

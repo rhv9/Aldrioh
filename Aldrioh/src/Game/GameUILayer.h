@@ -6,10 +6,12 @@
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
 
+#include <Game/Level/PlayerStats.h>
+
 class GameUILayer : public Layer
 {
 public:
-	GameUILayer(const std::string& name) : Layer(name) {}
+	GameUILayer(const std::string& name, Level& level) : Layer(name), level(level) {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
@@ -31,7 +33,7 @@ public:
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 
 private:
-	std::unique_ptr<Scene> scene;
+	Level& level;
 	std::unique_ptr<UIManager> uiManager = nullptr;
 
 	UIText* uiLevelCountText = nullptr;
@@ -39,4 +41,6 @@ private:
 	UIProgressBar* uiPlayerHealthBar = nullptr;
 	UIProgressBar* expProgressBar = nullptr;
 
+	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
+	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
 };

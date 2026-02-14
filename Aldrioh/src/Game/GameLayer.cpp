@@ -47,10 +47,8 @@
 #include <Game/Entity/GameEntityPrefab.h>
 
 
-
 GameLayer::~GameLayer()
 {
-	Game::Instance().GetLayerStack().QueuePopLayer(GlobalLayers::gameUILayer);
 }
 
 void GameLayer::OnBegin()
@@ -58,7 +56,6 @@ void GameLayer::OnBegin()
 	Renderer::SetClearColour({ 0.0f, 0.0f, 0.0f, 1.0f });
 
 	scene = std::make_unique<Scene>();
-	Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::gameUILayer);
 	
 	// Level system
 	currentLevel = std::make_unique<Level>(*scene);
@@ -66,8 +63,8 @@ void GameLayer::OnBegin()
 	levelEntity.AddComponent<LevelComponent>(currentLevel.get());
 	currentLevel->UpdateLevelArea();
 
-	// UI Component has to be before level
-	Entity uiEntity = scene->CreateEntityNoTransform("UIManager");
+	uiLayer = std::make_unique<GameUILayer>("Game UI Layer", *currentLevel);
+	Game::Instance().GetLayerStack().QueuePushLayer(uiLayer.get());
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
@@ -229,12 +226,19 @@ void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 
 void GameLayer::OnPlayerDeath()
 {
-	GlobalLayers::game->QueueTransitionTo(GlobalLayers::gameOver);
+	QueueTransitionTo(GlobalLayers::gameOver);
 }
 
 GameUILayer* GameLayer::GetUILayer()
 {
-	return GlobalLayers::gameUILayer;
+	return uiLayer.get();
+}
+
+void GameLayer::QueueTransitionTo(Layer* layer)
+{
+	// Pop uiLayer as usually this means game is going to be deleted.
+	Game::Instance().GetLayerStack().QueuePopLayer(uiLayer.get());
+	Layer::QueueTransitionTo(layer);
 }
 
 void GameLayer::OnTransitionIn()

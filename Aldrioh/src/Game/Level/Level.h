@@ -26,6 +26,8 @@ public:
 
 	Level(Level& other) = delete;
 	Level& operator=(Level& other) = delete;
+	Level(Level&& other) = delete;
+	Level& operator=(Level&& other) = delete;
 
 	void OnUpdate(Timestep ts);
 	void OnRender(Timestep ts);

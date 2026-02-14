@@ -16,7 +16,8 @@ public:
 
 	virtual void OnRemove() = 0;
 
-	void QueueTransitionTo(Layer* layer);
+	// This can be overriden, if switching to another layer and you want to handle something before it is swapped.
+	virtual void QueueTransitionTo(Layer* layer);
 
 	virtual void OnTransitionOut() {};
 	virtual void OnTransitionIn() {};

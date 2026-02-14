@@ -21,6 +21,7 @@ public:
 	virtual void OnImGuiRender(Timestep delta) override;
 	virtual void OnRemove() {}
 
+	virtual void QueueTransitionTo(Layer* layer) override;
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 	virtual void OnPushedLayerAboveEvent() override;
@@ -34,6 +35,7 @@ public:
 
 	void OnPlayerDeath();
 
+
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 	Level* GetCurrentLevel() { return currentLevel.get(); }
 	GameUILayer* GetUILayer();
@@ -41,4 +43,5 @@ public:
 private:
 	std::unique_ptr<Scene> scene = nullptr;
 	std::unique_ptr<Level> currentLevel = nullptr;
+	std::unique_ptr<GameUILayer> uiLayer = nullptr;
 };

@@ -14,7 +14,6 @@
 namespace GlobalLayers {
 
 	GLOBAL_LAYERS_EXTERN GameLayer* game;
-	GLOBAL_LAYERS_EXTERN GameUILayer* gameUILayer;
 
 	GLOBAL_LAYERS_EXTERN MainMenuLayer* mainMenu;
 	GLOBAL_LAYERS_EXTERN PauseMenuLayer* pauseMenu;

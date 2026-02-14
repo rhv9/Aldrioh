@@ -13,7 +13,6 @@
 void GameUILayer::OnBegin()
 {
 	uiManager = std::make_unique<UIManager>();
-
 	// UI
 	uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });
 	uiLevelCountText->SetText("Level: 0");
