@@ -26,6 +26,9 @@ public:
 	virtual void OnMouseMoveEvent(MouseMoveEventArg& e) override;
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 
+	void OnLevelUpEvent(PlayerStatsEventArg& e);
+	void OnExpGainEvent(PlayerStatsEventArg& e);
+
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 	UIText* GetUITimerText() { return uiTimerText; }
@@ -41,6 +44,6 @@ private:
 	UIProgressBar* uiPlayerHealthBar = nullptr;
 	UIProgressBar* expProgressBar = nullptr;
 
-	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
 	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
+	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
 };

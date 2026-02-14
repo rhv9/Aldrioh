@@ -52,8 +52,7 @@ public:
 	LevelStats& GetLevelStats() { return levelStats; }
 	PlayerStats& GetPlayerStats() { return playerStats; }
 
-	void OnLevelUp(PlayerStatsEventArg& e);
-	void OnExpGain(PlayerStatsEventArg& e);
+	void OnLevelUpEvent(PlayerStatsEventArg& e);
 
 	// debugging related
 	void Debug_SetEnableDebugCamera(bool enable);

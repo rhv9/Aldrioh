@@ -88,8 +88,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	scene.GetCollisionZone().Init(60, 40, 1);
 	fixedWaveManager.InitWaveConfig();
 
-	expGainCallbackId = playerStats.expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnExpGain);
-	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUp);
+	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUpEvent);
 
 	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Bullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
@@ -428,14 +427,8 @@ BoundingArea Level::GetDeathArea()
 	return boundingArea;
 }
 
-void Level::OnLevelUp(PlayerStatsEventArg& e)
+void Level::OnLevelUpEvent(PlayerStatsEventArg& e)
 {
-	GlobalLayers::game->GetUILayer()->GetUILevelCountText()->SetText(std::format("Level: {}", playerStats.GetLevelCount()));
-}
-
-void Level::OnExpGain(PlayerStatsEventArg& e)
-{
-	GlobalLayers::game->GetUILayer()->GetExpProgressBar()->SetProgress(playerStats.GetExpPercent());
 }
 
 void Level::Debug_SetEnableDebugCamera(bool enable)

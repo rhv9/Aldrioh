@@ -12,6 +12,9 @@
 
 void GameUILayer::OnBegin()
 {
+	expGainCallbackId = level.GetPlayerStats().expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnExpGainEvent);
+	lvlUpCallbackId = level.GetPlayerStats().lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnLevelUpEvent);
+
 	uiManager = std::make_unique<UIManager>();
 	// UI
 	uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });
@@ -88,6 +91,16 @@ void GameUILayer::OnRender(Timestep delta)
 	Renderer::StartUIScene();
 	uiManager->OnRender(delta);
 	Renderer::EndUIScene();
+}
+
+void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)
+{
+	uiLevelCountText->SetText(std::format("Level: {}", e.level.GetPlayerStats().GetLevelCount()));
+}
+
+void GameUILayer::OnExpGainEvent(PlayerStatsEventArg& e)
+{
+	expProgressBar->SetProgress(e.level.GetPlayerStats().GetExpPercent());
 }
 
 void GameUILayer::OnTransitionIn()
