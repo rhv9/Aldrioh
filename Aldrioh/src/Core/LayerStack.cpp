@@ -7,11 +7,12 @@ LayerStack::LayerStack()
 
 LayerStack::~LayerStack()
 {
-	for (Layer* layer : layerVector)
-	{
-		layer->OnRemove();
-		delete layer;
-	}
+	// TODO Need to think about this
+	//for (Layer* layer : layerVector)
+	//{
+	//	layer->OnRemove();
+	//	delete layer;
+	//}
 }
 
 void LayerStack::PushLayer(Layer* layer)
