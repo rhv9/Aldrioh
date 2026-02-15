@@ -16,6 +16,8 @@ namespace GameDebugState {
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(shouldUpdateScene, true);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(enabledImGui, false);
 
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showLvlUpUI, false);
+
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionBox, false);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(showCollisionZoneVisualisation, false);
 

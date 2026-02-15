@@ -29,11 +29,16 @@ public:
 	void OnLevelUpEvent(PlayerStatsEventArg& e);
 	void OnExpGainEvent(PlayerStatsEventArg& e);
 
+	void SetLvlUpUIActive(bool active);
+
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
 	UIText* GetUITimerText() { return uiTimerText; }
 	UIProgressBar* GetExpProgressBar() { return expProgressBar; }
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
+
+	// Lvl up related UI
+	UIObject* lvlBackground = nullptr;
 
 private:
 	Level& level;

@@ -110,6 +110,8 @@ void GameLayer::OnBegin()
 
 	// On UI Render Systems
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
+
+	GameDebugState::showLvlUpUI = true;
 }
 
 void GameLayer::OnUpdate(Timestep delta)
@@ -164,6 +166,11 @@ void GameLayer::OnImGuiRender(Timestep delta)
 
 				ImGui::SeparatorText("Entity");
 				ImGui::Text("Entity count: %d", scene->getRegistry().view<TransformComponent>().size());
+			}
+
+			if (ImGui::Checkbox("Show Lvl up UI", &GameDebugState::showLvlUpUI))
+			{
+				uiLayer->SetLvlUpUIActive(GameDebugState::showLvlUpUI);
 			}
 
 			ImGui::EndTabItem();

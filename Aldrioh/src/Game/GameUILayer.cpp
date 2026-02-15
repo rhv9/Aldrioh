@@ -51,7 +51,7 @@ void GameUILayer::OnBegin()
 
 	// UI for lvl up system
 	{
-		UIObject* lvlBackground = new UIObject("LVL Background", { 0.0f, 0.0f }, { 45.0f, 60.0f });
+		lvlBackground = new UIObject("LVL Background", { 0.0f, 0.0f }, { 45.0f, 60.0f });
 		lvlBackground->SetAnchorPoint(AnchorPoint::CENTER);
 		lvlBackground->SetBackgroundColour(Colour::BLUE);
 		uiManager->AddUIObject(lvlBackground);
@@ -139,6 +139,15 @@ void GameUILayer::OnExpGainEvent(PlayerStatsEventArg& e)
 {
 	expProgressBar->SetProgress(e.level.GetPlayerStats().GetExpPercent());
 }
+
+void GameUILayer::SetLvlUpUIActive(bool active)
+{
+	if (active)
+		lvlBackground->Enable();
+	else
+		lvlBackground->Disable();
+}
+
 
 void GameUILayer::OnTransitionIn()
 {
