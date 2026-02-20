@@ -1,5 +1,6 @@
 #pragma once
 #include <Game/SpriteCollection.h>
+#include "StatModifier.h"
 
 using ItemID = uint16_t;
 
@@ -11,26 +12,23 @@ struct ItemDef
 	spriteid_t spriteId;
 };
 
-class Item
+struct Item
 {
-public:
-	Item(ItemID id)
-		: id(id) {
-	}
+	using increase_tfunc = std::function<std::string(void)>;
 
-	virtual std::string IncreaseLevel() = 0;
-protected:
+	increase_tfunc levelUpFunc;
 	ItemID id;
+	spriteid_t cachedSpriteId;
 	int lvl;
+
+	Item(ItemID id) : id(id) {}
 };
 
-class BaseStatItem : public Item
+struct BaseStatItem : public Item
 {
-public:
-	BaseStatItem(ItemID id)
-		: Item(id) {
-	}
+	BaseStatItem(ItemID id) : Item(id) {}
 
+	StatModifier statModifier;
 };
 
 class ShipModuleItem : public Item
