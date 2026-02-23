@@ -17,6 +17,6 @@ namespace ItemTypes
 	constexpr ItemID ShipModule_Rocket		{ 1, ItemCategory::ShipModule };
 	constexpr ItemID ShipModule_AOEDrone	{ 2, ItemCategory::ShipModule };
 	
-	constexpr ItemID Special_DoubleDmg		{ 0, ItemCategory::Special };
+	constexpr ItemID Special_DoubleDmg		{ 0, ItemCategory::Unique };
 
 }
