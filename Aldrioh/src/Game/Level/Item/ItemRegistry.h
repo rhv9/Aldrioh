@@ -22,7 +22,7 @@ class ItemRegistry
 public:
 	
 	template<typename T>
-	std::unique_ptr<T>& CreateItem(const ItemDef& def)
+	T& CreateItem(const ItemDef& def)
 	{
 		if (itemMap.find(def.id) != itemMap.end())
 		{
@@ -30,7 +30,11 @@ public:
 		}
 		itemMap[def.id] = std::make_unique<T>(def);
 		itemDefMap[def.id] = def;
+
+		return *static_cast<T*>(itemMap[def.id].get());
 	}
+
+	void Debug_PrintRegistry();
 
 
 private:

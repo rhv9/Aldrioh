@@ -10,4 +10,9 @@ namespace LayerInitialiser {
 	// Here you create an array of all the layers you will use in the app. Only reason it is on an array is so that all OnBegin() are ran.
 	std::vector<Layer*> OtherLayers();
 
+	void PreLayerInit();
+	void PostLayerInit();
+
+	void PreLayerDestroy();
+	void PostLayerDestroy();
 }
