@@ -21,7 +21,7 @@
 #include <Graphics/ShaderManager.h>
 #include <Audio/SoundManager.h>
 
-#include <Core/LayerInitialiser.h>
+#include <Core/EntryPoint.h>
 
 #include <Game/SpriteCollection.h>
 #include <UI/Font.h>
@@ -29,6 +29,9 @@
 #include <Debug/Statistics.h>
 
 #include <File/Settings.h>
+
+
+
 
 #define DISPLAY_IMGUI_DEBUG
 
@@ -69,20 +72,14 @@ void Game::Init()
     imGuiLayer = new ImGuiLayer();
     layerStack.PushLayer(imGuiLayer);
 #endif
-    layerStack.PushLayer(LayerInitialiser::PushFirstLayer());
+
+    layerStack.PushLayer(EntryPoint::GameMain());
 
     running = true;
 }
 
 void Game::Start()
 {
-    std::vector<Layer*> otherLayers = LayerInitialiser::OtherLayers();
-    for (Layer* layer : otherLayers)
-    {
-        layer->OnBegin();
-        layer->SetInitialized(true);
-    }
-
     //emscripten_set_main_loop(this->Loop, 60, GLFW_FALSE);
     // This is the render loop
     previousTime = std::chrono::system_clock::now();
