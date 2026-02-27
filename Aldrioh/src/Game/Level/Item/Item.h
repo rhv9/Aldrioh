@@ -27,8 +27,8 @@ struct ItemID
 struct ItemDef
 {
 	ItemID id;
-	std::string_view name;
-	std::string_view description;
+	std::string name;
+	std::string description;
 	spriteid_t spriteId;
 };
 

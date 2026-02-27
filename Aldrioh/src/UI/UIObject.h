@@ -79,7 +79,7 @@ public:
 	UIOBJECT_EVENT(MouseMove)
 	UIOBJECT_EVENT(MouseButton)
 
-private:
+protected:
 	void RenderChildren(Timestep ts);
 
 	void RecalculateInternalState();

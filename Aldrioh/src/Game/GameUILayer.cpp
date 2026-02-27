@@ -11,6 +11,10 @@
 #include <Game/Systems/RenderSystems.h>
 #include <Game.h>
 
+#include <Game/GlobalResource.h>
+
+#include "Level/Item/ItemTypes.h"
+
 void GameUILayer::OnBegin()
 {
 	expGainCallbackId = level.GetPlayerStats().expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnExpGainEvent);
@@ -78,6 +82,8 @@ void GameUILayer::OnBegin()
 			UIButton* button = new UIButton(std::format("Option {}", i+1), { 0.0f, yRelativePos }, { 40.0f, yButtonHeight });
 			button->SetAnchorPoint(AnchorPoint::CENTER_TOP);
 			button->SetBackgroundColour(Colour::BLACK);
+			button->GetUIText()->SetText(GR::gr->itemRegistry.GetItemDef(ItemTypes::BaseStat_Hp).name);
+			button->GetUIText()->SetFontStyle(button->GetUIText()->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.5f));
 			lvlBackground->AddChild(button);
 
 		}

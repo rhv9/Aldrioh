@@ -20,7 +20,7 @@ struct std::hash<ItemID>
 class ItemRegistry
 {
 public:
-	
+
 	template<typename T>
 	T& CreateItem(const ItemDef& def)
 	{
@@ -33,6 +33,8 @@ public:
 
 		return *static_cast<T*>(itemMap[def.id].get());
 	}
+
+	ItemDef& GetItemDef(ItemID itemId);
 
 	void Debug_PrintRegistry();
 
