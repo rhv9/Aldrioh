@@ -27,7 +27,7 @@ struct FontStyle
 {
 	Font* font = Font::DEFAULT;
 	float size = 10.0f;
-	float charSpacingPercent = 0.8f;
+	float charSpacingPercent = 0.9f;
 	glm::vec4 colour = Colour::BLACK;
 
 	FontStyle& WithSize(float size) { this->size = size; return *this; }

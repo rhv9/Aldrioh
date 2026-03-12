@@ -6,10 +6,10 @@ struct std::hash<ItemID>
 {
 	std::size_t operator()(const ItemID& k) const
 	{
-		union
+		union 
 		{
 			ItemID itemId;
-			uint32_t val;
+			uint32_t val = 0;
 		};
 		itemId = k;
 		return static_cast<std::size_t>(val);
@@ -22,7 +22,7 @@ class ItemRegistry
 public:
 
 	template<typename T>
-	T& CreateItem(const ItemDef& def)
+	T& AddNewItem(const ItemDef& def)
 	{
 		if (itemMap.find(def.id) != itemMap.end())
 		{
@@ -35,6 +35,17 @@ public:
 	}
 
 	ItemDef& GetItemDef(ItemID itemId);
+
+	template<typename T>
+	T CreateInstance(const ItemID& itemId)
+	{
+		if (itemMap.find(itemId) == itemMap.end())
+		{
+			LOG_CRITICAL("ItemRegistry::CreateInstance ItemID not found: {}", itemId.to_string());
+			return T{};
+		}
+		return *static_cast<T*>(itemMap[itemId].get());
+	}
 
 	void Debug_PrintRegistry();
 

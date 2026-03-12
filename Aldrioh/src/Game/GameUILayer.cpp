@@ -7,6 +7,7 @@
 #include <Scene/Components.h>
 #include <Game/Components/EntityComponents.h>
 #include <UI/UIButton.h>
+#include <UI/UIImage.h>
 
 #include <Game/Systems/RenderSystems.h>
 #include <Game.h>
@@ -53,6 +54,15 @@ void GameUILayer::OnBegin()
 		uiManager->AddUIObject(uiTimerText);
 	}
 
+	BaseStatItem hpItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Hp);
+	BaseStatItem dmgItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Dmg);
+	BaseStatItem luckItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Luck);
+
+	std::array<Item*, 3> items;
+	items[0] = &hpItem;
+	items[1] = &dmgItem;
+	items[2] = &luckItem;
+
 	// UI for lvl up system
 	{
 		float w = 70.0f, h = 86.0f;
@@ -79,15 +89,43 @@ void GameUILayer::OnBegin()
 		float bw = w - 6.0f;
 		float yOffset = 10.0f;
 		float yGapBetween = 2.1f;
+
+		
+
 		for (int i = 0; i < 3; ++i)
 		{
 			float yRelativePos = lvlUpHeightOffset + yButtonHeight * i + yOffset + yGapBetween * i;
 			lvlupCards[i] = new UIButton(std::format("Option {}", i), {0.0f, yRelativePos}, { bw, yButtonHeight});
 			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
 			lvlupCards[i]->SetBackgroundColour(Colour::BLACK);
-			lvlupCards[i]->GetUIText()->SetText(GR::gr->itemRegistry.GetItemDef(ItemTypes::BaseStat_Hp).name);
-			lvlupCards[i]->GetUIText()->SetFontStyle(lvlupCards[i]->GetUIText()->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.5f));
 			lvlBackground->AddChild(lvlupCards[i]);
+
+			float ixp = 2.0f;
+			float iyp = 2.0f;
+			float imageSize = 5.0f;
+
+			lvlupImages[i] = new UIImage(std::format("Image {}", i), { ixp, iyp }, { imageSize, imageSize });
+			lvlupImages[i]->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+			lvlupImages[i]->SetSubTexture(Sprites::get(Sprites::null));
+			lvlupCards[i]->AddChild(lvlupImages[i]);
+
+			lvlupTitles[i] = new UIText(std::format("Title {}", i), { ixp + imageSize + 1.0f, iyp + 1.0f }, { 0.0f, 0.0f });
+			lvlupTitles[i]->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+			lvlupTitles[i]->GetFontStyle().WithSize(3.0f).WithColour(Colour::WHITE);
+			lvlupTitles[i]->SetText("Abra cadabra");
+			lvlupCards[i]->AddChild(lvlupTitles[i]);
+
+			lvlupLittleInfos[i] = new UIText(std::format("Little Info {}", i), { ixp + 1.25f, iyp + 1.25f }, { 0.0f, 0.0f });
+			lvlupLittleInfos[i]->SetAnchorPoint(AnchorPoint::RIGHT_TOP);
+			lvlupLittleInfos[i]->GetFontStyle().WithSize(2.5f).WithColour(Colour::BLUE).WithCharSpacingPercent(0.8f);
+			lvlupLittleInfos[i]->SetText("2->3");
+			lvlupCards[i]->AddChild(lvlupLittleInfos[i]);
+
+			lvlupDescriptions[i] = new UIText(std::format("Description {}", i), { ixp + 1.25f, iyp + imageSize + 2.0f }, { 0.0f, 0.0f });
+			lvlupDescriptions[i]->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+			lvlupDescriptions[i]->GetFontStyle().WithSize(2.0f).WithColour(glm::vec4{0.9f, 0.9f, 0.9f, 1.0f});
+			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%, this should never show!");
+			lvlupCards[i]->AddChild(lvlupDescriptions[i]);
 
 		}
 

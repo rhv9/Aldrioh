@@ -9,29 +9,33 @@ using itemid_t = uint16_t;
 
 enum ItemCategory : uint8_t
 {
-	BaseStat = 0,
+	None = 0,
+	BaseStat,
 	ShipModule,
 	Unique,
 	Count
 };
 
+
 struct ItemID
 {
-	itemid_t id;
-	ItemCategory category;
+	itemid_t id = 0;
+	ItemCategory category = None;
 
 	bool operator==(const ItemID& other) const { return id == other.id && category == other.category; }
 	std::string to_string() const { return std::format("ItemID({},{})", id, static_cast<uint8_t>(category)); }
+
+	bool IsValid() { return category != ItemCategory::None; }
 };
+
 
 struct ItemDef
 {
 	ItemID id;
 	std::string name;
 	std::string description;
-	spriteid_t spriteId;
+	spriteid_t spriteId = Sprites::null;
 };
-
 
 
 struct Item
@@ -44,6 +48,7 @@ struct Item
 
 	levelup_tfunc levelUpFunc;
 
+	Item() = default;
 	Item(const ItemDef& def) : id(def.id), cachedSpriteId(def.spriteId) {}
 };
 
@@ -51,6 +56,7 @@ struct BaseStatItem : public Item
 {
 	StatModifier statModifier;
 
+	BaseStatItem() = default;
 	BaseStatItem(const ItemDef& def) : Item(def) {}
 };
 
@@ -60,6 +66,7 @@ class ShipModuleItem : public Item
 
 	update_tfunc updateFunc;
 
+	ShipModuleItem() = default;
 	ShipModuleItem(const ItemDef& def) : Item(def) {}
 };
 
@@ -69,5 +76,6 @@ class UniqueItem : public Item
 
 	update_tfunc updateFunc;
 
+	UniqueItem() = default;
 	UniqueItem(const ItemDef& def) : Item(def) {}
 };

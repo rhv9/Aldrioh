@@ -5,9 +5,11 @@
 #include <UI/UIManager.h>
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
-#include <UI/UIButton.h>
 
 #include <Game/Level/PlayerStats.h>
+
+class UIButton;
+class UIImage;
 
 class GameUILayer : public Layer
 {
@@ -51,6 +53,12 @@ private:
 	// Lvl up related UI
 	UIObject* lvlBackground = nullptr;
 	std::array<UIButton*, 3> lvlupCards;
+	std::array<UIImage*, 3> lvlupImages;
+	std::array<UIText*, 3> lvlupTitles;
+	std::array<UIText*, 3> lvlupLittleInfos;
+	std::array<UIText*, 3> lvlupDescriptions;
+
+
 
 	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
