@@ -55,7 +55,9 @@ void GameUILayer::OnBegin()
 
 	// UI for lvl up system
 	{
-		lvlBackground = new UIObject("LVL Background", { 0.0f, 0.0f }, { 45.0f, 60.0f });
+		float w = 70.0f, h = 86.0f;
+
+		lvlBackground = new UIObject("LVL Background", { 0.0f, -4.0f }, { w, h });
 		lvlBackground->SetAnchorPoint(AnchorPoint::CENTER);
 		lvlBackground->SetBackgroundColour(Colour::BLUE);
 		uiManager->AddUIObject(lvlBackground);
@@ -73,18 +75,19 @@ void GameUILayer::OnBegin()
 		lvlBackground->AddChild(lvlUpExplanation);
 
 		float lvlUpHeightOffset = lvlUpTitle->GetRelativePosY() + lvlUpTitle->GetHeight();
-		float yButtonHeight = 12.0f;
+		float yButtonHeight = 20.0f;
+		float bw = w - 6.0f;
 		float yOffset = 10.0f;
-		float yGapBetween = 1.0f;
+		float yGapBetween = 2.1f;
 		for (int i = 0; i < 3; ++i)
 		{
 			float yRelativePos = lvlUpHeightOffset + yButtonHeight * i + yOffset + yGapBetween * i;
-			UIButton* button = new UIButton(std::format("Option {}", i+1), { 0.0f, yRelativePos }, { 40.0f, yButtonHeight });
-			button->SetAnchorPoint(AnchorPoint::CENTER_TOP);
-			button->SetBackgroundColour(Colour::BLACK);
-			button->GetUIText()->SetText(GR::gr->itemRegistry.GetItemDef(ItemTypes::BaseStat_Hp).name);
-			button->GetUIText()->SetFontStyle(button->GetUIText()->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.5f));
-			lvlBackground->AddChild(button);
+			lvlupCards[i] = new UIButton(std::format("Option {}", i), {0.0f, yRelativePos}, { bw, yButtonHeight});
+			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
+			lvlupCards[i]->SetBackgroundColour(Colour::BLACK);
+			lvlupCards[i]->GetUIText()->SetText(GR::gr->itemRegistry.GetItemDef(ItemTypes::BaseStat_Hp).name);
+			lvlupCards[i]->GetUIText()->SetFontStyle(lvlupCards[i]->GetUIText()->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.5f));
+			lvlBackground->AddChild(lvlupCards[i]);
 
 		}
 

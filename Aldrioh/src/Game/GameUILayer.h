@@ -5,6 +5,7 @@
 #include <UI/UIManager.h>
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
+#include <UI/UIButton.h>
 
 #include <Game/Level/PlayerStats.h>
 
@@ -37,8 +38,6 @@ public:
 	UIProgressBar* GetExpProgressBar() { return expProgressBar; }
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 
-	// Lvl up related UI
-	UIObject* lvlBackground = nullptr;
 
 private:
 	Level& level;
@@ -48,6 +47,10 @@ private:
 	UIText* uiTimerText = nullptr;
 	UIProgressBar* uiPlayerHealthBar = nullptr;
 	UIProgressBar* expProgressBar = nullptr;
+
+	// Lvl up related UI
+	UIObject* lvlBackground = nullptr;
+	std::array<UIButton*, 3> lvlupCards;
 
 	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
