@@ -581,6 +581,8 @@ void Renderer::UIDrawText(const FontStyle& style, const std::string& text, const
 
 void Renderer::UIDrawTextWithWrapping(const FontStyle& style, const std::string& text, const UIVector& pos, const float maxWidth, AnchorPoint ap)
 {
+	static const std::string ws = " ";
+	
 	glm::vec2 absPos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absSize = glm::vec2(style.size, style.size);
 	float absMaxWidth = maxWidth;
@@ -589,27 +591,33 @@ void Renderer::UIDrawTextWithWrapping(const FontStyle& style, const std::string&
 	float textWidth = style.CalculateTextWidth(text);
 
 	absPos = ap.ConvertPos(absPos, { textWidth, style.size }, uiRd->cameraController->GetBounds().GetSize());
-	for (char c : text)
+
+	std::size_t currentPos = 0;
+
+	while (currentPos != text.size())
 	{
-		// if with next char, it is outside bounds, then skip to next line
-		if ((absPos.x - startX + style.charSpacingPercent * absSize.x) > absMaxWidth)
+		std::size_t from = text.find_first_not_of(ws, currentPos);
+		if (from == std::string::npos) 
+			break;
+		std::size_t to = text.find_first_of(ws, from + 1);
+		if (to == std::string::npos) 
+			to = text.size();
+
+		std::size_t wordLen = to - from;
+		if ((absPos.x - startX + wordLen * style.charSpacingPercent * absSize.x) > maxWidth)
 		{
-			absPos.x = startX;
 			absPos.y -= style.textWrappingLineSpacingPercent * absSize.y;
-
-			if (c != ' ')
-				UIDrawTexture(style.font->GetCharSubTexture(c), absPos, absSize, style.colour, 1);
-			absPos.x += style.charSpacingPercent * absSize.x;
+			absPos.x = startX;
 		}
-		else
+
+		for (std::size_t i = from; i != to; i++)
 		{
-			if (c != ' ')
-				UIDrawTexture(style.font->GetCharSubTexture(c), absPos, absSize, style.colour, 1);
+			UIDrawTexture(style.font->GetCharSubTexture(text[i]), absPos, absSize, style.colour, 1);
 			absPos.x += style.charSpacingPercent * absSize.x;
 		}
-
+		absPos.x += style.charSpacingPercent * absSize.x;
+		currentPos = to;
 	}
-
 }
 
 void Renderer::UIDrawImage(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour)
