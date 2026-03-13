@@ -28,4 +28,7 @@ private:
 
 	bool shouldTextWrap = false;
 	float textWrapMaxWidth = 100.0f;
+
+	// This is based on the number of lines, need to offset starting character position
+	float cachedRenderYOffset = 0.0f;
 };

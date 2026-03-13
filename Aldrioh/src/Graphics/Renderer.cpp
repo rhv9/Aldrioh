@@ -42,13 +42,13 @@ struct RenderData
 	static const uint32_t MAX_BATCH_INDICES = MAX_DRAWS * 6;
 	static const uint32_t MAX_TEXTURE = 8;
 
-//	const glm::vec4 BatchQuadVertices[4] =
-//	{
-//		{ 0.0f, 1.0f, 0.0f, 1.0f },
-//		{ 0.0f, 0.0f, 0.0f, 1.0f },
-//		{ 1.0f, 0.0f, 0.0f, 1.0f },
-//		{ 1.0f, 1.0f, 0.0f, 1.0f }
-//	};
+	//	const glm::vec4 BatchQuadVertices[4] =
+	//	{
+	//		{ 0.0f, 1.0f, 0.0f, 1.0f },
+	//		{ 0.0f, 0.0f, 0.0f, 1.0f },
+	//		{ 1.0f, 0.0f, 0.0f, 1.0f },
+	//		{ 1.0f, 1.0f, 0.0f, 1.0f }
+	//	};
 	const glm::vec4 BatchQuadVertices[4] =
 	{
 		{ -0.5f,  0.5f, 0.0f, 1.0f },
@@ -584,36 +584,28 @@ void Renderer::UIDrawTextWithWrapping(const FontStyle& style, const std::string&
 	glm::vec2 absPos = pos.GetAbsolute(uiRd->WindowSize);
 	glm::vec2 absSize = glm::vec2(style.size, style.size);
 	float absMaxWidth = maxWidth;
+	float startX = absPos.x;
 
 	float textWidth = style.CalculateTextWidth(text);
 
 	absPos = ap.ConvertPos(absPos, { textWidth, style.size }, uiRd->cameraController->GetBounds().GetSize());
-	float widthTracker = absSize.x;
 	for (char c : text)
 	{
 		// if with next char, it is outside bounds, then skip to next line
-		if ((widthTracker + style.charSpacingPercent * absSize.x) > absMaxWidth)
+		if ((absPos.x - startX + style.charSpacingPercent * absSize.x) > absMaxWidth)
 		{
-			absPos.x = pos.GetAbsolute(uiRd->WindowSize).x;
+			absPos.x = startX;
 			absPos.y -= style.textWrappingLineSpacingPercent * absSize.y;
-			
+
 			if (c != ' ')
-			{
-				const SubTexture* charSubTexture = style.font->GetCharSubTexture(c);
-				UIDrawTexture(charSubTexture, absPos, absSize, style.colour, 1);
-			}
+				UIDrawTexture(style.font->GetCharSubTexture(c), absPos, absSize, style.colour, 1);
 			absPos.x += style.charSpacingPercent * absSize.x;
-			widthTracker = 1.0f;
 		}
 		else
 		{
 			if (c != ' ')
-			{
-				const SubTexture* charSubTexture = style.font->GetCharSubTexture(c);
-				UIDrawTexture(charSubTexture, absPos, absSize, style.colour, 1);
-			}
+				UIDrawTexture(style.font->GetCharSubTexture(c), absPos, absSize, style.colour, 1);
 			absPos.x += style.charSpacingPercent * absSize.x;
-			widthTracker += style.charSpacingPercent * absSize.x;
 		}
 
 	}

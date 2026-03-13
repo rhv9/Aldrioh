@@ -20,7 +20,7 @@ void UIText::OnRender(Timestep ts)
 	if (!shouldTextWrap)
 		Renderer::UIDrawText(style, text, { UIData::PIXEL, renderPos });
 	else
-		Renderer::UIDrawTextWithWrapping(style, text, { UIData::PIXEL, renderPos }, textWrapMaxWidth);
+		Renderer::UIDrawTextWithWrapping(style, text, { UIData::PIXEL, {renderPos.x, renderPos.y + cachedRenderYOffset} }, textWrapMaxWidth);
 
 }
 
@@ -37,8 +37,10 @@ void UIText::SetText(const std::string& text)
 		int lineCount = Math::fceil(fullTextWidth / textWrapMaxWidth);
 		float height = style.size + style.size * style.textWrappingLineSpacingPercent * (lineCount - 1);
 
+		cachedRenderYOffset = style.size * style.textWrappingLineSpacingPercent * (lineCount - 1);
+
 		SetSize({ width, height });
-		LOG_INFO("{}: UIText Size {}, line count: {}", name, glm::to_string(size), lineCount);
+		LOG_INFO("{}: UIText Size {}, line count: {}, renderpos: {}, offsety: {}", name, glm::to_string(size), lineCount, glm::to_string(renderPos), cachedRenderYOffset);
 	}
 
 }

@@ -128,7 +128,7 @@ void GameUILayer::OnBegin()
 			lvlupDescriptions[i]->GetFontStyle().WithSize(2.0f).WithColour(glm::vec4{ 0.9f, 0.9f, 0.9f, 1.0f });
 			lvlupDescriptions[i]->SetTextWrap(true);
 			lvlupDescriptions[i]->SetTextWrapMaxWidth(40.0f);
-			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%, this should never show!");
+			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%");
 			lvlupCards[i]->AddChild(lvlupDescriptions[i]);
 
 		}
@@ -184,12 +184,18 @@ void GameUILayer::OnRender(Timestep delta)
 void GameUILayer::OnImGuiRender(Timestep delta)
 {
 	static bool wrapEnable = true;
+	static char buffer[100];
 	if (ImGui::Checkbox("Enable Text Wrap", &wrapEnable))
 	{
 		for (auto& i : lvlupDescriptions)
 		{
 			i->SetTextWrap(wrapEnable);
 		}
+	}
+
+	if (ImGui::InputText("Input", buffer, 100))
+	{
+		lvlupDescriptions[0]->SetText(buffer);
 	}
 
 }
