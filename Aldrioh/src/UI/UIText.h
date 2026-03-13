@@ -16,10 +16,16 @@ public:
 
 	FontStyle& GetFontStyle() { return style; }
 	void SetFontStyle(const FontStyle& newStyle) { this->style = style; SetText(text); }
-
 	void SetFontSize(float fontSize);
+
+	// text wrapping
+	void SetTextWrap(bool enable) { shouldTextWrap = enable; SetText(text); }
+	void SetTextWrapMaxWidth(float width) { textWrapMaxWidth = width; SetText(text); }
 
 private:
 	std::string text = "";
 	FontStyle style;
+
+	bool shouldTextWrap = false;
+	float textWrapMaxWidth = 100.0f;
 };

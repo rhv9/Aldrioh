@@ -16,6 +16,8 @@
 
 #include "Level/Item/ItemTypes.h"
 
+#include <imgui.h>
+
 void GameUILayer::OnBegin()
 {
 	expGainCallbackId = level.GetPlayerStats().expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnExpGainEvent);
@@ -90,12 +92,12 @@ void GameUILayer::OnBegin()
 		float yOffset = 10.0f;
 		float yGapBetween = 2.1f;
 
-		
+
 
 		for (int i = 0; i < 3; ++i)
 		{
 			float yRelativePos = lvlUpHeightOffset + yButtonHeight * i + yOffset + yGapBetween * i;
-			lvlupCards[i] = new UIButton(std::format("Option {}", i), {0.0f, yRelativePos}, { bw, yButtonHeight});
+			lvlupCards[i] = new UIButton(std::format("Option {}", i), { 0.0f, yRelativePos }, { bw, yButtonHeight });
 			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
 			lvlupCards[i]->SetBackgroundColour(Colour::BLACK);
 			lvlBackground->AddChild(lvlupCards[i]);
@@ -123,7 +125,9 @@ void GameUILayer::OnBegin()
 
 			lvlupDescriptions[i] = new UIText(std::format("Description {}", i), { ixp + 1.25f, iyp + imageSize + 2.0f }, { 0.0f, 0.0f });
 			lvlupDescriptions[i]->SetAnchorPoint(AnchorPoint::LEFT_TOP);
-			lvlupDescriptions[i]->GetFontStyle().WithSize(2.0f).WithColour(glm::vec4{0.9f, 0.9f, 0.9f, 1.0f});
+			lvlupDescriptions[i]->GetFontStyle().WithSize(2.0f).WithColour(glm::vec4{ 0.9f, 0.9f, 0.9f, 1.0f });
+			lvlupDescriptions[i]->SetTextWrap(true);
+			lvlupDescriptions[i]->SetTextWrapMaxWidth(40.0f);
 			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%, this should never show!");
 			lvlupCards[i]->AddChild(lvlupDescriptions[i]);
 
@@ -175,6 +179,19 @@ void GameUILayer::OnRender(Timestep delta)
 	Renderer::StartUIScene();
 	uiManager->OnRender(delta);
 	Renderer::EndUIScene();
+}
+
+void GameUILayer::OnImGuiRender(Timestep delta)
+{
+	static bool wrapEnable = true;
+	if (ImGui::Checkbox("Enable Text Wrap", &wrapEnable))
+	{
+		for (auto& i : lvlupDescriptions)
+		{
+			i->SetTextWrap(wrapEnable);
+		}
+	}
+
 }
 
 void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)

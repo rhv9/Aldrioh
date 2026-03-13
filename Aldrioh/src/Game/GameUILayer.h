@@ -19,7 +19,7 @@ public:
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
 	virtual void OnRender(Timestep delta) override;
-	virtual void OnImGuiRender(Timestep delta) override {}
+	virtual void OnImGuiRender(Timestep delta) override;
 	virtual void OnRemove() override {}
 
 	virtual void OnTransitionIn() override;

@@ -131,6 +131,11 @@ int Math::ffloor(float val)
 	return floorf(val);
 }
 
+int Math::fceil(float val)
+{
+	return ceilf(val);
+}
+
 float Math::min(float x, float y)
 {
 	return x < y ? x : y;

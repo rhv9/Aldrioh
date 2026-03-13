@@ -19,6 +19,7 @@ namespace Math {
 	float floatMod(float lhs, float rhs);
 	float floatModNegative(float lhs, float rhs);
 	int ffloor(float val);
+	int fceil(float val);
 
 
 	float min(float x, float y);

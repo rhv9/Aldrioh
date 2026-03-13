@@ -15,7 +15,7 @@ public:
 	~Font();
 	
 	const std::shared_ptr<Texture>& GetTexture() { return fontTexture; }
-	SubTexture* GetCharSubTexture(const char c);
+	SubTexture* GetCharSubTexture(const char c) const;
 
 	SubTexture* GetBlockSubTexture();
 private:
@@ -26,13 +26,17 @@ private:
 struct FontStyle
 {
 	Font* font = Font::DEFAULT;
-	float size = 10.0f;
+	float size = 2.0f;
 	float charSpacingPercent = 0.9f;
 	glm::vec4 colour = Colour::BLACK;
+
+	// Text wrapping
+	float textWrappingLineSpacingPercent = 1.0f;
 
 	FontStyle& WithSize(float size) { this->size = size; return *this; }
 	FontStyle& WithCharSpacingPercent(float charSpacingPercent) { this->charSpacingPercent = charSpacingPercent; return *this; }
 	FontStyle& WithColour(const glm::vec4& colour) { this->colour = colour; return *this; }
 
 	float CalculateTextWidth(const std::string& text) const;
+
 };

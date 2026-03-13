@@ -31,7 +31,7 @@ Font::~Font()
 	delete[] charSubTextures;
 }
 
-SubTexture* Font::GetCharSubTexture(const char c)
+SubTexture* Font::GetCharSubTexture(const char c) const
 {
 	int ascii = int(c);
 	if (c == ' ')
@@ -55,5 +55,5 @@ SubTexture* Font::GetBlockSubTexture()
 
 float FontStyle::CalculateTextWidth(const std::string& text) const
 {
-	return text.size() * size * charSpacingPercent;
+	return size + size * charSpacingPercent * (text.size() - 1);
 }

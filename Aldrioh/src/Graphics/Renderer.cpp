@@ -557,28 +557,65 @@ void Renderer::UIDrawChar(Font* font, const char c, const UIVector& pos, const U
 	UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
 }
 
-float GetTextWidth(const std::string& text, float fontSize, float charSpacingPercent)
-{
-	return text.size() * fontSize * charSpacingPercent;
-}
 
-void Renderer::UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent, AnchorPoint ap)
+void Renderer::UIDrawText(const FontStyle& style, const std::string& text, const UIVector& pos, AnchorPoint ap)
 {
 	glm::vec2 absolutePos = pos.GetAbsolute(uiRd->WindowSize);
-	glm::vec2 absoluteSize = glm::vec2(fontSize, fontSize);
+	glm::vec2 absoluteSize = glm::vec2(style.size, style.size);
 
-	float textWidth = GetTextWidth(text, fontSize, charSpacingPercent);
+	float textWidth = style.CalculateTextWidth(text);
 
-	absolutePos = ap.ConvertPos(absolutePos, { textWidth, fontSize }, uiRd->cameraController->GetBounds().GetSize());
+	absolutePos = ap.ConvertPos(absolutePos, { textWidth, style.size }, uiRd->cameraController->GetBounds().GetSize());
 
 	for (char c : text)
 	{
 		if (c != ' ')
 		{
-			const SubTexture* charSubTexture = font->GetCharSubTexture(c);
-			UIDrawTexture(charSubTexture, absolutePos, absoluteSize, colour, 1);
+			const SubTexture* charSubTexture = style.font->GetCharSubTexture(c);
+			UIDrawTexture(charSubTexture, absolutePos, absoluteSize, style.colour, 1);
 		}
-		absolutePos.x += charSpacingPercent * fontSize;
+		absolutePos.x += style.charSpacingPercent * style.size;
+	}
+
+}
+
+void Renderer::UIDrawTextWithWrapping(const FontStyle& style, const std::string& text, const UIVector& pos, const float maxWidth, AnchorPoint ap)
+{
+	glm::vec2 absPos = pos.GetAbsolute(uiRd->WindowSize);
+	glm::vec2 absSize = glm::vec2(style.size, style.size);
+	float absMaxWidth = maxWidth;
+
+	float textWidth = style.CalculateTextWidth(text);
+
+	absPos = ap.ConvertPos(absPos, { textWidth, style.size }, uiRd->cameraController->GetBounds().GetSize());
+	float widthTracker = absSize.x;
+	for (char c : text)
+	{
+		// if with next char, it is outside bounds, then skip to next line
+		if ((widthTracker + style.charSpacingPercent * absSize.x) > absMaxWidth)
+		{
+			absPos.x = pos.GetAbsolute(uiRd->WindowSize).x;
+			absPos.y -= style.textWrappingLineSpacingPercent * absSize.y;
+			
+			if (c != ' ')
+			{
+				const SubTexture* charSubTexture = style.font->GetCharSubTexture(c);
+				UIDrawTexture(charSubTexture, absPos, absSize, style.colour, 1);
+			}
+			absPos.x += style.charSpacingPercent * absSize.x;
+			widthTracker = 1.0f;
+		}
+		else
+		{
+			if (c != ' ')
+			{
+				const SubTexture* charSubTexture = style.font->GetCharSubTexture(c);
+				UIDrawTexture(charSubTexture, absPos, absSize, style.colour, 1);
+			}
+			absPos.x += style.charSpacingPercent * absSize.x;
+			widthTracker += style.charSpacingPercent * absSize.x;
+		}
+
 	}
 
 }

@@ -115,8 +115,10 @@ public:
 
 	static void UIDrawChar(Font* font, const char c, const UIVector& pos, const UIVector& size, const glm::vec4& colour, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
 
-	static void UIDrawText(Font* font, const std::string& text, const UIVector& pos, float fontSize, const glm::vec4& colour, float charSpacingPercent = 0.85f, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
-	
+	static void UIDrawText(const FontStyle& style, const std::string& text, const UIVector& pos, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
+	static void UIDrawTextWithWrapping(const FontStyle& style, const std::string& text, const UIVector& pos, const float maxWidth, AnchorPoint ap = AnchorPoint::LEFT_BOTTOM);
+
+
 	static void UIDrawImage(const SubTexture* subTexture, const glm::vec2& pos, const glm::vec2& size, const glm::vec4& colour);
 
 	static void UIFlushBatch();
