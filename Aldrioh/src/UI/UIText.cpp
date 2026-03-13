@@ -24,9 +24,8 @@ void UIText::OnRender(Timestep ts)
 
 }
 
-void UIText::SetText(const std::string& text)
+void UIText::RecalculateUITextBoxSize()
 {
-	this->text = text;
 	if (!shouldTextWrap)
 		SetSize({ style.CalculateTextWidth(text), style.size });
 	else
@@ -40,13 +39,6 @@ void UIText::SetText(const std::string& text)
 		cachedRenderYOffset = style.size * style.textWrappingLineSpacingPercent * (lineCount - 1);
 
 		SetSize({ width, height });
-		LOG_INFO("{}: UIText Size {}, line count: {}, renderpos: {}, offsety: {}", name, glm::to_string(size), lineCount, glm::to_string(renderPos), cachedRenderYOffset);
+		//LOG_INFO("{}: UIText Size {}, line count: {}, renderpos: {}, offsety: {}", name, glm::to_string(size), lineCount, glm::to_string(renderPos), cachedRenderYOffset);
 	}
-
-}
-
-void UIText::SetFontSize(float fontSize)
-{
-	style.size = fontSize;
-	SetText(text);
 }

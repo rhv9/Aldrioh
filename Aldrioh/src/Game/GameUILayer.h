@@ -10,6 +10,7 @@
 
 class UIButton;
 class UIImage;
+class Item;
 
 class GameUILayer : public Layer
 {
@@ -33,6 +34,8 @@ public:
 	void OnExpGainEvent(PlayerStatsEventArg& e);
 
 	void SetLvlUpUIActive(bool active);
+
+	void SetLevelUpCardItem(int i, Item& item);
 
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }

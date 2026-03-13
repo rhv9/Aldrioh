@@ -92,8 +92,6 @@ void GameUILayer::OnBegin()
 		float yOffset = 10.0f;
 		float yGapBetween = 2.1f;
 
-
-
 		for (int i = 0; i < 3; ++i)
 		{
 			float yRelativePos = lvlUpHeightOffset + yButtonHeight * i + yOffset + yGapBetween * i;
@@ -123,17 +121,30 @@ void GameUILayer::OnBegin()
 			lvlupLittleInfos[i]->SetText("2->3");
 			lvlupCards[i]->AddChild(lvlupLittleInfos[i]);
 
-			lvlupDescriptions[i] = new UIText(std::format("Description {}", i), { ixp + 1.25f, iyp + imageSize + 2.0f }, { 0.0f, 0.0f });
+			float lvlDescriptionStartX = ixp + 1.25f;
+			lvlupDescriptions[i] = new UIText(std::format("Description {}", i), { lvlDescriptionStartX, iyp + imageSize + 2.0f }, { 0.0f, 0.0f });
 			lvlupDescriptions[i]->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 			lvlupDescriptions[i]->GetFontStyle().WithSize(2.0f).WithColour(glm::vec4{ 0.9f, 0.9f, 0.9f, 1.0f });
 			lvlupDescriptions[i]->SetTextWrap(true);
-			lvlupDescriptions[i]->SetTextWrapMaxWidth(40.0f);
-			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%");
+			lvlupDescriptions[i]->SetTextWrapMaxWidth(bw - lvlDescriptionStartX * 2);
+			lvlupDescriptions[i]->SetText("Increases Item Stat by 10%, this should never show!");
 			lvlupCards[i]->AddChild(lvlupDescriptions[i]);
-
 		}
-
 	}
+
+	SetLevelUpCardItem(0, *items[0]);
+	SetLevelUpCardItem(1, *items[1]);
+	SetLevelUpCardItem(2, *items[2]);
+}
+
+
+void GameUILayer::SetLevelUpCardItem(int i, Item& item)
+{
+	lvlupImages[i]->SetSubTexture(Sprites::get(item.cachedSpriteId));
+	lvlupTitles[i]->SetText(GR::gr->itemRegistry.GetItemDef(item.id).name);
+	lvlupLittleInfos[i]->SetText(std::format("{}->{}", item.lvl, item.lvl + 1));
+	lvlupDescriptions[i]->SetText(GR::gr->itemRegistry.GetItemDef(item.id).description);
+
 }
 
 void GameUILayer::OnUpdate(Timestep delta)
@@ -217,6 +228,7 @@ void GameUILayer::SetLvlUpUIActive(bool active)
 	else
 		lvlBackground->Disable();
 }
+
 
 
 void GameUILayer::OnTransitionIn()

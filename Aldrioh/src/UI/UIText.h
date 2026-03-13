@@ -11,18 +11,21 @@ public:
 	virtual void OnRender(Timestep ts) override;
 	virtual UIType GetType() const override { return UIType::Text; }
 
-	void SetText(const std::string& text);
+	void SetText(const std::string& text) { this->text = text; RecalculateUITextBoxSize(); }
 	const std::string& GetText() const { return text; }
 
 	FontStyle& GetFontStyle() { return style; }
-	void SetFontStyle(const FontStyle& newStyle) { this->style = style; SetText(text); }
-	void SetFontSize(float fontSize);
+	void SetFontStyle(const FontStyle& newStyle) { this->style = style; RecalculateUITextBoxSize(); }
+	void SetFontSize(float fontSize) { this->style.size = fontSize; RecalculateUITextBoxSize(); }
 
 	// text wrapping
-	void SetTextWrap(bool enable) { shouldTextWrap = enable; SetText(text); }
-	void SetTextWrapMaxWidth(float width) { textWrapMaxWidth = width; SetText(text); }
+	void SetTextWrap(bool enable) { shouldTextWrap = enable; RecalculateUITextBoxSize(); }
+	void SetTextWrapMaxWidth(float width) { textWrapMaxWidth = width; RecalculateUITextBoxSize(); }
 
 private:
+	// Recalculate box size
+	void RecalculateUITextBoxSize();
+
 	std::string text = "";
 	FontStyle style;
 
