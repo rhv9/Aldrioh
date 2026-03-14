@@ -18,7 +18,6 @@ void UIButton::OnUpdate(Timestep ts)
 void UIButton::OnRender(Timestep ts)
 {
 	UIObject::OnRender(ts);
-
 }
 
 void UIButton::OnMouseButtonEvent(MouseButtonEventArg& e)
@@ -37,4 +36,32 @@ void UIButton::OnMouseButtonEvent(MouseButtonEventArg& e)
 		pressedWithin = false;
 	}
 
+}
+
+void UIButton::OnMouseMoveEvent(MouseMoveEventArg& e)
+{
+	if (IsMouseHovering())
+		backgroundColour = hoverColour;
+	else
+		backgroundColour = normalColour;
+
+}
+
+void UIButton::SetButtonColour(const glm::vec4& colour)
+{
+	normalColour = hoverColour = colour;
+	SetBackgroundColour(normalColour);
+	UpdateButtonColour();
+}
+
+void UIButton::SetHoverColour(float percent)
+{
+	hoverPercent = percent;
+	UpdateButtonColour();
+}
+
+void UIButton::UpdateButtonColour()
+{
+	if (hoverPercent != INACTIVE_HOVER_PERCENT_VALUE)
+		hoverColour += normalColour * hoverPercent;
 }

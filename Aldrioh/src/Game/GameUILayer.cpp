@@ -97,7 +97,8 @@ void GameUILayer::OnBegin()
 			float yRelativePos = lvlUpHeightOffset + yButtonHeight * i + yOffset + yGapBetween * i;
 			lvlupCards[i] = new UIButton(std::format("Option {}", i), { 0.0f, yRelativePos }, { bw, yButtonHeight });
 			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
-			lvlupCards[i]->SetBackgroundColour(Colour::BLACK);
+			lvlupCards[i]->SetButtonColour(Colour::BLACK);
+			lvlupCards[i]->SetHoverColour(0.15f);
 			lvlBackground->AddChild(lvlupCards[i]);
 
 			float ixp = 2.0f;
@@ -140,11 +141,26 @@ void GameUILayer::OnBegin()
 
 void GameUILayer::SetLevelUpCardItem(int i, Item& item)
 {
-	lvlupImages[i]->SetSubTexture(Sprites::get(item.cachedSpriteId));
-	lvlupTitles[i]->SetText(GR::gr->itemRegistry.GetItemDef(item.id).name);
-	lvlupLittleInfos[i]->SetText(std::format("{}->{}", item.lvl, item.lvl + 1));
-	lvlupDescriptions[i]->SetText(GR::gr->itemRegistry.GetItemDef(item.id).description);
+	ItemDef& itemDef = GR::gr->itemRegistry.GetItemDef(item.id);
+	glm::vec4 backgroundCol = Colour::BLUE;
+	switch (itemDef.id.category)
+	{
+	case ItemCategory::BaseStat:
+		backgroundCol = Colour::RGBCol(227, 106, 7);
+		break;
+	case ItemCategory::ShipModule:
+		backgroundCol = Colour::RGBCol(107, 20, 32);
+		break;
+	case ItemCategory::Unique:
+		backgroundCol = Colour::RGBCol(19, 118, 120);
+		break;
+	}
 
+	lvlupImages[i]->SetSubTexture(Sprites::get(item.cachedSpriteId));
+	lvlupTitles[i]->SetText(itemDef.name);
+	lvlupLittleInfos[i]->SetText(std::format("{}->{}", item.lvl, item.lvl + 1));
+	lvlupDescriptions[i]->SetText(itemDef.description);
+	lvlupCards[i]->SetButtonColour(backgroundCol);
 }
 
 void GameUILayer::OnUpdate(Timestep delta)

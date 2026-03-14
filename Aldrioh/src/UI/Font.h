@@ -31,12 +31,14 @@ struct FontStyle
 	glm::vec4 colour = Colour::BLACK;
 
 	// Text wrapping
-	float textWrappingLineSpacingPercent = 1.0f;
+	float textWrappingLineSpacingPercent = 1.5f;
 
 	FontStyle& WithSize(float size) { this->size = size; return *this; }
 	FontStyle& WithCharSpacingPercent(float charSpacingPercent) { this->charSpacingPercent = charSpacingPercent; return *this; }
 	FontStyle& WithColour(const glm::vec4& colour) { this->colour = colour; return *this; }
 
 	float CalculateTextWidth(const std::string& text) const;
+
+	FontStyle Copy() const { return *this; }
 
 };

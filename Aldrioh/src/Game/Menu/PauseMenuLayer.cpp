@@ -43,7 +43,8 @@ void PauseMenuLayer::OnBegin()
 	continueButton->GetUIText()->SetFontSize(4);
 	continueButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
 	continueButton->SetAnchorPoint(AnchorPoint::CENTER);
-	continueButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	continueButton->SetButtonColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	continueButton->SetHoverColour(0.15f);
 	continueButton->SetOnClickCallback([this](UIButton* button) {
 		this->ExitPauseMenuToGame();
 		});
@@ -54,7 +55,8 @@ void PauseMenuLayer::OnBegin()
 	exitButton->GetUIText()->SetFontSize(4);
 	exitButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
 	exitButton->SetAnchorPoint(AnchorPoint::CENTER);
-	exitButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	exitButton->SetButtonColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	exitButton->SetHoverColour(0.15f);
 	exitButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_CORE_INFO("Pause menu - Switching to main menu");
 		Game::Instance().GetLayerStack().QueuePopLayer(this);

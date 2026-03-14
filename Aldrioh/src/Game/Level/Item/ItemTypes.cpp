@@ -5,7 +5,7 @@
 
 void ItemTypes::Init(ItemRegistry& itemRegistry)
 {
-	auto& baseStat_Hp = itemRegistry.AddNewItem<BaseStatItem>(ItemDef{ ItemTypes::BaseStat_Hp, "HP Gear", "Increases your HP", Sprites::asteroid_small });
+	auto& baseStat_Hp = itemRegistry.AddNewItem<BaseStatItem>(ItemDef{ ItemTypes::BaseStat_Hp, "HP Gear", "Increases your HP by a whole freaking lot boiii!", Sprites::asteroid_small });
 	baseStat_Hp.statModifier.hp_multiplier = 0.1f;
 	baseStat_Hp.levelUpFunc = [](Item* itemPtr) -> std::string
 		{

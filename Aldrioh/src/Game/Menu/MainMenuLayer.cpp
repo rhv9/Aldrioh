@@ -51,7 +51,8 @@ void MainMenuLayer::OnBegin()
 	startButton->GetUIText()->SetFontSize(4);
 	startButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
 	startButton->SetAnchorPoint(AnchorPoint::CENTER);
-	startButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	startButton->SetButtonColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	startButton->SetHoverColour(0.15f);
 	startButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_INFO("MainMenu - switching to game layer");
 		GlobalLayers::game = new GameLayer("Game Layer");
@@ -64,7 +65,8 @@ void MainMenuLayer::OnBegin()
 	exitButton->GetUIText()->SetFontSize(4);
 	exitButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
 	exitButton->SetAnchorPoint(AnchorPoint::CENTER);
-	exitButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	exitButton->SetButtonColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	exitButton->SetHoverColour(0.15f);
 	exitButton->SetOnClickCallback([](UIButton* button) {
 		LOG_CORE_INFO("MainMenu - Shutdown");
 		Game::Instance().Shutdown();

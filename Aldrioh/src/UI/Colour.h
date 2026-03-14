@@ -13,4 +13,8 @@ namespace Colour {
 
 	glm::vec4 Random();
 
+	constexpr glm::vec4 RGBCol(float r, float g, float b)
+	{
+		return glm::vec4{ r / 255.0f, g / 255.0f, b / 255.0f, 1.0f };
+	}
 }

@@ -20,7 +20,7 @@ void UIText::OnRender(Timestep ts)
 	if (!shouldTextWrap)
 		Renderer::UIDrawText(style, text, { UIData::PIXEL, renderPos });
 	else
-		Renderer::UIDrawTextWithWrapping(style, text, { UIData::PIXEL, {renderPos.x, renderPos.y + cachedRenderYOffset} }, textWrapMaxWidth);
+		Renderer::UIDrawTextWithWrapping(style, text, {UIData::PIXEL, {renderPos.x, renderPos.y + cachedRenderYOffset}}, textWrapMaxWidth);
 
 }
 
