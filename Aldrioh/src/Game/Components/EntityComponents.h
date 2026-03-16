@@ -1,5 +1,6 @@
 #pragma once
 #include <Scene/Entity.h>
+#include <Game/Level/Item/Item.h>
 
 struct TimeLifeComponent
 {
@@ -103,4 +104,22 @@ struct ItemAnimationControllerComponent
 
 	ItemAnimationControllerComponent() = default;
 	ItemAnimationControllerComponent(const ItemAnimationControllerComponent&) = default;
+};
+
+struct ModularShipComponent
+{
+	std::array<BaseStatItem, 5> bsi;
+	uint8_t bsiMax = 5, bsiCount = 0;
+	
+	std::array<ShipModuleItem, 3> smi;
+	uint8_t smiMax = 3, smiCount = 0;
+	
+	std::array<UniqueItem, 4> si;
+	uint8_t siMax = 4, siCount = 0;
+
+	ModularShipComponent() = default;
+	ModularShipComponent(const ModularShipComponent&) = default;
+
+	bool HasItem(ItemID itemId);
+	Item* GetItem(ItemID itemId);
 };

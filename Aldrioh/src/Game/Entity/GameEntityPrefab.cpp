@@ -49,7 +49,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	Entity player = scene.CreateEntity("Player");
 	scene.SetPlayer(player);
 	player.GetComponent<TransformComponent>().position = { startPos.x, startPos.y, 0.4f };
-	VisualComponent& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
+	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
 	player.AddComponent<MoveComponent>(6.0f);
@@ -59,6 +59,10 @@ Entity PlayerPrefab::create(Scene& scene)
 	pcc.dirLock = dir;
 	player.AddComponent<HealthComponent>(maxHealth);
 	player.AddComponent<OnDestroyComponent>(OnDestroy_Player);
+	auto& msc = player.AddComponent<ModularShipComponent>();
+	msc.bsiMax = 5;
+	msc.smiMax = 3;
+	msc.siMax = 4;
 
 	return player;
 }

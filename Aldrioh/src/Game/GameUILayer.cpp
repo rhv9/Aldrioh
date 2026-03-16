@@ -136,9 +136,9 @@ void GameUILayer::OnBegin()
 }
 
 
-void GameUILayer::SetLevelUpCardItem(int i, Item& item)
+void GameUILayer::SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpInfo, const std::string& littleInfo)
 {
-	ItemDef& itemDef = GR::gr->itemRegistry.GetItemDef(item.id);
+	ItemDef& itemDef = GR::gr->itemRegistry.GetItemDef(itemId);
 	glm::vec4 backgroundCol = Colour::BLUE;
 	switch (itemDef.id.category)
 	{
@@ -153,10 +153,10 @@ void GameUILayer::SetLevelUpCardItem(int i, Item& item)
 		break;
 	}
 
-	lvlupImages[i]->SetSubTexture(Sprites::get(item.cachedSpriteId));
+	lvlupImages[i]->SetSubTexture(Sprites::get(itemDef.spriteId));
 	lvlupTitles[i]->SetText(itemDef.name);
-	lvlupLittleInfos[i]->SetText(std::format("{}->{}", item.lvl, item.lvl + 1));
-	lvlupDescriptions[i]->SetText(itemDef.description);
+	lvlupLittleInfos[i]->SetText(littleInfo);
+	lvlupDescriptions[i]->SetText(lvlUpInfo.msg);
 	lvlupCards[i]->SetButtonColour(backgroundCol);
 }
 
@@ -226,11 +226,26 @@ void GameUILayer::OnImGuiRender(Timestep delta)
 
 void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)
 {
-	std::array<ItemID, 3> items = level.GetItemPool().GenerateThreeUniqueItems();
+	chosenItems = level.GetItemPool().GenerateThreeUniqueItems();
 
-	SetLevelUpCardItem(0, *items[0]);
-	SetLevelUpCardItem(1, *items[1]);
-	SetLevelUpCardItem(2, *items[2]);
+	// logic to update the ui
+	for (int i = 0; i < chosenItems.size(); ++i)
+	{
+		ItemID itemId = chosenItems[i];
+
+		auto& msc = level.GetPlayer().GetComponent<ModularShipComponent>();
+		Item* playerItemPtr = msc.GetItem(itemId);
+		if (playerItemPtr != nullptr)
+		{
+			int lvl = playerItemPtr->lvl;
+			LvlUpInfo lvlUpInfo = playerItemPtr->LevelUpPretend();
+			SetLvlUpCardItem(i, playerItemPtr->id, lvlUpInfo, std::format("{}->{}", lvl, lvl + 1));
+		}
+		else
+		{
+			SetLvlUpCardItem(i, itemId, { GR::gr->itemRegistry.GetItemDef(itemId).description }, "New");
+		}
+	}
 
 	SetLvlUpUIActive(true);
 	uiLevelCountText->SetText(std::format("Level: {}", e.level.GetPlayerStats().GetLevelCount()));

@@ -8,6 +8,8 @@
 
 #include <Game/Level/PlayerStats.h>
 
+#include "Level/Item/Item.h"
+
 class UIButton;
 class UIImage;
 class Item;
@@ -42,7 +44,7 @@ public:
 
 	// Level up related
 	void SetLvlUpUIActive(bool active);
-	void SetLevelUpCardItem(int i, Item& item);
+	void SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpInfo, const std::string& littleInfo);
 
 private:
 	Level& level;
@@ -61,7 +63,7 @@ private:
 	std::array<UIText*, 3> lvlupLittleInfos;
 	std::array<UIText*, 3> lvlupDescriptions;
 
-
+	std::array<ItemID, 3> chosenItems;
 
 	EventCallbackID<PlayerStatsEventArg> expGainCallbackId;
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
