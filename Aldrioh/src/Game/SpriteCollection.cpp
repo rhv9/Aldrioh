@@ -1,9 +1,11 @@
 #include "pch.h"
+#include "Graphics/SubTexture.h"
+
+#include "SpriteCollection.h"
 
 #define SPRITES_CPP
 #include "SpriteCollection.h"
 
-#include "Graphics/SubTexture.h"
 
 static std::shared_ptr<Texture> spritesheet;
 static std::shared_ptr<Texture> squareBox;

@@ -98,7 +98,7 @@ void GameUILayer::OnBegin()
 			lvlupCards[i] = new UIButton(std::format("Option {}", i), { 0.0f, yRelativePos }, { bw, yButtonHeight });
 			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
 			lvlupCards[i]->SetButtonColour(Colour::BLACK);
-			lvlupCards[i]->SetHoverColour(0.15f);
+			lvlupCards[i]->SetHoverColour(-0.15f);
 			lvlBackground->AddChild(lvlupCards[i]);
 
 			float ixp = 2.0f;

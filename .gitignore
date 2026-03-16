@@ -18,6 +18,7 @@ Makefile
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**.i
 
 #My
 **.h.gch
