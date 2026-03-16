@@ -99,6 +99,10 @@ void GameUILayer::OnBegin()
 			lvlupCards[i]->SetAnchorPoint(AnchorPoint::CENTER_TOP);
 			lvlupCards[i]->SetButtonColour(Colour::BLACK);
 			lvlupCards[i]->SetHoverColour(-0.15f);
+			lvlupCards[i]->SetOnClickCallback([i](UIButton* button) {
+				GlobalLayers::game->GetUILayer()->SelectLvlUpCard(i);
+				GlobalLayers::game->GetUILayer()->SetLvlUpUIActive(false);
+				});
 			lvlBackground->AddChild(lvlupCards[i]);
 
 			float ixp = 2.0f;
@@ -132,6 +136,8 @@ void GameUILayer::OnBegin()
 			lvlupCards[i]->AddChild(lvlupDescriptions[i]);
 		}
 	}
+
+	SetLvlUpUIActive(false);
 
 }
 
@@ -251,10 +257,17 @@ void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)
 	uiLevelCountText->SetText(std::format("Level: {}", e.level.GetPlayerStats().GetLevelCount()));
 }
 
+void GameUILayer::SelectLvlUpCard(int button)
+{
+	ItemID itemId = chosenItems[button];
+	auto& msc = level.GetPlayer().GetComponent<ModularShipComponent>();
+	msc.AddItem(itemId);
+}
 void GameUILayer::OnExpGainEvent(PlayerStatsEventArg& e)
 {
 	expProgressBar->SetProgress(e.level.GetPlayerStats().GetExpPercent());
 }
+
 
 void GameUILayer::SetLvlUpUIActive(bool active)
 {

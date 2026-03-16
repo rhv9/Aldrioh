@@ -35,6 +35,7 @@ public:
 	void OnLevelUpEvent(PlayerStatsEventArg& e);
 	void OnExpGainEvent(PlayerStatsEventArg& e);
 
+	void SelectLvlUpCard(int button);
 
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }

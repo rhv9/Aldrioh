@@ -120,6 +120,8 @@ struct ModularShipComponent
 	ModularShipComponent() = default;
 	ModularShipComponent(const ModularShipComponent&) = default;
 
-	bool HasItem(ItemID itemId);
-	Item* GetItem(ItemID itemId);
+	bool HasItem(const ItemID itemId);
+	Item* GetItem(const ItemID itemId);
+	void AddItem(const ItemID itemId);
+
 };
