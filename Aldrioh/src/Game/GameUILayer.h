@@ -33,9 +33,6 @@ public:
 	void OnLevelUpEvent(PlayerStatsEventArg& e);
 	void OnExpGainEvent(PlayerStatsEventArg& e);
 
-	void SetLvlUpUIActive(bool active);
-
-	void SetLevelUpCardItem(int i, Item& item);
 
 	UIText* GetUILevelCountText() { return uiLevelCountText; }
 	UIProgressBar* GetUIHealthProgressBar() { return uiPlayerHealthBar; }
@@ -43,6 +40,9 @@ public:
 	UIProgressBar* GetExpProgressBar() { return expProgressBar; }
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
 
+	// Level up related
+	void SetLvlUpUIActive(bool active);
+	void SetLevelUpCardItem(int i, Item& item);
 
 private:
 	Level& level;

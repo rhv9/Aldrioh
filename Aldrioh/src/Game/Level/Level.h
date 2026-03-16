@@ -8,6 +8,7 @@
 #include <Core/Window.h>
 #include "FixedWaveManager.h"
 #include "LevelStats.h"
+#include "Item/ItemPool.h"
 
 struct BoundingArea
 {
@@ -51,6 +52,7 @@ public:
 	FixedWaveManager& GetFixedWaveManager() { return fixedWaveManager; }
 	LevelStats& GetLevelStats() { return levelStats; }
 	PlayerStats& GetPlayerStats() { return playerStats; }
+	ItemPool& GetItemPool() { return itemPool; }
 
 	void OnLevelUpEvent(PlayerStatsEventArg& e);
 
@@ -68,6 +70,7 @@ protected:
 	FixedWaveManager fixedWaveManager;
 	PlayerStats playerStats;
 	LevelStats levelStats;
+	ItemPool itemPool;
 
 	EventCallbackID<MouseButtonEventArg> mouseButtonCallbackID;
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;

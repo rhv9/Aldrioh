@@ -133,9 +133,6 @@ void GameUILayer::OnBegin()
 		}
 	}
 
-	SetLevelUpCardItem(0, *items[0]);
-	SetLevelUpCardItem(1, *items[1]);
-	SetLevelUpCardItem(2, *items[2]);
 }
 
 
@@ -229,6 +226,13 @@ void GameUILayer::OnImGuiRender(Timestep delta)
 
 void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)
 {
+	std::array<ItemID, 3> items = level.GetItemPool().GenerateThreeUniqueItems();
+
+	SetLevelUpCardItem(0, *items[0]);
+	SetLevelUpCardItem(1, *items[1]);
+	SetLevelUpCardItem(2, *items[2]);
+
+	SetLvlUpUIActive(true);
 	uiLevelCountText->SetText(std::format("Level: {}", e.level.GetPlayerStats().GetLevelCount()));
 }
 
