@@ -19,7 +19,10 @@ public:
 	void AddExpMultiplier(float value) { expMultiplier += value; }
 
 	float GetExpPercent() const { return exp / maxExp; }
+
 	uint16_t GetLevelCount() const { return levelCount; }
+	float GetCurrentExp() const { return exp; }
+	float GetMaxExp() const { return maxExp; }
 
 	EventHandler<PlayerStatsEventArg> expGainEventHandler;
 	EventHandler<PlayerStatsEventArg> lvlUpEventHandler;

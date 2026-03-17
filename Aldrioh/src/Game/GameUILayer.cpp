@@ -102,6 +102,7 @@ void GameUILayer::OnBegin()
 			lvlupCards[i]->SetOnClickCallback([i](UIButton* button) {
 				GlobalLayers::game->GetUILayer()->SelectLvlUpCard(i);
 				GlobalLayers::game->GetUILayer()->SetLvlUpUIActive(false);
+				GlobalLayers::game->SetShouldUpdate(true);
 				});
 			lvlBackground->AddChild(lvlupCards[i]);
 
@@ -232,6 +233,7 @@ void GameUILayer::OnImGuiRender(Timestep delta)
 
 void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)
 {
+	GlobalLayers::game->SetShouldUpdate(false);
 	chosenItems = level.GetItemPool().GenerateThreeUniqueItems();
 
 	// logic to update the ui

@@ -237,6 +237,12 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 
 void Level::ImGuiRender(Timestep delta)
 {
+	if (ImGui::Button("Level player up!"))
+	{
+		float expToMax = playerStats.GetMaxExp() - playerStats.GetCurrentExp() + 1.0f;
+		playerStats.AddExp(expToMax);
+	}
+
 	if (ImGui::CollapsingHeader("Level Stats"))
 	{
 		ImGui::SeparatorText("Alive Enemy");
