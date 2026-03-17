@@ -137,3 +137,11 @@ struct StatComponent
 	StatComponent() = default;
 	StatComponent(const StatComponent&) = default;
 };
+
+struct ActionComponent
+{
+	bool up, down, left, right;
+	bool shoot;
+	glm::vec2 dir;
+	float anglePointingTo = 0.0f;
+};

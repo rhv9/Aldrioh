@@ -64,6 +64,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	msc.smiMax = 3;
 	msc.siMax = 4;
 	auto& sc = player.AddComponent<StatComponent>();
+	player.AddComponent<ActionComponent>();
 
 	return player;
 }

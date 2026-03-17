@@ -60,113 +60,132 @@ ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
-	auto view = scene.getRegistry().view<PlayerControllerComponent>();
 
-	for (entt::entity e : view)
 	{
-		Entity player = scene.WrapEntityHandle(e);
-
-		// Keyboard movement of player
-		auto& playerTransform = player.GetComponent<TransformComponent>();
-		auto& playerMove = player.GetComponent<MoveComponent>();
-
-		glm::vec2 move{ 0.0f };
-
-		if (Input::IsKeyPressed(Input::KEY_W))
-			move.y = 1.0f;
-		if (Input::IsKeyPressed(Input::KEY_S))
-			move.y = -1.0f;
-		if (Input::IsKeyPressed(Input::KEY_A))
-			move.x = -1.0f;
-		if (Input::IsKeyPressed(Input::KEY_D))
-			move.x = 1.0f;
-
-		playerMove.addMoveVec(move);
-
-		PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
-		glm::vec2 mousePos = scene.GetMousePosInScene();
-
-		float angleBetweenPlayerAndMouse = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
-
-		if (pcc.dirLock == DIRLOCK_FREE)
-			player.GetComponent<VisualComponent>().rotation = angleBetweenPlayerAndMouse;
-		else
-			player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
-
-		if (Input::IsKeyPressed(Input::KEY_SPACEBAR))
+		auto view = scene.getRegistry().view<PlayerControllerComponent, ActionComponent>();
+		for (entt::entity e : view)
 		{
-			if (shootTimer >= 0.08f || shootTimer == 0.0f)
+			auto& ac = view.get<ActionComponent>(e);
+
+			ac.up = Input::IsKeyPressed(Input::KEY_W);
+			ac.down = Input::IsKeyPressed(Input::KEY_S);
+			ac.left = Input::IsKeyPressed(Input::KEY_A);
+			ac.right = Input::IsKeyPressed(Input::KEY_D);
+
+			ac.shoot = Input::IsKeyPressed(Input::KEY_SPACEBAR);
+
+			Entity player = scene.WrapEntityHandle(e);
+			PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
+			glm::vec2 mousePos = scene.GetMousePosInScene();
+			auto& playerTransform = player.GetTransformComponent();
+
+			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
+
+			if (pcc.dirLock == DIRLOCK_FREE)
+				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), player.getScene()->GetMousePosInScene());
+			else
+				ac.dir = pcc.dirLock;
+			
+		}
+	}
+	{
+		auto view = scene.getRegistry().view<PlayerControllerComponent>();
+
+		for (entt::entity e : view)
+		{
+			Entity player = scene.WrapEntityHandle(e);
+
+			// Keyboard movement of player
+			auto& playerTransform = player.GetComponent<TransformComponent>();
+			auto& playerMove = player.GetComponent<MoveComponent>();
+			auto& inputAction = player.GetComponent<ActionComponent>();
+
+			glm::vec2 move{ 0.0f };
+
+			if (inputAction.up)
+				move.y = 1.0f;
+			if (inputAction.down)
+				move.y = -1.0f;
+			if (inputAction.left)
+				move.x = -1.0f;
+			if (inputAction.right)
+				move.x = 1.0f;
+
+			playerMove.addMoveVec(move);
+
+			PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
+			glm::vec2 mousePos = scene.GetMousePosInScene();
+
+			if (pcc.dirLock == DIRLOCK_FREE)
+				player.GetComponent<VisualComponent>().rotation = inputAction.anglePointingTo;
+			else
+				player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
+
+			if (inputAction.shoot)
 			{
-				shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-
-				glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
-
-				glm::vec2 dir;
-				if (pcc.dirLock == DIRLOCK_FREE)
+				if (shootTimer >= 0.08f || shootTimer == 0.0f)
 				{
-					dir = Math::normalizedDirection(glm::vec2(playerPos), player.getScene()->GetMousePosInScene());
+					shootTimer = std::max(shootTimer - 1.0f, 0.0f);
+					glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
+					shoot(player, playerPos, inputAction.dir);
+					scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
+
 				}
-				else
-					dir = pcc.dirLock;
-				shoot(player, playerPos, dir);
-
-				scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
-
+				shootTimer += ts;
 			}
-			shootTimer += ts;
-		}
-		else
-			shootTimer = 0.0f;
+			else
+				shootTimer = 0.0f;
 
 
-		if (move.x != 0 || move.y != 0)
-		{
-			glm::vec2 posOffset = glm::normalize(glm::vec2{ playerTransform.position } - mousePos) * 0.6f;
-
-			ParticleTemplate pt = playerExhaustParticle;
-			pt.startPos = glm::vec2{ playerTransform.position } + posOffset;
-			scene.GetParticleManager().Emit(pt);
-		}
-
-
-		// Simple brute force algorithm to select cells that are within radius from center of cell
-		Level* level = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
-		CollectableManager& collectableManager = level->GetCollectableManager();
-
-		int startX = playerTransform.position.x - pcc.radius;
-		int startY = playerTransform.position.y - pcc.radius;
-		int endX = playerTransform.position.x + pcc.radius;
-		int endY = playerTransform.position.y + pcc.radius;
-
-		for (int y = startY; y < endY; ++y)
-		{
-			for (int x = startX; x < endX; ++x)
+			if (move.x != 0 || move.y != 0)
 			{
-				if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, glm::vec2(playerTransform.position)) <= pcc.radius)
-				{
-					glm::vec2 chunkPos = { x, y };
-					CollectableMapping mapping = collectableManager.GetMapping(chunkPos);
-					CollectableBlock& cell = collectableManager.GetChunk(mapping).GetBlock(mapping);
+				glm::vec2 posOffset = glm::normalize(glm::vec2{ playerTransform.position } - mousePos) * 0.6f;
 
-					for (int i = 0; i < cell.count; ++i)
+				ParticleTemplate pt = playerExhaustParticle;
+				pt.startPos = glm::vec2{ playerTransform.position } + posOffset;
+				scene.GetParticleManager().Emit(pt);
+			}
+
+
+			// Simple brute force algorithm to select cells that are within radius from center of cell
+			Level* level = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
+			CollectableManager& collectableManager = level->GetCollectableManager();
+
+			int startX = playerTransform.position.x - pcc.radius;
+			int startY = playerTransform.position.y - pcc.radius;
+			int endX = playerTransform.position.x + pcc.radius;
+			int endY = playerTransform.position.y + pcc.radius;
+
+			for (int y = startY; y < endY; ++y)
+			{
+				for (int x = startX; x < endX; ++x)
+				{
+					if (Math::dist(glm::vec2{ (float)x + 0.5f, (float)y + 0.5f }, glm::vec2(playerTransform.position)) <= pcc.radius)
 					{
-						CollectableItem& cellData = cell.cellArray[i];
-						CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
-						Entity itemEntity = scene.CreateEntity("Item");
-						VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
-						vc.scale = itemRenderData.size;
-						vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
-						vc.colour = itemRenderData.colour;
-						glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
-						itemEntity.GetTransformComponent().position = { p0, 0.0f };
-						BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
-						bezier.onCompletionCallback = [](Entity e) {
-							e.QueueDestroy();
-							GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
-							};
-						itemEntity.AddComponent<ItemAnimationControllerComponent>();
+						glm::vec2 chunkPos = { x, y };
+						CollectableMapping mapping = collectableManager.GetMapping(chunkPos);
+						CollectableBlock& cell = collectableManager.GetChunk(mapping).GetBlock(mapping);
+
+						for (int i = 0; i < cell.count; ++i)
+						{
+							CollectableItem& cellData = cell.cellArray[i];
+							CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
+							Entity itemEntity = scene.CreateEntity("Item");
+							VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
+							vc.scale = itemRenderData.size;
+							vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
+							vc.colour = itemRenderData.colour;
+							glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
+							itemEntity.GetTransformComponent().position = { p0, 0.0f };
+							BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
+							bezier.onCompletionCallback = [](Entity e) {
+								e.QueueDestroy();
+								GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
+								};
+							itemEntity.AddComponent<ItemAnimationControllerComponent>();
+						}
+						cell.Clear();
 					}
-					cell.Clear();
 				}
 			}
 		}
