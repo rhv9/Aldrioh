@@ -71,7 +71,7 @@ struct BaseStatItem : public Item
 
 struct ShipModuleItem : public Item
 {
-	using update_tfunc = std::function<void(Timestep ts, Entity& e)>;
+	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
 
 	update_tfunc updateFunc;
 
@@ -83,7 +83,7 @@ struct ShipModuleItem : public Item
 
 struct UniqueItem : public Item
 {
-	using update_tfunc = std::function<void(Timestep ts, Entity& e)>;
+	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
 
 	update_tfunc updateFunc;
 

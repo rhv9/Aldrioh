@@ -63,6 +63,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	msc.bsiMax = 5;
 	msc.smiMax = 3;
 	msc.siMax = 4;
+	msc.AddItem(ItemTypes::ShipModule_Shooter);
 	auto& sc = player.AddComponent<StatComponent>();
 	player.AddComponent<ActionComponent>();
 

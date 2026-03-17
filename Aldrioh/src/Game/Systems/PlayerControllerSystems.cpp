@@ -16,8 +16,6 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Entity/GameEntities.h>
 
-float shootTimer = 0.0f;
-
 void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
 {
 	// Create entity
@@ -121,20 +119,6 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			else
 				player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 
-			if (inputAction.shoot)
-			{
-				if (shootTimer >= 0.08f || shootTimer == 0.0f)
-				{
-					shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-					glm::vec3& playerPos = player.GetComponent<TransformComponent>().position;
-					shoot(player, playerPos, inputAction.dir);
-					scene.CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
-
-				}
-				shootTimer += ts;
-			}
-			else
-				shootTimer = 0.0f;
 
 
 			if (move.x != 0 || move.y != 0)
@@ -187,6 +171,21 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 						cell.Clear();
 					}
 				}
+			}
+		}
+	}
+
+	{
+		auto view = scene.getRegistry().view<ActionComponent, ModularShipComponent>();
+
+		for (entt::entity eHandle : view)
+		{
+			auto [ac, msc] = view.get<ActionComponent, ModularShipComponent>(eHandle);
+			Entity e = scene.WrapEntityHandle(eHandle);
+
+			for (int i = 0; i < msc.smiCount; ++i)
+			{
+				msc.smi[i].updateFunc(ts, e);
 			}
 		}
 	}
