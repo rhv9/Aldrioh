@@ -8,6 +8,7 @@
 #include <UI/UIText.h>
 #include <UI/UIImage.h>
 #include <UI/UIButton.h>
+#include <Game/UI/UIStat.h>
 
 #include <Graphics/Renderer.h>
 #include <Scene/CameraController.h>
@@ -17,6 +18,8 @@
 #include <Scene/Entity.h>
 
 #include <Game/GlobalLayers.h>
+
+#include <Game/SpriteCollection.h>
 
 
 void PauseMenuLayer::OnBegin()
@@ -64,6 +67,24 @@ void PauseMenuLayer::OnBegin()
 		});
 	uiManager->AddUIObject(exitButton);
 
+
+	// StatUI
+
+	uiStat = new UIStat("Stat Main", { 5.0f, 15.0f }, { 40.0f, 70.0f });
+	uiStat->SetBackgroundColour(Colour::RGBCol(22, 22, 22));
+	uiStat->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+	uiManager->AddUIObject(uiStat);
+
+	hp = uiStat->AddItem("Health", Sprites::get(Sprites::coin), 23, 200);
+	dmg = uiStat->AddItem("Damage", Sprites::get(Sprites::coin), 23, 200);
+	critChance = uiStat->AddItem("Crit luck", Sprites::get(Sprites::coin), 23, 200);
+	critDmg = uiStat->AddItem("Crit Dmg", Sprites::get(Sprites::coin), 23, 200);
+
+	uiStat->AddGap();
+
+	luck = uiStat->AddItem("Luck", Sprites::get(Sprites::coin), 23, 200);
+	cooldown = uiStat->AddItem("Cooldown", Sprites::get(Sprites::coin), 23, 200);
+
 }
 
 void PauseMenuLayer::OnUpdate(Timestep delta)
@@ -91,7 +112,7 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 void PauseMenuLayer::OnTransitionIn()
 {
 	LOG_CORE_INFO("Pause menu - Transition In");
-	if (GlobalLayers::game != nullptr) 
+	if (GlobalLayers::game != nullptr)
 		GlobalLayers::game->SetShouldUpdate(false);
 	uiManager->OnTransitionIn();
 	gamePaused = true;

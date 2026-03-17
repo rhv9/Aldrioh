@@ -9,6 +9,7 @@ enum UIType
 	Text,
 	Image,
 	Button,
+	Custom,
 };
 
 class UIManager;

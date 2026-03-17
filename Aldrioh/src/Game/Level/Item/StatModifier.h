@@ -2,17 +2,17 @@
 
 struct StatModifier
 {
-	float hp_base = 0;
-	float hp_multiplier = 0;
-	float dmg_base = 0;
-	float dmg_multiplier = 0;
-	float critChance_base = 0;
-	float critChance_multiplier;
-	float critDmg_base = 0;
-	float critDmg_multiplier = 0;
-	float cooldown_base = 0;
-	float cooldown_multiplier = 0;
-	float luck_modifier = 0;
+	int hp_base = 0;
+	int hp_multiplier = 0;
+	int dmg_base = 0;
+	int dmg_multiplier = 0;
+	int critChance_base = 0;
+	int critChance_multiplier;
+	int critDmg_base = 0;
+	int critDmg_multiplier = 0;
+	int cooldown_base = 0;
+	int cooldown_multiplier = 0;
+	int luck_modifier = 0;
 
 	StatModifier& operator+=(const StatModifier& other)
 	{
@@ -27,13 +27,15 @@ struct StatModifier
 		cooldown_multiplier += other.cooldown_multiplier;
 		cooldown_base += other.cooldown_base;
 		luck_modifier += other.luck_modifier;
+
+		return *this;
 	}
 	
-	float CalcHealth() const { return hp_base * (1.0f + hp_multiplier); }
-	float CalcDmg() const { return dmg_base * (1.0f + dmg_multiplier); }
-	float CalcCritChance() const { return critChance_base * (1.0f + critChance_multiplier); }
-	float CalcCritDmg() const { return critDmg_base * (1.0f + critDmg_multiplier); }
-	float CalcCooldown() const { return cooldown_base * (1.0f + cooldown_multiplier); }
-	float CalcLuck() const { return luck_modifier; }
+	float CalcHealth() const { return hp_base * (hp_multiplier / 100.0f); }
+	float CalcDmg() const { return dmg_base * (dmg_multiplier / 100.f); }
+	float CalcCritChance() const { return critChance_base * (critChance_multiplier / 100.0f); }
+	float CalcCritDmg() const { return critDmg_base * (critDmg_multiplier / 100.0f); }
+	float CalcCooldown() const { return cooldown_base * (cooldown_multiplier / 100.0f); }
+	float CalcLuck() const { return luck_modifier / 100.0f; }
 
 };

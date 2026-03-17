@@ -3,6 +3,8 @@
 #include <Scene/Scene.h>
 
 #include <UI/UIManager.h>
+#include <Game/UI/UIStat.h>
+
 
 class PauseMenuLayer : public Layer
 {
@@ -29,6 +31,10 @@ public:
 
 private:
 	void ExitPauseMenuToGame();
+
+	UIStat* uiStat = nullptr;
+
+	UIStatIndex hp, dmg, critChance, critDmg, cooldown, luck;
 
 	std::shared_ptr<Scene> scene;
 	std::unique_ptr<UIManager> uiManager = nullptr;
