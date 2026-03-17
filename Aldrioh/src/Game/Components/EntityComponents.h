@@ -123,5 +123,16 @@ struct ModularShipComponent
 	bool HasItem(const ItemID itemId);
 	Item* GetItem(const ItemID itemId);
 	void AddItem(const ItemID itemId);
+	StatModifier CalculateTotalStatModifier() const;
 
+};
+
+struct StatComponent
+{
+	StatModifier baseStat;
+	StatModifier cachedStat;
+	bool dirty = false;
+
+	StatComponent() = default;
+	StatComponent(const StatComponent&) = default;
 };

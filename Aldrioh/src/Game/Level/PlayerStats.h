@@ -1,6 +1,7 @@
 #pragma once
 #include <Events/EventHandler.h>
 
+#include "Item/StatModifier.h"
 class Level;
 
 struct PlayerStatsEventArg : EventArg
@@ -23,6 +24,7 @@ public:
 	uint16_t GetLevelCount() const { return levelCount; }
 	float GetCurrentExp() const { return exp; }
 	float GetMaxExp() const { return maxExp; }
+	StatModifier& GetStatModifier() { return statModifier; }
 
 	EventHandler<PlayerStatsEventArg> expGainEventHandler;
 	EventHandler<PlayerStatsEventArg> lvlUpEventHandler;
@@ -34,4 +36,5 @@ private:
 	float maxExpGrowth = 1.05f;
 	uint16_t levelCount = 0;
 
+	StatModifier statModifier;
 };

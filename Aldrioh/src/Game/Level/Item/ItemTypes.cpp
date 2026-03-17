@@ -28,13 +28,13 @@ void ItemTypes::Init(ItemRegistry& itemRegistry)
 		};
 
 	auto& baseStat_critChance = itemRegistry.AddNewItem<BaseStatItem>(ItemDef{ ItemTypes::BaseStat_CritChance, "Crit Chance Gear", "Increases your chance of a critical hit", Sprites::asteroid_small });
-	baseStat_critChance.statModifier.critChange_multiplier = 0.1f;
+	baseStat_critChance.statModifier.critChance_multiplier = 0.1f;
 	baseStat_critChance.levelUpFunc = [](Item* itemPtr) -> LvlUpInfo
 		{
 			BaseStatItem* item = static_cast<BaseStatItem*>(itemPtr);
 			++item->lvl;
-			float old = item->statModifier.critChange_multiplier;
-			item->statModifier.critChange_multiplier += 0.1f;
+			float old = item->statModifier.critChance_multiplier;
+			item->statModifier.critChance_multiplier += 0.1f;
 			return { "Increase critical chance by 10%" };
 		};
 

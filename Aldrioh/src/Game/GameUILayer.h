@@ -46,6 +46,7 @@ public:
 	// Level up related
 	void SetLvlUpUIActive(bool active);
 	void SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpInfo, const std::string& littleInfo);
+	bool IsLvlUpUIActive() const { return lvlBackground->IsEnabled(); }
 
 private:
 	Level& level;

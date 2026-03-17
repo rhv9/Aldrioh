@@ -77,6 +77,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
 	scene->AddUpdateSystem(&EntitySystem::HealthSystem);
+	scene->AddUpdateSystem(&EntitySystem::StatSystem);
 	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
@@ -195,7 +196,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 void GameLayer::OnKeyEvent(KeyEventArg& e)
 {
 	scene->OnKeyEvent(e);
-	if (e.IsPressed(Input::KEY_ESCAPE))
+	if (e.IsPressed(Input::KEY_ESCAPE) && !GetUILayer()->IsLvlUpUIActive())
 	{
 		LOG_INFO("Pushing pause menu layer");
 		Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::pauseMenu);

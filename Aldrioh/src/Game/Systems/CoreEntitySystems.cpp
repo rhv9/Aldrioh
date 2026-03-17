@@ -90,17 +90,54 @@ void EntitySystem::RotationSystem(Timestep ts, Scene& scene)
 
 void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 {
+	auto view = scene.getRegistry().view<HealthComponent>();
+
+	for (entt::entity e : view)
 	{
-		auto view = scene.getRegistry().view<HealthComponent>();
+		Entity entity = scene.WrapEntityHandle(e);
+		HealthComponent& hc = view.get<HealthComponent>(e);
 
-		for (entt::entity e : view)
+		if (hc.health <= 0.0f)
+			entity.QueueDestroy();
+	}
+}
+
+void EntitySystem::StatSystem(Timestep ts, Scene& scene)
+{
+	auto view = scene.getRegistry().view<StatComponent>();
+
+	for (entt::entity e : view)
+	{
+		Entity entity = scene.WrapEntityHandle(e);
+		auto& sc = view.get<StatComponent>(e);
+
+		if (sc.dirty)
 		{
-			Entity entity = scene.WrapEntityHandle(e);
-			HealthComponent& hc = view.get<HealthComponent>(e);
+			sc.dirty = false;
+			
+			StatModifier newStat;
 
-			if (hc.health <= 0.0f)
-				entity.QueueDestroy();
+			if (entity.HasComponent<ModularShipComponent>())
+			{
+				auto& msc = entity.GetComponent<ModularShipComponent>();
+				newStat += msc.CalculateTotalStatModifier();
+			}
+
+			sc.cachedStat = sc.baseStat;
+			sc.cachedStat += newStat;
+
+			if (entity.HasComponent<HealthComponent>())
+			{
+				auto& hc = entity.GetComponent<HealthComponent>();
+				float newHealth = sc.cachedStat.hp_base * (sc.cachedStat.hp_multiplier + 1.0f);
+				if (hc.maxHealth != newHealth)
+				{
+					hc.maxHealth = newHealth;
+					hc.health = newHealth;
+				}
+			}
 		}
+
 	}
 }
 

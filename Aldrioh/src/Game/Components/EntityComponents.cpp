@@ -63,3 +63,11 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 		}
 	}
 }
+
+StatModifier ModularShipComponent::CalculateTotalStatModifier() const
+{
+	StatModifier total;
+	for (int i = 0; i < bsiCount; ++i)
+		total += bsi[i].statModifier;
+	return total;
+}
