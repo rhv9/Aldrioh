@@ -50,9 +50,22 @@ UIStatIndex UIStat::AddItem(const std::string& name, SubTexture* subTexture, int
 	elements.push_back(statItem);
 	cumulateYOffset += imageSize + gap;
 
-
 	SetSize({ size.x, yo + (cumulateYOffset + imageSize + gap) });
 
-	return static_cast<UIStatIndex>(elements.size() - 1);
+	return elements.size() - 1;
+}
+
+void UIStat::SetItem(UIStatIndex index, int base, int multiplier)
+{
+	int i = index;
+	ASSERT(i >= 0 && i < elements.size(), "Trying to set item for an item never added to ui!");
+	elements[i].val->SetText(std::format("+{} +{}%", base, multiplier));
+}
+
+void UIStat::SetItem(UIStatIndex index, int multiplier)
+{
+	int i = index;
+	ASSERT(i >= 0 && i < elements.size(), "Trying to set item for an item never added to ui!");
+	elements[i].val->SetText(std::format("+{}%", multiplier));
 }
 

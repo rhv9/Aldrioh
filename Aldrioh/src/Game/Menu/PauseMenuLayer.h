@@ -5,6 +5,7 @@
 #include <UI/UIManager.h>
 #include <Game/UI/UIStat.h>
 
+struct StatModifier;
 
 class PauseMenuLayer : public Layer
 {
@@ -28,6 +29,8 @@ public:
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 
 	bool IsPaused() const { return gamePaused; }
+
+	void UpdateStats(const StatModifier& statModifier);
 
 private:
 	void ExitPauseMenuToGame();

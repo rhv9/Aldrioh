@@ -17,7 +17,7 @@ LayerStack::~LayerStack()
 
 void LayerStack::PushLayer(Layer* layer)
 {
-	if (!layer->Initialized())
+	if (!layer->IsInitialized())
 	{
 		layer->OnBegin();
 		layer->SetInitialized(true);
@@ -77,7 +77,7 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 		{
 			first->OnTransitionOut();
 			layerVector[i] = second;
-			if (!second->Initialized())
+			if (!second->IsInitialized())
 				second->OnBegin();
 			second->OnTransitionIn();
 			return;

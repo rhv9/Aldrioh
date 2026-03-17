@@ -123,14 +123,16 @@ void EntitySystem::StatSystem(Timestep ts, Scene& scene)
 				newStat += msc.CalculateTotalStatModifier();
 			}
 
-			sc.cachedStat = sc.baseStat;
-			sc.cachedStat += newStat;
+			sc.precomputedBonusStat = newStat;
+
+			sc.totalCachedStat = sc.baseStat;
+			sc.totalCachedStat += sc.precomputedBonusStat;
 
 			if (entity.HasComponent<HealthComponent>())
 			{
 				auto& hc = entity.GetComponent<HealthComponent>();
-				float newHealth = sc.cachedStat.hp_base * (sc.cachedStat.hp_multiplier + 1.0f);
-				if (hc.maxHealth != newHealth)
+				float newHealth = sc.totalCachedStat.CalcHealth();
+				if (hc.maxHealth < newHealth)
 				{
 					hc.maxHealth = newHealth;
 					hc.health = newHealth;

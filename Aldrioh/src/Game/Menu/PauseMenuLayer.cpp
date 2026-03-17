@@ -20,6 +20,7 @@
 #include <Game/GlobalLayers.h>
 
 #include <Game/SpriteCollection.h>
+#include <Game/Level/Item/StatModifier.h>
 
 
 void PauseMenuLayer::OnBegin()
@@ -75,16 +76,13 @@ void PauseMenuLayer::OnBegin()
 	uiStat->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 	uiManager->AddUIObject(uiStat);
 
-	hp = uiStat->AddItem("Health", Sprites::get(Sprites::coin), 23, 200);
-	dmg = uiStat->AddItem("Damage", Sprites::get(Sprites::coin), 23, 200);
-	critChance = uiStat->AddItem("Crit luck", Sprites::get(Sprites::coin), 23, 200);
-	critDmg = uiStat->AddItem("Crit Dmg", Sprites::get(Sprites::coin), 23, 200);
-
+	hp = uiStat->AddItem("Health", Sprites::get(Sprites::coin), 69, 69);
+	dmg = uiStat->AddItem("Damage", Sprites::get(Sprites::coin), 69, 69);
+	critChance = uiStat->AddItem("Crit luck", Sprites::get(Sprites::coin), 69, 69);
+	critDmg = uiStat->AddItem("Crit Dmg", Sprites::get(Sprites::coin), 69, 69);
 	uiStat->AddGap();
-
-	luck = uiStat->AddItem("Luck", Sprites::get(Sprites::coin), 23, 200);
-	cooldown = uiStat->AddItem("Cooldown", Sprites::get(Sprites::coin), 23, 200);
-
+	luck = uiStat->AddItem("Luck", Sprites::get(Sprites::coin), 69, 69);
+	cooldown = uiStat->AddItem("Cooldown", Sprites::get(Sprites::coin), 69, 69);
 }
 
 void PauseMenuLayer::OnUpdate(Timestep delta)
@@ -101,6 +99,16 @@ void PauseMenuLayer::OnRender(Timestep delta)
 
 void PauseMenuLayer::OnImGuiRender(Timestep delta)
 {
+}
+
+void PauseMenuLayer::UpdateStats(const StatModifier& statModifier)
+{
+	uiStat->SetItem(hp, statModifier.hp_base, statModifier.hp_multiplier);
+	uiStat->SetItem(dmg, statModifier.dmg_base, statModifier.dmg_multiplier);
+	uiStat->SetItem(critChance, statModifier.critChance_base, statModifier.critChance_multiplier);
+	uiStat->SetItem(critDmg, statModifier.critDmg_base, statModifier.critDmg_multiplier);
+	uiStat->SetItem(cooldown, statModifier.cooldown_base, statModifier.cooldown_multiplier);
+	uiStat->SetItem(luck, statModifier.luck_modifier);
 }
 
 void PauseMenuLayer::ExitPauseMenuToGame()

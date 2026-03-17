@@ -130,7 +130,8 @@ struct ModularShipComponent
 struct StatComponent
 {
 	StatModifier baseStat;
-	StatModifier cachedStat;
+	StatModifier precomputedBonusStat;
+	StatModifier totalCachedStat;
 	bool dirty = false;
 
 	StatComponent() = default;

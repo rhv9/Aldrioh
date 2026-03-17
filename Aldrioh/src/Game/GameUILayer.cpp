@@ -264,6 +264,7 @@ void GameUILayer::SelectLvlUpCard(int button)
 	ItemID itemId = chosenItems[button];
 	auto& msc = level.GetPlayer().GetComponent<ModularShipComponent>();
 	msc.AddItem(itemId);
+	level.GetPlayer().GetComponent<StatComponent>().dirty = true;
 }
 void GameUILayer::OnExpGainEvent(PlayerStatsEventArg& e)
 {

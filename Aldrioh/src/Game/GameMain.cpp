@@ -16,6 +16,7 @@ Layer* EntryPoint::GameMain()
 	GlobalLayers::mainMenu = new MainMenuLayer("Main Menu Layer");
 	GlobalLayers::game = nullptr;
 	GlobalLayers::pauseMenu = new PauseMenuLayer("Pause Menu Layer");
+	GlobalLayers::pauseMenu->Initialize();
 	GlobalLayers::gameOver = new GameOverLayer("Game Over Layer");
 
 	return GlobalLayers::mainMenu;
