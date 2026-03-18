@@ -52,7 +52,7 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 		switch (itemId.category)
 		{
 		case ItemCategory::BaseStat:
-			arrayAddItem(bsi, std::make_unique<BaseStatItem>(GR::gr->itemRegistry.CreateInstance<BaseStatItem>(itemId)), bsiMax, bsiCount);
+			arrayAddItem(bsi, GR::gr->itemRegistry.CreateInstance<BaseStatItem>(itemId)), bsiMax, bsiCount);
 			break;
 		case ItemCategory::ShipModule:
 			arrayAddItem(smi, std::make_unique<ShipModuleItem>(GR::gr->itemRegistry.CreateInstance<ShipModuleItem>(itemId)), smiMax, smiCount);
