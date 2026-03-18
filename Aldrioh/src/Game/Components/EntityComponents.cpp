@@ -6,8 +6,8 @@
 Item* arrayGetItem(auto& items, const auto elem, auto itemCount)
 {
 	for (int i = 0; i < itemCount; ++i)
-		if (items[i].id == elem)
-			return &items[i];
+		if (items[i]->id == elem)
+			return items[i].get();
 	return nullptr;
 }
 
@@ -37,7 +37,7 @@ void arrayAddItem(auto& items, auto itemInstance, uint8_t maxItems, uint8_t& ite
 	if (itemCounter >= maxItems)
 		LOG_CRITICAL("Tried to add item to player when it is full!");
 	else
-		items[itemCounter++] = itemInstance;
+		items[itemCounter++] = std::move(itemInstance);
 }
 
 void ModularShipComponent::AddItem(const ItemID itemId)
@@ -52,13 +52,13 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 		switch (itemId.category)
 		{
 		case ItemCategory::BaseStat:
-			arrayAddItem(bsi, GR::gr->itemRegistry.CreateInstance<BaseStatItem>(itemId), bsiMax, bsiCount);
+			arrayAddItem(bsi, std::make_unique<BaseStatItem>(GR::gr->itemRegistry.CreateInstance<BaseStatItem>(itemId)), bsiMax, bsiCount);
 			break;
 		case ItemCategory::ShipModule:
-			arrayAddItem(smi, GR::gr->itemRegistry.CreateInstance<ShipModuleItem>(itemId), smiMax, smiCount);
+			arrayAddItem(smi, std::make_unique<ShipModuleItem>(GR::gr->itemRegistry.CreateInstance<ShipModuleItem>(itemId)), smiMax, smiCount);
 			break;
 		case ItemCategory::Unique:
-			arrayAddItem(si, GR::gr->itemRegistry.CreateInstance<UniqueItem>(itemId), siMax, siCount);
+			arrayAddItem(si, std::make_unique<UniqueItem>(GR::gr->itemRegistry.CreateInstance<UniqueItem>(itemId)), siMax, siCount);
 			break;
 		}
 	}
@@ -68,6 +68,6 @@ StatModifier ModularShipComponent::CalculateTotalStatModifier() const
 {
 	StatModifier total;
 	for (int i = 0; i < bsiCount; ++i)
-		total += bsi[i].statModifier;
+		total += bsi[i]->statModifier;
 	return total;
 }

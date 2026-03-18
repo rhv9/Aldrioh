@@ -185,7 +185,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 			for (int i = 0; i < msc.smiCount; ++i)
 			{
-				msc.smi[i].updateFunc(ts, e);
+				msc.smi[i]->updateFunc(ts, e);
 			}
 		}
 	}

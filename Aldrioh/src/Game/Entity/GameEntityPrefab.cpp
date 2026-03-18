@@ -57,14 +57,26 @@ Entity PlayerPrefab::create(Scene& scene)
 	player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f }, true);
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
-	player.AddComponent<HealthComponent>(maxHealth);
+	
+	StatModifier basicClass;
+	basicClass.hp_base = 100;
+	basicClass.dmg_base = 12;
+	basicClass.critChance_base = 5;
+	basicClass.critDmg_base = 100;
+	basicClass.cooldown_base = 100;
+
+	auto& sc = player.AddComponent<StatComponent>();
+	sc.dirty = true;
+	sc.baseStat = basicClass;
+
+	player.AddComponent<HealthComponent>(basicClass.hp_base);
 	player.AddComponent<OnDestroyComponent>(OnDestroy_Player);
 	auto& msc = player.AddComponent<ModularShipComponent>();
 	msc.bsiMax = 5;
 	msc.smiMax = 3;
 	msc.siMax = 4;
 	msc.AddItem(ItemTypes::ShipModule_Shooter);
-	auto& sc = player.AddComponent<StatComponent>();
+
 	player.AddComponent<ActionComponent>();
 
 	return player;
