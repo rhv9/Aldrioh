@@ -61,7 +61,7 @@ void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 		auto [tc, mc, vc, aic] = view.get<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>(e);
 
 		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
-		vc.rotation = Math::angle(dir);
+		vc.rotation = Math::angle(dir) - Math::PI / 2.0f;
 		mc.addMoveVec(dir);
 	}
 }

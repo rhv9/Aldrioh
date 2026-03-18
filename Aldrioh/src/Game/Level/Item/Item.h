@@ -48,9 +48,10 @@ class Item
 public:
 	Item() = default;
 	Item(const ItemDef& def) : id(def.id), cachedSpriteId(def.spriteId) {}
-	
-	virtual std::unique_ptr<Item> CreateCopy() = 0;
+	virtual ~Item() {}
 
+	virtual std::unique_ptr<Item> CreateCopy() = 0;
+	virtual void OnUpdate(Timestep ts, Entity e) = 0;
 	virtual LvlUpInfo LevelUp() = 0;
 	virtual LvlUpInfo LevelUpPretend() = 0;
 
@@ -65,8 +66,10 @@ public:
 	using levelup_tfunc = std::function<LvlUpInfo(Item*)>;
 	BaseStatItem() = default;
 	BaseStatItem(const ItemDef& def) : Item(def) {}
-	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<BaseStatItem>(*this); }
+	virtual ~BaseStatItem() override {}
 
+	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<BaseStatItem>(*this); }
+	virtual void OnUpdate(Timestep ts, Entity e) override {}
 	virtual LvlUpInfo LevelUp() override { return levelUpFunc(this); }
 	virtual LvlUpInfo LevelUpPretend() { BaseStatItem copyItem = *this; return copyItem.LevelUp(); }
 
@@ -79,11 +82,12 @@ class ShipModuleItem : public Item
 public:
 	ShipModuleItem() = default;
 	ShipModuleItem(const ItemDef& def) : Item(def) {}
-	virtual std::unique_ptr<Item> CreateCopy() = 0;
+	virtual ~ShipModuleItem() override {}
 
+	virtual std::unique_ptr<Item> CreateCopy() = 0;
+	virtual void OnUpdate(Timestep ts, Entity e) = 0;
 	virtual LvlUpInfo LevelUp() = 0;
 	virtual LvlUpInfo LevelUpPretend() = 0;
-	virtual void OnUpdate(Timestep ts, Entity e) {}
 };
 
 class UniqueItem : public Item
@@ -92,9 +96,10 @@ public:
 	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
 	UniqueItem() = default;
 	UniqueItem(const ItemDef& def) : Item(def) {}
-	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<UniqueItem>(*this); }
+	virtual ~UniqueItem() override {}
 
+	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<UniqueItem>(*this); }
+	virtual void OnUpdate(Timestep ts, Entity e) {}
 	virtual LvlUpInfo LevelUp() { return { "This should never run!" }; };
 	virtual LvlUpInfo LevelUpPretend() { UniqueItem copyItem = *this; return copyItem.LevelUp(); }
-	virtual void OnUpdate(Timestep ts, Entity e) {}
 };

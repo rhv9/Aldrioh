@@ -61,12 +61,12 @@ float Math::angleBetween2d(const glm::vec3& p1, const glm::vec3& p2)
 {
 	float dx = p2.x - p1.x;
 	float dy = p2.y - p1.y;
-	return atan2f(dy, dx) - Math::PI / 2.0f;
+	return atan2f(dy, dx);
 }
 
 float Math::angle(const glm::vec2& pos)
 {
-	return atan2f(pos.y, pos.x) - Math::PI / 2.0f;
+	return atan2f(pos.y, pos.x);
 }
 
 float Math::dist(const glm::vec2& left, const glm::vec2& right)

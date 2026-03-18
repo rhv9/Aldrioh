@@ -56,14 +56,14 @@ void GameUILayer::OnBegin()
 		uiManager->AddUIObject(uiTimerText);
 	}
 
-	BaseStatItem hpItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Hp);
-	BaseStatItem dmgItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Dmg);
-	BaseStatItem luckItem = GR::gr->itemRegistry.CreateInstance<BaseStatItem>(ItemTypes::BaseStat_Luck);
+	std::unique_ptr<Item> hpItem = GR::gr->itemRegistry.CreateInstance(ItemTypes::BaseStat_Hp);
+	std::unique_ptr<Item> dmgItem = GR::gr->itemRegistry.CreateInstance(ItemTypes::BaseStat_Dmg);
+	std::unique_ptr<Item> luckItem = GR::gr->itemRegistry.CreateInstance(ItemTypes::BaseStat_Luck);
 
 	std::array<Item*, 3> items;
-	items[0] = &hpItem;
-	items[1] = &dmgItem;
-	items[2] = &luckItem;
+	items[0] = hpItem.get();
+	items[1] = dmgItem.get();
+	items[2] = luckItem.get();
 
 	// UI for lvl up system
 	{

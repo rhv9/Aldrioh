@@ -15,7 +15,7 @@ ItemPool::ItemPool()
 		ItemTypes::BaseStat_CritDamage,
 		ItemTypes::BaseStat_Luck,
 
-		//ItemTypes::ShipModule_Shooter,
+		ItemTypes::ShipModule_Shooter,
 		//ItemTypes::ShipModule_Rocket,
 		//ItemTypes::ShipModule_AOEDrone,
 		//

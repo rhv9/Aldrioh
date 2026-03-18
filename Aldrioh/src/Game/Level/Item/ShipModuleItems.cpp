@@ -25,7 +25,9 @@ void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDi
 
 LvlUpInfo FireBallShipModuleItem::LevelUp()
 {
-
+	++lvl;
+	projectileCount += 1;
+	return { "Increase projectile count by one" };
 }
 
 void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
@@ -37,9 +39,14 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
 			glm::vec3& playerPos = e.GetTransformComponent().position;
-			shootBall(e, playerPos, inputAction.dir);
-			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 
+			for (int i = 0; i < projectileCount; ++i)
+			{
+				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
+				shootBall(e, playerPos, dir);
+
+			}
+			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
 		shootTimer += ts;
 	}

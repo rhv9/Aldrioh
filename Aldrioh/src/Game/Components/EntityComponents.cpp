@@ -52,14 +52,11 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 		switch (itemId.category)
 		{
 		case ItemCategory::BaseStat:
-			arrayAddItem(bsi, GR::gr->itemRegistry.CreateInstance<BaseStatItem>(itemId)), bsiMax, bsiCount);
-			break;
+			arrayAddItem(bsi, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), bsiMax, bsiCount);
 		case ItemCategory::ShipModule:
-			arrayAddItem(smi, std::make_unique<ShipModuleItem>(GR::gr->itemRegistry.CreateInstance<ShipModuleItem>(itemId)), smiMax, smiCount);
-			break;
+			arrayAddItem(smi, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), smiMax, smiCount);
 		case ItemCategory::Unique:
-			arrayAddItem(si, std::make_unique<UniqueItem>(GR::gr->itemRegistry.CreateInstance<UniqueItem>(itemId)), siMax, siCount);
-			break;
+			arrayAddItem(si, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), siMax, siCount);
 		}
 	}
 }
@@ -68,6 +65,6 @@ StatModifier ModularShipComponent::CalculateTotalStatModifier() const
 {
 	StatModifier total;
 	for (int i = 0; i < bsiCount; ++i)
-		total += bsi[i]->statModifier;
+		total += static_cast<BaseStatItem*>(bsi[i].get())->statModifier;
 	return total;
 }

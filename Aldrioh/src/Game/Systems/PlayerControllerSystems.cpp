@@ -80,12 +80,13 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
 
 			if (pcc.dirLock == DIRLOCK_FREE)
-				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), player.getScene()->GetMousePosInScene());
+				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), mousePos);
 			else
 				ac.dir = pcc.dirLock;
 			
 		}
 	}
+
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent>();
 
@@ -115,7 +116,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			glm::vec2 mousePos = scene.GetMousePosInScene();
 
 			if (pcc.dirLock == DIRLOCK_FREE)
-				player.GetComponent<VisualComponent>().rotation = inputAction.anglePointingTo;
+				player.GetComponent<VisualComponent>().rotation = inputAction.anglePointingTo - Math::PI / 2.0f;
 			else
 				player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 
