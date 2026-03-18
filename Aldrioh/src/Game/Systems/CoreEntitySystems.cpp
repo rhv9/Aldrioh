@@ -138,6 +138,16 @@ void EntitySystem::StatSystem(Timestep ts, Scene& scene)
 					hc.health = newHealth;
 				}
 			}
+
+			if (entity.HasComponent<ModularShipComponent>())
+			{
+				auto& msc = entity.GetComponent<ModularShipComponent>();
+				
+				for (int i = 0; i < msc.smiCount; ++i)
+				{
+					msc.smi[i]->RecalculateOnStatChanges(sc.totalCachedStat);
+				}
+			}
 		}
 
 	}

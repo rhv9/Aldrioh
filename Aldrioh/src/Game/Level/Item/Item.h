@@ -54,6 +54,8 @@ public:
 	virtual void OnUpdate(Timestep ts, Entity e) = 0;
 	virtual LvlUpInfo LevelUp() = 0;
 	virtual LvlUpInfo LevelUpPretend() = 0;
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) = 0;
+
 
 	ItemID id;
 	spriteid_t cachedSpriteId;
@@ -72,6 +74,7 @@ public:
 	virtual void OnUpdate(Timestep ts, Entity e) override {}
 	virtual LvlUpInfo LevelUp() override { return levelUpFunc(this); }
 	virtual LvlUpInfo LevelUpPretend() { BaseStatItem copyItem = *this; return copyItem.LevelUp(); }
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override {}
 
 	StatModifier statModifier;
 	levelup_tfunc levelUpFunc;
@@ -88,6 +91,7 @@ public:
 	virtual void OnUpdate(Timestep ts, Entity e) = 0;
 	virtual LvlUpInfo LevelUp() = 0;
 	virtual LvlUpInfo LevelUpPretend() = 0;
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) = 0;
 };
 
 class UniqueItem : public Item
@@ -102,4 +106,5 @@ public:
 	virtual void OnUpdate(Timestep ts, Entity e) {}
 	virtual LvlUpInfo LevelUp() { return { "This should never run!" }; };
 	virtual LvlUpInfo LevelUpPretend() { UniqueItem copyItem = *this; return copyItem.LevelUp(); }
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override {}
 };

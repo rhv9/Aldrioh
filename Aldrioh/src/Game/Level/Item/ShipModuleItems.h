@@ -15,7 +15,13 @@ public:
 	virtual LvlUpInfo LevelUp();
 	virtual void OnUpdate(Timestep ts, Entity e) override;
 	virtual LvlUpInfo LevelUpPretend() override { FireBallShipModuleItem copyItem = *this; return copyItem.LevelUp(); }
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override;
 
 	float shootTimer = 0.0f;
 	float projectileCount = 1;
+
+	float cachedDmg = 10;
+
+	int dmg = 10;
+	int dmg_mult = 0;
 };

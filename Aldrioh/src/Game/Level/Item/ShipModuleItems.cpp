@@ -6,7 +6,7 @@
 #include <Game/Entity/GameEntities.h>
 #include <Math/Math.h>
 
-void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
+void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg)
 {
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
@@ -26,8 +26,16 @@ void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDi
 LvlUpInfo FireBallShipModuleItem::LevelUp()
 {
 	++lvl;
-	projectileCount += 1;
-	return { "Increase projectile count by one" };
+	if (lvl % 5 == 0)
+	{
+		projectileCount += 1;
+		return { "Increase projectile count by one" };
+	}
+	else
+	{
+		dmg_mult += 10;
+		return { "Increase damage by 10%" };
+	}
 }
 
 void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
@@ -43,8 +51,8 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 			for (int i = 0; i < projectileCount; ++i)
 			{
 				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
-				shootBall(e, playerPos, dir);
-
+				shootBall(e, playerPos, dir, cachedDmg);
+				LOG_CORE_INFO("Fireball dmg: {}", cachedDmg);
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
@@ -52,4 +60,9 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 	}
 	else
 		shootTimer = 0.0f;
+}
+
+void FireBallShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)
+{
+	cachedDmg = (float)dmg * ((dmg_mult + statModifier.dmg_multiplier + 100) / 100.0f);
 }
