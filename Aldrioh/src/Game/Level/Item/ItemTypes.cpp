@@ -14,22 +14,7 @@
 
 #include <Scene/Components.h>
 
-void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
-{
-	// Create entity
-	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.addMoveVec(normalizedDir);
-	mc.locked = true;
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
-	vc.rotation = Math::angle(mc.moveVec);
-	vc.colour.a = 1.0f;
-	fireball.AddComponent<TimeLifeComponent>(1.0f);
-	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
-	glm::vec2 collisionSize{ 0.3f };
-	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
-}
+#include "ShipModuleItems.h"
 
 
 void ItemTypes::Init(ItemRegistry& itemRegistry)
@@ -92,31 +77,7 @@ void ItemTypes::Init(ItemRegistry& itemRegistry)
 
 	// Ship modules!!
 
-	struct ShipModuleShooterData
-	{
-		float shootTimer = 0.0f;
-	};
-	ShipModuleShooterData shipModuleShooterData;
-
-	auto& shipModule_shooter = itemRegistry.AddNewItem<ShipModuleItem>(ItemDef{ ItemTypes::ShipModule_Shooter, "Fireball Shooter", "High fire rate weaponary", Sprites::asteroid_small });
-	shipModule_shooter.updateFunc = [data = shipModuleShooterData](Timestep ts, Entity e) mutable
-		{
-			auto& inputAction = e.GetComponent<ActionComponent>();
-			if (inputAction.shoot)
-			{
-				if (data.shootTimer >= 0.08f || data.shootTimer == 0.0f)
-				{
-					data.shootTimer = std::max(data.shootTimer - 1.0f, 0.0f);
-					glm::vec3& playerPos = e.GetTransformComponent().position;
-					shootBall(e, playerPos, inputAction.dir);
-					e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
-
-				}
-				data.shootTimer += ts;
-			}
-			else
-				data.shootTimer = 0.0f;
-		};
+	auto& shipModule_shooter = itemRegistry.AddNewItem<FireBallShipModuleItem>(ItemDef{ ItemTypes::ShipModule_Shooter, "Fireball Shooter", "High fire rate weaponary", Sprites::asteroid_small });
 
 	itemRegistry.Debug_PrintRegistry();
 }

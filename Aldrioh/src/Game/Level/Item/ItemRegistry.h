@@ -36,15 +36,14 @@ public:
 
 	ItemDef& GetItemDef(ItemID itemId);
 
-	template<typename T>
-	T CreateInstance(const ItemID& itemId)
+	std::unique_ptr<Item> CreateInstance(const ItemID& itemId)
 	{
 		if (itemMap.find(itemId) == itemMap.end())
 		{
 			LOG_CRITICAL("ItemRegistry::CreateInstance ItemID not found: {}", itemId.to_string());
-			return T{};
+			// TODO: add a failed item type
 		}
-		return *static_cast<T*>(itemMap[itemId].get());
+		return std::move(itemMap[itemId]->CreateCopy());
 	}
 
 	void Debug_PrintRegistry();

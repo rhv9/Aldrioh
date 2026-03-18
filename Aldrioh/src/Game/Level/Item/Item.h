@@ -1,6 +1,7 @@
 #pragma once
 #include <Game/SpriteCollection.h>
 #include "StatModifier.h"
+#include <Scene/Entity.h>
 
 class ItemRegistry;
 class Entity;
@@ -42,53 +43,58 @@ struct LvlUpInfo
 	std::string msg;
 };
 
-struct Item
+class Item
 {
-	using levelup_tfunc = std::function<LvlUpInfo(Item*)>;
+public:
+	Item() = default;
+	Item(const ItemDef& def) : id(def.id), cachedSpriteId(def.spriteId) {}
+	
+	virtual std::unique_ptr<Item> CreateCopy() = 0;
+
+	virtual LvlUpInfo LevelUp() = 0;
+	virtual LvlUpInfo LevelUpPretend() = 0;
 
 	ItemID id;
 	spriteid_t cachedSpriteId;
 	int lvl = 1;
-
-	levelup_tfunc levelUpFunc;
-
-	virtual LvlUpInfo LevelUpPretend() { Item copyItem = *this; return copyItem.LevelUp(); }
-	LvlUpInfo LevelUp() { return levelUpFunc(this); }
-
-	Item() = default;
-	Item(const ItemDef& def) : id(def.id), cachedSpriteId(def.spriteId) {}
 };
 
-struct BaseStatItem : public Item
+class BaseStatItem : public Item
 {
-	StatModifier statModifier;
-
-	virtual LvlUpInfo LevelUpPretend() { BaseStatItem copyItem = *this; return copyItem.LevelUp(); }
-
+public:
+	using levelup_tfunc = std::function<LvlUpInfo(Item*)>;
 	BaseStatItem() = default;
 	BaseStatItem(const ItemDef& def) : Item(def) {}
+	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<BaseStatItem>(*this); }
+
+	virtual LvlUpInfo LevelUp() override { return levelUpFunc(this); }
+	virtual LvlUpInfo LevelUpPretend() { BaseStatItem copyItem = *this; return copyItem.LevelUp(); }
+
+	StatModifier statModifier;
+	levelup_tfunc levelUpFunc;
 };
 
-struct ShipModuleItem : public Item
+class ShipModuleItem : public Item
 {
-	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
-
-	update_tfunc updateFunc;
-
-	virtual LvlUpInfo LevelUpPretend() { ShipModuleItem copyItem = *this; return copyItem.LevelUp(); }
-
+public:
 	ShipModuleItem() = default;
 	ShipModuleItem(const ItemDef& def) : Item(def) {}
+	virtual std::unique_ptr<Item> CreateCopy() = 0;
+
+	virtual LvlUpInfo LevelUp() = 0;
+	virtual LvlUpInfo LevelUpPretend() = 0;
+	virtual void OnUpdate(Timestep ts, Entity e) {}
 };
 
-struct UniqueItem : public Item
+class UniqueItem : public Item
 {
+public:
 	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
-
-	update_tfunc updateFunc;
-
-	virtual LvlUpInfo LevelUpPretend() { UniqueItem copyItem = *this; return copyItem.LevelUp(); }
-
 	UniqueItem() = default;
 	UniqueItem(const ItemDef& def) : Item(def) {}
+	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<UniqueItem>(*this); }
+
+	virtual LvlUpInfo LevelUp() { return { "This should never run!" }; };
+	virtual LvlUpInfo LevelUpPretend() { UniqueItem copyItem = *this; return copyItem.LevelUp(); }
+	virtual void OnUpdate(Timestep ts, Entity e) {}
 };
