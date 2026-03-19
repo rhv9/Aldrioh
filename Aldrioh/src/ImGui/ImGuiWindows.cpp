@@ -10,6 +10,9 @@
 #include <Input/Input.h>
 
 #include <Audio/SoundManager.h>
+
+#include <Graphics/ShaderManager.h>
+
 void GameImGuiWindows::ShowGameInfo()
 {
 	if (ImGui::CollapsingHeader("Game", ImGuiTreeNodeFlags_DefaultOpen))
@@ -66,6 +69,9 @@ void GameImGuiWindows::ShowRendererInfo()
 			ImGui::Text("  Total: %d", rqStats.renderQueueCount);
 			ImGui::TreePop();
 		}
+
+		if (ImGui::Button("Recompile background shader"))
+			ShaderManager::Get().GetShader(ShaderName::BACKGROUND_SHADER).Recompile();
 	}
 }
 

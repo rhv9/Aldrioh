@@ -4,7 +4,7 @@
 class Shader
 {
 public:
-	Shader(const std::string& vertexSourcePath, const std::string& fragmentSourcePath);
+	//Shader(const std::string& vertexSourcePath, const std::string& fragmentSourcePath); // Not used
 	Shader(const std::string& path);
 
 	Shader() : m_Program(0) {}
@@ -33,6 +33,8 @@ public:
 
 
 private:
+	void Initialize(bool deleteOldOnSuccess);
+
 	GLuint m_Program = 0;
 	std::string path;
 };

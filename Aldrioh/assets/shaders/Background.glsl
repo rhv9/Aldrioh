@@ -20,5 +20,5 @@ void main()
 
     float d = length(uv);
 
-    FragColor = vec4(uv.y, 0. , 0., 1.0);
+    FragColor = vec4(0., uv.y, 0., 1.0);
 }
