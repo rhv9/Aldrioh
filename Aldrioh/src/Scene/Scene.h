@@ -94,5 +94,6 @@ private:
 	std::vector<SystemFunction> renderSystems;
 	std::vector<SystemFunction> uiRenderSystems;
 
+
 	friend class Entity;
 };

@@ -10,15 +10,15 @@ void main()
 #type fragment
 #version 330 core
 uniform float uTime;
+uniform vec2 uResolution;
 
 out vec4 FragColor;
 
 void main()
 {
-    float x = (sin(uTime*4+gl_FragCoord.x/200.0)+1.0)/2.0;
-    float y = (cos(uTime*4+gl_FragCoord.x/200.0)+1.0)/2.0;
-    float r=x;
-    float g=y;
-    float b=0;
-    FragColor = vec4(r, g, b, 1.0);
+    vec2 uv = gl_FragCoord.xy / uResolution;
+
+    float d = length(uv);
+
+    FragColor = vec4(uv.y, 0. , 0., 1.0);
 }

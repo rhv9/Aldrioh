@@ -84,7 +84,7 @@ Entity PlayerPrefab::create(Scene& scene)
 
 Entity FixedCameraPrefab::create(Scene& scene)
 {
-	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+	float aspectRatio = Game::Instance().GetWindow()->GetWidth() / static_cast<float>(Game::Instance().GetWindow()->GetHeight());
 	Entity cameraEntity = scene.CreateEntityNoTransform("FixedCamera");
 	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<CameraController>(aspectRatio, 1.0f));
 	cc.cameraController->SetZoomLevel(zoomLevel);
@@ -96,7 +96,7 @@ Entity FixedCameraPrefab::create(Scene& scene)
 
 Entity FollowingCameraPrefab::create(Scene& scene)
 {
-	float aspectRatio = static_cast<float>(Game::Instance().GetWindow()->GetHeight()) / Game::Instance().GetWindow()->GetWidth();
+	float aspectRatio =  Game::Instance().GetWindow()->GetWidth() / static_cast<float>(Game::Instance().GetWindow()->GetHeight());
 	// Add camera component
 	Entity cameraEntity = scene.CreateEntityNoTransform("EntityCamera");
 	CameraComponent& cc = cameraEntity.AddComponent<CameraComponent>(std::make_unique<EntityCameraController>(aspectRatio, 1.0f));

@@ -93,8 +93,6 @@ void WindowsWindow::Init(const WindowProps& windowProps)
 		{
 			WindowData* windowData = (WindowData*)glfwGetWindowUserPointer(window);
 
-			glViewport(0, 0, width, height);
-
 			windowData->WindowObj->SetSize(width, height);
 
 			WindowResizeEventArg windowResizeEventArg{ width, height };

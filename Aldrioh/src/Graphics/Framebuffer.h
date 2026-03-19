@@ -10,6 +10,9 @@ public:
 	void Bind() const;
 	void UnBind() const;
 
+	uint32_t GetWidth() const { return textureObj->GetWidth(); }
+	uint32_t GetHeight() const { return textureObj->GetHeight(); }
+
 	std::unique_ptr<Texture>& GetTextureObj() { return textureObj; }
 
 private:

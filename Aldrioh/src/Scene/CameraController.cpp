@@ -10,7 +10,7 @@
 CameraController::CameraController(const float aspectRatio, const float zoomLevel)
 	: aspectRatio(aspectRatio), zoomLevel(zoomLevel), bounds({ -aspectRatio * zoomLevel, aspectRatio * zoomLevel, -zoomLevel, zoomLevel }), camera(bounds.Left, bounds.Right, bounds.Bottom, bounds.Top)
 {
-	SetAspectRatio((float)Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight());
+	SetAspectRatio(aspectRatio);
 }
 
 void CameraController::OnUpdate(Timestep delta)

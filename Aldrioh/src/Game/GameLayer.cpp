@@ -63,6 +63,7 @@ void GameLayer::OnBegin()
 	levelEntity.AddComponent<LevelComponent>(currentLevel.get());
 	currentLevel->UpdateLevelArea();
 
+
 	uiLayer = std::make_unique<GameUILayer>("Game UI Layer", *currentLevel);
 	Game::Instance().GetLayerStack().QueuePushLayer(uiLayer.get());
 

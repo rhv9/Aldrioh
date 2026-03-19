@@ -214,21 +214,6 @@ void GameUILayer::OnRender(Timestep delta)
 
 void GameUILayer::OnImGuiRender(Timestep delta)
 {
-	static bool wrapEnable = true;
-	static char buffer[100];
-	if (ImGui::Checkbox("Enable Text Wrap", &wrapEnable))
-	{
-		for (auto& i : lvlupDescriptions)
-		{
-			i->SetTextWrap(wrapEnable);
-		}
-	}
-
-	if (ImGui::InputText("Input", buffer, 100))
-	{
-		lvlupDescriptions[0]->SetText(buffer);
-	}
-
 }
 
 void GameUILayer::OnLevelUpEvent(PlayerStatsEventArg& e)

@@ -104,6 +104,7 @@ Shader::Shader(const std::string& vertexSourcePath, const std::string& fragmentS
 
 Shader::Shader(const std::string& path)
 {
+    this->path = path;
     std::string shaderSource = Platform::File::ReadFileAsString(path.c_str());
 
     ASSERT(shaderSource != "", "File location gave empty string.");
@@ -145,6 +146,12 @@ Shader::Shader(const std::string& path)
 }
 
 
+void Shader::Recompile()
+{
+
+}
+
+
 Shader& Shader::operator=(Shader& other)
 {
     m_Program = other.m_Program;
@@ -170,6 +177,7 @@ Shader::~Shader()
 
     glDeleteProgram(m_Program);
 }
+
 
 void Shader::UniformInt(const std::string& name, const int val) const
 {

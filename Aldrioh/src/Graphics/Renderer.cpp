@@ -142,7 +142,7 @@ void Renderer::Init()
 	InitUIRenderer();
 
 	// Background pass setup
-	renderData.backFramebuffer = std::make_unique<Framebuffer>(200, 100);
+	renderData.backFramebuffer = std::make_unique<Framebuffer>(400, 300);
 	renderData.backgroundShader = &ShaderManager::Get().GetShader(ShaderName::BACKGROUND_SHADER);
 }
 
@@ -256,6 +256,8 @@ void Renderer::DrawBackgroundPass()
 
 	renderData.backgroundShader->Use();
 	renderData.backgroundShader->UniformFloat("uTime", Platform::GetElapsedTime());
+	renderData.backgroundShader->UniformFloat2("uResolution", { renderData.backFramebuffer->GetWidth(), renderData.backFramebuffer->GetHeight() });
+	glViewport(0, 0, renderData.backFramebuffer->GetWidth(), renderData.backFramebuffer->GetHeight());
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	renderData.backFramebuffer->UnBind();
 }
@@ -289,6 +291,9 @@ void Renderer::FlushBatch()
 		glBindTextureUnit(slot, renderData.textureSlots[slot]);
 	}
 
+	glm::vec2 windowSize = Game::Instance().GetWindow()->GetSize();
+
+	glViewport(0, 0, windowSize.x, windowSize.y);
 	glDrawElements(GL_TRIANGLES, renderData.drawCount * 6, GL_UNSIGNED_INT, 0);
 }
 
