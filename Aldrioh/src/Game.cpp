@@ -29,8 +29,7 @@
 #include <Debug/Statistics.h>
 
 #include <File/Settings.h>
-
-
+#include <File/FileResourceManager.h>
 
 
 #define DISPLAY_IMGUI_DEBUG
@@ -49,6 +48,8 @@ void Game::Init()
     
     //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
     window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
+
+    fileResourceManager = std::make_unique<FileResourceManager>();
 
     ShaderManager::Get().LoadShaders();
     Renderer::Init();
@@ -176,6 +177,7 @@ void Game::OnClosing()
     Font::DestroyGlobalFonts();
     Renderer::Destroy();
     SoundManager::Destroy();
+    fileResourceManager->CloseAndJoinThreads();
 }
 
 Timestep Game::GetFixedTickTimestep() const

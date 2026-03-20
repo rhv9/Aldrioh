@@ -1,5 +1,6 @@
 #include <pch.h>
 #include "ShaderManager.h"
+#include <Core/Platform.h>
 
 ShaderManager ShaderManager::shaderManager;
 
@@ -12,5 +13,7 @@ void ShaderManager::LoadShaders()
 	shaders[static_cast<uint32_t>(ShaderName::UI_SHADER)] = { "assets/shaders/UIShader.glsl" };
 	
 	shaders[static_cast<uint32_t>(ShaderName::BACKGROUND_SHADER)] = { "assets/shaders/Background.glsl" };
+
+	Platform::File::WatchForFileUpdate("assets/shaders/");
 
 }

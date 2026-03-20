@@ -6,7 +6,7 @@ namespace Platform {
 
 		std::string ReadFileAsString(const char* path);
 
-		void WatchForFileUpdate(std::string path);
+		void WatchForFileUpdate(const std::string& path);
 	}
 
 	float GetElapsedTime();

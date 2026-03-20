@@ -14,7 +14,7 @@ uniform vec2 uResolution;
 
 out vec4 FragColor;
 
-void main()
+void main() 
 {
     vec2 uv = gl_FragCoord.xy / uResolution;
 

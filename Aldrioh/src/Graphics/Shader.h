@@ -30,7 +30,7 @@ public:
 	void UniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
 	void Use();
-
+	const std::string& GetFilePath() const { return path; }
 
 private:
 	void Initialize(bool deleteOldOnSuccess);

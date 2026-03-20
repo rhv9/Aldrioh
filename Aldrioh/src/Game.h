@@ -4,6 +4,7 @@
 #include "Core/LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 
+class FileResourceManager;
 
 namespace Statistics {
 	struct EngineStats;
@@ -52,6 +53,9 @@ public:
 	LayerStack& GetLayerStack() { return layerStack; }
 	
 	const GameStats& gameStats = i_gameStats;
+
+	FileResourceManager* GetFileResourceManager() { return fileResourceManager.get(); }
+
 private:
 	void OnWindowCloseEvent(WindowCloseEventArg& arg);
 	void OnWindowResizeEvent(WindowResizeEventArg& arg);
@@ -71,6 +75,7 @@ private:
 	float deltaSinceUpdate = 0.0f;
 
 	std::unique_ptr<Window> window;
+	std::unique_ptr<FileResourceManager> fileResourceManager;
 
 	ImGuiLayer* imGuiLayer;
 	LayerStack layerStack;
@@ -81,7 +86,6 @@ private:
 	EventCallbackID<MouseScrolledEventArg> callbackMouseScrolledID;
 	EventCallbackID<WindowCloseEventArg> callbackWindowCloseID;
 	EventCallbackID<WindowResizeEventArg> callbackWindowResizeID;
-
 
 	friend Statistics::EngineStats;
 };
