@@ -49,6 +49,7 @@ void Game::Init()
     //window = std::make_unique<WindowsWindow>(WindowProps { 600 , 800, "Aldrioh" });
     window = std::make_unique<WindowsWindow>(WindowProps { 500 , 500, "Aldrioh" });
 
+    Platform::File::InitInternal();
     fileResourceManager = std::make_unique<FileResourceManager>();
 
     ShaderManager::Get().LoadShaders();
@@ -179,6 +180,7 @@ void Game::OnClosing()
     Renderer::Destroy();
     SoundManager::Destroy();
     fileResourceManager->CloseAndJoinThreads();
+    Platform::File::CleanupInternal();
 }
 
 Timestep Game::GetFixedTickTimestep() const

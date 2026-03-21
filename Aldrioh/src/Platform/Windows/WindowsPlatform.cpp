@@ -17,6 +17,28 @@ float Platform::GetElapsedTime()
 
 #ifdef PLATFORM_WINDOWS
 
+static HANDLE dwShutdownEventHandle;
+
+void Platform::File::InitInternal()
+{
+	dwShutdownEventHandle = CreateEventA(NULL, TRUE, FALSE, "File thread shutdown event");
+
+	if (dwShutdownEventHandle == INVALID_HANDLE_VALUE)
+		LOG_CORE_ERROR("Platform::File::InitInternal Failed to create shutdown event handle");
+}
+
+void Platform::File::SendThreadShutdownSignal()
+{
+	if (!SetEvent(dwShutdownEventHandle))
+		LOG_CORE_ERROR("Platform::File::SendThreadShutdownSignal failed!");
+}
+
+void Platform::File::CleanupInternal()
+{
+	if (!CloseHandle(dwShutdownEventHandle))
+		LOG_CORE_ERROR("Failed to shutdown event handle!");
+}
+
 void Platform::File::WatchForFileUpdate(const std::string& pathString, FileUpdateCallback callback)
 {
 	LOG_CORE_TRACE("File:: Waiting for updates on path: {}", pathString.c_str());
@@ -29,7 +51,7 @@ void Platform::File::WatchForFileUpdate(const std::string& pathString, FileUpdat
 			std::filesystem::path pathObj(filePath);
 			std::error_code errorCode;
 			std::filesystem::file_time_type oldWriteTime = std::filesystem::last_write_time(pathObj, errorCode);
-			
+
 			if (errorCode)
 			{
 				LOG_CORE_ERROR("Failed to get last modified time for file: {}", filePath.c_str());
@@ -41,19 +63,26 @@ void Platform::File::WatchForFileUpdate(const std::string& pathString, FileUpdat
 
 			LPSTR lpDir = const_cast<char*>(dirPathString.c_str());
 			DWORD dwWaitStatus;
-			HANDLE dwChangeHandle;
-			dwChangeHandle = FindFirstChangeNotificationA(lpDir, FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
+			HANDLE dwChangeHandle[2];
+			dwChangeHandle[0] = FindFirstChangeNotificationA(lpDir, FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE);
+			dwChangeHandle[1] = dwShutdownEventHandle;
 
-			if (dwChangeHandle == INVALID_HANDLE_VALUE)
+			if (dwChangeHandle[0] == INVALID_HANDLE_VALUE)
 			{
 				LOG_CORE_ERROR("Failed to create file change handle!");
 				return;
 			}
 
+			if (dwChangeHandle[1] == INVALID_HANDLE_VALUE)
+			{
+				LOG_CORE_ERROR("Shutdown event is not valid!");
+				return;
+			}
+
 			while (true)
 			{
-				dwWaitStatus = WaitForSingleObject(dwChangeHandle, 1000);
-				
+				dwWaitStatus = WaitForMultipleObjects(2, dwChangeHandle, FALSE, INFINITE);
+
 				if (token.stop_requested())
 				{
 					LOG_CORE_TRACE("Requested to close file watch: {}", filePath.c_str());
@@ -76,7 +105,7 @@ void Platform::File::WatchForFileUpdate(const std::string& pathString, FileUpdat
 						oldWriteTime = currentWriteTime;
 						callback(filePath);
 					}
-					if (FindNextChangeNotification(dwChangeHandle) == FALSE)
+					if (FindNextChangeNotification(dwChangeHandle[0]) == FALSE)
 					{
 						LOG_CORE_ERROR("ERROR: FindNextChangeNotification function failed.");
 						break;
@@ -86,6 +115,8 @@ void Platform::File::WatchForFileUpdate(const std::string& pathString, FileUpdat
 
 		}, pathString, callback);
 }
+
+
 
 #endif
 
