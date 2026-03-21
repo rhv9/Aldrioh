@@ -6,7 +6,8 @@ namespace Platform {
 
 		std::string ReadFileAsString(const char* path);
 
-		void WatchForFileUpdate(const std::string& path);
+		using FileUpdateCallback = std::function<void(const std::string& filePath)>;
+		void WatchForFileUpdate(const std::string& path, FileUpdateCallback callback);
 	}
 
 	float GetElapsedTime();

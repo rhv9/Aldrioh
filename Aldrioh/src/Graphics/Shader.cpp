@@ -103,7 +103,7 @@ std::pair<bool, GLuint> CreateShader(GLenum shaderType, const char* shaderSource
 //    LOG_CORE_INFO("Shader created successfully: {}, {}", vertexSourcePath, fragmentSourcePath);
 //}
 
-void Shader::Initialize(bool deleteOldOnSuccess)
+void Shader::Initialize(bool recompileJob)
 {
 	std::string shaderSource = Platform::File::ReadFileAsString(path.c_str());
 
@@ -143,10 +143,10 @@ void Shader::Initialize(bool deleteOldOnSuccess)
 
 	if (programSuccess)
 	{
-		if (deleteOldOnSuccess)
-			glDeleteProgram(m_Program	);
+		if (recompileJob)
+			glDeleteProgram(m_Program);
 		m_Program = shaderProgram;
-		LOG_CORE_INFO("Shader created successfully: {}", path);
+		LOG_CORE_INFO("Shader {} successfully: {}", recompileJob ? "recompiled" : "created", path);
 	}
 	else
 		glDeleteProgram(shaderProgram);

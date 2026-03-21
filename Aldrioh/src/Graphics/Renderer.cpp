@@ -144,6 +144,7 @@ void Renderer::Init()
 	// Background pass setup
 	renderData.backFramebuffer = std::make_unique<Framebuffer>(400, 300);
 	renderData.backgroundShader = &ShaderManager::Get().GetShader(ShaderName::BACKGROUND_SHADER);
+	ShaderManager::Get().EnableRecompileShaderOnEdit(ShaderName::BACKGROUND_SHADER);
 }
 
 static glm::mat4 viewProjection;

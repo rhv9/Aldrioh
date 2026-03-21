@@ -52,10 +52,12 @@ public:
 	}
 	LayerStack& GetLayerStack() { return layerStack; }
 	
-	const GameStats& gameStats = i_gameStats;
-
 	FileResourceManager* GetFileResourceManager() { return fileResourceManager.get(); }
 
+	using MainThreadJob = std::function<void(void)>;
+	void AddMainThreadJob(MainThreadJob job);
+
+	const GameStats& gameStats = i_gameStats;
 private:
 	void OnWindowCloseEvent(WindowCloseEventArg& arg);
 	void OnWindowResizeEvent(WindowResizeEventArg& arg);
@@ -63,6 +65,8 @@ private:
 	void OnMouseMoveEvent(MouseMoveEventArg& arg);
 	void OnMouseScrolledEvent(MouseScrolledEventArg& arg);
 	void OnKeyEvent(KeyEventArg& arg);
+
+	void HandleAnyMainThreadJobs();
 
 private:
 	std::chrono::system_clock::time_point previousTime = std::chrono::system_clock::now();
@@ -79,6 +83,10 @@ private:
 
 	ImGuiLayer* imGuiLayer;
 	LayerStack layerStack;
+
+	// stores callbacks to run on main thread. Needed for opengl calls, initially written to make shader auto recompile work.
+	std::queue<MainThreadJob> mainThreadJobs;
+	std::mutex mainThreadJobsMutex;
 
 	EventCallbackID<KeyEventArg> callbackKeyID;
 	EventCallbackID<MouseButtonEventArg> callbackMouseButtonID;

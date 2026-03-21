@@ -6,19 +6,19 @@ void main()
 {
     gl_Position = vec4(quadVertices[gl_VertexID], 0.0, 1.0);
 }
-
+ 
 #type fragment
 #version 330 core
 uniform float uTime;
 uniform vec2 uResolution;
-
-out vec4 FragColor;
-
+ 
+out vec4 FragColor; 
+ 
 void main() 
 {
     vec2 uv = gl_FragCoord.xy / uResolution;
 
     float d = length(uv);
 
-    FragColor = vec4(0., uv.y, 0., 1.0);
+    FragColor = vec4(uv.y, uv.x, uv.x, 1.0);
 }

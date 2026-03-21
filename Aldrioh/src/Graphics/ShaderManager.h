@@ -16,7 +16,7 @@ public:
 
 	void LoadShaders();
 	Shader& GetShader(const ShaderName shaderName) { return shaders[static_cast<uint32_t>(shaderName)]; }
-
+	void EnableRecompileShaderOnEdit(const ShaderName shaderName);
 private:
 	ShaderManager() {}
 

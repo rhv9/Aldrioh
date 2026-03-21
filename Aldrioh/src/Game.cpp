@@ -163,6 +163,7 @@ bool Game::Iterate()
     window->OnUpdate();
 
     SoundManager::RecycleFinishedSounds();
+    HandleAnyMainThreadJobs();
 
     return true;
 }
@@ -195,6 +196,25 @@ void Game::BlockEvents(bool val)
     imGuiLayer->BlockEvents(val);
 }
 
+void Game::AddMainThreadJob(MainThreadJob job)
+{
+    std::lock_guard<std::mutex> lock{ mainThreadJobsMutex };
+    mainThreadJobs.push(job);
+}
+
+void Game::HandleAnyMainThreadJobs()
+{
+    std::lock_guard<std::mutex> lock{ mainThreadJobsMutex };
+    if (!mainThreadJobs.empty())
+    {
+        while (!mainThreadJobs.empty())
+        {
+            mainThreadJobs.front()();
+            mainThreadJobs.pop();
+        }
+    }
+}
+
 void Game::OnWindowCloseEvent(WindowCloseEventArg& arg)
 {
     LOG_CORE_INFO("Window Closing...");
@@ -211,6 +231,8 @@ void Game::OnKeyEvent(KeyEventArg& arg)
 {
     layerStack.OnKeyEvent(arg);
 }
+
+
 
 void Game::OnMouseButtonEvent(MouseButtonEventArg& arg)
 {
