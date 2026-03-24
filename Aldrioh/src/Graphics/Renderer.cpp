@@ -251,13 +251,14 @@ void Renderer::Destroy()
 	DestroyUIRenderer();
 }
 
-void Renderer::DrawBackgroundPass()
+void Renderer::DrawBackgroundPass(const glm::vec2 offset)
 {
 	renderData.backFramebuffer->Bind();
 
 	renderData.backgroundShader->Use();
 	renderData.backgroundShader->UniformFloat("uTime", Platform::GetElapsedTime());
 	renderData.backgroundShader->UniformFloat2("uResolution", { renderData.backFramebuffer->GetWidth(), renderData.backFramebuffer->GetHeight() });
+	renderData.backgroundShader->UniformFloat2("uScrollingOffset", offset);
 	glViewport(0, 0, renderData.backFramebuffer->GetWidth(), renderData.backFramebuffer->GetHeight());
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	renderData.backFramebuffer->UnBind();

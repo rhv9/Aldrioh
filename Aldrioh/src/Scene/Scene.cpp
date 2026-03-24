@@ -76,7 +76,7 @@ void Scene::OnRender(Timestep ts)
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	cameraController->OnUpdate(ts);
 
-	Renderer::DrawBackgroundPass();
+	Renderer::DrawBackgroundPass(cameraController->GetPosition());
 	Renderer::StartScene({ backgroundCameraController.GetCamera().GetViewProjection()});
 	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
 	Renderer::DrawQuad(glm::vec3{ 0, 0, 0.5f }, &subTexture, backgroundWindowSize);
