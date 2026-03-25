@@ -68,20 +68,11 @@ void Scene::OnUpdate(Timestep ts)
 	particleManager.OnUpdate(ts);
 }
 
-static CameraController backgroundCameraController (1920/1080.0f, 50.0f);
-static glm::vec2 backgroundWindowSize{ 0 };
-
 void Scene::OnRender(Timestep ts)
 {
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
 	cameraController->OnUpdate(ts);
 
-	Renderer::DrawBackgroundPass(cameraController->GetPosition());
-	Renderer::StartScene({ backgroundCameraController.GetCamera().GetViewProjection()});
-	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
-	Renderer::DrawQuad(glm::vec3{ 0, 0, 0.5f }, &subTexture, backgroundWindowSize);
-	Renderer::EndScene();
-	
 	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
 	Renderer::ClearDepthBuffer();
 	RenderQueue::Reset();
@@ -157,12 +148,6 @@ void Scene::OnMouseScrollEvent(MouseScrolledEventArg& e)
 
 void Scene::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
-	backgroundCameraController.OnResize(e.Width, e.Height);
-	backgroundCameraController.SetZoomLevel(e.Height / 2.0f);
-	float x = backgroundCameraController.GetAspectRatio() * backgroundCameraController.GetZoomLevel();
-	float y = backgroundCameraController.GetZoomLevel();
-	backgroundCameraController.SetPosition({ x, y });
-	backgroundWindowSize = { e.Width, e.Height };
 
 	auto view = registry.view<CameraComponent>();
 	for (entt::entity eHandle : view)

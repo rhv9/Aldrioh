@@ -41,6 +41,9 @@ public:
 	GameUILayer* GetUILayer();
 
 private:
+	void UpdateBackground(int width, int height);
+
+private:
 	std::unique_ptr<Scene> scene = nullptr;
 	std::unique_ptr<Level> currentLevel = nullptr;
 	std::unique_ptr<GameUILayer> uiLayer = nullptr;

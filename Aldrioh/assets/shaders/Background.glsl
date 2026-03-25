@@ -38,14 +38,14 @@ float noise(vec2 st) {
 void main() 
 {
     vec2 uv = gl_FragCoord.xy / uResolution;
-
+    uv.x = uv.x * (uResolution.x / uResolution.y);
     vec3 colour = vec3(0.0);
     float d = length(uv);
     
-    uv *= 10.;
 
-    vec2 pos = vec2(uv*10.0) + uScrollingOffset * 1.4;
+    vec2 pos = vec2(uv*100.0) + uScrollingOffset * 1.4;
     colour = vec3( pow(noise(pos)*.5 + 0.73, 50) );
+    //colour = vec3( pow(noise(pos), 1) );
 
     FragColor = vec4(colour, 1.0);
 }

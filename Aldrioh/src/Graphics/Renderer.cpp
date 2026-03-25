@@ -142,7 +142,7 @@ void Renderer::Init()
 	InitUIRenderer();
 
 	// Background pass setup
-	renderData.backFramebuffer = std::make_unique<Framebuffer>(400, 300);
+	renderData.backFramebuffer = std::make_unique<Framebuffer>(Game::Instance().GetWindow()->GetWidth(), Game::Instance().GetWindow()->GetHeight());
 	renderData.backgroundShader = &ShaderManager::Get().GetShader(ShaderName::BACKGROUND_SHADER);
 	ShaderManager::Get().EnableRecompileShaderOnEdit(ShaderName::BACKGROUND_SHADER);
 }
@@ -267,6 +267,11 @@ void Renderer::DrawBackgroundPass(const glm::vec2 offset)
 std::unique_ptr<Texture>& Renderer::GetBackgroundPassTexture()
 {
 	return renderData.backFramebuffer->GetTextureObj();
+}
+
+void Renderer::ResizeBackgroundPass(uint32_t width, uint32_t height)
+{
+	renderData.backFramebuffer->Resize(width, height);
 }
 
 void Renderer::FlushBatch()

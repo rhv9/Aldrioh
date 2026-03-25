@@ -92,6 +92,7 @@ public:
 	// TODO: Need to generalise this later
 	static void DrawBackgroundPass(const glm::vec2 offset);
 	static std::unique_ptr<Texture>& GetBackgroundPassTexture();
+	static void ResizeBackgroundPass(uint32_t width, uint32_t height);
 
 	static void FlushBatch();
 	static void ResetBatch();

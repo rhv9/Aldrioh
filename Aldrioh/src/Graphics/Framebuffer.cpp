@@ -2,11 +2,12 @@
 #include "Framebuffer.h"
 #include <glad/glad.h>
 
-Framebuffer::Framebuffer(uint32_t width, uint32_t height)
+
+void Framebuffer::Init(uint32_t width, uint32_t height)
 {
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	
+
 	// Generate texture
 	unsigned int textureo;
 	glGenTextures(1, &textureo);
@@ -17,16 +18,21 @@ Framebuffer::Framebuffer(uint32_t width, uint32_t height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
+
 	// attach it to currently bound framebuffer object
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureo, 0);
-	
+
 	// Wrap into Texture obj
 	textureObj = std::make_unique<Texture>(textureo, width, height, GL_RGBA8, GL_RGBA);
 
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Complete!");
-	
+
 	UnBind();
+}
+
+Framebuffer::Framebuffer(uint32_t width, uint32_t height)
+{
+	Init(width, height);
 }
 
 Framebuffer::~Framebuffer()
@@ -42,4 +48,13 @@ void Framebuffer::Bind() const
 void Framebuffer::UnBind() const
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Framebuffer::Resize(uint32_t width, uint32_t height)
+{
+	glDeleteFramebuffers(1, &fbo);
+	fbo = 0;
+	textureObj.reset();
+
+	Init(width, height);
 }

@@ -47,6 +47,10 @@
 #include <Game/Entity/GameEntityPrefab.h>
 
 
+static CameraController backgroundCameraController(1920 / 1080.0f, 50.0f);
+static glm::vec2 backgroundWindowSize{ 0 };
+static uint32_t backgroundPixelHeight = 300;
+
 GameLayer::~GameLayer()
 {
 }
@@ -63,6 +67,7 @@ void GameLayer::OnBegin()
 	levelEntity.AddComponent<LevelComponent>(currentLevel.get());
 	currentLevel->UpdateLevelArea();
 
+	UpdateBackground( backgroundPixelHeight * (Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight()), backgroundPixelHeight);
 
 	uiLayer = std::make_unique<GameUILayer>("Game UI Layer", *currentLevel);
 	Game::Instance().GetLayerStack().QueuePushLayer(uiLayer.get());
@@ -124,7 +129,12 @@ void GameLayer::OnUpdate(Timestep delta)
 
 void GameLayer::OnRender(Timestep delta)
 {
-	//Renderer::DrawBackgroundPass();
+	glm::vec2 cameraPos = scene->GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController->GetPosition();
+	Renderer::DrawBackgroundPass(cameraPos);
+	Renderer::StartScene({ backgroundCameraController.GetCamera().GetViewProjection() });
+	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
+	Renderer::DrawQuad(glm::vec3{ 0, 0, 0.5f }, &subTexture, backgroundWindowSize);
+	Renderer::EndScene();
 	scene->OnRender(delta);
 	scene->OnUIRender(delta);
 }
@@ -230,6 +240,8 @@ void GameLayer::OnMouseScrolledEvent(MouseScrolledEventArg& e)
 
 void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
+	UpdateBackground(backgroundPixelHeight * (e.Width / (float)e.Height), backgroundPixelHeight);
+
 	scene->OnWindowResizeEvent(e);
 	currentLevel->UpdateLevelArea();
 }
@@ -242,6 +254,18 @@ void GameLayer::OnPlayerDeath()
 GameUILayer* GameLayer::GetUILayer()
 {
 	return uiLayer.get();
+}
+
+void GameLayer::UpdateBackground(int width, int height)
+{
+	backgroundCameraController.OnResize(width, height);
+	backgroundCameraController.SetZoomLevel(height / 2.0f);
+	float x = backgroundCameraController.GetAspectRatio() * backgroundCameraController.GetZoomLevel();
+	float y = backgroundCameraController.GetZoomLevel();
+	backgroundCameraController.SetPosition({ x, y });
+	backgroundWindowSize = { width, height };
+
+	Renderer::ResizeBackgroundPass(width, height);
 }
 
 void GameLayer::QueueTransitionTo(Layer* layer)
