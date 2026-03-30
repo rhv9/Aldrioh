@@ -141,6 +141,15 @@ CollisionPositionMapping CollisionZone::GetCollisionPositionMapping(const glm::v
 	return CollisionPositionMapping{ cellX, cellY };
 }
 
+std::pair<glm::vec2, Entity> CollisionZone::HeuristicNearest(const glm::vec2& pos, const float maxDistance)
+{
+	std::pair<glm::vec2, Entity> result{ glm::vec2{0}, {} };
+
+	CollisionPositionMapping positionMapping = GetCollisionPositionMapping(pos);
+
+	return std::pair<glm::vec2, Entity>();
+}
+
 std::optional<CollisionCell*> CollisionZone::GetCell(const CollisionPositionMapping& mapping)
 {
 	if (mapping.cellX >= 0 && mapping.cellX < width &&

@@ -12,6 +12,7 @@
 #include <UI/Font.h>
 #include <Graphics/SubTexture.h>
 
+// Deprecated
 void EntitySystem::CollisionSystem(Timestep ts, Scene& scene)
 {
 	{

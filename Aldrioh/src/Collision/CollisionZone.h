@@ -37,9 +37,9 @@ public:
 
 	int GetWidth() const { return width; }
 	int GetHeight() const { return height; }
-
 	float GetCellSize() const { return cellSize; }
 
+	std::pair<glm::vec2, Entity> HeuristicNearest(const glm::vec2& pos, const float maxDistance = -1);
 
 	std::optional<CollisionCell*> GetCell(const CollisionPositionMapping& mapping);
 

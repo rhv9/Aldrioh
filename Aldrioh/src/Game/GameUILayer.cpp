@@ -45,6 +45,7 @@ void GameUILayer::OnBegin()
 		expProgressBar->SetBarColour(Colour::GREEN);
 		expProgressBar->SetScalingBasedWidth(1.0f);
 		expProgressBar->SetProgress(0);
+		expProgressBar->SetSmoothBar(1);
 		uiManager->AddUIObject(expProgressBar);
 
 		uiTimerText = new UIText("Timer", { 0, 4 }, glm::vec2{ 4, 4 });

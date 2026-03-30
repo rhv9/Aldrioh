@@ -43,7 +43,7 @@ void main()
     float d = length(uv);
     
 
-    vec2 pos = vec2(uv*100.0) + uScrollingOffset * 1.4;
+    vec2 pos = vec2(uv*100.0) + uScrollingOffset * 2.0;
     colour = vec3( pow(noise(pos)*.5 + 0.73, 50) );
     //colour = vec3( pow(noise(pos), 1) );
 
