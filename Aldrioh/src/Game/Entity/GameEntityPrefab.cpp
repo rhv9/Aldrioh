@@ -48,7 +48,7 @@ Entity PlayerPrefab::create(Scene& scene)
 {
 	Entity player = scene.CreateEntity("Player");
 	scene.SetPlayer(player);
-	player.GetComponent<TransformComponent>().position = startPos;
+	player.GetComponent<TransformComponent>().UpdateBothPos(startPos);
 	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
@@ -160,7 +160,7 @@ Entity EnemyPrefab::create(Scene& scene)
 {
 	Entity enemy = scene.CreateEntity("Enemy");
 	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.position = glm::vec3{ spawnPos, 0.4f };
+	tc.UpdateBothPos(spawnPos);
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -184,7 +184,7 @@ Entity EnemyPathPrefab::create(Scene& scene)
 	const glm::vec2& spawnPos = points[0];
 	Entity enemy = scene.CreateEntity("Enemy Path");
 	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.position = glm::vec3{ spawnPos, 0.4f };
+	tc.UpdateBothPos(spawnPos);
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -211,7 +211,7 @@ Entity AsteroidPrefab::create(Scene& scene)
 {
 	Entity asteroid = scene.CreateEntity("Asteroid");
 	auto& tc = asteroid.GetComponent<TransformComponent>();
-	tc.position = glm::vec3{ spawnPos, 0.4f };
+	tc.UpdateBothPos(spawnPos);
 	VisualComponent& vc = asteroid.AddComponent<VisualComponent>(Sprites::asteroid_small);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	MoveComponent& mc = asteroid.AddComponent<MoveComponent>(speed);
@@ -289,7 +289,7 @@ Entity DroneEnemyPrefab::create(Scene& scene)
 
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.position = glm::vec3{ spawnPos, 0.4f };
+	tc.UpdateBothPos(spawnPos);
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_normal);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	enemy.AddComponent<MoveComponent>(speed);

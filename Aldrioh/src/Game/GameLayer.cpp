@@ -29,6 +29,8 @@
 #include <Systems/UISystems.h>
 #include <Systems/SoundSystems.h>
 #include <Systems/PathSystems.h>
+#include <Systems/PhysicsMovementSystem.h>
+#include <Systems/CoreSystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -73,6 +75,7 @@ void GameLayer::OnBegin()
 	Game::Instance().GetLayerStack().QueuePushLayer(uiLayer.get());
 
 	// On Update Systems
+	scene->AddUpdateSystem(&EntitySystem::TransformUpdatePrevPosition);
 	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
@@ -92,12 +95,14 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionZone);
 
 	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
+	scene->AddUpdateSystem(&EntitySystem::PhysicsMovementSystem);
 	//scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
 	scene->AddUpdateSystem(&EntitySystem::DeleteEnemyOutsideScreenSystem);
 
 	// Very last
 	scene->AddUpdateSystem(&EntitySystem::RotationSystem);
+
 
 	// Not game system 
 	scene->AddUpdateSystem(&EntitySystem::UIManagerUpdateSystem);

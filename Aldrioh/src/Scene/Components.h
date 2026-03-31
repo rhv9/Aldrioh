@@ -25,11 +25,16 @@ struct EntityTypeComponent
 
 struct TransformComponent
 {
-	glm::vec2 position { 0 };
-	
+	glm::vec2 position{ 0.0f };
+	glm::vec2 prevPosition{ 0.0f };
+
+	glm::vec2 CalculateInterpolatePosition(float deltaPercent);
+
 	TransformComponent() = default;
 	TransformComponent(const TransformComponent&) = default;
-	TransformComponent(const glm::vec3& pos) : position(pos) {}
+	TransformComponent(const glm::vec2& pos) : position(pos), prevPosition(pos) {}
+
+	void UpdateBothPos(const glm::vec2& pos) { position = prevPosition = pos; }
 };
 
 struct VisualComponent
@@ -50,8 +55,8 @@ struct VisualComponent
 	VisualComponent(const VisualComponent&) = default;
 
 	static constexpr int DEFAULT_SPRITE_ID = 0;
-	static constexpr glm::vec3 DEFAULT_LOCAL_TRANSFORM { 0.0f, 0.0f, 0.0f };
-	static constexpr glm::vec2 DEFAULT_SCALE { 1.0f, 1.0f };
+	static constexpr glm::vec3 DEFAULT_LOCAL_TRANSFORM{ 0.0f, 0.0f, 0.0f };
+	static constexpr glm::vec2 DEFAULT_SCALE{ 1.0f, 1.0f };
 };
 
 struct DestroyEntityComponent
@@ -59,7 +64,7 @@ struct DestroyEntityComponent
 	float timeRemaining = 0.0f;
 
 	DestroyEntityComponent() = default;
-	DestroyEntityComponent(float timer) :  timeRemaining(timer) {}
+	DestroyEntityComponent(float timer) : timeRemaining(timer) {}
 	DestroyEntityComponent(DestroyEntityComponent&) = default;
 };
 
@@ -113,7 +118,7 @@ struct MoveComponent
 
 struct PhysicsMovementComponent
 {
-	glm::vec2 resultantVelocity { 0.0f }; 
+	glm::vec2 resultantVelocity{ 0.0f };
 
 	PhysicsMovementComponent() = default;
 	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
@@ -125,7 +130,6 @@ struct BezierPathComponent
 	glm::vec2 p0{ 0 }, p1{ 0 }, p2{ 0 };
 	std::function<void(Entity e)> onCompletionCallback;
 	bool completionHandled = false;
-	glm::vec2 prevPos { 0 };
 
 	BezierPathComponent(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2) : p0(p0), p1(p1), p2(p2) {}
 	BezierPathComponent(const BezierPathComponent&) = default;
@@ -136,7 +140,7 @@ struct RotationComponent
 	float angle = 0.0f;
 	bool shouldRotateTo = false;
 	uint8_t skipTicks = 1;
-	
+
 	RotationComponent() = default;
 	RotationComponent(float angle) : angle(angle) {};
 	RotationComponent(const RotationComponent&) = default;
@@ -166,8 +170,8 @@ struct AnimatedMovementComponent
 	float speed = 1.0f;
 	int frame = 0;
 	MoveDir currentDir = MoveDir::UP;
-	
-	AnimatedMovementComponent(std::vector<int>& up, std::vector<int>& down, std::vector<int>& left, std::vector<int>& right, float speed) : animations({up, down, left, right}), speed(speed) {}
+
+	AnimatedMovementComponent(std::vector<int>& up, std::vector<int>& down, std::vector<int>& left, std::vector<int>& right, float speed) : animations({ up, down, left, right }), speed(speed) {}
 	AnimatedMovementComponent() = default;
 	AnimatedMovementComponent(const AnimatedMovementComponent&) = default;
 

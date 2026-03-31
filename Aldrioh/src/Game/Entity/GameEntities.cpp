@@ -76,7 +76,7 @@ static Entity drone_create(EnemyEntityType& type, Level& level, const glm::vec2&
 
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.position = glm::vec3{ pos, 0.4f };
+	tc.UpdateBothPos(pos);
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(type.spriteId);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)

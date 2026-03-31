@@ -14,32 +14,9 @@ glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity,
 	entityTransform.x = tc.position.x;
 	entityTransform.y = tc.position.y;
 
-	if (entity.HasComponent<MoveComponent>())
-	{
-		MoveComponent& mc = entity.GetComponent<MoveComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		entityTransform.x -= mc.moveVec.x * delta * (1.0f - ts);
-		entityTransform.y -= mc.moveVec.y * delta * (1.0f - ts);
-
-	}
-
-	if (entity.HasComponent<PathComponent>())
-	{
-		PathComponent& pc = entity.GetComponent<PathComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		const glm::vec2& diff = pc.currentPosition - pc.prevPosition;
-		entityTransform.x -= diff.x * (1.0f - ts);
-		entityTransform.y -= diff.y * (1.0f - ts);
-	}
-
-	if (entity.HasComponent<BezierPathComponent>())
-	{
-		BezierPathComponent& bezier = entity.GetComponent<BezierPathComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		const glm::vec2& diff = entityTransform - bezier.prevPos;
-		entityTransform.x -= diff.x * (1.0f - ts);
-		entityTransform.y -= diff.y * (1.0f - ts);
-	}
+	const glm::vec2& diff = entityTransform - tc.prevPosition;
+	entityTransform.x -= diff.x * (1.0f - ts);
+	entityTransform.y -= diff.y * (1.0f - ts);
 
 	return entityTransform;
 }
@@ -53,7 +30,7 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 		auto [transform, visual] = view.get(e);
 		Entity entity = scene.WrapEntityHandle(e);
 
-		glm::vec2 entityPos = CalculateEntityTransformWithInterpolation(entity, ts);
+		glm::vec2 entityPos = transform.CalculateInterpolatePosition(ts);
 
 		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
 

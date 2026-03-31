@@ -10,7 +10,7 @@ void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDi
 {
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
+	fireball.GetComponent<TransformComponent>().UpdateBothPos(origin);
 	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
 	mc.addMoveVec(normalizedDir);
 	mc.locked = true;
