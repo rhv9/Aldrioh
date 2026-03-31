@@ -77,7 +77,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			glm::vec2 mousePos = scene.GetMousePosInScene();
 			auto& playerTransform = player.GetTransformComponent();
 
-			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
+			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, mousePos);
 
 			if (pcc.dirLock == DIRLOCK_FREE)
 				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), mousePos);
@@ -161,7 +161,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 							vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
 							vc.colour = itemRenderData.colour;
 							glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
-							itemEntity.GetTransformComponent().position = { p0, 0.0f };
+							itemEntity.GetTransformComponent().position = p0;
 							BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
 							bezier.onCompletionCallback = [](Entity e) {
 								e.QueueDestroy();

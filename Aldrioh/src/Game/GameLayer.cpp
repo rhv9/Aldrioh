@@ -80,7 +80,6 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::ControllerSystems);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
 
-	scene->AddUpdateSystem(&EntitySystem::JumpSystem);
 	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
 	scene->AddUpdateSystem(&EntitySystem::HealthSystem);
 	scene->AddUpdateSystem(&EntitySystem::StatSystem);

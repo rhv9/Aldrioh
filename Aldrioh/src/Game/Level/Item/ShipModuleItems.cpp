@@ -46,7 +46,7 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 		if (shootTimer >= 0.08f || shootTimer == 0.0f)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-			glm::vec3& playerPos = e.GetTransformComponent().position;
+			glm::vec2& playerPos = e.GetTransformComponent().position;
 
 			for (int i = 0; i < projectileCount; ++i)
 			{

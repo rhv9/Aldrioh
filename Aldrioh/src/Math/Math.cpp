@@ -57,7 +57,7 @@ float Math::angleBetween(const glm::vec2& p1, const glm::vec2& p2)
 	return atan2f(dy, dx) - Math::PI / 2.0f;
 }
 
-float Math::angleBetween2d(const glm::vec3& p1, const glm::vec3& p2)
+float Math::angleBetween2d(const glm::vec2& p1, const glm::vec2& p2)
 {
 	float dx = p2.x - p1.x;
 	float dy = p2.y - p1.y;

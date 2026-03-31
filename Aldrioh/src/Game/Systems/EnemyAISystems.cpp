@@ -54,7 +54,7 @@ void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>();
 
-	glm::vec3 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
+	glm::vec2 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
 	
 	for (auto e : view)
 	{

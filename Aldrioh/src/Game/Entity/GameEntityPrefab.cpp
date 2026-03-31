@@ -48,7 +48,7 @@ Entity PlayerPrefab::create(Scene& scene)
 {
 	Entity player = scene.CreateEntity("Player");
 	scene.SetPlayer(player);
-	player.GetComponent<TransformComponent>().position = { startPos.x, startPos.y, 0.4f };
+	player.GetComponent<TransformComponent>().position = startPos;
 	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);

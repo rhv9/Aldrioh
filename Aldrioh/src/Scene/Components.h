@@ -25,7 +25,7 @@ struct EntityTypeComponent
 
 struct TransformComponent
 {
-	glm::vec3 position { 0 };
+	glm::vec2 position { 0 };
 	
 	TransformComponent() = default;
 	TransformComponent(const TransformComponent&) = default;
@@ -92,7 +92,7 @@ struct MoveComponent
 	MoveComponent() : speed(16.0f) {}
 	MoveComponent(const MoveComponent&) = default;
 
-	glm::vec3 CalculateActualMoveOffsetVec3(Timestep ts);
+	glm::vec2 CalculateActualMoveOffsetVec2(Timestep ts);
 
 	bool isMoving() const { return moveVec != ZERO_VEC; }
 	bool isMovingUp() const { return moveVec.y > 0; }
@@ -108,6 +108,15 @@ struct MoveComponent
 	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
 	void zero() { moveVec = ZERO_VEC; }
 
+};
+
+
+struct PhysicsMovementComponent
+{
+	glm::vec2 resultantVelocity { 0.0f }; 
+
+	PhysicsMovementComponent() = default;
+	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
 };
 
 struct BezierPathComponent

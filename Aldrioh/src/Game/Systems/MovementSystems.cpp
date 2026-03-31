@@ -27,16 +27,13 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 		auto [transform, move] = view.get(e);
 		Entity entityWrapped = scene.WrapEntityHandle(e);
 		if (entityWrapped.HasComponent<CollisionComponent>())
-		{
 			scene.DispatchCollisions(ts, entityWrapped);
-
-		}
 	}
 
 	for (entt::entity e : view)
 	{
 		auto [transform, move] = view.get(e);
-		transform.position += move.CalculateActualMoveOffsetVec3(ts);
+		transform.position += move.CalculateActualMoveOffsetVec2(ts);
 	}
 
 	// Remove all handled collision components
@@ -48,33 +45,8 @@ void EntitySystem::MovementSystem(Timestep ts, Scene& scene)
 	}
 }
 
-void EntitySystem::JumpSystem(Timestep ts, Scene& scene)
-{
-
-	// Jump component
-	auto view = scene.getRegistry().view<JumpComponent, VisualComponent>();
-
-	for (entt::entity e : view)
-	{
-		auto [jc, vc] = view.get<JumpComponent, VisualComponent>(e);
-
-		jc.velocity -= 0.8f * (float)ts;
-		//jc.acceleration -= 0.4f * (float)delta;
-		jc.z += jc.velocity;
-		if (jc.z <= 0)
-		{
-			jc.z = 0;
-			jc.velocity = 0;
-			jc.acceleration = 0;
-		}
-
-		vc.localTransform.z = jc.z;
-	}
-}
-
 void EntitySystem::LifeSystem(Timestep ts, Scene& scene)
 {
-
 	auto view = scene.getRegistry().view<TimeLifeComponent>();
 
 	for (entt::entity e : view)

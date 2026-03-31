@@ -52,7 +52,7 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 	{
 		auto [transform, visual] = view.get(e);
 		Entity entity = scene.WrapEntityHandle(e);
-		
+
 		glm::vec2 entityPos = CalculateEntityTransformWithInterpolation(entity, ts);
 
 		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
@@ -67,11 +67,11 @@ void EntitySystem::CollisionRenderSystem(Timestep ts, Scene& scene)
 		return;
 
 	auto view = scene.getRegistry().view<TransformComponent, CollisionComponent>();
-	
+
 	for (entt::entity e : view)
 	{
 		auto [tc, cc] = view.get<TransformComponent, CollisionComponent>(e);
-		glm::vec3 offset = tc.position + cc.collisionBox.position;
-		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::borderBox, Colour::RED, cc.collisionBox.size);
+		glm::vec2 offset = tc.position + cc.collisionBox.position;
+		RenderQueue::EnQueue(RenderLayer::THREE, glm::vec3{ offset, 0.0f }, Sprites::borderBox, Colour::RED, cc.collisionBox.size);
 	}
 }

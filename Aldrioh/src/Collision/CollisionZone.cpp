@@ -49,11 +49,11 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 	TransformComponent& transform1 = e1.GetTransformComponent();
 	MoveComponent& move1 = e1.GetComponent<MoveComponent>();
 
-	glm::vec2 movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
+	glm::vec2 movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec2(ts);;
 
 	CollisionComponent& cc1 = e1.GetComponent<CollisionComponent>();
-	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
-	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
+	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew(movedPos1).GetMidpoint();
+	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(movedPos1);
 
 	CollisionPositionMapping mapping = GetCollisionPositionMapping(collisionMidPos1);
 
@@ -88,7 +88,7 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 
 				TransformComponent& transform2 = e2.GetTransformComponent();
 				MoveComponent& move2 = e2.GetComponent<MoveComponent>();
-				glm::vec3 pos2 = transform2.position;
+				glm::vec2 pos2 = transform2.position;
 				CollisionComponent& cc2 = e2.GetComponent<CollisionComponent>();
 
 				CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(pos2);
@@ -111,10 +111,10 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 						move1.addMoveVec({ normalizedDirection.x ,normalizedDirection.y }, pushout);
 						move2.addMoveVec({ normalizedDirection.x, normalizedDirection.y }, -pushout);
 
-						movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
+						movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec2(ts);;
 
-						collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
-						cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
+						collisionMidPos1 = cc1.collisionBox.OffsetNew(movedPos1).GetMidpoint();
+						cb1Offseted = cc1.collisionBox.OffsetNew(movedPos1);
 					}
 
 					CollisionEvent eventEntity1{ e1, false };
