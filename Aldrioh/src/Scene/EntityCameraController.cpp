@@ -3,10 +3,8 @@
 
 #include "Scene/Components.h"
 
-#include <Game/Systems/RenderSystems.h>
 #include <Game.h>
 #include <Math/Math.h>
-
 
 EntityCameraController::EntityCameraController(const float aspectRatio, const float zoomLevel)
 	: CameraController(aspectRatio, zoomLevel)
@@ -19,7 +17,7 @@ void EntityCameraController::OnUpdate(Timestep delta)
 
 	if (entity.IsValid())
 	{
-		glm::vec2 pos = EntitySystem::CalculateEntityTransformWithInterpolation(entity, delta);
+		glm::vec2 pos = entity.GetTransformComponent().CalculateInterpolatePosition(delta);
 		glm::vec2 diff = currentPosition - pos;
 		float diffLength = glm::length(diff);
 		

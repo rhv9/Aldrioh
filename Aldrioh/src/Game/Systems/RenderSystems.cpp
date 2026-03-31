@@ -7,20 +7,6 @@
 #include <Game/Debug/GameDebugState.h>
 #include <Game.h>
 
-glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity, Timestep ts)
-{
-	glm::vec2 entityTransform{ 0 };
-	TransformComponent& tc = entity.GetComponent<TransformComponent>();
-	entityTransform.x = tc.position.x;
-	entityTransform.y = tc.position.y;
-
-	const glm::vec2& diff = entityTransform - tc.prevPosition;
-	entityTransform.x -= diff.x * (1.0f - ts);
-	entityTransform.y -= diff.y * (1.0f - ts);
-
-	return entityTransform;
-}
-
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<TransformComponent, VisualComponent>();

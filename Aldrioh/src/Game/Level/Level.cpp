@@ -20,7 +20,6 @@
 #include <Game/Entity/GameEntityPrefab.h>
 #include <Game/Entity/GameEntities.h>
 
-#include <Game/Systems/RenderSystems.h>
 #include <imgui.h>
 
 #include <Game/Debug/GameDebugState.h>
@@ -184,7 +183,7 @@ bool renderBezierCurve = false;
 
 void Level::OnRender(Timestep ts)
 {
-	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
+	glm::vec2 playerPos = playerEntity.GetTransformComponent().CalculateInterpolatePosition(ts);
 	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
 
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
