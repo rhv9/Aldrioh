@@ -151,7 +151,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
-	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 1.0f, 1.0f }, 1);
+	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 0.0f, 0.0f }, 1);
 	dummyTest.RemoveComponent<FollowPlayerAIComponent>();
 	dummyTest.AddComponent<PhysicsMovementComponent>().resultantVelocity.x = 1.0f;
 

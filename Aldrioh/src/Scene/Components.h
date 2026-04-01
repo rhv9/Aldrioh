@@ -118,10 +118,20 @@ struct MoveComponent
 
 struct PhysicsMovementComponent
 {
-	glm::vec2 resultantVelocity{ 0.0f };
+	glm::vec2 resultantVelocity{ 0.0f, 0.0f };
 
 	PhysicsMovementComponent() = default;
 	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
+};
+
+struct MoveControllerComponent
+{
+	glm::vec2 moveDir{ 0.0f, 0.0f };
+	float speed = 1.0f;
+
+	MoveControllerComponent() = default;
+	MoveControllerComponent(float speed) : speed(speed), moveDir(0.0f) {}
+	MoveControllerComponent(const MoveControllerComponent&) = default;
 };
 
 struct BezierPathComponent

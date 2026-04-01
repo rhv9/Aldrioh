@@ -58,7 +58,7 @@ ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
-
+	// Update action component based on keyboard/mouse input
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent, ActionComponent>();
 		for (entt::entity e : view)
@@ -83,9 +83,9 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), mousePos);
 			else
 				ac.dir = pcc.dirLock;
-			
 		}
 	}
+
 
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent>();
@@ -96,8 +96,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 			// Keyboard movement of player
 			auto& playerTransform = player.GetComponent<TransformComponent>();
-			auto& playerMove = player.GetComponent<MoveComponent>();
 			auto& inputAction = player.GetComponent<ActionComponent>();
+			auto& moveController = player.GetComponent<MoveControllerComponent>();
 
 			glm::vec2 move{ 0.0f };
 
@@ -110,7 +110,10 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			if (inputAction.right)
 				move.x = 1.0f;
 
-			playerMove.addMoveVec(move);
+			if (move != glm::vec2(0.0f))
+				move = glm::normalize(move);
+
+			moveController.moveDir = move;
 
 			PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 			glm::vec2 mousePos = scene.GetMousePosInScene();
@@ -176,6 +179,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		}
 	}
 
+	// Update modular ship items with player action
 	{
 		auto view = scene.getRegistry().view<ActionComponent, ModularShipComponent>();
 
