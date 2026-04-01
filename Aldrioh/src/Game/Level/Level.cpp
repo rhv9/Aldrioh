@@ -96,6 +96,8 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 			hc.health -= 0.5f;
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
+			glm::vec2 fireballMoveDir = glm::normalize(fireball.e.GetComponent<PhysicsMovementComponent>().resultantVelocity);
+			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += fireballMoveDir * 1.0f;
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
