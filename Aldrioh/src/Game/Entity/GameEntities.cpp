@@ -21,11 +21,13 @@
 
 #include <Math/Math.h>
 
+#include <Game/Level/CollectableChunk.h>
+
 
 //======================
 // Entity factories
 //======================
-static Entity drone_create(EnemyEntityType& type, Level& level, const glm::vec2& pos, int lvl)
+static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos, int lvl, void* data)
 {
 	static ParticleTemplate particleTemplate_droneDestroyed = []() {
 		ParticleTemplate pt;
@@ -73,21 +75,22 @@ static Entity drone_create(EnemyEntityType& type, Level& level, const glm::vec2&
 		};
 
 	Scene& scene = level.GetScene();
+	EnemyEntityType& typeCasted = *((EnemyEntityType*)&type);
 
 	Entity enemy = scene.CreateEntity("Drone");
 	auto& tc = enemy.GetComponent<TransformComponent>();
 	tc.UpdateBothPos(pos);
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(type.spriteId);
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(typeCasted.spriteId);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)
 	{
 		vc.colour = Colour::Random();
 	}
-	enemy.AddComponent<MoveComponent>(type.speed);
+	enemy.AddComponent<MoveComponent>(typeCasted.speed);
 	enemy.AddComponent<EntityTypeComponent>(type.entityId);
 	glm::vec2 collisionSize{ 0.5f };
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
-	enemy.AddComponent<HealthComponent>(type.maxHp);
+	enemy.AddComponent<HealthComponent>(typeCasted.maxHp);
 	enemy.AddComponent<CoreEnemyStateComponent>();
 	enemy.AddComponent<FollowPlayerAIComponent>();
 	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneDeath);
@@ -96,7 +99,24 @@ static Entity drone_create(EnemyEntityType& type, Level& level, const glm::vec2&
 }
 
 
-
+static Entity item_create(EntityType& type, Level& level, const glm::vec2& pos, int lvl, void* data)
+{
+	CollectableItem::RenderData itemRenderData = *((CollectableItem::RenderData*)data);
+	Entity itemEntity = level.GetScene().CreateEntity("FlyingItem");
+	VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
+	vc.scale = itemRenderData.size;
+	vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
+	vc.colour = itemRenderData.colour;
+	glm::vec2 p0 = pos;
+	itemEntity.GetTransformComponent().UpdateBothPos(p0);
+	BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, level.GetPlayer().GetTransformComponent().position);
+	bezier.onCompletionCallback = [](Entity e) {
+		e.QueueDestroy();
+		GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
+		};
+	itemEntity.AddComponent<ItemAnimationControllerComponent>();
+	return itemEntity;
+}
 
 
 
@@ -111,6 +131,9 @@ void EntityTypes::InitGlobal()
 {
 	Player = new EntityType{ EntityCategory::Player, "Player" };
 	Fireball = new EntityType{ EntityCategory::Bullet, "Fireball" };
+
+	FlyingCollectedItem = new EntityType{ EntityCategory::FlyingItem, "Flying_Collected_Item" };
+	FlyingCollectedItem->onCreateCallback = item_create;
 	EnemyInitGlobal();
 }
 
@@ -155,14 +178,9 @@ EnemyEntityType* EnemyEntityTypes::GetEnemyEntityType(entitytypeid_t id)
 	return (EnemyEntityType*)(EntityType::GetEntityType(id));
 }
 
-void EnemyEntityType::OnPostCreate(Level& level, Entity e)
-{
-	level.GetLevelStats().addEntityCount(entityId);
-}
-
 EnemyEntityType::EnemyEntityType(EntityCategory category, const std::string& name) : EntityType(category, name)
 {
-	static auto default_create = [](EnemyEntityType&, Level&, const glm::vec2&, int) -> Entity
+	static auto default_create = [](EntityType&, Level&, const glm::vec2&, int, void*) -> Entity
 		{
 			ASSERT(false, "No creation method has been placed!")
 				return Entity::Null;

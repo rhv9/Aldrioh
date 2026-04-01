@@ -158,19 +158,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 						{
 							CollectableItem& cellData = cell.cellArray[i];
 							CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
-							Entity itemEntity = scene.CreateEntity("Item");
-							VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
-							vc.scale = itemRenderData.size;
-							vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
-							vc.colour = itemRenderData.colour;
-							glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
-							itemEntity.GetTransformComponent().UpdateBothPos(p0);
-							BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
-							bezier.onCompletionCallback = [](Entity e) {
-								e.QueueDestroy();
-								GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
-								};
-							itemEntity.AddComponent<ItemAnimationControllerComponent>();
+
+							EntityTypes::FlyingCollectedItem->create(*level, cellData.GetFloatOffset() + chunkPos, 1, static_cast<void*>(&itemRenderData));
 						}
 						cell.Clear();
 					}

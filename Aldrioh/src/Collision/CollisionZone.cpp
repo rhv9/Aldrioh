@@ -43,7 +43,7 @@ void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 	LOG_CORE_INFO("Init: Collision Zone Size: ({},{})", width, height);
 }
 
-bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, std::vector<Entity>& collidedEntities)
+bool CollisionZone::GetCollisions(Timestep ts, Entity e1, std::vector<Entity>& collidedEntities)
 {
 	TransformComponent& transform1 = e1.GetTransformComponent();
 

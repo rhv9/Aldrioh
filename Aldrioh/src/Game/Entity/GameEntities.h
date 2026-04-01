@@ -22,17 +22,14 @@ struct EnemyEntityType : public EntityType
 	float dmg = 1.0f;
 	spriteid_t spriteId = 0;
 
-	std::function<Entity(EnemyEntityType& entityType, Level& level, const glm::vec2& pos, int lvl)> onCreateCallback;
-	void OnPostCreate(Level& level, Entity e);
-
 	EnemyEntityType(EntityCategory category, const std::string& name);
-	Entity create(Level& level, const glm::vec2& pos, int lvl) { Entity e = onCreateCallback(*this, level, pos, lvl); OnPostCreate(level, e); return e; }
 };
 
 namespace EntityTypes
 {
 	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(Player);
 	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(Fireball);
+	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(FlyingCollectedItem);
 	void InitGlobal();
 }
 

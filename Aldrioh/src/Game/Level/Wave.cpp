@@ -10,6 +10,6 @@ void SpawnerWave::OnUpdate(Timestep ts)
 	{
 		timer -= cooldown;
 		glm::vec2 spawnPos = level.GenerateRandomSpawnCoords();
-		type->create(level, spawnPos, 1);
+		type->create(level, spawnPos, 1, nullptr);
 	}
 }
