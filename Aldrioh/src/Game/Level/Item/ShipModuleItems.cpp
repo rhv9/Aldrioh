@@ -11,11 +11,11 @@ void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDi
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
 	fireball.GetComponent<TransformComponent>().UpdateBothPos(origin);
-	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.addMoveVec(normalizedDir);
-	mc.locked = true;
+	fireball.AddComponent<PhysicsMovementComponent>();
+	auto& mcc = fireball.AddComponent<MoveControllerComponent>(5.0f);
+	mcc.moveDir = normalizedDir;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
-	vc.rotation = Math::angle(mc.moveVec);
+	vc.rotation = Math::angle(normalizedDir);
 	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);

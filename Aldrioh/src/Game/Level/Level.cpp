@@ -153,7 +153,6 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 0.0f, 0.0f }, 1, nullptr);
 	dummyTest.RemoveComponent<FollowPlayerAIComponent>();
-	dummyTest.AddComponent<PhysicsMovementComponent>().resultantVelocity.x = 1.0f;
 
 	// Debugging
 	mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));

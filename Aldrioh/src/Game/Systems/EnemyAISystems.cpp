@@ -52,16 +52,16 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 
 void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 {
-	auto view = scene.getRegistry().view<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>();
+	auto view = scene.getRegistry().view<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerAIComponent>();
 
 	glm::vec2 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
 	
 	for (auto e : view)
 	{
-		auto [tc, mc, vc, aic] = view.get<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>(e);
+		auto [tc, mcc, vc, aic] = view.get<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerAIComponent>(e);
 
 		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
 		vc.rotation = Math::angle(dir) - Math::PI / 2.0f;
-		mc.addMoveVec(dir);
+		mcc.moveDir = dir;
 	}
 }

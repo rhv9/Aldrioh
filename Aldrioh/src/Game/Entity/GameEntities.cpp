@@ -86,7 +86,8 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 	{
 		vc.colour = Colour::Random();
 	}
-	enemy.AddComponent<MoveComponent>(typeCasted.speed);
+	enemy.AddComponent<MoveControllerComponent>(typeCasted.speed);
+	enemy.AddComponent<PhysicsMovementComponent>();
 	enemy.AddComponent<EntityTypeComponent>(type.entityId);
 	glm::vec2 collisionSize{ 0.5f };
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
@@ -153,21 +154,21 @@ void EnemyInitGlobal()
 
 	Drone_Normal = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Normal" };
 	Drone_Normal->maxHp = 1.0f;
-	Drone_Normal->speed = 1.5f;
+	Drone_Normal->speed = 0.13f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->onCreateCallback = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
 	Drone_Tank->maxHp = 10.0f;
-	Drone_Tank->speed = 0.5f;
+	Drone_Tank->speed = 0.05f;
 	Drone_Tank->collectableDrop = CollectableType::JEWEL2;
 	Drone_Tank->spriteId = Sprites::drone_tank;
 	Drone_Tank->onCreateCallback = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
 	Drone_Colourful->maxHp = 0.1f;
-	Drone_Colourful->speed = 2.9f;
+	Drone_Colourful->speed = 0.15f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
 	Drone_Colourful->spriteId = Sprites::drone_normal;
 	Drone_Colourful->onCreateCallback = drone_create;
