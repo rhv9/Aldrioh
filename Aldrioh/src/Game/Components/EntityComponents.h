@@ -70,16 +70,6 @@ struct CoreEnemyStateComponent
 	CoreEnemyStateComponent(const CoreEnemyStateComponent&) = default;
 };
 
-struct JumpComponent
-{
-	float z;
-	float velocity;
-	float acceleration;
-
-	JumpComponent() = default;
-	JumpComponent(const JumpComponent&) = default;
-};
-
 
 struct ShipComponent
 {

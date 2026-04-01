@@ -27,7 +27,7 @@ public:
 	CollisionZone(Scene& scene) : scene(scene) {}
 	void Init(float widthMax, float heightMax, float cellSize);
 
-	bool FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionDispatcher& dispatcher);
+	bool GetCollisions(Timestep ts, Entity e1, std::vector<Entity>& collidedEntities);
 	CollisionPositionMapping GetCollisionPositionMapping(const glm::vec2& pos);
 
 	void SetPlayerOffset(const glm::vec2& pos) { playerOffset.x = static_cast<float>(static_cast<int>(pos.x)); playerOffset.y = static_cast<float>(static_cast<int>(pos.y)); }

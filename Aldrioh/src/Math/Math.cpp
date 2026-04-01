@@ -57,7 +57,7 @@ float Math::angleBetween(const glm::vec2& p1, const glm::vec2& p2)
 	return atan2f(dy, dx) - Math::PI / 2.0f;
 }
 
-float Math::angleBetween2d(const glm::vec3& p1, const glm::vec3& p2)
+float Math::angleBetween2d(const glm::vec2& p1, const glm::vec2& p2)
 {
 	float dx = p2.x - p1.x;
 	float dy = p2.y - p1.y;
@@ -82,6 +82,13 @@ glm::vec2 Math::angleToNormalizedVector(float angle)
 glm::vec2 Math::normalizedDirection(const glm::vec2& origin, const glm::vec2& dest)
 {
 	return glm::normalize(dest - origin);
+}
+
+glm::vec2 Math::rotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
+{
+	float newX = start.x + (dest.x - start.x) * Math::cosRad(x) - (dest.y - start.y) * Math::sinRad(x);
+	float newY = start.y + (dest.x - start.x) * Math::sinRad(x) + (dest.y - start.y) * Math::cosRad(x);
+	return { newX, newY };
 }
 
 float Math::triangleWave(float t)

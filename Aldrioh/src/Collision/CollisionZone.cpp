@@ -43,17 +43,13 @@ void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 	LOG_CORE_INFO("Init: Collision Zone Size: ({},{})", width, height);
 }
 
-bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionDispatcher& dispatcher)
+bool CollisionZone::GetCollisions(Timestep ts, Entity e1, std::vector<Entity>& collidedEntities)
 {
-	bool hasCollided = false;
 	TransformComponent& transform1 = e1.GetTransformComponent();
-	MoveComponent& move1 = e1.GetComponent<MoveComponent>();
-
-	glm::vec2 movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
 
 	CollisionComponent& cc1 = e1.GetComponent<CollisionComponent>();
-	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
-	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
+	glm::vec2 collisionMidPos1 = cc1.collisionBox.OffsetNew(transform1.position).GetMidpoint();
+	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(transform1.position);
 
 	CollisionPositionMapping mapping = GetCollisionPositionMapping(collisionMidPos1);
 
@@ -78,59 +74,24 @@ bool CollisionZone::FindAndDispatchCollisions(Timestep ts, Entity e1, CollisionD
 
 				if (!e2.IsValid())
 					continue;
-
 				if (e1 == e2)
 					continue;
-				if (e1.HasComponent<CollisionHandledComponent>())
-					return true;
-				if (e2.HasComponent<CollisionHandledComponent>())
-					continue;
-
-				TransformComponent& transform2 = e2.GetTransformComponent();
-				MoveComponent& move2 = e2.GetComponent<MoveComponent>();
-				glm::vec3 pos2 = transform2.position;
+				
 				CollisionComponent& cc2 = e2.GetComponent<CollisionComponent>();
+				CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(e2.GetTransformComponent().position);
 
-				CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(pos2);
 				bool collides = cb1Offseted.CollidesWith(&cb2Offseted);
 
 				// Debug data
 				++collisionCheckCount;
 
 				if (collides)
-				{
-					hasCollided = true;
-
-					// if both are rigid objects, then do push out effect
-					if (cc1.rigid && cc2.rigid)
-					{
-						float pushout = 0.30f;
-						glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
-						glm::vec2 normalizedDirection = glm::normalize(direction);
-
-						move1.addMoveVec({ normalizedDirection.x ,normalizedDirection.y }, pushout);
-						move2.addMoveVec({ normalizedDirection.x, normalizedDirection.y }, -pushout);
-
-						movedPos1 = transform1.position + move1.CalculateActualMoveOffsetVec3(ts);;
-
-						collisionMidPos1 = cc1.collisionBox.OffsetNew({ movedPos1, 0.0f }).GetMidpoint();
-						cb1Offseted = cc1.collisionBox.OffsetNew(glm::vec3{ movedPos1, 0.0f });
-					}
-
-					CollisionEvent eventEntity1{ e1, false };
-					CollisionEvent eventEntity2{ e2, false };
-					scene.GetCollisionDispatcher().Dispatch(eventEntity1, eventEntity2);
-
-					if (eventEntity1.handled)
-						e1.AddComponent<CollisionHandledComponent>();
-					if (eventEntity2.handled)
-						e2.AddComponent<CollisionHandledComponent>();
-				}
+					collidedEntities.push_back(e2);
 			}
 		}
 	}
 
-	return hasCollided;
+	return !collidedEntities.empty();
 }
 
 CollisionPositionMapping CollisionZone::GetCollisionPositionMapping(const glm::vec2& pos)

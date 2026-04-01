@@ -13,7 +13,6 @@
 #include <Game/Debug/GameDebugState.h>
 #include <Scene/Components.h>
 #include <Game/Components/ControllerComponents.h>
-#include <Game/Systems/RenderSystems.h>
 
 CollectableMapping CollectableManager::GetMapping(const glm::vec2& pos)
 {
@@ -120,7 +119,7 @@ void CollectableManager::OnUpdate(Timestep ts, const CollectableMapping& bottomL
 void CollectableManager::Debug_Render(Level& level, Timestep ts, const CollectableMapping& bottomLeftMapping, const CollectableMapping& topRightMapping)
 {
 	glm::vec2 playerCameraPos = level.GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition();
-	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(level.GetPlayer(), ts);
+	glm::vec2 playerPos = level.GetPlayer().GetTransformComponent().CalculateInterpolatePosition(ts);
 
 	auto& levelArea = level.GetScreenBorderOffset();
 

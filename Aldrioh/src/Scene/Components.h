@@ -25,11 +25,16 @@ struct EntityTypeComponent
 
 struct TransformComponent
 {
-	glm::vec3 position { 0 };
-	
+	glm::vec2 position{ 0.0f };
+	glm::vec2 prevPosition{ 0.0f };
+
+	glm::vec2 CalculateInterpolatePosition(float deltaPercent);
+
 	TransformComponent() = default;
 	TransformComponent(const TransformComponent&) = default;
-	TransformComponent(const glm::vec3& pos) : position(pos) {}
+	TransformComponent(const glm::vec2& pos) : position(pos), prevPosition(pos) {}
+
+	void UpdateBothPos(const glm::vec2& pos) { position = prevPosition = pos; }
 };
 
 struct VisualComponent
@@ -50,8 +55,8 @@ struct VisualComponent
 	VisualComponent(const VisualComponent&) = default;
 
 	static constexpr int DEFAULT_SPRITE_ID = 0;
-	static constexpr glm::vec3 DEFAULT_LOCAL_TRANSFORM { 0.0f, 0.0f, 0.0f };
-	static constexpr glm::vec2 DEFAULT_SCALE { 1.0f, 1.0f };
+	static constexpr glm::vec3 DEFAULT_LOCAL_TRANSFORM{ 0.0f, 0.0f, 0.0f };
+	static constexpr glm::vec2 DEFAULT_SCALE{ 1.0f, 1.0f };
 };
 
 struct DestroyEntityComponent
@@ -59,7 +64,7 @@ struct DestroyEntityComponent
 	float timeRemaining = 0.0f;
 
 	DestroyEntityComponent() = default;
-	DestroyEntityComponent(float timer) :  timeRemaining(timer) {}
+	DestroyEntityComponent(float timer) : timeRemaining(timer) {}
 	DestroyEntityComponent(DestroyEntityComponent&) = default;
 };
 
@@ -81,33 +86,27 @@ enum MoveDir
 	NONE
 };
 
-struct MoveComponent
+
+struct PhysicsMovementComponent
 {
-	float speed;
-	glm::vec2 moveVec{ 0.0f };
-	MoveDir dir = MoveDir::NONE;
-	bool locked = false;
+	glm::vec2 resultantVelocity{ 0.0f, 0.0f };
+	float naturalFallOffPercent = 0.95f;
 
-	MoveComponent(float speed) : speed(speed) {}
-	MoveComponent() : speed(16.0f) {}
-	MoveComponent(const MoveComponent&) = default;
+	PhysicsMovementComponent() = default;
+	PhysicsMovementComponent(bool naturalSlowdown) : naturalFallOffPercent(naturalSlowdown ? 0.95f : -1.0f) {}
+	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
+};
 
-	glm::vec3 CalculateActualMoveOffsetVec3(Timestep ts);
+struct MoveControllerComponent
+{
+	glm::vec2 moveDir{ 0.0f, 0.0f };
+	float speed = 1.0f;
 
-	bool isMoving() const { return moveVec != ZERO_VEC; }
-	bool isMovingUp() const { return moveVec.y > 0; }
-	bool isMovingDown() const { return moveVec.y < 0; }
-	bool isMovingLeft() const { return moveVec.x < 0; }
-	bool isMovingRight() const { return moveVec.x > 0; }
-	MoveDir getMoveDir() const { return dir; }
+	bool IsMoving() const { return moveDir != glm::vec2(0.0f); }
 
-	void addMoveVec(const glm::vec2& newMoveVec, float speed);
-	void addMoveVec(const glm::vec2& newMoveVec) { addMoveVec(newMoveVec, speed); }
-
-
-	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
-	void zero() { moveVec = ZERO_VEC; }
-
+	MoveControllerComponent() = default;
+	MoveControllerComponent(float speed) : speed(speed), moveDir(0.0f) {}
+	MoveControllerComponent(const MoveControllerComponent&) = default;
 };
 
 struct BezierPathComponent
@@ -116,7 +115,6 @@ struct BezierPathComponent
 	glm::vec2 p0{ 0 }, p1{ 0 }, p2{ 0 };
 	std::function<void(Entity e)> onCompletionCallback;
 	bool completionHandled = false;
-	glm::vec2 prevPos { 0 };
 
 	BezierPathComponent(const glm::vec2& p0, const glm::vec2& p1, const glm::vec2& p2) : p0(p0), p1(p1), p2(p2) {}
 	BezierPathComponent(const BezierPathComponent&) = default;
@@ -127,7 +125,7 @@ struct RotationComponent
 	float angle = 0.0f;
 	bool shouldRotateTo = false;
 	uint8_t skipTicks = 1;
-	
+
 	RotationComponent() = default;
 	RotationComponent(float angle) : angle(angle) {};
 	RotationComponent(const RotationComponent&) = default;
@@ -157,8 +155,8 @@ struct AnimatedMovementComponent
 	float speed = 1.0f;
 	int frame = 0;
 	MoveDir currentDir = MoveDir::UP;
-	
-	AnimatedMovementComponent(std::vector<int>& up, std::vector<int>& down, std::vector<int>& left, std::vector<int>& right, float speed) : animations({up, down, left, right}), speed(speed) {}
+
+	AnimatedMovementComponent(std::vector<int>& up, std::vector<int>& down, std::vector<int>& left, std::vector<int>& right, float speed) : animations({ up, down, left, right }), speed(speed) {}
 	AnimatedMovementComponent() = default;
 	AnimatedMovementComponent(const AnimatedMovementComponent&) = default;
 

@@ -12,15 +12,15 @@ public:
 class CollisionBox : public CollisionShape 
 {
 public:
-	glm::vec3 position;
+	glm::vec2 position;
 	glm::vec2 size;
 
 	static CollisionManager* collisionManager;
 
-	CollisionBox(const glm::vec3& pos, const glm::vec2& size)
+	CollisionBox(const glm::vec2& pos, const glm::vec2& size)
 		: position(pos), size(size) {}
 
-	CollisionBox OffsetNew(const glm::vec3& offset) { return CollisionBox(position + offset, size); }
+	CollisionBox OffsetNew(const glm::vec2& offset) { return CollisionBox(position + offset, size); }
 	glm::vec2 GetMidpoint() const { return { position.x + size.x / 2.0f, position.y + size.y / 2.0f }; }
 
 	virtual bool CollidesWith(CollisionShape* shape) override;

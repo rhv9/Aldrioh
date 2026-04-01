@@ -50,14 +50,6 @@ struct WobblyEnemyGroupPrefab : public EntityPrefab
 	virtual Entity create(Scene& scene) override;
 };
 
-struct EnemyPrefab : public EntityPrefab
-{
-	glm::vec2 spawnPos{ 0 };
-	float maxHealth = 1;
-	Entity enemyManager;
-	glm::vec2 dirFacing{ 0, -1 };
-	virtual Entity create(Scene& scene) override;
-};
 
 struct EnemyPathPrefab : public EntityPrefab
 {
@@ -66,14 +58,6 @@ struct EnemyPathPrefab : public EntityPrefab
 	std::vector<glm::vec2> points;
 	float speed = 1.0f;
 
-	virtual Entity create(Scene& scene) override;
-};
-
-struct DroneEnemyPrefab : public EntityPrefab
-{
-	glm::vec2 spawnPos{ 0 };
-	float maxHealth = 1;
-	float speed = 1.0f;
 	virtual Entity create(Scene& scene) override;
 };
 

@@ -8,14 +8,15 @@
 
 void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg)
 {
+	float speed = 20.0f;
+
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.addMoveVec(normalizedDir);
-	mc.locked = true;
+	fireball.GetComponent<TransformComponent>().UpdateBothPos(origin);
+	auto& pmc = fireball.AddComponent<PhysicsMovementComponent>(false);
+	pmc.resultantVelocity = normalizedDir * speed;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
-	vc.rotation = Math::angle(mc.moveVec);
+	vc.rotation = Math::angle(normalizedDir);
 	vc.colour.a = 1.0f;
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
@@ -46,13 +47,12 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 		if (shootTimer >= 0.08f || shootTimer == 0.0f)
 		{
 			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
-			glm::vec3& playerPos = e.GetTransformComponent().position;
+			glm::vec2& playerPos = e.GetTransformComponent().position;
 
 			for (int i = 0; i < projectileCount; ++i)
 			{
 				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
 				shootBall(e, playerPos, dir, cachedDmg);
-				LOG_CORE_INFO("Fireball dmg: {}", cachedDmg);
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}

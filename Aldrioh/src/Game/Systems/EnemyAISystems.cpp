@@ -11,21 +11,20 @@
 
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {
-
 	// DumbAIComponent
-	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveComponent>();
+	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveControllerComponent>();
 	auto& player_mc = scene.GetPlayer().GetComponent<TransformComponent>();
 	for (entt::entity e : view)
 	{
-		auto [dac, tc, mc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveComponent>(e);
+		auto [dac, tc, mcc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveControllerComponent>(e);
 
 		if (dac.enemyManager.IsValid())
 		{
 			auto& emc = dac.enemyManager.GetComponent<EnemyManagerComponent>();
-			auto& emmc = dac.enemyManager.GetComponent<MoveComponent>();
+			auto& emcc = dac.enemyManager.GetComponent<MoveControllerComponent>();
 
-			mc.speed = emmc.speed;
-			mc.addMoveVec(emmc.moveVec);
+			mcc.speed = emcc.speed;
+			mcc.moveDir = emcc.moveDir;
 
 			if (dac.firstUpdate)
 			{
@@ -36,11 +35,11 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 	}
 
 	{
-		auto view = scene.getRegistry().view<TransformComponent, EnemyManagerComponent, MoveComponent>();
+		auto view = scene.getRegistry().view<TransformComponent, EnemyManagerComponent, MoveControllerComponent>();
 
 		for (entt::entity e : view)
 		{
-			auto [tc, emc, mc] = view.get<TransformComponent, EnemyManagerComponent, MoveComponent>(e);
+			auto [tc, emc, mcc] = view.get<TransformComponent, EnemyManagerComponent, MoveControllerComponent>(e);
 
 			if (emc.entityCount == 0)
 				scene.WrapEntityHandle(e).AddComponent<DestroyEntityComponent>();
@@ -52,16 +51,16 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 
 void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 {
-	auto view = scene.getRegistry().view<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>();
+	auto view = scene.getRegistry().view<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerAIComponent>();
 
-	glm::vec3 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
+	glm::vec2 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
 	
 	for (auto e : view)
 	{
-		auto [tc, mc, vc, aic] = view.get<TransformComponent, MoveComponent, VisualComponent, FollowPlayerAIComponent>(e);
+		auto [tc, mcc, vc, aic] = view.get<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerAIComponent>(e);
 
 		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
 		vc.rotation = Math::angle(dir) - Math::PI / 2.0f;
-		mc.addMoveVec(dir);
+		mcc.moveDir = dir;
 	}
 }

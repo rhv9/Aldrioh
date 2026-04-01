@@ -16,32 +16,6 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Entity/GameEntities.h>
 
-void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
-{
-	// Create entity
-	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.addMoveVec(normalizedDir);
-	mc.locked = true;
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
-	vc.rotation = Math::angle(mc.moveVec);
-	vc.colour.a = 1.0f;
-	fireball.AddComponent<TimeLifeComponent>(1.0f);
-	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
-	glm::vec2 collisionSize{ 0.3f };
-	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
-}
-
-
-glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
-{
-	float newX = start.x + (dest.x - start.x) * Math::cosRad(x) - (dest.y - start.y) * Math::sinRad(x);
-	float newY = start.y + (dest.x - start.x) * Math::sinRad(x) + (dest.y - start.y) * Math::cosRad(x);
-
-	return { newX, newY };
-}
-
 ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 	ParticleTemplate pt;
 	pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 1.0f);
@@ -54,11 +28,9 @@ ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
 	return pt;
 	}();
-
-
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
-
+	// Update action component based on keyboard/mouse input
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent, ActionComponent>();
 		for (entt::entity e : view)
@@ -77,15 +49,15 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			glm::vec2 mousePos = scene.GetMousePosInScene();
 			auto& playerTransform = player.GetTransformComponent();
 
-			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, { mousePos, 0.0f });
+			ac.anglePointingTo = Math::angleBetween2d(playerTransform.position, mousePos);
 
 			if (pcc.dirLock == DIRLOCK_FREE)
 				ac.dir = Math::normalizedDirection(glm::vec2(playerTransform.position), mousePos);
 			else
 				ac.dir = pcc.dirLock;
-			
 		}
 	}
+
 
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent>();
@@ -96,8 +68,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 
 			// Keyboard movement of player
 			auto& playerTransform = player.GetComponent<TransformComponent>();
-			auto& playerMove = player.GetComponent<MoveComponent>();
 			auto& inputAction = player.GetComponent<ActionComponent>();
+			auto& moveController = player.GetComponent<MoveControllerComponent>();
 
 			glm::vec2 move{ 0.0f };
 
@@ -110,7 +82,10 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			if (inputAction.right)
 				move.x = 1.0f;
 
-			playerMove.addMoveVec(move);
+			if (move != glm::vec2(0.0f))
+				move = glm::normalize(move);
+
+			moveController.moveDir = move;
 
 			PlayerControllerComponent& pcc = view.get<PlayerControllerComponent>(e);
 			glm::vec2 mousePos = scene.GetMousePosInScene();
@@ -155,19 +130,8 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 						{
 							CollectableItem& cellData = cell.cellArray[i];
 							CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
-							Entity itemEntity = scene.CreateEntity("Item");
-							VisualComponent& vc = itemEntity.AddComponent<VisualComponent>(itemRenderData.spriteId);
-							vc.scale = itemRenderData.size;
-							vc.localTransform = { -(vc.scale / 2.0f), 0.0f };
-							vc.colour = itemRenderData.colour;
-							glm::vec2 p0 = cellData.GetFloatOffset() + chunkPos;
-							itemEntity.GetTransformComponent().position = { p0, 0.0f };
-							BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, playerTransform.position);
-							bezier.onCompletionCallback = [](Entity e) {
-								e.QueueDestroy();
-								GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
-								};
-							itemEntity.AddComponent<ItemAnimationControllerComponent>();
+
+							EntityTypes::FlyingCollectedItem->create(*level, cellData.GetFloatOffset() + chunkPos, 1, static_cast<void*>(&itemRenderData));
 						}
 						cell.Clear();
 					}
@@ -176,6 +140,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		}
 	}
 
+	// Update modular ship items with player action
 	{
 		auto view = scene.getRegistry().view<ActionComponent, ModularShipComponent>();
 

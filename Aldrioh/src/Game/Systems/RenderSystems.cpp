@@ -7,43 +7,6 @@
 #include <Game/Debug/GameDebugState.h>
 #include <Game.h>
 
-glm::vec2 EntitySystem::CalculateEntityTransformWithInterpolation(Entity entity, Timestep ts)
-{
-	glm::vec2 entityTransform{ 0 };
-	TransformComponent& tc = entity.GetComponent<TransformComponent>();
-	entityTransform.x = tc.position.x;
-	entityTransform.y = tc.position.y;
-
-	if (entity.HasComponent<MoveComponent>())
-	{
-		MoveComponent& mc = entity.GetComponent<MoveComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		entityTransform.x -= mc.moveVec.x * delta * (1.0f - ts);
-		entityTransform.y -= mc.moveVec.y * delta * (1.0f - ts);
-
-	}
-
-	if (entity.HasComponent<PathComponent>())
-	{
-		PathComponent& pc = entity.GetComponent<PathComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		const glm::vec2& diff = pc.currentPosition - pc.prevPosition;
-		entityTransform.x -= diff.x * (1.0f - ts);
-		entityTransform.y -= diff.y * (1.0f - ts);
-	}
-
-	if (entity.HasComponent<BezierPathComponent>())
-	{
-		BezierPathComponent& bezier = entity.GetComponent<BezierPathComponent>();
-		Timestep delta = Game::Instance().GetFixedTickTimestep();
-		const glm::vec2& diff = entityTransform - bezier.prevPos;
-		entityTransform.x -= diff.x * (1.0f - ts);
-		entityTransform.y -= diff.y * (1.0f - ts);
-	}
-
-	return entityTransform;
-}
-
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<TransformComponent, VisualComponent>();
@@ -52,8 +15,8 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 	{
 		auto [transform, visual] = view.get(e);
 		Entity entity = scene.WrapEntityHandle(e);
-		
-		glm::vec2 entityPos = CalculateEntityTransformWithInterpolation(entity, ts);
+
+		glm::vec2 entityPos = transform.CalculateInterpolatePosition(ts);
 
 		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
 
@@ -67,11 +30,11 @@ void EntitySystem::CollisionRenderSystem(Timestep ts, Scene& scene)
 		return;
 
 	auto view = scene.getRegistry().view<TransformComponent, CollisionComponent>();
-	
+
 	for (entt::entity e : view)
 	{
 		auto [tc, cc] = view.get<TransformComponent, CollisionComponent>(e);
-		glm::vec3 offset = tc.position + cc.collisionBox.position;
-		RenderQueue::EnQueue(RenderLayer::THREE, offset, Sprites::borderBox, Colour::RED, cc.collisionBox.size);
+		glm::vec2 offset = tc.position + cc.collisionBox.position;
+		RenderQueue::EnQueue(RenderLayer::THREE, glm::vec3{ offset, 0.0f }, Sprites::borderBox, Colour::RED, cc.collisionBox.size);
 	}
 }

@@ -95,7 +95,6 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 		{
 			auto [tc, bezier] = view.get<TransformComponent, BezierPathComponent>(eHandle);
 
-
 			bezier.t += ts;
 			if (bezier.t > 1.0f && !bezier.completionHandled)
 			{
@@ -104,9 +103,7 @@ void EntitySystem::PathsSystem(Timestep ts, Scene& scene)
 					bezier.onCompletionCallback(scene.WrapEntityHandle(eHandle));
 			}
 
-
 			glm::vec2 newPos = Math::bezier3(bezier.p0, bezier.p1, bezier.p2, bezier.t);
-			bezier.prevPos = tc.position;
 			tc.position.x = newPos.x;
 			tc.position.y = newPos.y;
 		}

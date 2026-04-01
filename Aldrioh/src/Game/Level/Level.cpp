@@ -20,7 +20,6 @@
 #include <Game/Entity/GameEntityPrefab.h>
 #include <Game/Entity/GameEntities.h>
 
-#include <Game/Systems/RenderSystems.h>
 #include <imgui.h>
 
 #include <Game/Debug/GameDebugState.h>
@@ -152,6 +151,9 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
+	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 0.0f, 0.0f }, 1, nullptr);
+	dummyTest.RemoveComponent<FollowPlayerAIComponent>();
+
 	// Debugging
 	mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
 }
@@ -180,7 +182,7 @@ bool renderBezierCurve = false;
 
 void Level::OnRender(Timestep ts)
 {
-	glm::vec2 playerPos = EntitySystem::CalculateEntityTransformWithInterpolation(playerEntity, ts);
+	glm::vec2 playerPos = playerEntity.GetTransformComponent().CalculateInterpolatePosition(ts);
 	glm::vec2 playerCameraPos = playerCamera.GetComponent<CameraComponent>().cameraController->GetPosition();
 
 	CollectableMapping bottomLeftMapping = collectableManager.GetMapping(levelArea.bottomLeft + playerCameraPos);
@@ -230,7 +232,7 @@ void Level::Debug_OnMouseButtonForSpawningEnemies(MouseButtonEventArg& e)
 	{
 		glm::vec2 spawnPos = scene.GetMousePosInScene();
 		EnemyEntityType* entityType = imGuiSettings->entityTypes[imGuiSettings->option];
-		entityType->create(*this, spawnPos, 1);
+		entityType->create(*this, spawnPos, 1, nullptr);
 		LOG_INFO("Click to spawn: {}", EntityType::GetEntityType(entityType->entityId.id)->name);
 	}
 }
@@ -268,6 +270,12 @@ void Level::ImGuiRender(Timestep delta)
 			ImGui::PopID();
 			++i;
 		}
+	}
+
+	if (ImGui::CollapsingHeader("Player"))
+	{
+		glm::vec2 velocity = playerEntity.GetComponent<PhysicsMovementComponent>().resultantVelocity;
+		ImGui::Text(std::format("Velocity: ({:.2f},{:.2f})  {:.2f}", velocity.x, velocity.y, glm::length(velocity)).c_str());
 	}
 
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);

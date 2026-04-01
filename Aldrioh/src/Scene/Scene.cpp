@@ -225,8 +225,8 @@ CollisionDispatcher& Scene::GetCollisionDispatcher()
 	return collisionDispatcher;
 }
 
-bool Scene::DispatchCollisions(Timestep ts, Entity e)
+bool Scene::GetCollisions(Timestep ts, Entity e, std::vector<Entity>& collidedEntities)
 {
-	return collisionZone.FindAndDispatchCollisions(ts, e, collisionDispatcher);
+	return collisionZone.GetCollisions(ts, e, collidedEntities);
 }
 
