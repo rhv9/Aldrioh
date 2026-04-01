@@ -44,6 +44,8 @@ namespace Math {
 	float angleBetween2d(const glm::vec2& p1, const glm::vec2& p2);
 	glm::vec2 normalizedDirection(const glm::vec2& origin, const glm::vec2& dest);
 
+	glm::vec2 rotatePosition(const glm::vec2& start, const glm::vec2& dest, float x);
+
 	float triangleWave(float t);
 
 	float gradient(const glm::vec2& p1, const glm::vec2& p2);

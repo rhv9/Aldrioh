@@ -116,16 +116,16 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 	auto& emc = manager.AddComponent<EnemyManagerComponent>();
 
 	glm::vec2 moveBy = Math::perpendicularClockwise(dirFacing);
-	auto& mc = manager.AddComponent<MoveComponent>(speed);
-	mc.addMoveVec(moveBy);
+	auto& mcc = manager.AddComponent<MoveControllerComponent>(speed);
+	mcc.moveDir = moveBy;
 
 	bool alreadyFlipped = false;
 	emc.OnUpdateFunc = [distance = distance, alreadyFlipped, dirFacing = dirFacing * 1.0f](Timestep ts, Entity enemyManager) mutable
 		{
 			auto& tc = enemyManager.GetComponent<TransformComponent>();
-			auto& mc = enemyManager.GetComponent<MoveComponent>();
+			auto& mc = enemyManager.GetComponent<MoveControllerComponent>();
 
-			glm::vec2 move = mc.moveVec / mc.speed;
+			glm::vec2 move = mc.moveDir;
 			glm::vec2 newPos = glm::vec2{ tc.position.x, tc.position.y };
 			float length = glm::length(newPos);
 			if (!alreadyFlipped && length > distance)
@@ -138,44 +138,25 @@ Entity WobblyEnemyGroupPrefab::create(Scene& scene)
 
 			move = glm::normalize(move + dirFacing);
 
-			mc.addMoveVec(move);
+			mc.moveDir = move;
 		};
 
 	for (int y = 0; y < count.y; ++y)
 	{
 		for (int x = 0; x < count.x; ++x)
 		{
-			EnemyPrefab enemyPrefab;
-			enemyPrefab.enemyManager = manager;
-			enemyPrefab.maxHealth = 1;
-			enemyPrefab.dirFacing = dirFacing;
-			enemyPrefab.spawnPos = { startPos.x + x * spacing.x, startPos.y + y * spacing.y };
-			enemyPrefab.create(scene);
+			//EnemyPrefab enemyPrefab;
+			//enemyPrefab.enemyManager = manager;
+			//enemyPrefab.maxHealth = 1;
+			//enemyPrefab.dirFacing = dirFacing;
+			//enemyPrefab.spawnPos = { startPos.x + x * spacing.x, startPos.y + y * spacing.y };
+			//enemyPrefab.create(scene);
 		}
 	}
 
 	return manager;
 }
 
-Entity EnemyPrefab::create(Scene& scene)
-{
-	Entity enemy = scene.CreateEntity("Enemy");
-	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.UpdateBothPos(spawnPos);
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::player_ship);
-	vc.localTransform = { -0.5f, -0.5f, 0.0f };
-	vc.colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	vc.rotation = Math::angle(dirFacing);
-	enemy.AddComponent<MoveComponent>(1.0f);
-	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);
-	enemy.AddComponent<AnimatedMovementComponent>(Sprites::animPlayerUp, Sprites::animPlayerDown, Sprites::animPlayerLeft, Sprites::animPlayerRight, 0.1f);
-	enemy.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f });
-	auto& dac = enemy.AddComponent<GlobalDumbAIComponent>();
-	dac.enemyManager = enemyManager;
-	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<CoreEnemyStateComponent>();
-	return enemy;
-}
 
 Entity EnemyPathPrefab::create(Scene& scene)
 {
@@ -215,9 +196,7 @@ Entity AsteroidPrefab::create(Scene& scene)
 	tc.UpdateBothPos(spawnPos);
 	VisualComponent& vc = asteroid.AddComponent<VisualComponent>(Sprites::asteroid_small);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
-	MoveComponent& mc = asteroid.AddComponent<MoveComponent>(speed);
-	mc.addMoveVec(Math::angleToNormalizedVector(angle));
-	mc.locked = true;
+	asteroid.AddComponent<PhysicsMovementComponent>(false).resultantVelocity = Math::angleToNormalizedVector(angle);
 	int rand = Math::Random::linearInt(-45, 45);
 	RotationComponent& rc = asteroid.AddComponent<RotationComponent>(Math::degreesToRad(static_cast<float>(rand)));
 	rc.skipTicks = 5;
@@ -243,64 +222,3 @@ Entity FreeRoamCameraPrefab::create(Scene& scene)
 	return cameraEntity;
 }
 
-Entity DroneEnemyPrefab::create(Scene& scene)
-{
-	static ParticleTemplate particleTemplate_droneDestroyed = []() {
-		ParticleTemplate pt;
-		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
-		pt.beginSize = 0.25f;
-		pt.endSize = 0.25f;
-		pt.life = 1.1f;
-		pt.velocity = { 0.0f, 0.0f };
-		pt.velocityVariation = { 2.0f, 2.0f };
-		pt.rotationRange = { Math::degreesToRad(-100), Math::degreesToRad(100) };
-		pt.count = 7;
-		return pt;
-		}();
-
-	static ParticleTemplate particleTemplate_droneDestroyedRed = []() {
-		ParticleTemplate pt = particleTemplate_droneDestroyed;
-		pt.beginColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		pt.endColour = glm::vec4(0.4f, 0.0f, 0.0f, 1.0f);
-		pt.count = 1;
-		return pt;
-		}();
-
-	static auto OnDestroy_DroneDeath = [](Entity e) -> void {
-		if (e.GetComponent<HealthComponent>().health <= 0.0f)
-		{
-			glm::vec2 pos = e.GetTransformComponent().position;
-			ParticleTemplate pt = particleTemplate_droneDestroyed;
-			pt.startPos = pos;
-			e.getScene()->GetParticleManager().Emit(pt);
-
-			pt = particleTemplate_droneDestroyedRed;
-			pt.startPos = pos;
-			e.getScene()->GetParticleManager().Emit(pt);
-
-			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
-
-			CollectableMapping mapping = level->GetCollectableManager().GetMapping(pos);
-			CollectableBlock& cell = level->GetCollectableManager().GetChunk(mapping).GetBlock(mapping);
-			cell.AddCollectable(pos, static_cast<CollectableType>(Math::Random::linearInt(0, 3)));
-		}
-		
-		};
-
-	Entity enemy = scene.CreateEntity("Drone");
-	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.UpdateBothPos(spawnPos);
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(Sprites::drone_normal);
-	vc.localTransform = { -0.5f, -0.5f, 0.0f };
-	enemy.AddComponent<MoveComponent>(speed);
-	enemy.AddComponent<EntityTypeComponent>(EnemyEntityTypes::Enemy->entityId);
-	glm::vec2 collisionSize{ 0.5f };
-	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
-	enemy.AddComponent<HealthComponent>(maxHealth);
-	enemy.AddComponent<CoreEnemyStateComponent>();
-	enemy.AddComponent<FollowPlayerAIComponent>();
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneDeath);
-
-	return Entity();
-}

@@ -11,21 +11,20 @@
 
 void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 {
-
 	// DumbAIComponent
-	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveComponent>();
+	auto view = scene.getRegistry().view<GlobalDumbAIComponent, TransformComponent, MoveControllerComponent>();
 	auto& player_mc = scene.GetPlayer().GetComponent<TransformComponent>();
 	for (entt::entity e : view)
 	{
-		auto [dac, tc, mc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveComponent>(e);
+		auto [dac, tc, mcc] = view.get<GlobalDumbAIComponent, TransformComponent, MoveControllerComponent>(e);
 
 		if (dac.enemyManager.IsValid())
 		{
 			auto& emc = dac.enemyManager.GetComponent<EnemyManagerComponent>();
-			auto& emmc = dac.enemyManager.GetComponent<MoveComponent>();
+			auto& emcc = dac.enemyManager.GetComponent<MoveControllerComponent>();
 
-			mc.speed = emmc.speed;
-			mc.addMoveVec(emmc.moveVec);
+			mcc.speed = emcc.speed;
+			mcc.moveDir = emcc.moveDir;
 
 			if (dac.firstUpdate)
 			{
@@ -36,11 +35,11 @@ void EntitySystem::DumbAISystem(Timestep ts, Scene& scene)
 	}
 
 	{
-		auto view = scene.getRegistry().view<TransformComponent, EnemyManagerComponent, MoveComponent>();
+		auto view = scene.getRegistry().view<TransformComponent, EnemyManagerComponent, MoveControllerComponent>();
 
 		for (entt::entity e : view)
 		{
-			auto [tc, emc, mc] = view.get<TransformComponent, EnemyManagerComponent, MoveComponent>(e);
+			auto [tc, emc, mcc] = view.get<TransformComponent, EnemyManagerComponent, MoveControllerComponent>(e);
 
 			if (emc.entityCount == 0)
 				scene.WrapEntityHandle(e).AddComponent<DestroyEntityComponent>();

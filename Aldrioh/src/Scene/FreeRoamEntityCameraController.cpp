@@ -37,10 +37,10 @@ void FreeRoamEntityCameraController::OnUpdate(Timestep ts)
 		initialCameraPos += move;
 	}
 
-	auto entityTransform = entity.GetComponent<TransformComponent>();
-	auto entityMove = entity.GetComponent<MoveComponent>();
+	auto& entityTransform = entity.GetComponent<TransformComponent>();
+	auto& entityMove = entity.GetComponent<MoveControllerComponent>();
 
-	if (entityMove.isMoving())
+	if (entityMove.IsMoving())
 	{
 		this->SetPosition(entityTransform.position);
 	}

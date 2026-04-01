@@ -86,35 +86,6 @@ enum MoveDir
 	NONE
 };
 
-struct MoveComponent
-{
-	float speed;
-	glm::vec2 moveVec{ 0.0f };
-	MoveDir dir = MoveDir::NONE;
-	bool locked = false;
-
-	MoveComponent(float speed) : speed(speed) {}
-	MoveComponent() : speed(16.0f) {}
-	MoveComponent(const MoveComponent&) = default;
-
-	glm::vec2 CalculateActualMoveOffsetVec2(Timestep ts);
-
-	bool isMoving() const { return moveVec != ZERO_VEC; }
-	bool isMovingUp() const { return moveVec.y > 0; }
-	bool isMovingDown() const { return moveVec.y < 0; }
-	bool isMovingLeft() const { return moveVec.x < 0; }
-	bool isMovingRight() const { return moveVec.x > 0; }
-	MoveDir getMoveDir() const { return dir; }
-
-	void addMoveVec(const glm::vec2& newMoveVec, float speed);
-	void addMoveVec(const glm::vec2& newMoveVec) { addMoveVec(newMoveVec, speed); }
-
-
-	static constexpr glm::vec2 ZERO_VEC{ 0.0f };
-	void zero() { moveVec = ZERO_VEC; }
-
-};
-
 
 struct PhysicsMovementComponent
 {
@@ -130,6 +101,8 @@ struct MoveControllerComponent
 {
 	glm::vec2 moveDir{ 0.0f, 0.0f };
 	float speed = 1.0f;
+
+	bool IsMoving() const { return moveDir != glm::vec2(0.0f); }
 
 	MoveControllerComponent() = default;
 	MoveControllerComponent(float speed) : speed(speed), moveDir(0.0f) {}

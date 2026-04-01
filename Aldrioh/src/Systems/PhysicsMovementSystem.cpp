@@ -78,6 +78,14 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 			if (pmc1.naturalFallOffPercent >= 0.0f)
 				pmc1.resultantVelocity *= pmc1.naturalFallOffPercent;
 		}
+
+		// Remove all handled collision components
+		{
+			auto view = scene.getRegistry().view<CollisionHandledComponent>();
+
+			for (auto e : view)
+				scene.WrapEntityHandle(e).RemoveComponent<CollisionHandledComponent>();
+		}
 	}
 
 }

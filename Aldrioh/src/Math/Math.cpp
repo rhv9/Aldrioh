@@ -84,6 +84,13 @@ glm::vec2 Math::normalizedDirection(const glm::vec2& origin, const glm::vec2& de
 	return glm::normalize(dest - origin);
 }
 
+glm::vec2 Math::rotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
+{
+	float newX = start.x + (dest.x - start.x) * Math::cosRad(x) - (dest.y - start.y) * Math::sinRad(x);
+	float newY = start.y + (dest.x - start.x) * Math::sinRad(x) + (dest.y - start.y) * Math::cosRad(x);
+	return { newX, newY };
+}
+
 float Math::triangleWave(float t)
 {
 	float x = (2.0f * t - PI) / PI;

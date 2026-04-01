@@ -16,32 +16,6 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Entity/GameEntities.h>
 
-void shoot(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir)
-{
-	// Create entity
-	Entity fireball = e.getScene()->CreateEntity("Fireball");
-	fireball.GetComponent<TransformComponent>().position = glm::vec3{ origin , 0.5f };
-	auto& mc = fireball.AddComponent<MoveComponent>(20.0f);
-	mc.addMoveVec(normalizedDir);
-	mc.locked = true;
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
-	vc.rotation = Math::angle(mc.moveVec);
-	vc.colour.a = 1.0f;
-	fireball.AddComponent<TimeLifeComponent>(1.0f);
-	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
-	glm::vec2 collisionSize{ 0.3f };
-	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
-}
-
-
-glm::vec2 RotatePosition(const glm::vec2& start, const glm::vec2& dest, float x)
-{
-	float newX = start.x + (dest.x - start.x) * Math::cosRad(x) - (dest.y - start.y) * Math::sinRad(x);
-	float newY = start.y + (dest.x - start.x) * Math::sinRad(x) + (dest.y - start.y) * Math::cosRad(x);
-
-	return { newX, newY };
-}
-
 ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 	ParticleTemplate pt;
 	pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 1.0f);
@@ -54,8 +28,6 @@ ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
 	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
 	return pt;
 	}();
-
-
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
 	// Update action component based on keyboard/mouse input

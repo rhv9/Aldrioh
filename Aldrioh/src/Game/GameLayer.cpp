@@ -20,7 +20,6 @@
 
 #include <Game/Systems/CollisionSystems.h>
 #include <Game/Systems/AnimatedSystems.h>
-#include <Game/Systems/MovementSystems.h>
 #include <Game/Systems/EnemyAISystems.h>
 #include <Game/Systems/PlayerControllerSystems.h>
 #include <Game/Systems/TestSystems.h>
@@ -76,17 +75,15 @@ void GameLayer::OnBegin()
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::TransformUpdatePrevPosition);
-	scene->AddUpdateSystem(&EntitySystem::ResetMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
 	scene->AddUpdateSystem(&EntitySystem::ControllerSystems);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
 
-	scene->AddUpdateSystem(&EntitySystem::LifeSystem);
 	scene->AddUpdateSystem(&EntitySystem::HealthSystem);
 	scene->AddUpdateSystem(&EntitySystem::StatSystem);
-	scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
+	//scene->AddUpdateSystem(&EntitySystem::AnimatedMovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::LevelUpdateSystem);
 	scene->AddUpdateSystem(&EntitySystem::TestUpdateSystem);
 
@@ -94,7 +91,6 @@ void GameLayer::OnBegin()
 	//scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionWorld);
 	scene->AddUpdateSystem(&EntitySystem::ResetAndAddCollisionZone);
 
-	scene->AddUpdateSystem(&EntitySystem::MovementSystem);
 	scene->AddUpdateSystem(&EntitySystem::PhysicsMovementSystem);
 	//scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
