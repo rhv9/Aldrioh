@@ -8,11 +8,13 @@
 
 void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg)
 {
+	float speed = 20.0f;
+
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
 	fireball.GetComponent<TransformComponent>().UpdateBothPos(origin);
-	auto& pmc = fireball.AddComponent<PhysicsMovementComponent>();
-	pmc.resultantVelocity = normalizedDir * 30.0f;
+	auto& pmc = fireball.AddComponent<PhysicsMovementComponent>(false);
+	pmc.resultantVelocity = normalizedDir * speed;
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(normalizedDir);
 	vc.colour.a = 1.0f;
@@ -51,7 +53,6 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 			{
 				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
 				shootBall(e, playerPos, dir, cachedDmg);
-				LOG_CORE_INFO("Fireball dmg: {}", cachedDmg);
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}

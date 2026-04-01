@@ -272,6 +272,12 @@ void Level::ImGuiRender(Timestep delta)
 		}
 	}
 
+	if (ImGui::CollapsingHeader("Player"))
+	{
+		glm::vec2 velocity = playerEntity.GetComponent<PhysicsMovementComponent>().resultantVelocity;
+		ImGui::Text(std::format("Velocity: ({:.2f},{:.2f})  {:.2f}", velocity.x, velocity.y, glm::length(velocity)).c_str());
+	}
+
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
 
 	ImGui::Checkbox("Mouse spawn enemies", &GameDebugState::clickToSpawnEnemies);

@@ -154,21 +154,21 @@ void EnemyInitGlobal()
 
 	Drone_Normal = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Normal" };
 	Drone_Normal->maxHp = 1.0f;
-	Drone_Normal->speed = 0.13f;
+	Drone_Normal->speed = 2.25f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->onCreateCallback = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
 	Drone_Tank->maxHp = 10.0f;
-	Drone_Tank->speed = 0.05f;
+	Drone_Tank->speed = 1.0f;
 	Drone_Tank->collectableDrop = CollectableType::JEWEL2;
 	Drone_Tank->spriteId = Sprites::drone_tank;
 	Drone_Tank->onCreateCallback = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
 	Drone_Colourful->maxHp = 0.1f;
-	Drone_Colourful->speed = 0.15f;
+	Drone_Colourful->speed = 3.0f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
 	Drone_Colourful->spriteId = Sprites::drone_normal;
 	Drone_Colourful->onCreateCallback = drone_create;

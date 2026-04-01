@@ -119,8 +119,10 @@ struct MoveComponent
 struct PhysicsMovementComponent
 {
 	glm::vec2 resultantVelocity{ 0.0f, 0.0f };
+	float naturalFallOffPercent = 0.95f;
 
 	PhysicsMovementComponent() = default;
+	PhysicsMovementComponent(bool naturalSlowdown) : naturalFallOffPercent(naturalSlowdown ? 0.95f : -1.0f) {}
 	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
 };
 
