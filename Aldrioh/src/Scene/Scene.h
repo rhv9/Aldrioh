@@ -38,7 +38,7 @@ public:
 
 	CollisionDispatcher& GetCollisionDispatcher();
 
-	bool DispatchCollisions(Timestep ts, Entity e);
+	bool DispatchCollisions(Timestep ts, Entity e, std::vector<Entity>& collidedEntities);
 	CollisionZone& GetCollisionZone() { return collisionZone; }
 
 	Entity GetPrimaryCameraEntity();
