@@ -12,6 +12,21 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 		for (entt::entity eHandle : view)
 		{
 			auto [mcc, pmc] = view.get<MoveControllerComponent, PhysicsMovementComponent>(eHandle);
+			
+			if (mcc.moveDir != glm::vec2(0))
+			{
+				mcc.velocity += mcc.moveDir * mcc.speed * (float)ts;
+				float length = glm::length(mcc.velocity);
+				if (length >= mcc.maxSpeed)
+					mcc.velocity = (mcc.velocity / length) * mcc.maxSpeed;
+			}
+			else
+			{
+				mcc.velocity ;
+			}
+
+
+
 			pmc.resultantVelocity += mcc.moveDir * mcc.speed * (float)ts;
 		}
 	}
