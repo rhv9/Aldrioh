@@ -22,12 +22,11 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 			}
 			else
 			{
-				mcc.velocity ;
+				mcc.velocity *= mcc.falloff;
 			}
 
 
-
-			pmc.resultantVelocity += mcc.moveDir * mcc.speed * (float)ts;
+			pmc.managedVelocity = mcc.velocity;
 		}
 	}
 
@@ -39,7 +38,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 		{
 			auto [t1, pmc1] = view.get<TransformComponent, PhysicsMovementComponent>(eHandle);
 
-			t1.position += pmc1.resultantVelocity * (float)ts;
+			t1.position += (pmc1.resultantVelocity + pmc1.managedVelocity) * (float)ts;
 			Entity e1 = scene.WrapEntityHandle(eHandle);
 
 			if (e1.HasComponent<CollisionComponent>())

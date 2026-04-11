@@ -25,6 +25,8 @@
 #include <Game/Debug/GameDebugState.h>
 #include <Input/Input.h>
 
+#include <ImGui/ImGuiEntityComponents.h>
+
 float zoomLevel = 10;
 
 struct ImGuiSettings
@@ -274,11 +276,7 @@ void Level::ImGuiRender(Timestep delta)
 		}
 	}
 
-	if (ImGui::CollapsingHeader("Player"))
-	{
-		glm::vec2 velocity = playerEntity.GetComponent<PhysicsMovementComponent>().resultantVelocity;
-		ImGui::Text(std::format("Velocity: ({:.2f},{:.2f})  {:.2f}", velocity.x, velocity.y, glm::length(velocity)).c_str());
-	}
+	ImGuiEntityComponents::Show(playerEntity);
 
 	ImGui::Checkbox("Spawn Enemies", &GameDebugState::level_spawnEntites);
 
