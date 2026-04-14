@@ -44,9 +44,9 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 	auto& inputAction = e.GetComponent<ActionComponent>();
 	if (inputAction.shoot)
 	{
-		if (shootTimer >= 0.08f || shootTimer == 0.0f)
+		if (shootTimer >= 0.25f)
 		{
-			shootTimer = std::max(shootTimer - 1.0f, 0.0f);
+			shootTimer = 0.0f;
 			glm::vec2& playerPos = e.GetTransformComponent().position;
 
 			for (int i = 0; i < projectileCount; ++i)
@@ -56,10 +56,8 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
-		shootTimer += ts;
 	}
-	else
-		shootTimer = 0.0f;
+	shootTimer += ts;
 }
 
 void FireBallShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)

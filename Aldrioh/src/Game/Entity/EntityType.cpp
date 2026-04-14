@@ -16,7 +16,8 @@ EntityType::EntityType(EntityCategory category, const std::string& name) : entit
 
 void EntityType::OnPostCreate(Level& level, Entity e)
 {
-	level.GetLevelStats().addEntityCount(entityId);
+	if (entityId.category == EntityCategory::Enemy)
+		level.GetLevelStats().addEntityCount(entityId);
 }
 
 Entity EntityType::create(Level& level, const glm::vec2& pos, int lvl, void* dataPtr)

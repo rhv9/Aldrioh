@@ -10,6 +10,8 @@ public:
 	void addEntityCount(EntityID typeId);
 	void onEnemyWipedByBorder(EntityID typeId);
 
+	uint32_t GetAliveEnemyCount() const { return totalLiveEnemyCount; }
+
 private:
 	std::unordered_map<entitytypeid_t, uint32_t> enemyKilled;
 	std::unordered_map<entitytypeid_t, uint32_t> aliveEnemy;

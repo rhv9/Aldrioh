@@ -27,10 +27,10 @@ struct EntityID
 
 struct EntityType
 {
-	EntityType(EntityCategory category, const std::string& name);
-	
 	EntityID entityId;
 	std::string name;
+
+	EntityType(EntityCategory category, const std::string& name);
 
 	bool operator==(const EntityType& rhs) const { return entityId.id == rhs.entityId.id; }
 	bool IsSameCategory(EntityType type) const { return entityId.category == type.entityId.category; }
