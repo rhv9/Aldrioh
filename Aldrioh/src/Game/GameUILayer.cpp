@@ -172,6 +172,9 @@ void GameUILayer::OnUpdate(Timestep delta)
 	if (GlobalLayers::game == nullptr)
 		return;
 
+	if (GlobalLayers::game->IsPlayerDead())
+		return;
+
 	// Update health bar
 	Level* level = GlobalLayers::game->GetCurrentLevel();
 	auto& hc = level->GetPlayer().GetComponent<HealthComponent>();

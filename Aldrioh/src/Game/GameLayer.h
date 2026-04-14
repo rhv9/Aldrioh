@@ -34,6 +34,7 @@ public:
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 
 	void OnPlayerDeath();
+	bool IsPlayerDead() const { return playerDead; }
 
 
 	// Added it for efficiency sake. Why go through entt to find level entity when game can only have one level running.
@@ -44,6 +45,8 @@ private:
 	void UpdateBackground(int width, int height);
 
 private:
+	bool playerDead = false;
+
 	std::unique_ptr<Scene> scene = nullptr;
 	std::unique_ptr<Level> currentLevel = nullptr;
 	std::unique_ptr<GameUILayer> uiLayer = nullptr;

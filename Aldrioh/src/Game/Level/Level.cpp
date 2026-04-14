@@ -111,7 +111,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
 			HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
-			hc.health -= 0.5f;
+			hc.health -= 10.0f;
 			auto& cesc = asteroid.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
@@ -119,16 +119,13 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			fireball.handled = true;
 		});
 
-	scene.GetCollisionDispatcher().AddCallback(EnemyEntityTypes::Enemy->entityId, EntityTypes::Player->entityId, [](CollisionEvent& enemy, CollisionEvent& player)
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Enemy, EntityCategory::Player, [](CollisionEvent& enemy, CollisionEvent& player)
 		{
-			if (false)
-			{
-				auto& hc = player.e.GetComponent<HealthComponent>();
-				hc.health -= 0.03f;
-				ParticleTemplate pt = particleTemplate_playerTakingDamage;
-				pt.startPos = player.e.GetTransformComponent().position;
-				player.e.getScene()->GetParticleManager().Emit(pt);
-			}
+			auto& hc = player.e.GetComponent<HealthComponent>();
+			hc.health -= 0.1f;
+			ParticleTemplate pt = particleTemplate_playerTakingDamage;
+			pt.startPos = player.e.GetTransformComponent().position;
+			player.e.getScene()->GetParticleManager().Emit(pt);
 		});
 
 	scene.GetCollisionDispatcher().AddCallback(EnemyEntityTypes::Enemy->entityId, EnemyEntityTypes::Enemy->entityId, [](CollisionEvent& e1, CollisionEvent& e2)
@@ -155,7 +152,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	freeCameraPrefab.speed = 0.05f;
 	debugCamera = freeCameraPrefab.create(scene);
 
-	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 0.0f, 0.0f }, 1, nullptr);
+	Entity dummyTest = EnemyEntityTypes::Drone_Normal->create(*this, { 4.0f, 4.0f }, 1, nullptr);
 	dummyTest.RemoveComponent<FollowPlayerAIComponent>();
 
 	// Debugging

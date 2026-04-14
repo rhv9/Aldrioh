@@ -22,7 +22,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 			}
 			else
 			{
-				mcc.velocity *= mcc.falloff;
+				mcc.velocity -= mcc.velocity * mcc.falloff * (float)ts;
 			}
 
 
@@ -65,7 +65,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 							CollisionBox cb2Offseted = cc2.collisionBox.OffsetNew(e2.GetTransformComponent().position);
 							PhysicsMovementComponent pmc2 = e2.GetComponent<PhysicsMovementComponent>();
 
-							float pushout = 0.32f;
+							float pushout = 0.25f;
 							glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
 							glm::vec2 normalizedDirection = glm::normalize(direction);
 
