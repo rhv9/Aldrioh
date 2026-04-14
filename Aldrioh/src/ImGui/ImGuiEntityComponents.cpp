@@ -22,7 +22,10 @@ void ImGuiEntityComponents::Show(Entity e)
 		{
 			auto& pmc = e.GetComponent<PhysicsMovementComponent>();
 			glm::vec2 velocity = pmc.managedVelocity + pmc.resultantVelocity;
-			ImGui::Text(std::format("Velocity: ({:.2f},{:.2f})  {:.2f}", velocity.x, velocity.y, glm::length(velocity)).c_str());
+			ImGui::Text(std::format("Managed : ({:.2f},{:.2f})  {:.2f}", pmc.managedVelocity.x, pmc.managedVelocity.y, glm::length(pmc.managedVelocity)).c_str());
+			ImGui::Text(std::format("Additive: ({:.2f},{:.2f})  {:.2f}", pmc.resultantVelocity.x, pmc.resultantVelocity.y, glm::length(pmc.resultantVelocity)).c_str());
+			ImGui::Text(std::format("Result  : ({:.2f},{:.2f})  {:.2f}", velocity.x, velocity.y, glm::length(velocity)).c_str());
+
 			ImGui::TreePop();
 		}
 
