@@ -31,7 +31,7 @@ void ImGuiEntityComponents::Show(Entity e)
 			auto& mcc = e.GetComponent<MoveControllerComponent>();
 			ImGui::DragFloat("Speed", &mcc.speed);
 			ImGui::DragFloat("Max Speed", &mcc.maxSpeed);
-			ImGui::DragFloat("Falloff", &mcc.falloff, 0.005f, 0.0f, 1.0f);
+			ImGui::DragFloat("Falloff", &mcc.falloff, 0.005f);
 			ImGui::TreePop();
 		}
 

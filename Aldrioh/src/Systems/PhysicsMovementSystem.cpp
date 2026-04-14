@@ -12,7 +12,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 		for (entt::entity eHandle : view)
 		{
 			auto [mcc, pmc] = view.get<MoveControllerComponent, PhysicsMovementComponent>(eHandle);
-			
+
 			if (mcc.moveDir != glm::vec2(0))
 			{
 				mcc.velocity += mcc.moveDir * mcc.speed * (float)ts;
@@ -22,7 +22,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 			}
 			else
 			{
-				mcc.velocity -= mcc.velocity * mcc.falloff * (float)ts;
+				mcc.velocity -= mcc.velocity * Math::min(mcc.falloffMultiplier * (float)ts, 1.0f);
 			}
 
 
@@ -69,8 +69,8 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 							glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
 							glm::vec2 normalizedDirection = glm::normalize(direction);
 
-							pmc1.resultantVelocity += glm::vec2{ normalizedDirection.x ,normalizedDirection.y } * pushout;
-							pmc2.resultantVelocity += glm::vec2{ normalizedDirection.x, normalizedDirection.y }* -pushout;
+							pmc1.resultantVelocity += glm::vec2{ normalizedDirection.x ,normalizedDirection.y } *pushout;
+							pmc2.resultantVelocity += glm::vec2{ normalizedDirection.x, normalizedDirection.y }*-pushout;
 						}
 
 						CollisionEvent eventEntity1{ e1, false };
@@ -89,8 +89,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 
 			}
 
-			if (pmc1.naturalFallOffPercent >= 0.0f)
-				pmc1.resultantVelocity *= pmc1.naturalFallOffPercent;
+			pmc1.resultantVelocity -= pmc1.resultantVelocity * Math::min(pmc1.naturalFallOffMultiplier * (float)ts, 1.0f);
 		}
 
 		// Remove all handled collision components
