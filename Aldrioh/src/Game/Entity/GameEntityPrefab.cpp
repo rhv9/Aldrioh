@@ -52,10 +52,12 @@ Entity PlayerPrefab::create(Scene& scene)
 	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
-	player.AddComponent<MoveControllerComponent>(10.0f);
+	auto& mcc = player.AddComponent<MoveControllerComponent>(20.0f);
+	mcc.maxSpeed = 8.0f;
+	mcc.falloffMultiplier = 1.0f;
 	auto& pmc = player.AddComponent<PhysicsMovementComponent>();
 	player.AddComponent<EntityTypeComponent>(EntityTypes::Player->entityId);
-	//player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f }, true);
+	player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f }, true);
 	auto& pcc = player.AddComponent<PlayerControllerComponent>();
 	pcc.dirLock = dir;
 	

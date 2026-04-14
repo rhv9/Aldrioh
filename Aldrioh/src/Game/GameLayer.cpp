@@ -248,6 +248,8 @@ void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 
 void GameLayer::OnPlayerDeath()
 {
+	playerDead = true;
+	Game::Instance().GetLayerStack().QueuePopLayer(uiLayer.get());
 	QueueTransitionTo(GlobalLayers::gameOver);
 }
 

@@ -89,18 +89,22 @@ enum MoveDir
 
 struct PhysicsMovementComponent
 {
-	glm::vec2 resultantVelocity{ 0.0f, 0.0f };
-	float naturalFallOffPercent = 0.95f;
+	glm::vec2 resultantVelocity{ 0.0f };
+	glm::vec2 managedVelocity{ 0.0f };
+	float naturalFallOffMultiplier = 1.0f;
 
 	PhysicsMovementComponent() = default;
-	PhysicsMovementComponent(bool naturalSlowdown) : naturalFallOffPercent(naturalSlowdown ? 0.95f : -1.0f) {}
+	PhysicsMovementComponent(bool naturalSlowdown) : naturalFallOffMultiplier(naturalSlowdown ? 0.95f : -1.0f) {}
 	PhysicsMovementComponent(const PhysicsMovementComponent&) = default;
 };
 
 struct MoveControllerComponent
 {
-	glm::vec2 moveDir{ 0.0f, 0.0f };
+	glm::vec2 moveDir{ 0.0f };
 	float speed = 1.0f;
+	float maxSpeed = 1.0f;
+	glm::vec2 velocity{ 0.0f };
+	float falloffMultiplier = 0.8f;
 
 	bool IsMoving() const { return moveDir != glm::vec2(0.0f); }
 

@@ -6,4 +6,5 @@ namespace GameImGuiWindows {
 	void ShowRendererInfo();
 	void ShowImGuiInfo();
 	void ShowWindowInfo();
+
 }
