@@ -169,7 +169,7 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 	{
 		auto [tc, etc] = view.get<TransformComponent, EntityTypeComponent>(e);
 
-		if (etc.typeId == EnemyEntityTypes::Asteroid->entityId || etc.typeId.category == EntityCategory::Enemy)
+		if (etc.typeId == EnemyEntityTypes::Asteroid->entityId || etc.typeId.category == EntityCategory::Enemy || etc.typeId.category == EntityCategory::PlayerBullet)
 		{
 			// if outside boundaries then queue to delete
 			if (tc.position.x < bottomLeft.x || tc.position.y < bottomLeft.y ||
@@ -180,7 +180,8 @@ void EntitySystem::DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene)
 					eWrapped.GetComponent<CoreEnemyStateComponent>().addScoreOnDeath = false;
 
 				// TODO: I don't think this should do it for all wiped enemies since it may not be an enemy
-				lc.level->GetLevelStats().onEnemyWipedByBorder(etc.typeId);
+				if (etc.typeId == EnemyEntityTypes::Asteroid->entityId || etc.typeId.category == EntityCategory::Enemy)
+					lc.level->GetLevelStats().onEnemyWipedByBorder(etc.typeId);
 				eWrapped.QueueDestroy();
 			}
 		}

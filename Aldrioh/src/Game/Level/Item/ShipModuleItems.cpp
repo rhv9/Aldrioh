@@ -6,22 +6,46 @@
 #include <Game/Entity/GameEntities.h>
 #include <Math/Math.h>
 
-void shootBall(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg)
-{
-	float speed = 20.0f;
+ParticleTemplate particleTemplate_fireballImpact = []() {
+	ParticleTemplate pt;
+	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
+	pt.beginSize = 0.25f;
+	pt.endSize = 0.05f;
+	pt.life = 0.2f;
+	pt.velocity = { 0.0f, 0.0f };
+	pt.velocityVariation = { 5.0f, 5.0f };
+	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+	pt.count = 3;
+	return pt;
+	}();
 
+auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
+	ParticleTemplate pt = particleTemplate_fireballImpact;
+	pt.startPos = fireball.GetTransformComponent().position;
+	fireball.getScene()->GetParticleManager().Emit(pt);
+	};
+
+void shootFireball(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed)
+{
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
 	fireball.GetComponent<TransformComponent>().UpdateBothPos(origin);
 	auto& pmc = fireball.AddComponent<PhysicsMovementComponent>(false);
 	pmc.resultantVelocity = normalizedDir * speed;
+	pmc.naturalFallOffMultiplier = 0.0f;
+
 	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
 	vc.rotation = Math::angle(normalizedDir);
 	vc.colour.a = 1.0f;
+
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
+
 	glm::vec2 collisionSize{ 0.3f };
 	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
+	fireball.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
+	fireball.AddComponent<DamageComponent>(dmg);
 }
 
 LvlUpInfo FireBallShipModuleItem::LevelUp()
@@ -44,7 +68,7 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 	auto& inputAction = e.GetComponent<ActionComponent>();
 	if (inputAction.shoot)
 	{
-		if (shootTimer >= 0.25f)
+		if (shootTimer >= shootCooldown)
 		{
 			shootTimer = 0.0f;
 			glm::vec2& playerPos = e.GetTransformComponent().position;
@@ -52,7 +76,7 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 			for (int i = 0; i < projectileCount; ++i)
 			{
 				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
-				shootBall(e, playerPos, dir, cachedDmg);
+				shootFireball(e, playerPos, dir, cachedDmg, speed);
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}

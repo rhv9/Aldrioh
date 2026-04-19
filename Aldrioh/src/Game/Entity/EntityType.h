@@ -11,7 +11,7 @@ enum EntityCategory : entitycategorytype_t
 	Player = 0,
 	Enemy,
 	DamageBox,
-	Bullet,
+	PlayerBullet,
 	FlyingItem,
 };
 

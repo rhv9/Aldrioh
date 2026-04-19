@@ -135,3 +135,11 @@ struct ActionComponent
 	glm::vec2 dir;
 	float anglePointingTo = 0.0f;
 };
+
+struct DamageComponent
+{
+	float dmg = -20.0f;
+
+	DamageComponent(float dmg) : dmg(dmg) {}
+	DamageComponent(const DamageComponent&) = default;
+};

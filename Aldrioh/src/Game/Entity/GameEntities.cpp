@@ -131,7 +131,7 @@ void EnemyInitGlobal();
 void EntityTypes::InitGlobal()
 {
 	Player = new EntityType{ EntityCategory::Player, "Player" };
-	Fireball = new EntityType{ EntityCategory::Bullet, "Fireball" };
+	Fireball = new EntityType{ EntityCategory::PlayerBullet, "Fireball" };
 
 	FlyingCollectedItem = new EntityType{ EntityCategory::FlyingItem, "Flying_Collected_Item" };
 	FlyingCollectedItem->onCreateCallback = item_create;
@@ -153,8 +153,8 @@ void EnemyInitGlobal()
 	EnemyEntityTypes::Enemy->collectableDrop = CollectableType::JEWEL1;
 
 	Drone_Normal = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Normal" };
-	Drone_Normal->maxHp = 1.0f;
-	Drone_Normal->speed = 2.25f;
+	Drone_Normal->maxHp = 25.0f;
+	Drone_Normal->speed = 2.0f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->onCreateCallback = drone_create;

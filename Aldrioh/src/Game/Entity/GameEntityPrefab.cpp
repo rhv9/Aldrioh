@@ -52,8 +52,8 @@ Entity PlayerPrefab::create(Scene& scene)
 	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
-	auto& mcc = player.AddComponent<MoveControllerComponent>(20.0f);
-	mcc.maxSpeed = 8.0f;
+	auto& mcc = player.AddComponent<MoveControllerComponent>(10.0f);
+	mcc.maxSpeed = 4.0f;
 	mcc.falloffMultiplier = 1.0f;
 	auto& pmc = player.AddComponent<PhysicsMovementComponent>();
 	player.AddComponent<EntityTypeComponent>(EntityTypes::Player->entityId);

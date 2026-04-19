@@ -38,7 +38,8 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 		{
 			auto [t1, pmc1] = view.get<TransformComponent, PhysicsMovementComponent>(eHandle);
 
-			t1.position += (pmc1.resultantVelocity + pmc1.managedVelocity) * (float)ts;
+			glm::vec2 totalVelocity = pmc1.resultantVelocity + pmc1.managedVelocity;
+			t1.position += totalVelocity * (float)ts;
 			Entity e1 = scene.WrapEntityHandle(eHandle);
 
 			if (e1.HasComponent<CollisionComponent>())
@@ -85,8 +86,6 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 
 					collidedEntities.clear();
 				}
-
-
 			}
 
 			pmc1.resultantVelocity -= pmc1.resultantVelocity * Math::min(pmc1.naturalFallOffMultiplier * (float)ts, 1.0f);

@@ -60,26 +60,6 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 	return pt;
 	}();
 
-ParticleTemplate particleTemplate_fireballImpact = []() {
-	ParticleTemplate pt;
-	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
-	pt.beginSize = 0.25f;
-	pt.endSize = 0.05f;
-	pt.life = 0.2f;
-	pt.velocity = { 0.0f, 0.0f };
-	pt.velocityVariation = { 5.0f, 5.0f };
-	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
-	pt.count = 3;
-	return pt;
-	}();
-
-auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
-	ParticleTemplate pt = particleTemplate_fireballImpact;
-	pt.startPos = fireball.GetTransformComponent().position;
-	fireball.getScene()->GetParticleManager().Emit(pt);
-	};
-
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
 	// Debugging
@@ -91,15 +71,14 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUpEvent);
 
-	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Bullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::PlayerBullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
 		{
-			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
-			hc.health -= 0.5f;
-			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
+			hc.health -= fireball.e.GetComponent<DamageComponent>().dmg;
 			glm::vec2 fireballMoveDir = glm::normalize(fireball.e.GetComponent<PhysicsMovementComponent>().resultantVelocity);
 			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += fireballMoveDir * 1.0f;
+			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
@@ -108,7 +87,6 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
 		{
-			fireball.e.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 			fireball.e.QueueDestroy();
 			HealthComponent& hc = asteroid.e.GetComponent<HealthComponent>();
 			hc.health -= 10.0f;
