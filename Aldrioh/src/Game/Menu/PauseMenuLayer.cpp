@@ -13,6 +13,7 @@
 #include <Graphics/Renderer.h>
 #include <Scene/CameraController.h>
 #include <Scene/Components.h>
+#include <Game/Components/EntityComponents.h>
 
 #include <Game.h>
 #include <Scene/Entity.h>
@@ -120,8 +121,12 @@ void PauseMenuLayer::ExitPauseMenuToGame()
 void PauseMenuLayer::OnTransitionIn()
 {
 	LOG_CORE_INFO("Pause menu - Transition In");
+
 	if (GlobalLayers::game != nullptr)
+	{
 		GlobalLayers::game->SetShouldUpdate(false);
+		UpdateStats(GlobalLayers::game->GetCurrentLevel()->GetPlayer().GetComponent<StatComponent>().totalCachedStat);
+	}
 	uiManager->OnTransitionIn();
 	gamePaused = true;
 }

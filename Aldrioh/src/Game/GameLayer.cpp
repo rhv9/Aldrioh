@@ -210,7 +210,7 @@ void GameLayer::OnKeyEvent(KeyEventArg& e)
 	if (e.IsPressed(Input::KEY_ESCAPE) && !GetUILayer()->IsLvlUpUIActive())
 	{
 		LOG_INFO("Pushing pause menu layer");
-		GlobalLayers::pauseMenu->UpdateStats(currentLevel->GetPlayer().GetComponent<StatComponent>().precomputedBonusStat);
+		
 		Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::pauseMenu);
 	}
 
