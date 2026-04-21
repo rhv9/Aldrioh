@@ -21,11 +21,11 @@ Item* ModularShipComponent::GetItem(const ItemID itemId)
 	switch (itemId.category)
 	{
 	case ItemCategory::BaseStat:
-		return arrayGetItem(bsi, itemId, bsiCount);
+		return arrayGetItem(baseStatItems, itemId, baseStatCount);
 	case ItemCategory::ShipModule:
-		return arrayGetItem(smi, itemId, smiCount);
+		return arrayGetItem(shipModuleItems, itemId, shipModuleCount);
 	case ItemCategory::Unique:
-		return arrayGetItem(si, itemId, siCount);
+		return arrayGetItem(uniqueItems, itemId, uniqueCount);
 	}
 
 	return nullptr;
@@ -52,13 +52,13 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 		switch (itemId.category)
 		{
 		case ItemCategory::BaseStat:
-			arrayAddItem(bsi, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), bsiMax, bsiCount);
+			arrayAddItem(baseStatItems, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), baseStatMax, baseStatCount);
 			break;
 		case ItemCategory::ShipModule:
-			arrayAddItem(smi, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), smiMax, smiCount);
+			arrayAddItem(shipModuleItems, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), shipModuleMax, shipModuleCount);
 			break;
 		case ItemCategory::Unique:
-			arrayAddItem(si, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), siMax, siCount);
+			arrayAddItem(uniqueItems, std::move(GR::gr->itemRegistry.CreateInstance(itemId)), uniqueMax, uniqueCount);
 			break;
 		}
 	}
@@ -67,7 +67,7 @@ void ModularShipComponent::AddItem(const ItemID itemId)
 StatModifier ModularShipComponent::CalculateTotalStatModifier() const
 {
 	StatModifier total;
-	for (int i = 0; i < bsiCount; ++i)
-		total += static_cast<BaseStatItem*>(bsi[i].get())->statModifier;
+	for (int i = 0; i < baseStatCount; ++i)
+		total += static_cast<BaseStatItem*>(baseStatItems[i].get())->statModifier;
 	return total;
 }

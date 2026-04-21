@@ -128,6 +128,13 @@ void EntitySystem::StatSystem(Timestep ts, Scene& scene)
 			sc.totalCachedStat = sc.baseStat;
 			sc.totalCachedStat += sc.precomputedBonusStat;
 
+			if (entity.HasComponent<MoveControllerComponent>())
+			{
+				auto& mcc = entity.GetComponent<MoveControllerComponent>();
+				mcc.speed = sc.totalCachedStat.CalcAcceleration();
+				mcc.maxSpeed = sc.totalCachedStat.CalcMaxSpeed();
+			}
+
 			if (entity.HasComponent<HealthComponent>())
 			{
 				auto& hc = entity.GetComponent<HealthComponent>();
@@ -143,11 +150,18 @@ void EntitySystem::StatSystem(Timestep ts, Scene& scene)
 			{
 				auto& msc = entity.GetComponent<ModularShipComponent>();
 				
-				for (int i = 0; i < msc.smiCount; ++i)
+				for (int i = 0; i < msc.shipModuleCount; ++i)
 				{
-					msc.smi[i]->RecalculateOnStatChanges(sc.totalCachedStat);
+					msc.shipModuleItems[i]->RecalculateOnStatChanges(sc.totalCachedStat);
+				}
+
+				for (int i = 0; i < msc.uniqueCount; ++i)
+				{
+					((UniqueItem*)msc.uniqueItems[i].get())->ApplyEffectsToPlayer(entity);
 				}
 			}
+
+			
 		}
 
 	}

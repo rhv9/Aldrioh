@@ -98,13 +98,19 @@ class UniqueItem : public Item
 {
 public:
 	using update_tfunc = std::function<void(Timestep ts, Entity e)>;
+	using applyEffectsToPlayerFunc_tfunc = std::function<void(Entity e)>;
+
+	update_tfunc updateFunc;
+	applyEffectsToPlayerFunc_tfunc applyEffectsToPlayerFunc;
+
 	UniqueItem() = default;
 	UniqueItem(const ItemDef& def) : Item(def) {}
 	virtual ~UniqueItem() override {}
 
 	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<UniqueItem>(*this); }
-	virtual void OnUpdate(Timestep ts, Entity e) {}
+	virtual void OnUpdate(Timestep ts, Entity e) { updateFunc(ts, e); }
 	virtual LvlUpInfo LevelUp() { return { "This should never run!" }; };
 	virtual LvlUpInfo LevelUpPretend() { UniqueItem copyItem = *this; return copyItem.LevelUp(); }
 	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override {}
+	void ApplyEffectsToPlayer(Entity e) { applyEffectsToPlayerFunc(e); };
 };

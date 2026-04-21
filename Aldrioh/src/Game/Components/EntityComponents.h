@@ -98,14 +98,14 @@ struct ItemAnimationControllerComponent
 
 struct ModularShipComponent
 {
-	std::array<std::unique_ptr<Item>, 5> bsi;
-	uint8_t bsiMax = 5, bsiCount = 0;
+	std::array<std::unique_ptr<Item>, 5> baseStatItems;
+	uint8_t baseStatMax = 5, baseStatCount = 0;
 	
-	std::array<std::unique_ptr<Item>, 3> smi;
-	uint8_t smiMax = 3, smiCount = 0;
+	std::array<std::unique_ptr<Item>, 3> shipModuleItems;
+	uint8_t shipModuleMax = 3, shipModuleCount = 0;
 	
-	std::array<std::unique_ptr<Item>, 4> si;
-	uint8_t siMax = 4, siCount = 0;
+	std::array<std::unique_ptr<Item>, 4> uniqueItems;
+	uint8_t uniqueMax = 4, uniqueCount = 0;
 
 	ModularShipComponent() = default;
 	ModularShipComponent(const ModularShipComponent&) = default;
@@ -126,6 +126,16 @@ struct StatComponent
 
 	StatComponent() = default;
 	StatComponent(const StatComponent&) = default;
+};
+
+struct BaseClassData
+{
+	StatModifier baseStat;
+	float speed = -1.0f;
+};
+struct ClassDataComponent
+{
+	StatModifier baseStat;
 };
 
 struct ActionComponent

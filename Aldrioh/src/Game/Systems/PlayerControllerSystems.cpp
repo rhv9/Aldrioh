@@ -149,9 +149,9 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			auto [ac, msc] = view.get<ActionComponent, ModularShipComponent>(eHandle);
 			Entity e = scene.WrapEntityHandle(eHandle);
 
-			for (int i = 0; i < msc.smiCount; ++i)
+			for (int i = 0; i < msc.shipModuleCount; ++i)
 			{
-				msc.smi[i]->OnUpdate(ts, e);
+				msc.shipModuleItems[i]->OnUpdate(ts, e);
 			}
 		}
 	}

@@ -14,6 +14,11 @@ struct StatModifier
 	int cooldown_multiplier = 0;
 	int luck_modifier = 0;
 
+	int acceleration_base = 0;
+	int acceleration_multiplier = 0;
+	int maxSpeed_base = 0;
+	int maxSpeed_multiplier = 0;
+
 	StatModifier& operator+=(const StatModifier& other)
 	{
 		hp_base					+= other.hp_base;
@@ -32,6 +37,12 @@ struct StatModifier
 		cooldown_multiplier		+= other.cooldown_multiplier;
 		
 		luck_modifier			+= other.luck_modifier;
+
+		acceleration_base		+= other.acceleration_base;
+		acceleration_multiplier += other.acceleration_multiplier;
+
+		maxSpeed_base			+= other.maxSpeed_base;
+		maxSpeed_multiplier		+= other.maxSpeed_multiplier;
 		return *this;
 	}
 	
@@ -41,5 +52,7 @@ struct StatModifier
 	float CalcCritDmg() const { return critDmg_base * (critDmg_multiplier / 100.0f); }
 	float CalcCooldown() const { return cooldown_base * (cooldown_multiplier / 100.0f); }
 	float CalcLuck() const { return luck_modifier / 100.0f; }
+	float CalcAcceleration() const { return (acceleration_base / 10.0f) * ((acceleration_multiplier + 100) / 100.0f); }
+	float CalcMaxSpeed() const { return (maxSpeed_base / 10.0f) * ((maxSpeed_multiplier + 100) / 100.0f); }
 
 };

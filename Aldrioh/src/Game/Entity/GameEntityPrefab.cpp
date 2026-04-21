@@ -52,9 +52,7 @@ Entity PlayerPrefab::create(Scene& scene)
 	auto& vc = player.AddComponent<VisualComponent>(Sprites::player_ship);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
 	vc.colour = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
-	auto& mcc = player.AddComponent<MoveControllerComponent>(6.0f);
-	mcc.maxSpeed = 3.0f;
-	mcc.falloffMultiplier = 1.0f;
+
 	auto& pmc = player.AddComponent<PhysicsMovementComponent>();
 	player.AddComponent<EntityTypeComponent>(EntityTypes::Player->entityId);
 	player.AddComponent<CollisionComponent>(glm::vec3{ -0.5f, -0.5f, 0.0f }, glm::vec2{ 1.0f, 1.0f }, true);
@@ -67,6 +65,13 @@ Entity PlayerPrefab::create(Scene& scene)
 	basicClass.critChance_base = 5;
 	basicClass.critDmg_base = 100;
 	basicClass.cooldown_base = 100;
+	basicClass.acceleration_base = 60;
+	basicClass.maxSpeed_base = 30;
+
+	auto& mcc = player.AddComponent<MoveControllerComponent>(basicClass.CalcAcceleration());
+	mcc.maxSpeed = basicClass.CalcMaxSpeed();
+	mcc.maxSpeed = 3.0f;
+	mcc.falloffMultiplier = 1.0f;
 
 	auto& sc = player.AddComponent<StatComponent>();
 	sc.dirty = true;
@@ -75,9 +80,9 @@ Entity PlayerPrefab::create(Scene& scene)
 	player.AddComponent<HealthComponent>(basicClass.hp_base);
 	player.AddComponent<OnDestroyComponent>(OnDestroy_Player);
 	auto& msc = player.AddComponent<ModularShipComponent>();
-	msc.bsiMax = 5;
-	msc.smiMax = 3;
-	msc.siMax = 4;
+	msc.baseStatMax = 5;
+	msc.shipModuleMax = 3;
+	msc.uniqueMax = 4;
 	msc.AddItem(ItemTypes::ShipModule_Shooter);
 
 	player.AddComponent<ActionComponent>();

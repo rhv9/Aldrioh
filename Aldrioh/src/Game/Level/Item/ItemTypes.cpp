@@ -79,5 +79,20 @@ void ItemTypes::Init(ItemRegistry& itemRegistry)
 
 	auto& shipModule_shooter = itemRegistry.AddNewItem<FireBallShipModuleItem>(ItemDef{ ItemTypes::ShipModule_Shooter, "Fireball Shooter", "High fire rate weaponary", Sprites::asteroid_small });
 
+
+	// Special items
+
+	auto& special_floatyFast = itemRegistry.AddNewItem<UniqueItem>(ItemDef{ ItemTypes::Unique_FloatyFast, "Floaty Fast", "Move very fast but something is fishy with gravity here" });
+	special_floatyFast.applyEffectsToPlayerFunc = [](Entity e)
+		{
+			auto& mcc = e.GetComponent<MoveControllerComponent>();
+			mcc.maxSpeed *= 3.0f;
+			mcc.speed *= 10.0f;
+			
+		};
+	special_floatyFast.updateFunc = [](Timestep ts, Entity e)
+		{
+		};
+
 	itemRegistry.Debug_PrintRegistry();
 }

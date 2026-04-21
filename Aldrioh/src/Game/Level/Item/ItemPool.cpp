@@ -19,7 +19,7 @@ ItemPool::ItemPool()
 		//ItemTypes::ShipModule_Rocket,
 		//ItemTypes::ShipModule_AOEDrone,
 		//
-		//ItemTypes::Special_DoubleDmg
+		ItemTypes::Unique_FloatyFast,
 	};
 }
 
