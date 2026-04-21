@@ -2,22 +2,22 @@
 
 struct StatModifier
 {
-	int hp_base = 0;
-	int hp_multiplier = 0;
-	int dmg_base = 0;
-	int dmg_multiplier = 0;
-	int critChance_base = 0;
-	int critChance_multiplier = 0;
-	int critDmg_base = 0;
-	int critDmg_multiplier = 0;
-	int cooldown_base = 0;
-	int cooldown_multiplier = 0;
-	int luck_modifier = 0;
+	float hp_base = 0.0f;
+	float hp_multiplier = 0.0f;
+	float dmg_base = 0.0f;
+	float dmg_multiplier = 0.0f;
+	float critChance_base = 0.0f;
+	float critChance_multiplier = 0.0f;
+	float critDmg_base = 0.0f;
+	float critDmg_multiplier = 0.0f;
+	float cooldown_base = 0.0f;
+	float cooldown_multiplier = 0.0f;
+	float luck_modifier = 0.0f;
 
-	int acceleration_base = 0;
-	int acceleration_multiplier = 0;
-	int maxSpeed_base = 0;
-	int maxSpeed_multiplier = 0;
+	float acceleration_base = 0.0f;
+	float acceleration_multiplier = 0.0f;
+	float maxSpeed_base = 0.0f;
+	float maxSpeed_multiplier = 0.0f;
 
 	StatModifier& operator+=(const StatModifier& other)
 	{
@@ -46,13 +46,13 @@ struct StatModifier
 		return *this;
 	}
 	
-	float CalcHealth() const { return hp_base * (hp_multiplier / 100.0f); }
-	float CalcDmg() const { return dmg_base * (dmg_multiplier / 100.0f); }
-	float CalcCritChance() const { return critChance_base * (critChance_multiplier / 100.0f); }
-	float CalcCritDmg() const { return critDmg_base * (critDmg_multiplier / 100.0f); }
-	float CalcCooldown() const { return cooldown_base * (cooldown_multiplier / 100.0f); }
-	float CalcLuck() const { return luck_modifier / 100.0f; }
-	float CalcAcceleration() const { return (acceleration_base / 10.0f) * ((acceleration_multiplier + 100) / 100.0f); }
-	float CalcMaxSpeed() const { return (maxSpeed_base / 10.0f) * ((maxSpeed_multiplier + 100) / 100.0f); }
+	float CalcHealth() const { return hp_base * (hp_multiplier + 1.0f); }
+	float CalcDmg() const { return dmg_base * (dmg_multiplier + 1.0f); }
+	float CalcCritChance() const { return critChance_base * (critChance_multiplier + 1.0f); }
+	float CalcCritDmg() const { return critDmg_base * (critDmg_multiplier + 1.0f); }
+	float CalcCooldown() const { return cooldown_base * (cooldown_multiplier); }
+	float CalcLuck() const { return luck_modifier; }
+	float CalcAcceleration() const { return acceleration_base * (acceleration_multiplier + 1.0f); }
+	float CalcMaxSpeed() const { return maxSpeed_base * (maxSpeed_multiplier + 1.0f); }
 
 };

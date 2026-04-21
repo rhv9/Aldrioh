@@ -25,6 +25,6 @@ public:
 
 	float cachedDmg = 10;
 
-	int dmg = 10;
-	int dmg_mult = 0;
+	float dmg = 10;
+	float dmg_mult = 0;
 };

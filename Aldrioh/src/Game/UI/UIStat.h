@@ -24,8 +24,8 @@ public:
 	virtual UIType GetType() const override { return UIType::Custom; }
 
 	UIStatIndex AddItem(const std::string& name, SubTexture* subTexture, int base, int multiplier);
-	void SetItem(UIStatIndex index, int base, int multiplier);
-	void SetItem(UIStatIndex index, int multiplier);
+	void SetItem(UIStatIndex index, float base, float multiplier);
+	void SetItem(UIStatIndex index, float multiplier);
 
 
 	void AddGap(float gap = 2.5f) { cumulateYOffset += gap; }

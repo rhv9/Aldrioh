@@ -58,7 +58,7 @@ LvlUpInfo FireBallShipModuleItem::LevelUp()
 	}
 	else
 	{
-		dmg_mult += 10;
+		dmg_mult += 0.1f;
 		return { "Increase damage by 10%" };
 	}
 }
@@ -86,5 +86,5 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 
 void FireBallShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)
 {
-	cachedDmg = (float)dmg * ((dmg_mult + statModifier.dmg_multiplier + 100) / 100.0f);
+	cachedDmg = dmg * (dmg_mult + statModifier.dmg_multiplier + 1.0f);
 }

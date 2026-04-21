@@ -55,17 +55,17 @@ UIStatIndex UIStat::AddItem(const std::string& name, SubTexture* subTexture, int
 	return elements.size() - 1;
 }
 
-void UIStat::SetItem(UIStatIndex index, int base, int multiplier)
+void UIStat::SetItem(UIStatIndex index, float base, float multiplier)
 {
 	int i = index;
 	ASSERT(i >= 0 && i < elements.size(), "Trying to set item for an item never added to ui!");
-	elements[i].val->SetText(std::format("+{} +{}%", base, multiplier));
+	elements[i].val->SetText(std::format("+{} +{}%", static_cast<int>(base), static_cast<int>((multiplier * 100.0f))));
 }
 
-void UIStat::SetItem(UIStatIndex index, int multiplier)
+void UIStat::SetItem(UIStatIndex index, float multiplier)
 {
 	int i = index;
 	ASSERT(i >= 0 && i < elements.size(), "Trying to set item for an item never added to ui!");
-	elements[i].val->SetText(std::format("+{}%", multiplier));
+	elements[i].val->SetText(std::format("+{}%", static_cast<int>((multiplier * 100.0f))));
 }
 
