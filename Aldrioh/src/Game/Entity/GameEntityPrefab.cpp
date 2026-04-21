@@ -67,11 +67,11 @@ Entity PlayerPrefab::create(Scene& scene)
 	basicClass.cooldown_base = 1.0f;
 	basicClass.acceleration_base = 6.0f;
 	basicClass.maxSpeed_base = 3.0f;
+	basicClass.movementFalloff_base = 1.0f;
 
 	auto& mcc = player.AddComponent<MoveControllerComponent>(basicClass.CalcAcceleration());
 	mcc.maxSpeed = basicClass.CalcMaxSpeed();
-	mcc.maxSpeed = 3.0f;
-	mcc.falloffMultiplier = 1.0f;
+	mcc.falloffMultiplier = basicClass.CalcMovementFalloff();
 
 	auto& sc = player.AddComponent<StatComponent>();
 	sc.dirty = true;

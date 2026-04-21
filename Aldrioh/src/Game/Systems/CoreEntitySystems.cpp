@@ -133,6 +133,7 @@ void EntitySystem::StatSystem(Timestep ts, Scene& scene)
 				auto& mcc = entity.GetComponent<MoveControllerComponent>();
 				mcc.speed = sc.totalCachedStat.CalcAcceleration();
 				mcc.maxSpeed = sc.totalCachedStat.CalcMaxSpeed();
+				mcc.falloffMultiplier = sc.totalCachedStat.CalcMovementFalloff();
 			}
 
 			if (entity.HasComponent<HealthComponent>())

@@ -19,30 +19,36 @@ struct StatModifier
 	float maxSpeed_base = 0.0f;
 	float maxSpeed_multiplier = 0.0f;
 
+	float movementFalloff_base = 0.0f;
+	float movementFalloff_multiplier = 0.0f;
+
 	StatModifier& operator+=(const StatModifier& other)
 	{
-		hp_base					+= other.hp_base;
-		hp_multiplier			+= other.hp_multiplier;
+		hp_base						+= other.hp_base;
+		hp_multiplier				+= other.hp_multiplier;
 
-		dmg_base				+= other.dmg_base;
-		dmg_multiplier			+= other.dmg_multiplier;
+		dmg_base					+= other.dmg_base;
+		dmg_multiplier				+= other.dmg_multiplier;
 
-		critChance_base			+= other.critChance_base;
-		critChance_multiplier	+= other.critChance_multiplier;
+		critChance_base				+= other.critChance_base;
+		critChance_multiplier		+= other.critChance_multiplier;
 
-		critDmg_base			+= other.critDmg_base;
-		critDmg_multiplier		+= other.critDmg_multiplier;
+		critDmg_base				+= other.critDmg_base;
+		critDmg_multiplier			+= other.critDmg_multiplier;
 		
-		cooldown_base			+= other.cooldown_base;
-		cooldown_multiplier		+= other.cooldown_multiplier;
+		cooldown_base				+= other.cooldown_base;
+		cooldown_multiplier			+= other.cooldown_multiplier;
 		
-		luck_modifier			+= other.luck_modifier;
+		luck_modifier				+= other.luck_modifier;
 
-		acceleration_base		+= other.acceleration_base;
-		acceleration_multiplier += other.acceleration_multiplier;
+		acceleration_base			+= other.acceleration_base;
+		acceleration_multiplier		+= other.acceleration_multiplier;
 
-		maxSpeed_base			+= other.maxSpeed_base;
-		maxSpeed_multiplier		+= other.maxSpeed_multiplier;
+		maxSpeed_base				+= other.maxSpeed_base;
+		maxSpeed_multiplier			+= other.maxSpeed_multiplier;
+
+		movementFalloff_base		+= other.movementFalloff_base;
+		movementFalloff_multiplier	+= other.movementFalloff_multiplier;
 		return *this;
 	}
 	
@@ -54,5 +60,6 @@ struct StatModifier
 	float CalcLuck() const { return luck_modifier; }
 	float CalcAcceleration() const { return acceleration_base * (acceleration_multiplier + 1.0f); }
 	float CalcMaxSpeed() const { return maxSpeed_base * (maxSpeed_multiplier + 1.0f); }
+	float CalcMovementFalloff() const { return movementFalloff_base * (movementFalloff_multiplier + 1.0f); }
 
 };

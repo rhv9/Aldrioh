@@ -88,7 +88,7 @@ void ItemTypes::Init(ItemRegistry& itemRegistry)
 			auto& mcc = e.GetComponent<MoveControllerComponent>();
 			mcc.maxSpeed *= 3.0f;
 			mcc.speed *= 10.0f;
-			
+			mcc.falloffMultiplier *= 0.5f;
 		};
 	special_floatyFast.updateFunc = [](Timestep ts, Entity e)
 		{
