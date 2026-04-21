@@ -63,7 +63,7 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
 	// Debugging
-	GameDebugState::level_spawnEntites = false;
+	GameDebugState::level_spawnEntites = true;
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
 	scene.GetCollisionZone().Init(60, 40, 1);
