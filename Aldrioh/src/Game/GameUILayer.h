@@ -1,4 +1,5 @@
 #pragma once
+#include <span>
 #include <Core/Layer.h>
 #include <Scene/Scene.h>
 
@@ -13,13 +14,14 @@
 class UIButton;
 class UIImage;
 class Item;
+struct ModularShipComponent;
 
 class GameUILayer : public Layer
 {
 public:
-	GameUILayer(const std::string& name, Level& level) : Layer(name), level(level) {}
+	GameUILayer(const std::string& name, Level& level);
 
-	virtual void OnBegin() override;
+	virtual void OnBegin() override {}
 	virtual void OnUpdate(Timestep delta) override;
 	virtual void OnRender(Timestep delta) override;
 	virtual void OnImGuiRender(Timestep delta) override;
@@ -48,6 +50,10 @@ public:
 	void SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpInfo, const std::string& littleInfo);
 	bool IsLvlUpUIActive() const { return lvlBackground->IsEnabled(); }
 
+
+	// Item ui related
+	void UpdateItemUI(const ModularShipComponent& msc);
+
 private:
 	Level& level;
 	std::unique_ptr<UIManager> uiManager = nullptr;
@@ -64,6 +70,13 @@ private:
 	std::array<UIText*, 3> lvlupTitles;
 	std::array<UIText*, 3> lvlupLittleInfos;
 	std::array<UIText*, 3> lvlupDescriptions;
+
+	// Item related UI
+	UIObject* itemContainer = nullptr;
+	std::vector<UIObject*> uniqueItemContainer;
+	std::vector<UIObject*> shipModuleItemContainer;
+	std::vector<UIObject*> baseStatItemContainer;
+
 
 	std::array<ItemID, 3> chosenItems;
 

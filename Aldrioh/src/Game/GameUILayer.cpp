@@ -17,7 +17,7 @@
 
 #include <imgui.h>
 
-void GameUILayer::OnBegin()
+GameUILayer::GameUILayer(const std::string& name, Level& level) : Layer(name), level(level) 
 {
 	expGainCallbackId = level.GetPlayerStats().expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnExpGainEvent);
 	lvlUpCallbackId = level.GetPlayerStats().lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnLevelUpEvent);
@@ -138,6 +138,17 @@ void GameUILayer::OnBegin()
 		}
 	}
 
+	// Item ui related
+	{
+		uniqueItemContainer.reserve(10);
+		shipModuleItemContainer.reserve(10);
+		baseStatItemContainer.reserve(10);
+
+		itemContainer = new UIObject("UI Item main div", { 2.0f, 10.0f }, { 0.0f, 0.0f });
+		itemContainer->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+		uiManager->AddUIObject(itemContainer);
+	}
+
 	SetLvlUpUIActive(false);
 
 }
@@ -165,6 +176,86 @@ void GameUILayer::SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpI
 	lvlupLittleInfos[i]->SetText(littleInfo);
 	lvlupDescriptions[i]->SetText(lvlUpInfo.msg);
 	lvlupCards[i]->SetButtonColour(backgroundCol);
+}
+
+UIObject* CreateUIItemSlot(float imageSize)
+{
+	UIObject* uiObj = new UIObject("UIItem Container", glm::vec2(0), glm::vec2(imageSize));
+	uiObj->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+
+	UIImage* uiImage = new UIImage("UIItem Image", glm::vec2(0), glm::vec2(imageSize));
+	uiImage->SetAnchorPoint(AnchorPoint::LEFT_TOP);
+	uiObj->AddChild(uiImage);
+
+	UIText* uiText = new UIText("UIItem Text", glm::vec2(0), glm::vec2());
+	uiText->SetAnchorPoint(AnchorPoint::RIGHT_BOTTOM);
+	uiText->SetText("1");
+	uiText->SetFontStyle(uiText->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.0f));
+	uiObj->AddChild(uiText);
+
+	return uiObj;
+}
+
+void GameUILayer::UpdateItemUI(const ModularShipComponent& msc)
+{
+	constexpr float imageSize = 4.0f;
+	constexpr float widthGap = imageSize + 0.8f;
+	constexpr float heightGap = imageSize + 1.0f;
+
+	for (int i = 0; i < msc.uniqueCount; ++i)
+	{
+		if (i >= uniqueItemContainer.size())
+		{
+			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			newUIObj->SetRelativePos({ i * widthGap, 0.0f });
+			static_cast<UIText*>(newUIObj->GetFirstChild(UIType::Text))->Disable();
+			itemContainer->AddChild(newUIObj);
+
+			uniqueItemContainer.push_back(newUIObj);
+		}
+		UIObject* uiObj = uniqueItemContainer[i];
+		UIImage* uiImage = static_cast<UIImage*>(uiObj->GetFirstChild(UIType::Image));
+		uiImage->SetSubTexture(Sprites::get(msc.uniqueItems[i]->cachedSpriteId));
+
+		UIText* uiText = static_cast<UIText*>(uiObj->GetFirstChild(UIType::Text));
+		uiText->SetText(std::to_string(msc.uniqueItems[i]->lvl));
+	}
+
+	for (int i = 0; i < msc.shipModuleCount; ++i)
+	{
+		if (i >= shipModuleItemContainer.size())
+		{
+			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			newUIObj->SetRelativePos({ i * widthGap, heightGap });
+			itemContainer->AddChild(newUIObj);
+
+			shipModuleItemContainer.push_back(newUIObj);
+		}
+		UIObject* uiObj = shipModuleItemContainer[i];
+		UIImage* uiImage = static_cast<UIImage*>(uiObj->GetFirstChild(UIType::Image));
+		uiImage->SetSubTexture(Sprites::get(msc.shipModuleItems[i]->cachedSpriteId));
+
+		UIText* uiText = static_cast<UIText*>(uiObj->GetFirstChild(UIType::Text));
+		uiText->SetText(std::to_string(msc.shipModuleItems[i]->lvl));
+	}
+
+	for (int i = 0; i < msc.baseStatCount; ++i)
+	{
+		if (i >= baseStatItemContainer.size())
+		{
+			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			newUIObj->SetRelativePos({ i * widthGap, heightGap * 2.0f});
+			itemContainer->AddChild(newUIObj);
+
+			baseStatItemContainer.push_back(newUIObj);
+		}
+		UIObject* uiObj = baseStatItemContainer[i];
+		UIImage* uiImage = static_cast<UIImage*>(uiObj->GetFirstChild(UIType::Image));
+		uiImage->SetSubTexture(Sprites::get(msc.baseStatItems[i]->cachedSpriteId));
+
+		UIText* uiText = static_cast<UIText*>(uiObj->GetFirstChild(UIType::Text));
+		uiText->SetText(std::to_string(msc.baseStatItems[i]->lvl));
+	}
 }
 
 void GameUILayer::OnUpdate(Timestep delta)
@@ -253,6 +344,8 @@ void GameUILayer::SelectLvlUpCard(int button)
 	auto& msc = level.GetPlayer().GetComponent<ModularShipComponent>();
 	msc.AddItem(itemId);
 	level.GetPlayer().GetComponent<StatComponent>().dirty = true;
+
+	UpdateItemUI(msc);
 }
 void GameUILayer::OnExpGainEvent(PlayerStatsEventArg& e)
 {

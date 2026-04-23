@@ -60,13 +60,13 @@ Entity PlayerPrefab::create(Scene& scene)
 	pcc.dirLock = dir;
 	
 	StatModifier basicClass;
-	basicClass.hp_base = 100.0f;
+	basicClass.hp_base = 20.0f;
 	basicClass.dmg_base = 12.0f;
 	basicClass.critChance_base = 5.0f;
 	basicClass.critDmg_base = 1.0f;
 	basicClass.cooldown_base = 1.0f;
-	basicClass.acceleration_base = 6.0f;
-	basicClass.maxSpeed_base = 3.0f;
+	basicClass.acceleration_base = 7.0f;
+	basicClass.maxSpeed_base = 3.4f;
 	basicClass.movementFalloff_base = 1.0f;
 
 	auto& mcc = player.AddComponent<MoveControllerComponent>(basicClass.CalcAcceleration());

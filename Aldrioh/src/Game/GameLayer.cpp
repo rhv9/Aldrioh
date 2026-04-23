@@ -72,6 +72,8 @@ void GameLayer::OnBegin()
 
 	uiLayer = std::make_unique<GameUILayer>("Game UI Layer", *currentLevel);
 	Game::Instance().GetLayerStack().QueuePushLayer(uiLayer.get());
+	// Update Item UI
+	GetUILayer()->UpdateItemUI(currentLevel->GetPlayer().GetComponent<ModularShipComponent>());
 
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::TransformUpdatePrevPosition);

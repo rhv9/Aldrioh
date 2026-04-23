@@ -135,6 +135,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	// Debugging
 	mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
+	
 }
 
 Level::~Level()

@@ -18,7 +18,7 @@ public:
 	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override;
 
 	float shootTimer = 0.0f;
-	float shootCooldown = 0.50f;
+	float shootCooldown = 0.42f;
 
 	float projectileCount = 1;
 	float speed = 10.0f;

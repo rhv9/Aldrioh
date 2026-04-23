@@ -53,6 +53,14 @@ void UIObject::SetScalingBasedHeight(const float percentage)
 	RecalculateInternalState();
 }
 
+UIObject* UIObject::GetFirstChild(UIType type)
+{
+	for (UIObject* uiObject : children)
+		if (uiObject->GetType() == type)
+			return uiObject;
+	return nullptr;
+}
+
 UIManager* UIObject::GetUIManager()
 {
 	if (uiManager == nullptr && parent != nullptr)
