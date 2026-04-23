@@ -153,7 +153,7 @@ void EnemyInitGlobal()
 	EnemyEntityTypes::Enemy->collectableDrop = CollectableType::JEWEL1;
 
 	Drone_Normal = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Normal" };
-	Drone_Normal->maxHp = 25.0f;
+	Drone_Normal->maxHp = 20.0f;
 	Drone_Normal->speed = 2.0f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;

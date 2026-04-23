@@ -15,7 +15,7 @@ void FixedWaveManager::InitWaveConfig()
 	SpawnerWaveConfig wave1Config;
 	wave1Config.cooldownMin = 0.1f;
 	wave1Config.cooldownMax = 0.5f;
-	wave1Config.maxEntities = 5.0f;
+	wave1Config.maxEntities = 15.0f;
 	waveQueue.emplace_back("Wave 1", 60,
 		std::vector<IWaveLogic*> {
 		new SpawnerWave(level, wave1Config, EnemyEntityTypes::Drone_Normal),
