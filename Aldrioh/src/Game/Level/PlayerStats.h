@@ -31,7 +31,7 @@ public:
 private:
 	Level& level;
 	float exp = 0;
-	float maxExp = 100;
+	float maxExp = 40;
 	float expMultiplier = 1.0f;
 	float maxExpGrowth = 1.05f;
 	uint16_t levelCount = 0;

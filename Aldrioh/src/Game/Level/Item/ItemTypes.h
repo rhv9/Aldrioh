@@ -16,6 +16,7 @@ namespace ItemTypes
 	constexpr ItemID ShipModule_Shooter		{ 1, ItemCategory::ShipModule };
 	constexpr ItemID ShipModule_Rocket		{ 2, ItemCategory::ShipModule };
 	constexpr ItemID ShipModule_AOEDrone	{ 3, ItemCategory::ShipModule };
+	constexpr ItemID ShipModule_MachineGun	{ 4, ItemCategory::ShipModule };
 	
 	constexpr ItemID Unique_FloatyFast		{ 1, ItemCategory::Unique };
 

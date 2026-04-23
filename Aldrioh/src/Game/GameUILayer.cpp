@@ -178,19 +178,19 @@ void GameUILayer::SetLvlUpCardItem(int i, ItemID itemId, const LvlUpInfo& lvlUpI
 	lvlupCards[i]->SetButtonColour(backgroundCol);
 }
 
-UIObject* CreateUIItemSlot(float imageSize)
+UIObject* CreateUIItemSlot(float imageSize, float scale)
 {
-	UIObject* uiObj = new UIObject("UIItem Container", glm::vec2(0), glm::vec2(imageSize));
+	UIObject* uiObj = new UIObject("UIItem Container", glm::vec2(0), glm::vec2(imageSize * scale));
 	uiObj->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 
-	UIImage* uiImage = new UIImage("UIItem Image", glm::vec2(0), glm::vec2(imageSize));
+	UIImage* uiImage = new UIImage("UIItem Image", glm::vec2(0), glm::vec2(imageSize * scale));
 	uiImage->SetAnchorPoint(AnchorPoint::LEFT_TOP);
 	uiObj->AddChild(uiImage);
 
 	UIText* uiText = new UIText("UIItem Text", glm::vec2(0), glm::vec2());
 	uiText->SetAnchorPoint(AnchorPoint::RIGHT_BOTTOM);
 	uiText->SetText("1");
-	uiText->SetFontStyle(uiText->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.0f));
+	uiText->SetFontStyle(uiText->GetFontStyle().WithColour(Colour::WHITE).WithSize(1.0f * scale));
 	uiObj->AddChild(uiText);
 
 	return uiObj;
@@ -198,15 +198,16 @@ UIObject* CreateUIItemSlot(float imageSize)
 
 void GameUILayer::UpdateItemUI(const ModularShipComponent& msc)
 {
+	constexpr float scale = 1.2f;
 	constexpr float imageSize = 4.0f;
-	constexpr float widthGap = imageSize + 0.8f;
-	constexpr float heightGap = imageSize + 1.0f;
+	constexpr float widthGap = (imageSize + 0.8f) * scale;
+	constexpr float heightGap = (imageSize + 1.0f) * scale;
 
 	for (int i = 0; i < msc.uniqueCount; ++i)
 	{
 		if (i >= uniqueItemContainer.size())
 		{
-			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			UIObject* newUIObj = CreateUIItemSlot(imageSize, scale);
 			newUIObj->SetRelativePos({ i * widthGap, 0.0f });
 			static_cast<UIText*>(newUIObj->GetFirstChild(UIType::Text))->Disable();
 			itemContainer->AddChild(newUIObj);
@@ -225,7 +226,7 @@ void GameUILayer::UpdateItemUI(const ModularShipComponent& msc)
 	{
 		if (i >= shipModuleItemContainer.size())
 		{
-			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			UIObject* newUIObj = CreateUIItemSlot(imageSize, scale);
 			newUIObj->SetRelativePos({ i * widthGap, heightGap });
 			itemContainer->AddChild(newUIObj);
 
@@ -243,7 +244,7 @@ void GameUILayer::UpdateItemUI(const ModularShipComponent& msc)
 	{
 		if (i >= baseStatItemContainer.size())
 		{
-			UIObject* newUIObj = CreateUIItemSlot(imageSize);
+			UIObject* newUIObj = CreateUIItemSlot(imageSize, scale);
 			newUIObj->SetRelativePos({ i * widthGap, heightGap * 2.0f});
 			itemContainer->AddChild(newUIObj);
 

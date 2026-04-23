@@ -69,6 +69,18 @@ namespace Sprites {
 		SPRITES_MACRO(greenBox, 1, 0);
 		SPRITES_MACRO(square, 2, 0);
 
+		// Items
+		SPRITES_MACRO(item_fireball,		15, 15);
+		SPRITES_MACRO(item_health,			15, 14);
+		SPRITES_MACRO(item_floatyfast,		15, 13);
+		SPRITES_MACRO(item_dmg_increase,	15, 12);
+		SPRITES_MACRO(item_crit_dmg,		15, 11);
+		SPRITES_MACRO(item_crit_chance,		15, 10);
+		SPRITES_MACRO(item_clover,			15,	 9);
+
+
+
+
 // It iterates through the list so that we can add it in.
 #ifdef SPRITES_CPP
 		LOG_CORE_INFO("Number of sprites using new system:{}", toInitSprites.size());
