@@ -16,6 +16,7 @@ ItemPool::ItemPool()
 		ItemTypes::BaseStat_Luck,
 
 		ItemTypes::ShipModule_Shooter,
+		ItemTypes::ShipModule_MachineGun,
 		//ItemTypes::ShipModule_Rocket,
 		//ItemTypes::ShipModule_AOEDrone,
 		//

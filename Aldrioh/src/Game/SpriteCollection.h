@@ -77,6 +77,7 @@ namespace Sprites {
 		SPRITES_MACRO(item_crit_dmg,		15, 11);
 		SPRITES_MACRO(item_crit_chance,		15, 10);
 		SPRITES_MACRO(item_clover,			15,	 9);
+		SPRITES_MACRO(item_machinegun,		15,  8);
 
 
 

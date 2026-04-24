@@ -26,7 +26,7 @@ auto OnDestroy_FireballImpact = [](Entity fireball) -> void {
 	fireball.getScene()->GetParticleManager().Emit(pt);
 	};
 
-void shootFireball(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed)
+void shootFireball(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
 {
 	// Create entity
 	Entity fireball = e.getScene()->CreateEntity("Fireball");
@@ -35,14 +35,16 @@ void shootFireball(Entity& e, const glm::vec2& origin, const glm::vec2& normaliz
 	pmc.resultantVelocity = normalizedDir * speed;
 	pmc.naturalFallOffMultiplier = 0.0f;
 
-	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire, glm::vec3{ -0.5f, -0.5f, 0.0f });
+	VisualComponent& vc = fireball.AddComponent<VisualComponent>(Sprites::bullet_fire);
+	vc.scale *= sizeScaling;
+	vc.localTransform = glm::vec3{ -(vc.scale / 2.0f), 0.0f };
 	vc.rotation = Math::angle(normalizedDir);
-	vc.colour.a = 1.0f;
+	vc.colour = colour;
 
 	fireball.AddComponent<TimeLifeComponent>(1.0f);
 	fireball.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
 
-	glm::vec2 collisionSize{ 0.3f };
+	glm::vec2 collisionSize{ 0.3f * sizeScaling };
 	fireball.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 	fireball.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
 	fireball.AddComponent<DamageComponent>(dmg);
@@ -76,7 +78,7 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 			for (int i = 0; i < projectileCount; ++i)
 			{
 				glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + i * (Math::PI / 10.0f));
-				shootFireball(e, playerPos, dir, cachedDmg, speed);
+				shootFireball(e, playerPos, dir, cachedDmg, speed, 1.0f, glm::vec4{ 1.0f });
 			}
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
@@ -85,6 +87,48 @@ void FireBallShipModuleItem::OnUpdate(Timestep ts, Entity e)
 }
 
 void FireBallShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)
+{
+	cachedDmg = dmg * (dmg_mult + statModifier.dmg_multiplier + 1.0f);
+}
+
+
+
+// Machine gun related
+
+LvlUpInfo MachineGunShipModuleItem::LevelUp()
+{
+	++lvl;
+	if (lvl % 5 == 0)
+	{
+		projectileCount += 1;
+		return { "Increase projectile count by one" };
+	}
+	else
+	{
+		dmg_mult += 0.1f;
+		return { "Increase damage by 10%" };
+	}
+}
+
+void MachineGunShipModuleItem::OnUpdate(Timestep ts, Entity e)
+{
+	auto& inputAction = e.GetComponent<ActionComponent>();
+	if (inputAction.shoot)
+	{
+		if (shootTimer >= shootCooldown)
+		{
+			shootTimer = 0.0f;
+			glm::vec2& playerPos = e.GetTransformComponent().position;
+
+			glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + (Math::Random::normalized() - 0.5f) * (Math::PI / 10.0f) * 1.2f);
+			shootFireball(e, playerPos, dir, cachedDmg, speed, 0.5f, glm::vec4{ 1.5f, 1.5f, 1.5f, 1.0f});
+			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
+		}
+	}
+	shootTimer += ts;
+}
+
+void MachineGunShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)
 {
 	cachedDmg = dmg * (dmg_mult + statModifier.dmg_multiplier + 1.0f);
 }
