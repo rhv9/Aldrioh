@@ -86,6 +86,6 @@ void CollectableItem::SetPosOnDecimalValue(const glm::vec2 pos)
 
 CollectableItem::RenderData CollectableItem::GetRenderData() const
 {
-	static const glm::vec4 JEWEL_COLOURS_ARRAY[4]{ {0, 1, 0, 1}, {0, 0, 1, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
+	static const glm::vec4 JEWEL_COLOURS_ARRAY[4]{ {0, 1, 0, 1}, {0.3f, 0.85f, 0.85f, 1}, {1, 0, 0, 1}, {1, 1, 1, 1} };
 	return RenderData{ type == CollectableType::COIN ? Sprites::coin : Sprites::jewel, JEWEL_COLOURS_ARRAY[static_cast<int>(type)] };
 }

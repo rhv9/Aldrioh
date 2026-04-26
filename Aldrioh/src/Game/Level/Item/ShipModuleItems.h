@@ -12,7 +12,7 @@ public:
 	virtual ~FireBallShipModuleItem() override {}
 	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<FireBallShipModuleItem>(*this); }
 
-	virtual LvlUpInfo LevelUp();
+	virtual LvlUpInfo LevelUp() override;
 	virtual void OnUpdate(Timestep ts, Entity e) override;
 	virtual LvlUpInfo LevelUpPretend() override { FireBallShipModuleItem copyItem = *this; return copyItem.LevelUp(); }
 	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override;
@@ -38,9 +38,35 @@ public:
 	virtual ~MachineGunShipModuleItem() override {}
 	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<MachineGunShipModuleItem>(*this); }
 
-	virtual LvlUpInfo LevelUp();
+	virtual LvlUpInfo LevelUp() override;
 	virtual void OnUpdate(Timestep ts, Entity e) override;
 	virtual LvlUpInfo LevelUpPretend() override { MachineGunShipModuleItem copyItem = *this; return copyItem.LevelUp(); }
+	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override;
+
+	float shootTimer = 0.0f;
+	float shootCooldown = 0.12f;
+
+	float projectileCount = 1;
+	float speed = 7.0f;
+
+	float dmg = 2;
+	float dmg_mult = 0;
+
+	float cachedDmg = dmg;
+};
+
+
+class RocketShooterModuleItem : public ShipModuleItem
+{
+public:
+	RocketShooterModuleItem() = default;
+	RocketShooterModuleItem(const ItemDef& def) : ShipModuleItem(def) {}
+	virtual ~RocketShooterModuleItem() override {}
+	virtual std::unique_ptr<Item> CreateCopy() { return std::make_unique<RocketShooterModuleItem>(*this); }
+
+	virtual LvlUpInfo LevelUp() override;
+	virtual void OnUpdate(Timestep ts, Entity e) override;
+	virtual LvlUpInfo LevelUpPretend() override { RocketShooterModuleItem copyItem = *this; return copyItem.LevelUp(); }
 	virtual void RecalculateOnStatChanges(StatModifier& statModifier) override;
 
 	float shootTimer = 0.0f;

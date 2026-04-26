@@ -81,6 +81,7 @@ void ItemTypes::Init(ItemRegistry& itemRegistry)
 	
 	auto& shipModule_machineGun = itemRegistry.AddNewItem<MachineGunShipModuleItem>(ItemDef{ ItemTypes::ShipModule_MachineGun, "Machine Gun", "Brrrrrrrrrrrr!!", Sprites::item_machinegun });
 	
+	auto& shipModule_rocketShooter = itemRegistry.AddNewItem<RocketShooterModuleItem>(ItemDef{ ItemTypes::ShipModule_RocketShooter, "Rocket Shooter", "Highly explosive aiming turrets", Sprites::item_rocketshooter });
 
 
 	// Unique items

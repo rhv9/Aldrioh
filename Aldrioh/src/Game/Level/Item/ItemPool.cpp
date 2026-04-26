@@ -17,7 +17,7 @@ ItemPool::ItemPool()
 
 		ItemTypes::ShipModule_Shooter,
 		ItemTypes::ShipModule_MachineGun,
-		//ItemTypes::ShipModule_Rocket,
+		ItemTypes::ShipModule_RocketShooter,
 		//ItemTypes::ShipModule_AOEDrone,
 		//
 		ItemTypes::Unique_FloatyFast,

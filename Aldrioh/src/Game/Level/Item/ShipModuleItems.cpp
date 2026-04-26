@@ -132,3 +132,21 @@ void MachineGunShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifi
 {
 	cachedDmg = dmg * (dmg_mult + statModifier.dmg_multiplier + 1.0f);
 }
+
+
+// Rocket Shooter
+
+LvlUpInfo RocketShooterModuleItem::LevelUp()
+{
+	return LvlUpInfo();
+}
+
+void RocketShooterModuleItem::OnUpdate(Timestep ts, Entity e)
+{
+
+}
+
+void RocketShooterModuleItem::RecalculateOnStatChanges(StatModifier& statModifier)
+{
+
+}
