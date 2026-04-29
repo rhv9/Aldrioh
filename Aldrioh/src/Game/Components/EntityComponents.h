@@ -128,15 +128,6 @@ struct StatComponent
 	StatComponent(const StatComponent&) = default;
 };
 
-struct BaseClassData
-{
-	StatModifier baseStat;
-	float speed = -1.0f;
-};
-struct ClassDataComponent
-{
-	StatModifier baseStat;
-};
 
 struct ActionComponent
 {
@@ -150,6 +141,7 @@ struct DamageComponent
 {
 	float dmg = -20.0f;
 
+	DamageComponent() {}
 	DamageComponent(float dmg) : dmg(dmg) {}
 	DamageComponent(const DamageComponent&) = default;
 };

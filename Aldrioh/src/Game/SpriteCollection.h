@@ -51,6 +51,8 @@ namespace Sprites {
 		SPRITES_MACRO(bullet_fire, 0, 1);
 		SPRITES_MACRO(bullet_red, 1, 1);
 		SPRITES_MACRO(bullet_white, 2, 1);
+		SPRITES_MACRO(bullet_rocket, 5, 1);
+
 		SPRITES_MACRO(coin, 3, 1);
 		SPRITES_MACRO(jewel, 4, 1);
 
