@@ -25,6 +25,7 @@
 #include <Game/Systems/TestSystems.h>
 #include <Game/Systems/CoreEntitySystems.h>
 #include <Game/Systems/ControllerSystems.h>
+#include <Game/Systems/ShipModuleSystems.h>
 #include <Systems/UISystems.h>
 #include <Systems/SoundSystems.h>
 #include <Systems/PathSystems.h>
@@ -78,6 +79,7 @@ void GameLayer::OnBegin()
 	// On Update Systems
 	scene->AddUpdateSystem(&EntitySystem::TransformUpdatePrevPosition);
 	scene->AddUpdateSystem(&EntitySystem::PlayerControllerSystem);
+	scene->AddUpdateSystem(&EntitySystem::ShipModuleSystems);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
 	scene->AddUpdateSystem(&EntitySystem::ControllerSystems);

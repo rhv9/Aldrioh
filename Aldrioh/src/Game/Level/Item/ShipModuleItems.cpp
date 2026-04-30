@@ -5,6 +5,7 @@
 #include <Scene/Components.h>
 #include <Game/Entity/GameEntities.h>
 #include <Math/Math.h>
+#include <Game/Components/ShipModuleComponents.h>
 
 ParticleTemplate particleTemplate_fireballImpact = []() {
 	ParticleTemplate pt;
@@ -50,52 +51,6 @@ void shootFireball(Entity& e, const glm::vec2& origin, const glm::vec2& normaliz
 	fireball.AddComponent<DamageComponent>(dmg);
 }
 
-
-
-
-ParticleTemplate particleTemplate_rocketImpact = []() {
-	ParticleTemplate pt;
-	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
-	pt.beginSize = 0.25f;
-	pt.endSize = 0.05f;
-	pt.life = 0.2f;
-	pt.velocity = { 0.0f, 0.0f };
-	pt.velocityVariation = { 5.0f, 5.0f };
-	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
-	pt.count = 3;
-	return pt;
-	}();
-
-auto OnDestroy_RocketImpact = [](Entity fireball) -> void {
-	ParticleTemplate pt = particleTemplate_fireballImpact;
-	pt.startPos = fireball.GetTransformComponent().position;
-	fireball.getScene()->GetParticleManager().Emit(pt);
-	};
-
-void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
-{
-	// Create entity
-	Entity rocket = e.getScene()->CreateEntity("Rocket");
-	rocket.GetComponent<TransformComponent>().UpdateBothPos(origin);
-	auto& pmc = rocket.AddComponent<PhysicsMovementComponent>(false);
-	pmc.resultantVelocity = glm::vec2{ Math::Random::linearFloat(-1, 1), Math::Random::linearFloat(-1, 1) } * 2.0f;
-	pmc.naturalFallOffMultiplier = 0.0f;
-
-	VisualComponent& vc = rocket.AddComponent<VisualComponent>(Sprites::bullet_rocket);
-	vc.scale *= sizeScaling;
-	vc.localTransform = glm::vec3{ -(vc.scale / 2.0f), 0.0f };
-	vc.rotation = Math::angle(normalizedDir);
-	vc.colour = colour;
-
-	rocket.AddComponent<TimeLifeComponent>(1.0f);
-	rocket.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
-
-	glm::vec2 collisionSize{ 0.3f * sizeScaling };
-	rocket.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
-	rocket.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
-	rocket.AddComponent<DamageComponent>(dmg);
-}
 
 
 
@@ -189,6 +144,60 @@ void MachineGunShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifi
 
 // Rocket Shooter
 
+
+ParticleTemplate particleTemplate_rocketImpact = []() {
+	ParticleTemplate pt;
+	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
+	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
+	pt.beginSize = 0.25f;
+	pt.endSize = 0.05f;
+	pt.life = 0.2f;
+	pt.velocity = { 0.0f, 0.0f };
+	pt.velocityVariation = { 5.0f, 5.0f };
+	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+	pt.count = 3;
+	return pt;
+	}();
+
+auto OnDestroy_RocketImpact = [](Entity fireball) -> void {
+	ParticleTemplate pt = particleTemplate_fireballImpact;
+	pt.startPos = fireball.GetTransformComponent().position;
+	fireball.getScene()->GetParticleManager().Emit(pt);
+	};
+
+void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
+{
+	// Create entity
+	Entity rocket = e.getScene()->CreateEntity("Rocket");
+	rocket.GetComponent<TransformComponent>().UpdateBothPos(origin);
+	auto& pmc = rocket.AddComponent<PhysicsMovementComponent>(false);
+	pmc.resultantVelocity = glm::vec2{ Math::Random::linearFloat(-1, 1), Math::Random::linearFloat(-1, 1) } * 3.0f;
+	pmc.naturalFallOffMultiplier = 0.0f;
+	auto& mcc = rocket.AddComponent<MoveControllerComponent>();
+	mcc.maxSpeed = 4.0f;
+	mcc.speed = 7.0f;
+	mcc.falloffMultiplier = 0.0f;
+
+	VisualComponent& vc = rocket.AddComponent<VisualComponent>(Sprites::bullet_rocket);
+	vc.scale *= sizeScaling;
+	vc.localTransform = glm::vec3{ -(vc.scale / 2.0f), 0.0f };
+	vc.rotation = Math::angle(normalizedDir) - Math::PI / 4.0f;
+	vc.colour = colour;
+
+	rocket.AddComponent<TimeLifeComponent>(1.0f);
+	rocket.AddComponent<EntityTypeComponent>(EntityTypes::Fireball->entityId);
+
+	glm::vec2 collisionSize{ 0.3f * sizeScaling };
+	rocket.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
+	rocket.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
+	rocket.AddComponent<DamageComponent>(dmg);
+
+	auto& rsc = rocket.AddComponent<RocketShooterComponent>();
+	rsc.timer = 1.0f;
+	rocket.AddComponent<RotationComponent>(Math::PI / 2.0f);
+}
+
+
 LvlUpInfo RocketShooterModuleItem::LevelUp()
 {
 	return LvlUpInfo();
@@ -204,8 +213,8 @@ void RocketShooterModuleItem::OnUpdate(Timestep ts, Entity e)
 			shootTimer = 0.0f;
 			glm::vec2& playerPos = e.GetTransformComponent().position;
 
-			glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo + (Math::Random::normalized() - 0.5f) * (Math::PI / 10.0f) * 1.2f);
-			shootFireball(e, playerPos, dir, cachedDmg, speed, 0.5f, glm::vec4{ 1.5f, 1.5f, 1.5f, 1.0f });
+			glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo);
+			shootRocket(e, playerPos, dir, cachedDmg, speed, 1.0f, glm::vec4{ 1.5f, 1.5f, 1.5f, 1.0f });
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
 	}
