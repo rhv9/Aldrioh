@@ -61,6 +61,7 @@ void Scene::SetPlayer(const Entity& e)
 
 void Scene::OnUpdate(Timestep ts)
 {
+	mousePosCached = CalculateMousePosInScene();
 	// Run each system
 	for (auto system : updateSystems)
 		system(ts, *this);
@@ -205,7 +206,7 @@ void Scene::SetPrimaryCameraEntity(Entity primaryEntity)
 
 }
 
-glm::vec2 Scene::GetMousePosInScene()
+glm::vec2 Scene::CalculateMousePosInScene()
 {
 	glm::vec2 mousePos = Input::GetMousePosition();
 	auto& cameraComponent = GetPrimaryCameraEntity().GetComponent<CameraComponent>();
@@ -218,6 +219,7 @@ glm::vec2 Scene::GetMousePosInScene()
 	glm::vec2 zoomedDimensions{ bounds.Right, bounds.Top };
 
 	return (glm::vec2{ mousePosPercent.x * zoomedDimensions.x - bounds.Right / 2.0f, mousePosPercent.y * zoomedDimensions.y - bounds.Top / 2.0f } *2.0f) + cameraComponent.cameraController->GetPosition();
+	return mousePos;
 }
 
 CollisionDispatcher& Scene::GetCollisionDispatcher()

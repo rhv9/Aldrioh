@@ -34,7 +34,8 @@ public:
 
 	// temp
 	entt::registry& getRegistry() { return registry; }
-	glm::vec2 GetMousePosInScene();
+	glm::vec2 GetMousePosInScene() const { return mousePosCached; }
+	glm::vec2 CalculateMousePosInScene();
 
 	CollisionDispatcher& GetCollisionDispatcher();
 
@@ -94,6 +95,7 @@ private:
 	std::vector<SystemFunction> renderSystems;
 	std::vector<SystemFunction> uiRenderSystems;
 
+	glm::vec2 mousePosCached{ 0.0f };
 
 	friend class Entity;
 };
