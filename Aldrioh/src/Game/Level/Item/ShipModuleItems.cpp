@@ -167,7 +167,7 @@ auto OnDestroy_RocketImpact = [](Entity fireball) -> void {
 
 void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
 {
-	float oppositeAngle = Math::normalizeAngle(e.GetComponent<VisualComponent>().rotation + Math::PI + Math::HALF_PI);
+	float oppositeAngle = Math::normalizeAngle(e.GetComponent<VisualComponent>().rotation + Math::PI);
 	// Create entity
 	Entity rocket = e.getScene()->CreateEntity("Rocket");
 	rocket.GetComponent<TransformComponent>().UpdateBothPos(origin);

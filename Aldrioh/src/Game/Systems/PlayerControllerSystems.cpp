@@ -91,7 +91,7 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 			glm::vec2 mousePos = scene.GetMousePosInScene();
 
 			if (pcc.dirLock == DIRLOCK_FREE)
-				player.GetComponent<VisualComponent>().rotation = inputAction.anglePointingTo - Math::PI / 2.0f;
+				player.GetComponent<VisualComponent>().rotation = inputAction.anglePointingTo;
 			else
 				player.GetComponent<VisualComponent>().rotation = Math::angle(pcc.dirLock);
 
