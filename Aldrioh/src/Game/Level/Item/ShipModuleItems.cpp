@@ -167,15 +167,16 @@ auto OnDestroy_RocketImpact = [](Entity fireball) -> void {
 
 void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
 {
+	float oppositeAngle = Math::normalizeAngle(e.GetComponent<VisualComponent>().rotation + Math::PI + Math::HALF_PI);
 	// Create entity
 	Entity rocket = e.getScene()->CreateEntity("Rocket");
 	rocket.GetComponent<TransformComponent>().UpdateBothPos(origin);
 	auto& pmc = rocket.AddComponent<PhysicsMovementComponent>(false);
-	pmc.resultantVelocity = glm::vec2{ Math::Random::linearFloat(-1, 1), Math::Random::linearFloat(-1, 1) } * 3.0f;
+	pmc.resultantVelocity = Math::angleToNormalizedVector(Math::Random::linearFloat(oppositeAngle - Math::QUARTER_PI, oppositeAngle + Math::QUARTER_PI))  * 5.0f;
 	pmc.naturalFallOffMultiplier = 0.0f;
 	auto& mcc = rocket.AddComponent<MoveControllerComponent>();
-	mcc.maxSpeed = 4.0f;
-	mcc.speed = 7.0f;
+	mcc.maxSpeed = 50.0f;
+	mcc.speed = 20.0f;
 	mcc.falloffMultiplier = 0.0f;
 
 	VisualComponent& vc = rocket.AddComponent<VisualComponent>(Sprites::bullet_rocket);
@@ -194,7 +195,8 @@ void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalized
 
 	auto& rsc = rocket.AddComponent<RocketShooterComponent>();
 	rsc.timer = 1.0f;
-	rocket.AddComponent<RotationComponent>(Math::PI / 2.0f);
+	rocket.AddComponent<RotationComponent>(Math::Random::randomSign() * Math::PI * 2.0f);
+
 }
 
 

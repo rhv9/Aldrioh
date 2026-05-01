@@ -3,6 +3,11 @@
 namespace Math {
 
 	constexpr float PI = 3.14159265358979323846f;
+	constexpr float TWO_PI = PI * 2.0f;
+	constexpr float HALF_PI = PI / 2.0f;
+	constexpr float QUARTER_PI = HALF_PI / 2.0f;
+
+
 
 	namespace Random {
 
@@ -11,6 +16,7 @@ namespace Math {
 		// Min/max inclusive
 		float linearFloat(float min, float max);
 		float normalized();
+		int32_t randomSign();
 
 	}
 
@@ -40,6 +46,7 @@ namespace Math {
 	glm::vec2 perpendicularClockwise(const glm::vec2& pos);
 	glm::vec2 perpendicularCounterClockwise(const glm::vec2& pos);
 
+	float normalizeAngle(float angle);
 	float angleBetween(const glm::vec2& p1, const glm::vec2& p2);
 	float angleBetween2d(const glm::vec2& p1, const glm::vec2& p2);
 	glm::vec2 normalizedDirection(const glm::vec2& origin, const glm::vec2& dest);

@@ -18,6 +18,11 @@ float Math::Random::normalized()
 	return glm::linearRand(0.0f, 1.0f);
 }
 
+int32_t Math::Random::randomSign()
+{
+	return Math::Random::linearInt(0, 1) * 2 - 1;
+}
+
 
 
 float Math::sinRad(float val)
@@ -48,6 +53,11 @@ glm::vec2 Math::perpendicularClockwise(const glm::vec2& pos)
 glm::vec2 Math::perpendicularCounterClockwise(const glm::vec2& pos)
 {
 	return glm::vec2{ -pos.y, pos.x };
+}
+
+float Math::normalizeAngle(float angle)
+{
+	return angle - TWO_PI * Math::ffloor((angle + PI) / TWO_PI);
 }
 
 float Math::angleBetween(const glm::vec2& p1, const glm::vec2& p2)

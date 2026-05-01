@@ -154,6 +154,7 @@ void Level::OnUpdate(Timestep ts)
 	CollectableMapping topRightMapping = collectableManager.GetMapping(levelArea.topRight + playerCameraPos);
 
 	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
+
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };

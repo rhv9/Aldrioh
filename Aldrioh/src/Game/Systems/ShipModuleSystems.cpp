@@ -30,29 +30,27 @@ void EntitySystem::ShipModuleSystems(Timestep ts, Scene& scene)
 
 		if (!rsc.active && rsc.elapsedTime >= rsc.timer)
 		{
-			
 			rsc.active = true;
 			e.RemoveComponent<RotationComponent>();
 			rsc.angleFacing = e.GetComponent<VisualComponent>().rotation - RocketShooterComponent::ROTATION_OFFSET;
-			
-			e.GetComponent<PhysicsMovementComponent>().naturalFallOffMultiplier = 0.5f;
+			e.GetComponent<PhysicsMovementComponent>().naturalFallOffMultiplier = 8.0f;
 
 			auto& mcc = e.GetComponent<MoveControllerComponent>();
 			mcc.moveDir = Math::angleToNormalizedVector(rsc.angleFacing);
-		}
-		else if (rsc.active && rsc.elapsedTime <= rsc.timer * 10.0f)
-		{
-		
-			
+
 			glm::vec2 mousePos = scene.GetMousePosInScene();
-			
-			// Rotate towards mouse pos;
 			glm::vec2 pos = e.GetTransformComponent().position;
-			float angle = Math::angleBetween2d(pos, mousePos);
-			float rocketAngle = rsc.angleFacing;
-			float angleDiff = angle - rocketAngle;
-			float angleTurn = Math::min(Math::abs(angleDiff), rsc.rotationSpeed * ts) * Math::sign(angleDiff);
-			LOG_CORE_INFO("Angle diff {}, rocketAngle: {}, angleToMouse: {}", angleDiff, rocketAngle, angle);
+			rsc.targetAngle = Math::angleBetween2d(pos, mousePos);
+		}
+		else if (rsc.active && rsc.elapsedTime <= rsc.timer + 1.2f)
+		{
+			glm::vec2 mousePos = scene.GetMousePosInScene();
+			glm::vec2 pos = e.GetTransformComponent().position;
+			rsc.targetAngle = Math::angleBetween2d(pos, mousePos);
+			float diff = Math::normalizeAngle(rsc.targetAngle - rsc.angleFacing);
+
+			float sign = Math::sign(diff);
+			float angleTurn = Math::min(diff * sign, rsc.rotationSpeed * ts) * sign;
 			rsc.angleFacing += angleTurn;
 
 			auto& mcc = e.GetComponent<MoveControllerComponent>();
