@@ -99,8 +99,10 @@ void EntitySystem::ShipModuleSystems(Timestep ts, Scene& scene)
 			// Switch to fixed movement
 			auto& mcc = e.GetComponent<MoveControllerComponent>();
 			mcc.moveDir = glm::vec2{ 0 };
+			
 			auto& pmc = e.GetComponent<PhysicsMovementComponent>();
 			pmc.resultantVelocity = mcc.moveDir * mcc.speed;
+			pmc.managedVelocity = glm::vec2{ 0.0f };
 			pmc.naturalFallOffMultiplier = 0.0f;
 
 			glm::vec2 pos = e.GetTransformComponent().position;

@@ -20,7 +20,9 @@ void EntitySystem::CoreEntitySystems(Timestep ts, Scene& scene)
 		{
 			Entity entity = scene.WrapEntityHandle(e);
 
-			//LOG_CORE_INFO("On death: {}", entity.GetComponent<NameComponent>().name);
+			LOG_CORE_INFO("On death: {}", entity.GetComponent<NameComponent>().name);
+			if (entity.HasComponent<TransformComponent>())
+				LOG_CORE_INFO("Pos: {}", glm::to_string(entity.GetTransformComponent().position));
 
 			if (entity.HasComponent<OnDestroyComponent>())
 				entity.GetComponent<OnDestroyComponent>().onDeathFunc(entity);

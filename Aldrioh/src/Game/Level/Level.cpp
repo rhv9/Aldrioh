@@ -63,7 +63,6 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
 	// Debugging
-	GameDebugState::level_spawnEntites = true;
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
 	scene.GetCollisionZone().Init(60, 40, 1);
@@ -71,18 +70,18 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 
 	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUpEvent);
 
-	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::PlayerBullet, EntityCategory::Enemy, [](CollisionEvent& fireball, CollisionEvent& enemy)
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::PlayerBullet, EntityCategory::Enemy, [](CollisionEvent& playerBullet, CollisionEvent& enemy)
 		{
-			fireball.e.QueueDestroy();
+			playerBullet.e.QueueDestroy();
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
-			hc.health -= fireball.e.GetComponent<DamageComponent>().dmg;
-			glm::vec2 fireballMoveDir = glm::normalize(fireball.e.GetComponent<PhysicsMovementComponent>().resultantVelocity);
-			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += fireballMoveDir * 1.0f;
+			hc.health -= playerBullet.e.GetComponent<DamageComponent>().dmg;
+			glm::vec2 playerBulletMoveDir = glm::normalize(playerBullet.e.GetComponent<PhysicsMovementComponent>().resultantVelocity);
+			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += playerBulletMoveDir * 1.0f;
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
-			fireball.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
-			fireball.handled = true;
+			playerBullet.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+			playerBullet.handled = true;
 		});
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
