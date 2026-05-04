@@ -11,6 +11,7 @@ void Settings::LoadOrCreate()
 	simdjson::ondemand::parser parser;
 	simdjson::padded_string json = simdjson::padded_string::load("assets/config/settings.json");
 	simdjson::ondemand::document parsed = parser.iterate(json);
+	
 	volumeMaster = float(parsed["volume"]["master"]);
 	volumeSfx = float(parsed["volume"]["sfx"]);
 	volumeMusic = float(parsed["volume"]["music"]);

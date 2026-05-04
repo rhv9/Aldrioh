@@ -55,6 +55,11 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 		if (e.GetComponent<HealthComponent>().health <= 0.0f)
 		{
 			glm::vec2 pos = e.GetTransformComponent().position;
+			if (std::isnan(pos.x))
+			{
+				auto& vc = e.GetComponent<VisualComponent>();
+				vc.flags;
+			}
 			ParticleTemplate pt = particleTemplate_droneDestroyed;
 			pt.startPos = pos;
 			e.getScene()->GetParticleManager().Emit(pt);

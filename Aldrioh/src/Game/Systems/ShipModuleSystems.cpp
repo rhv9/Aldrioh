@@ -104,7 +104,7 @@ void EntitySystem::ShipModuleSystems(Timestep ts, Scene& scene)
 			pmc.naturalFallOffMultiplier = 0.0f;
 
 			glm::vec2 pos = e.GetTransformComponent().position;
-			particleTemplate_rocketExhausted.startPos = pos - mcc.moveDir / 2.2f;
+			particleTemplate_rocketExhausted.startPos = pos + mcc.moveDir * mcc.speed * (float)ts;
 			particleTemplate_rocketExhausted.velocity = -mcc.moveDir * 4.0f;
 			scene.GetParticleManager().Emit(particleTemplate_rocketExhausted);
 		}
