@@ -86,7 +86,7 @@ Entity PlayerPrefab::create(Scene& scene)
 
 	//msc.AddItem(ItemTypes::ShipModule_Shooter);
 	msc.AddItem(ItemTypes::ShipModule_RocketShooter);
-	msc.AddItem(ItemTypes::Unique_FloatyFast);
+	//msc.AddItem(ItemTypes::Unique_FloatyFast);
 
 	player.AddComponent<ActionComponent>();
 

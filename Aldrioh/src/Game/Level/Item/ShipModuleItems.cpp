@@ -147,22 +147,21 @@ void MachineGunShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifi
 
 ParticleTemplate particleTemplate_rocketImpact = []() {
 	ParticleTemplate pt;
-	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
-	pt.endColour = glm::vec4(1.0f, 0.5f, 0.0f, 0.9f);
-	pt.beginSize = 0.25f;
-	pt.endSize = 0.05f;
-	pt.life = 0.2f;
+	pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+	pt.beginSize = 0.80f;
+	pt.endSize = 0.4f;
+	pt.life = 1.0f;
 	pt.velocity = { 0.0f, 0.0f };
-	pt.velocityVariation = { 5.0f, 5.0f };
-	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
-	pt.count = 3;
+	pt.velocityVariation = { 2.0f, 2.0f };
+	pt.rotationRange = { Math::degreesToRad(-10), Math::degreesToRad(10) };
+	pt.count = 5;
 	return pt;
 	}();
 
-auto OnDestroy_RocketImpact = [](Entity fireball) -> void {
-	ParticleTemplate pt = particleTemplate_fireballImpact;
-	pt.startPos = fireball.GetTransformComponent().position;
-	fireball.getScene()->GetParticleManager().Emit(pt);
+auto OnDestroy_RocketImpact = [](Entity rocket) -> void {
+	particleTemplate_rocketImpact.startPos = rocket.GetTransformComponent().position;
+	rocket.getScene()->GetParticleManager().Emit(particleTemplate_rocketImpact);
 	};
 
 void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
@@ -190,7 +189,7 @@ void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalized
 
 	glm::vec2 collisionSize{ 0.3f * sizeScaling };
 	rocket.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
-	rocket.AddComponent<OnDestroyComponent>(OnDestroy_FireballImpact);
+	rocket.AddComponent<OnDestroyComponent>(OnDestroy_RocketImpact);
 	rocket.AddComponent<DamageComponent>(dmg);
 
 	auto& rsc = rocket.AddComponent<RocketShooterComponent>();

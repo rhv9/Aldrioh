@@ -1,4 +1,5 @@
 #pragma once
+#include <Math/Math.h>
 
 struct ParticleTemplate
 {
@@ -8,6 +9,7 @@ struct ParticleTemplate
 	float beginSize = 1, endSize = 1;
 	float life = 1.0f;
 	std::pair<float, float> rotationRange{ 0.0f, 0.0f };
+	float (*easingFunc)(float) = Math::EasingFunction::easeInQuint;
 
 	int count = 1;
 };
@@ -20,6 +22,7 @@ struct Particle
 	float beginSize, endSize;
 	float life = 1.0f;
 	float rotation = 0.0f;
+	float (*easingFunc)(float);
 
 	float lifeRemaining = 1.0f;
 	bool active = false;

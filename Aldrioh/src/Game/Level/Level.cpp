@@ -62,6 +62,8 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
+	Math::EasingFunction::debug_test(Math::EasingFunction::easeInExpo);
+
 	// Debugging
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
@@ -75,8 +77,10 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			playerBullet.e.QueueDestroy();
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 			hc.health -= playerBullet.e.GetComponent<DamageComponent>().dmg;
-			glm::vec2 playerBulletMoveDir = glm::normalize(playerBullet.e.GetComponent<PhysicsMovementComponent>().resultantVelocity);
-			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += playerBulletMoveDir * 1.0f;
+
+			glm::vec2 playerBulletMoveDir = playerBullet.e.GetComponent<PhysicsMovementComponent>().TotalVelocity();
+			if (playerBulletMoveDir != glm::vec2{ 0.0f })
+				enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += playerBulletMoveDir / 10.0f;
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;

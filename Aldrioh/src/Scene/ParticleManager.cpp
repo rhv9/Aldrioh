@@ -26,7 +26,8 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 		p.endColour = pt.endColour;
 		p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
 		p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
-	
+		p.easingFunc = pt.easingFunc;
+
 		p.active = true;
 		poolIndex = (poolIndex + 1) % MAX_PARTICLES;
 		++activeCount;
@@ -62,9 +63,20 @@ void ParticleManager::OnUpdate(Timestep ts)
 	}
 }
 
+glm::vec4 interpolateWithFunc(const glm::vec4& p1, const glm::vec4& p2, float (*easingFunc)(float), float x)
+{
+	glm::vec4 result;
+	float easingPercent = easingFunc(x);
+	result.x = p1.x + (p2.x - p1.x) * easingPercent;
+	result.y = p1.y + (p2.y - p1.y) * easingPercent;
+	result.z = p1.z + (p2.z - p1.z) * easingPercent;
+	result.w = p1.w + (p2.w - p1.w) * easingPercent;
+
+	return result;
+}
+
 void ParticleManager::OnRender(Timestep ts)
 {
-
 	for (Particle& p : particlePool)
 	{
 		if (!p.active)
@@ -72,7 +84,7 @@ void ParticleManager::OnRender(Timestep ts)
 
 		float percentLife = p.lifeRemaining / p.life;
 		float size = glm::mix(p.endSize, p.beginSize, percentLife);
-		glm::vec4 colour = glm::mix(p.endColour, p.beginColour, percentLife);
+		glm::vec4 colour = interpolateWithFunc(p.beginColour, p.endColour, p.easingFunc, percentLife);
 		p.rotation += p.rotation * Game::Instance().GetDelta();
 		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 

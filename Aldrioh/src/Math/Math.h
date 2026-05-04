@@ -20,12 +20,24 @@ namespace Math {
 
 	}
 
+	namespace EasingFunction {
+
+		//https://easings.net/
+		void debug_test(float (*easeFunc)(float));
+
+		float easeInQuint(float x);
+		float easeInExpo(float x);
+		float lerp(float x);
+	}
+
 	float abs(float val);
 	float sign(float val);
 	float floatMod(float lhs, float rhs);
 	float floatModNegative(float lhs, float rhs);
 	int ffloor(float val);
 	int fceil(float val);
+
+	float power(float x, float n);
 
 
 	float min(float x, float y);

@@ -24,6 +24,34 @@ int32_t Math::Random::randomSign()
 }
 
 
+// Easing functions
+
+void Math::EasingFunction::debug_test(float(*easeFunc)(float))
+{
+	for (float i = 0; i <= 1.0f; i += 0.05f)
+		LOG_CORE_INFO("({:.2f},{})", i, easeFunc(i));
+}
+
+float Math::EasingFunction::easeInQuint(float x)
+{
+	return x * x * x;
+}
+
+float Math::EasingFunction::easeInExpo(float x)
+{
+	return x == 0.0f ? 0.0f : Math::power(2, 10.0f * x - 10);
+}
+
+float Math::EasingFunction::lerp(float x)
+{
+	return x;
+}
+
+
+
+// Other
+
+
 
 float Math::sinRad(float val)
 {
@@ -153,6 +181,11 @@ int Math::fceil(float val)
 	return ceilf(val);
 }
 
+float Math::power(float x, float n)
+{
+	return powf(x, n);
+}
+
 float Math::min(float x, float y)
 {
 	return x < y ? x : y;
@@ -172,3 +205,4 @@ float Math::minAndMax(float lhs, float val, float rhs)
 	else
 		return val;
 }
+
