@@ -109,16 +109,17 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 		glm::vec2 playerCameraPos = level->GetPlayerCamera().GetComponent<CameraComponent>().cameraController->GetPosition();
 		glm::vec2 collisionZoneOffset = collisionZone.GetPlayerOffset();
 
-		int startX = static_cast<int>(collisionZoneOffset.x) - collisionZone.GetCenterXCellPos();
-		int startY = static_cast<int>(collisionZoneOffset.y) - collisionZone.GetCenterYCellPos();
-		int endX = startX + collisionZone.GetWidth();
-		int endY = startY + collisionZone.GetHeight();
-
 		glm::vec2 cellSize{ collisionZone.GetCellSize(), collisionZone.GetCellSize() };
 
-		for (int y = startY; y < endY; ++y)
+		int startX = static_cast<int>(collisionZoneOffset.x) - collisionZone.GetCenterXCellPos();
+		int startY = static_cast<int>(collisionZoneOffset.y) - collisionZone.GetCenterYCellPos();
+		int endX = startX + collisionZone.GetWidth() * cellSize.x;
+		int endY = startY + collisionZone.GetHeight() * cellSize.y;
+
+
+		for (int y = startY; y < endY; y += cellSize.y)
 		{
-			for (int x = startX; x < endX; ++x)
+			for (int x = startX; x < endX; x += cellSize.x)
 			{
 				static FontStyle fontStyle = FontStyle{}.WithSize(0.4f).WithColour({ 0.8f,0.8f, 0.8f, 1.0f });
 				CollisionPositionMapping mapping = collisionZone.GetCollisionPositionMapping({ x, y });

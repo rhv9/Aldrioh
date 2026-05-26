@@ -84,7 +84,7 @@ void ParticleManager::OnRender(Timestep ts)
 
 		float percentLife = p.lifeRemaining / p.life;
 		float size = glm::mix(p.endSize, p.beginSize, percentLife);
-		glm::vec4 colour = interpolateWithFunc(p.beginColour, p.endColour, p.easingFunc, percentLife);
+		glm::vec4 colour = interpolateWithFunc(p.endColour, p.beginColour, p.easingFunc, percentLife);
 		p.rotation += p.rotation * Game::Instance().GetDelta();
 		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 

@@ -67,7 +67,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	// Debugging
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
-	scene.GetCollisionZone().Init(60, 40, 1);
+	scene.GetCollisionZone().Init(60, 40, 4);
 	fixedWaveManager.InitWaveConfig();
 
 	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUpEvent);

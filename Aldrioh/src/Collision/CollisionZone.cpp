@@ -26,9 +26,11 @@ void CollisionCell::AddEntity(entt::entity handle)
 
 void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 {
+	this->cellSize = cellSize;
+
 	// x and y needs to be odd so that center is simple.
-	width = static_cast<int>(widthMax / cellSize + 0.5f);
-	height = static_cast<int>(heightMax / cellSize + 0.5f);
+	width = static_cast<int>(widthMax / cellSize + cellSize / 2.0f);
+	height = static_cast<int>(heightMax / cellSize + cellSize / 2.0f);
 	
 	if (width % 2 == 0)
 		++width;
@@ -39,7 +41,6 @@ void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 	centerY = static_cast<int>((float)height / 2.0f);
 
 	cellMap.resize(width * height);
-
 	LOG_CORE_INFO("Init: Collision Zone Size: ({},{})", width, height);
 }
 
