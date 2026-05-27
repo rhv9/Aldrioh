@@ -28,7 +28,7 @@ namespace GameDebugState {
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(renderLevelArea, false);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(enabledDebugCamera, false);
 
-	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(level_spawnEntites, true);
+	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(level_spawnEntites, false);
 	EXTERN_GAMEDEBUGSTATE bool GLOBAL_VARIABLE(clickToSpawnEnemies, true);
 
 

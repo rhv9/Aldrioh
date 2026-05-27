@@ -111,9 +111,9 @@ void EntitySystem::DebugRenderCollisionZoneVisualisation(Timestep ts, Scene& sce
 
 		glm::vec2 cellSize{ collisionZone.GetCellSize(), collisionZone.GetCellSize() };
 
-		int startX = static_cast<int>(collisionZoneOffset.x) - collisionZone.GetCenterXCellPos();
-		int startY = static_cast<int>(collisionZoneOffset.y) - collisionZone.GetCenterYCellPos();
-		int endX = startX + collisionZone.GetWidth() * cellSize.x;
+		int startX = static_cast<int>(collisionZoneOffset.x) - collisionZone.GetCenterXCellPos() * cellSize.x;
+		int startY = static_cast<int>(collisionZoneOffset.y) - collisionZone.GetCenterYCellPos() * cellSize.y;
+		int endX = startX + collisionZone.GetWidth()  * cellSize.x;
 		int endY = startY + collisionZone.GetHeight() * cellSize.y;
 
 

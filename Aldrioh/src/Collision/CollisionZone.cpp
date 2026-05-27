@@ -29,8 +29,8 @@ void CollisionZone::Init(float widthMax, float heightMax, float cellSize)
 	this->cellSize = cellSize;
 
 	// x and y needs to be odd so that center is simple.
-	width = static_cast<int>(widthMax / cellSize + cellSize / 2.0f);
-	height = static_cast<int>(heightMax / cellSize + cellSize / 2.0f);
+	width = static_cast<int>(widthMax / cellSize + 0.5f);
+	height = static_cast<int>(heightMax / cellSize + 0.5f);
 	
 	if (width % 2 == 0)
 		++width;
@@ -53,6 +53,10 @@ bool CollisionZone::GetCollisions(Timestep ts, Entity e1, std::vector<Entity>& c
 	CollisionBox cb1Offseted = cc1.collisionBox.OffsetNew(transform1.position);
 
 	CollisionPositionMapping mapping = GetCollisionPositionMapping(collisionMidPos1);
+
+	CollisionPositionMapping blMapping = GetCollisionPositionMapping(cb1Offseted.position);
+	CollisionPositionMapping trMapping = GetCollisionPositionMapping(cb1Offseted.position + cb1Offseted.size);
+	LOG_CORE_INFO("BL: {}, TR: {}", blMapping.ToString(), trMapping.ToString());
 
 	for (int y = -1; y < 2; ++y)
 	{
