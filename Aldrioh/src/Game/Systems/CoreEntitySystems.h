@@ -8,5 +8,7 @@ namespace EntitySystem {
 	void HealthSystem(Timestep ts, Scene& scene);
 	void StatSystem(Timestep ts, Scene& scene);
 
+	void HitboxSystem(Timestep ts, Scene& scene);
+
 	void DeleteEnemyOutsideScreenSystem(Timestep ts, Scene& scene);
 }

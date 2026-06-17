@@ -76,6 +76,12 @@ void EntitySystem::ResetAndAddCollisionZone(Timestep ts, Scene& scene)
 		{
 			auto [tc, cb] = view.get<TransformComponent, CollisionComponent>(eHandle);
 
+			CollisionZone& collisionZone = scene.GetCollisionZone();
+
+			CollisionBox cbOffseted = cb.collisionBox.OffsetNew(tc.position);
+
+			CollisionPositionMapping blMapping = collisionZone.GetCollisionPositionMapping(cbOffseted.position);
+			CollisionPositionMapping trMapping = collisionZone.GetCollisionPositionMapping(cbOffseted.position + cbOffseted.size);
 
 			// Get collision centre pos and use that.
 			glm::vec2 midPos = cb.collisionBox.OffsetNew(tc.position).GetMidpoint();
@@ -85,7 +91,7 @@ void EntitySystem::ResetAndAddCollisionZone(Timestep ts, Scene& scene)
 				midPos.x > deathArea.topRight.x || midPos.y > deathArea.topRight.y)
 				continue;
 
-			CollisionZone& collisionZone = scene.GetCollisionZone();
+
 			CollisionPositionMapping positionMapping = collisionZone.GetCollisionPositionMapping(midPos);
 
 			std::optional<CollisionCell*> cellOptional = collisionZone.GetCell(positionMapping);

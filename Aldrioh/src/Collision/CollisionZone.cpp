@@ -56,15 +56,13 @@ bool CollisionZone::GetCollisions(Timestep ts, Entity e1, std::vector<Entity>& c
 
 	CollisionPositionMapping blMapping = GetCollisionPositionMapping(cb1Offseted.position);
 	CollisionPositionMapping trMapping = GetCollisionPositionMapping(cb1Offseted.position + cb1Offseted.size);
-	LOG_CORE_INFO("BL: {}, TR: {}", blMapping.ToString(), trMapping.ToString());
+	//LOG_CORE_INFO("BL: {}, TR: {}", blMapping.ToString(), trMapping.ToString());
 
-	for (int y = -1; y < 2; ++y)
+	for (int cellY = blMapping.cellY; cellY <= trMapping.cellY; ++cellY)
 	{
-		for (int x = -1; x < 2; ++x)
+		for (int cellX = blMapping.cellX; cellX <= trMapping.cellX; ++cellX)
 		{
-			CollisionPositionMapping mappingOffset;
-			mappingOffset.cellX = mapping.cellX + x;
-			mappingOffset.cellY = mapping.cellY + y;
+			CollisionPositionMapping mappingOffset{ cellX, cellY };
 			
 			// get cell
 			std::optional<CollisionCell*> cellOptional = GetCell(mappingOffset);

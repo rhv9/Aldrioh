@@ -162,9 +162,19 @@ ParticleTemplate particleTemplate_rocketImpact = []() {
 auto OnDestroy_RocketImpact = [](Entity rocket) -> void {
 	particleTemplate_rocketImpact.startPos = rocket.GetTransformComponent().position;
 	rocket.getScene()->GetParticleManager().Emit(particleTemplate_rocketImpact);
+	
+	auto& tc = rocket.GetTransformComponent();
+	auto& rsc = rocket.GetComponent<RocketShooterComponent>();
+	Entity hitbox = rocket.getScene()->CreateEntity("Rocket Hitbox");
+	hitbox.GetTransformComponent().position = tc.position;
+	hitbox.AddComponent<CollisionComponent>(CollisionBox{ (glm::vec2(1) * rsc.explosionSize) / -2.0f , glm::vec2(1) * rsc.explosionSize });
+	hitbox.AddComponent<HitboxComponent>(EntityCategory::Enemy);
+	hitbox.AddComponent<PhysicsMovementComponent>();
+	hitbox.AddComponent<DamageComponent>(rsc.explosionDmg);
+	hitbox.AddComponent<EntityTypeComponent>(EntityTypes::PlayerHitbox->entityId);
 	};
 
-void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour)
+void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalizedDir, float dmg, float speed, float sizeScaling, glm::vec4 colour, float explosionSize)
 {
 	float oppositeAngle = Math::normalizeAngle(e.GetComponent<VisualComponent>().rotation + Math::PI);
 	// Create entity
@@ -190,10 +200,14 @@ void shootRocket(Entity& e, const glm::vec2& origin, const glm::vec2& normalized
 	glm::vec2 collisionSize{ 0.3f * sizeScaling };
 	rocket.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize);
 	rocket.AddComponent<OnDestroyComponent>(OnDestroy_RocketImpact);
-	rocket.AddComponent<DamageComponent>(dmg);
+	rocket.AddComponent<DamageComponent>(dmg / 2.0f);
+
+
 
 	auto& rsc = rocket.AddComponent<RocketShooterComponent>();
 	rsc.timer = 1.0f;
+	rsc.explosionSize = explosionSize;
+	rsc.explosionDmg = dmg;
 	rocket.AddComponent<RotationComponent>(Math::Random::randomSign() * Math::PI * 2.0f);
 
 }
@@ -215,7 +229,7 @@ void RocketShooterModuleItem::OnUpdate(Timestep ts, Entity e)
 			glm::vec2& playerPos = e.GetTransformComponent().position;
 
 			glm::vec2 dir = Math::angleToNormalizedVector(inputAction.anglePointingTo);
-			shootRocket(e, playerPos, dir, cachedDmg, speed, 1.0f, glm::vec4{ 1.5f, 1.5f, 1.5f, 1.0f });
+			shootRocket(e, playerPos, dir, cachedDmg, speed, 1.0f, glm::vec4{ 1.5f, 1.5f, 1.5f, 1.0f }, 3.0f);
 			e.getScene()->CreateEntity("Sound").AddComponent<SoundComponent>("player_shoot");
 		}
 	}

@@ -145,3 +145,15 @@ struct DamageComponent
 	DamageComponent(float dmg) : dmg(dmg) {}
 	DamageComponent(const DamageComponent&) = default;
 };
+
+
+
+struct HitboxComponent
+{
+	EntityCategory target = EntityCategory::Enemy;
+	bool stayActive = false;
+
+	HitboxComponent() = default;
+	HitboxComponent(EntityCategory target) : target(target) {}
+	HitboxComponent(const HitboxComponent&) = default;
+};

@@ -30,6 +30,8 @@ namespace EntityTypes
 	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(Player);
 	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(Fireball);
 	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(FlyingCollectedItem);
+	EXTERN_GAMEENTITIES EntityType* GE_GLOBAL_VARIABLE(PlayerHitbox);
+
 	void InitGlobal();
 }
 

@@ -89,7 +89,6 @@ enum MoveDir
 
 struct PhysicsMovementComponent
 {
-
 	glm::vec2 resultantVelocity{ 0.0f };
 	glm::vec2 managedVelocity{ 0.0f };
 	float naturalFallOffMultiplier = 1.0f;

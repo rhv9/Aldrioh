@@ -140,6 +140,7 @@ void EntityTypes::InitGlobal()
 
 	FlyingCollectedItem = new EntityType{ EntityCategory::FlyingItem, "Flying_Collected_Item" };
 	FlyingCollectedItem->onCreateCallback = item_create;
+	PlayerHitbox = new EntityType{ EntityCategory::Hitbox, "Hitbox" };
 	EnemyInitGlobal();
 }
 

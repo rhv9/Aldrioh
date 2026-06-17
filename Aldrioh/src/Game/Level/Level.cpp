@@ -67,7 +67,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	// Debugging
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
-	scene.GetCollisionZone().Init(40, 30, 3);
+	scene.GetCollisionZone().Init(40, 30, 0.5f);
 	fixedWaveManager.InitWaveConfig();
 
 	lvlUpCallbackId = playerStats.lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(Level::OnLevelUpEvent);
@@ -86,6 +86,17 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			playerBullet.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 			playerBullet.handled = true;
+		});
+
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Hitbox, EntityCategory::Enemy, [](CollisionEvent& hitbox, CollisionEvent& enemy)
+		{
+			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
+			hc.health -= hitbox.e.GetComponent<DamageComponent>().dmg;
+
+			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
+			cesc.hitVisualTimer = 0.1f;
+			cesc.hitVisualState = HitVisualState::JUST_HIT;
+			hitbox.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 		});
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
@@ -158,6 +169,14 @@ void Level::OnUpdate(Timestep ts)
 
 	collectableManager.OnUpdate(ts, bottomLeftMapping, topRightMapping);
 
+	// debugging
+	if (GameDebugState::clickToSpawnEnemies && Input::IsMouseButtonPressed(Input::MOUSE_BUTTON_1) && Input::IsMouseButtonPressed(Input::MOUSE_BUTTON_RIGHT))
+	{
+		glm::vec2 spawnPos = scene.GetMousePosInScene();
+		EnemyEntityType* entityType = imGuiSettings->entityTypes[imGuiSettings->option];
+		entityType->create(*this, spawnPos, 1, nullptr);
+		LOG_INFO("Click to spawn: {}", EntityType::GetEntityType(entityType->entityId.id)->name);
+	}
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };

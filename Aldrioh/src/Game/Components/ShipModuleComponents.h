@@ -19,6 +19,8 @@ struct RocketShooterComponent
 	float rotationSpeed = Math::PI;
 	constexpr static float ROTATION_OFFSET = -Math::PI / 4.0f;
 	State state = State::NOT_ACTIVE;
+	float explosionSize = 1.0f;
+	float explosionDmg = 1.0f;
 
 	RocketShooterComponent() {}
 	RocketShooterComponent(const RocketShooterComponent&) = default;

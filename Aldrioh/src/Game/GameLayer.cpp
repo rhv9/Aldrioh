@@ -98,6 +98,8 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::PhysicsMovementSystem);
 	//scene->AddUpdateSystem(&EntitySystem::CollisionSystem);
 	scene->AddUpdateSystem(&EntitySystem::CoreEntitySystems);
+	scene->AddUpdateSystem(&EntitySystem::HitboxSystem);
+
 	scene->AddUpdateSystem(&EntitySystem::DeleteEnemyOutsideScreenSystem);
 
 	// Very last
