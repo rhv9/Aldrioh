@@ -21,6 +21,7 @@ struct RocketShooterComponent
 	State state = State::NOT_ACTIVE;
 	float explosionSize = 1.0f;
 	float explosionDmg = 1.0f;
+	float explosionPushForce = 2.0f;
 
 	RocketShooterComponent() {}
 	RocketShooterComponent(const RocketShooterComponent&) = default;

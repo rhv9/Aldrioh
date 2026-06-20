@@ -4,7 +4,6 @@
 #include <Scene/Components.h>
 #include <Game/SpriteCollection.h>
 #include <Collision/Collision.h>
-#include <Game/Components/ControllerComponents.h>
 #include <Game.h>
 
 #include <Graphics/Renderer.h>
@@ -12,10 +11,12 @@
 #include <Game/RenderDepth.h>
 
 #include <Math/Math.h>
+#include <Game/GlobalLayers.h>
 
+#include <Game/Components/ControllerComponents.h>
 #include <Game/Components/LevelComponents.h>
 #include <Game/Components/EntityComponents.h>
-#include <Game/GlobalLayers.h>
+#include <Game/Components/ShipModuleComponents.h>
 
 #include <Game/Entity/GameEntityPrefab.h>
 #include <Game/Entity/GameEntities.h>
@@ -88,15 +89,19 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			playerBullet.handled = true;
 		});
 
-	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::Hitbox, EntityCategory::Enemy, [](CollisionEvent& hitbox, CollisionEvent& enemy)
+	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::RocketHitbox, EntityCategory::Enemy, [](CollisionEvent& hitbox, CollisionEvent& enemy)
 		{
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
 			hc.health -= hitbox.e.GetComponent<DamageComponent>().dmg;
-
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			hitbox.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
+
+			auto hitboxPos = hitbox.e.GetTransformComponent().position;
+			auto enemyPos = enemy.e.GetTransformComponent().position;
+			auto diff = enemyPos - hitboxPos;
+			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += diff * 2.0f;
 		});
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
