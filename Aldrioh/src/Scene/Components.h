@@ -140,18 +140,13 @@ struct RotationComponent
 
 struct AnimateVisualComponent
 {
-	std::vector<spriteid_t> spriteIds;
+	AnimatedSprite animSprite;
 
-	float ts = 0.0f;
-	float speed;
 	int frame = 0;
 
-	AnimateVisualComponent(const std::vector<spriteid_t> spriteIds, float speed) : spriteIds(spriteIds), speed(speed) {}
-	AnimateVisualComponent() : AnimateVisualComponent({ 0 }, 1.0f) {}
+	AnimateVisualComponent(const AnimatedSprite animSprite) : animSprite(animSprite) {}
+	AnimateVisualComponent() : AnimateVisualComponent({ 0 }) {}
 	AnimateVisualComponent(const AnimateVisualComponent&) = default;
-
-	spriteid_t getCurrentSprite() { return spriteIds[frame]; }
-	void reset() { ts = 0.0f; }
 };
 
 struct AnimatedMovementComponent

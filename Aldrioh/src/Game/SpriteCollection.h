@@ -1,4 +1,3 @@
-
 #if !defined(SPRITECOLLECTION_GUARD) || defined(SPRITES_CPP)
 #define SPRITECOLLECTION_GUARD
 
@@ -17,7 +16,27 @@
 #define SPRITES_MACRO(name, x, y) extern spriteid_t name;
 #endif
 
+#ifdef SPRITES_CPP
+#define SPRITES_ANIMATED_MACRO(name, x, y, size) toInitAnimSprites.push_back(AnimatedSpriteDataInternal {&name, glm::vec2{x, y}, size})
+#elif defined(SPRITES_DECLARATION)
+#define SPRITES_ANIMATED_MACRO(name, x, y, size) AnimatedSprite name {-1, 0}
+#else
+#define SPRITES_ANIMATED_MACRO(name, x, y, size) extern AnimatedSprite name
+#endif
+
 using spriteid_t = int;
+
+#if defined(SPRITECOLLECTION_GUARD) && !defined(SPRITES_CPP) || !defined(SPRITECOLLECTION_GUARD) && !defined(SPRITES_CPP)
+struct AnimatedSprite
+{
+	spriteid_t firstFrame;
+	uint8_t frameCount;
+
+	uint8_t GetFrameCount() const { return frameCount; }
+	// parameter frame assumed to be between 0 and frameCount
+	spriteid_t GetFrameUnsafe(uint8_t frame) { return firstFrame + frame; }
+};
+#endif
 
 class Texture;
 class SubTexture;
@@ -38,8 +57,18 @@ namespace Sprites {
 		spriteid_t* spriteLocation;
 		glm::vec2 size;
 	};
+
+	struct AnimatedSpriteDataInternal
+	{
+		AnimatedSprite* animSpriteLocation;
+		glm::vec2 size;
+		int frameCount;
+	};
+
 	void RunMonsterCodeThatInitialisesSpritesFromHeaderFileUsingVeryReadableMacros() {
 		std::vector<SpriteDataInternal> toInitSprites;
+		std::vector<AnimatedSpriteDataInternal> toInitAnimSprites;
+
 #endif
 
 		// Subtextures
@@ -82,7 +111,7 @@ namespace Sprites {
 		SPRITES_MACRO(item_machinegun,		15,  8);
 		SPRITES_MACRO(item_rocketshooter,	15,  7);
 
-
+		SPRITES_ANIMATED_MACRO(anim_energycore_drone, 0, 12, 4);
 
 
 // It iterates through the list so that we can add it in.
@@ -96,6 +125,22 @@ namespace Sprites {
 			*spriteLoc = spriteCounter++;
 			spriteMap[*spriteLoc] = { spritesheet, spriteSize, Sprites::TileSize };
 		}
+
+		LOG_CORE_INFO("Number of animated sprites using new system:{}", toInitAnimSprites.size());
+		
+		for (AnimatedSpriteDataInternal& aspi : toInitAnimSprites)
+		{
+			AnimatedSprite* animSpriteLoc = aspi.animSpriteLocation;
+			glm::vec2 spriteSize = aspi.size;
+			animSpriteLoc->firstFrame = spriteCounter;
+			animSpriteLoc->frameCount = aspi.frameCount;
+			for (int i = 0; i < aspi.frameCount; ++i)
+			{
+				spriteMap[spriteCounter++] = { spritesheet, {spriteSize.x + i, spriteSize.y}, Sprites::TileSize};
+			}
+		}
+
+		LOG_CORE_INFO("Total loaded sprites:{}", spriteCounter);
 	}
 #endif
 

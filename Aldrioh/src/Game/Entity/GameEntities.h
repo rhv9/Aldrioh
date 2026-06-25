@@ -21,6 +21,7 @@ struct EnemyEntityType : public EntityType
 	CollectableType collectableDrop = CollectableType::NONE;
 	float dmg = 1.0f;
 	spriteid_t spriteId = 0;
+	AnimatedSprite animSprite{ -1, 0 };
 
 	EnemyEntityType(EntityCategory category, const std::string& name);
 };
@@ -44,6 +45,7 @@ namespace EnemyEntityTypes {
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Asteroid);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Enemy);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Normal);
+	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_EnergyCore);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Tank);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Colourful);
 }

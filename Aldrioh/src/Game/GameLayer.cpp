@@ -31,6 +31,7 @@
 #include <Systems/PathSystems.h>
 #include <Systems/PhysicsMovementSystem.h>
 #include <Systems/CoreSystems.h>
+#include <Systems/VisualSystems.h>
 
 #include <Game/Systems/LevelSystems.h>
 #include <Game/Systems/RenderSystems.h>
@@ -112,6 +113,7 @@ void GameLayer::OnBegin()
 	// Does not matter order
 	scene->AddUpdateSystem(&EntitySystem::ScoreSystems);
 	scene->AddUpdateSystem(&EntitySystem::SoundSystem);
+	scene->AddUpdateSystem(&EntitySystem::AnimatedSpriteSystem);
 
 
 	// On Render Systems

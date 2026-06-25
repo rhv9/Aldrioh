@@ -6,6 +6,7 @@ struct SpawnerWaveConfig
 {
 	float cooldownMin = 0.0f, cooldownMax = 1.0f;
 	float maxEntities = 5;
+	int enemyLevel = 1;
 };
 
 class SpawnerWave : public IWaveLogic

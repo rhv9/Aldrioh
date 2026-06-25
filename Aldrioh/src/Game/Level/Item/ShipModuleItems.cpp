@@ -7,6 +7,8 @@
 #include <Math/Math.h>
 #include <Game/Components/ShipModuleComponents.h>
 
+#include <UI/Colour.h>
+
 ParticleTemplate particleTemplate_fireballImpact = []() {
 	ParticleTemplate pt;
 	pt.beginColour = glm::vec4(1.0f, 0.5f, 0.0f, 1.0f);
@@ -147,15 +149,15 @@ void MachineGunShipModuleItem::RecalculateOnStatChanges(StatModifier& statModifi
 
 ParticleTemplate particleTemplate_rocketImpact = []() {
 	ParticleTemplate pt;
-	pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	pt.beginColour = Colour::RGBCol(247, 159, 35);
 	pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
-	pt.beginSize = 0.80f;
-	pt.endSize = 0.4f;
-	pt.life = 1.0f;
+	pt.beginSize = 0.30f;
+	pt.endSize = 0.1f;
+	pt.life = 1.4f;
 	pt.velocity = { 0.0f, 0.0f };
-	pt.velocityVariation = { 2.0f, 2.0f };
+	pt.velocityVariation = { 4.0f, 4.0f };
 	pt.rotationRange = { Math::degreesToRad(-10), Math::degreesToRad(10) };
-	pt.count = 5;
+	pt.count = 30;
 	return pt;
 	}();
 

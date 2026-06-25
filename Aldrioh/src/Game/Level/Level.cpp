@@ -36,7 +36,7 @@ struct ImGuiSettings
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
 
-	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful };
+	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful, EnemyEntityTypes::Drone_EnergyCore};
 	int option = 0;
 };
 struct LevelEditorData

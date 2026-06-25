@@ -84,8 +84,8 @@ Entity PlayerPrefab::create(Scene& scene)
 	msc.shipModuleMax = 3;
 	msc.uniqueMax = 4;
 
-	//msc.AddItem(ItemTypes::ShipModule_Shooter);
-	msc.AddItem(ItemTypes::ShipModule_RocketShooter);
+	msc.AddItem(ItemTypes::ShipModule_Shooter);
+	//msc.AddItem(ItemTypes::ShipModule_RocketShooter);
 	//msc.AddItem(ItemTypes::Unique_FloatyFast);
 
 	player.AddComponent<ActionComponent>();

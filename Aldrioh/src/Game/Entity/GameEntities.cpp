@@ -87,6 +87,9 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 	tc.UpdateBothPos(pos);
 	VisualComponent& vc = enemy.AddComponent<VisualComponent>(typeCasted.spriteId);
 	vc.localTransform = { -0.5f, -0.5f, 0.0f };
+	if (typeCasted.animSprite.GetFrameUnsafe(0) != -1)
+		enemy.AddComponent<AnimateVisualComponent>(Sprites::anim_energycore_drone);
+
 	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)
 	{
 		vc.colour = Colour::Random();
@@ -164,6 +167,14 @@ void EnemyInitGlobal()
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
 	Drone_Normal->onCreateCallback = drone_create;
+
+	Drone_EnergyCore = new EnemyEntityType{ EntityCategory::Enemy, "Drone_EnergyCore" };
+	Drone_EnergyCore->maxHp = 20.0f;
+	Drone_EnergyCore->speed = 2.0f;
+	Drone_EnergyCore->collectableDrop = CollectableType::JEWEL1;
+	Drone_EnergyCore->spriteId = Sprites::anim_energycore_drone.GetFrameUnsafe(0);
+	Drone_EnergyCore->animSprite = Sprites::anim_energycore_drone;
+	Drone_EnergyCore->onCreateCallback = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
 	Drone_Tank->maxHp = 10.0f;
