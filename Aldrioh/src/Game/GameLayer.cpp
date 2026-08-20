@@ -83,6 +83,7 @@ void GameLayer::OnBegin()
 	scene->AddUpdateSystem(&EntitySystem::ShipModuleSystems);
 	scene->AddUpdateSystem(&EntitySystem::DumbAISystem);
 	scene->AddUpdateSystem(&EntitySystem::FollowPlayerAISystem);
+	scene->AddUpdateSystem(&EntitySystem::FollowPlayerStraightAISystem);
 	scene->AddUpdateSystem(&EntitySystem::ControllerSystems);
 	scene->AddUpdateSystem(&EntitySystem::PathsSystem);
 

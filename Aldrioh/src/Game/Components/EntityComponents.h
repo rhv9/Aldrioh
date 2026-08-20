@@ -51,6 +51,14 @@ struct FollowPlayerAIComponent
 	FollowPlayerAIComponent(const FollowPlayerAIComponent&) = default;
 };
 
+struct FollowPlayerStraightAIComponent
+{
+	bool follow = true;
+
+	FollowPlayerStraightAIComponent() = default;
+	FollowPlayerStraightAIComponent(const FollowPlayerStraightAIComponent&) = default;
+};
+
 enum class HitVisualState : uint8_t
 {
 	NORMAL = 0,

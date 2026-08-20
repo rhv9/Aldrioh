@@ -45,6 +45,7 @@ struct VisualComponent
 	float rotation = 0.0f;
 	glm::vec4 colour{ 1.0f };
 	float flags = 0;
+	bool flipX = false;
 	RenderLayer renderLayer = RenderLayer::TWO;
 
 	VisualComponent(const spriteid_t spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}

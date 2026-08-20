@@ -18,9 +18,13 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 
 		glm::vec2 entityPos = transform.CalculateInterpolatePosition(ts);
 
-		glm::vec3 drawTransform = { entityPos.x + visual.localTransform.x, entityPos.y + visual.localTransform.y, RenderDepth::ENTITY };
+		glm::vec3 drawTransform = { entityPos.x, entityPos.y, RenderDepth::ENTITY };
+		drawTransform.x += visual.flipX ? -visual.localTransform.x : visual.localTransform.x;
+		drawTransform.y += visual.localTransform.y;
 
-		RenderQueue::EnQueue(visual.renderLayer, drawTransform, visual.spriteId, visual.colour, visual.scale, visual.rotation, visual.flags);
+		glm::vec2 scale{ visual.flipX ? -visual.scale.x : visual.scale.x, visual.scale.y };
+
+		RenderQueue::EnQueue(visual.renderLayer, drawTransform, visual.spriteId, visual.colour, scale, visual.rotation, visual.flags);
 	}
 }
 

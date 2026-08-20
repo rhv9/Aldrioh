@@ -64,3 +64,22 @@ void EntitySystem::FollowPlayerAISystem(Timestep ts, Scene& scene)
 		mcc.moveDir = dir;
 	}
 }
+
+void EntitySystem::FollowPlayerStraightAISystem(Timestep ts, Scene& scene)
+{
+	auto view = scene.getRegistry().view<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerStraightAIComponent>();
+
+	glm::vec2 playerPos = scene.GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level->GetPlayer().GetTransformComponent().position;
+
+	for (auto e : view)
+	{
+		auto [tc, mcc, vc, aic] = view.get<TransformComponent, MoveControllerComponent, VisualComponent, FollowPlayerStraightAIComponent>(e);
+		glm::vec2 dir = Math::normalizedDirection(glm::vec2{ tc.position }, glm::vec2{ playerPos });
+		
+		if (dir.x > 0)
+			vc.flipX = false;
+		else
+			vc.flipX = true;
+		mcc.moveDir = dir;
+	}
+}

@@ -19,6 +19,7 @@ void FixedWaveManager::InitWaveConfig()
 	waveQueue.emplace_back("Wave 1", 60,
 		std::vector<IWaveLogic*> {
 		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Normal),
+		new SpawnerWave(level, waveConfig, EnemyEntityTypes::TwoWing_Small),
 	});
 
 	waveConfig.enemyLevel = 2;

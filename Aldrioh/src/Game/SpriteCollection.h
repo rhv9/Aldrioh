@@ -10,10 +10,13 @@
 // In the cpp file, this header file is included twice with different defines, so that we have both declaration of global variable and initialisation of it.
 #ifdef SPRITES_CPP
 #define SPRITES_MACRO(name, x, y) toInitSprites.push_back(SpriteDataInternal{&name, glm::vec2{x, y}});
+#define SPRITES_MACRO_SIZE(name, x, y, size) toInitSprites.push_back(SpriteDataInternal{&name, glm::vec2{x, y}, size});
 #elif defined(SPRITES_DECLARATION)
 #define SPRITES_MACRO(name, x, y) spriteid_t name = -1;
+#define SPRITES_MACRO_SIZE(name, x, y, size) spriteid_t name = -1;
 #else
 #define SPRITES_MACRO(name, x, y) extern spriteid_t name;
+#define SPRITES_MACRO_SIZE(name, x, y, size) extern spriteid_t name;
 #endif
 
 #ifdef SPRITES_CPP
@@ -55,13 +58,14 @@ namespace Sprites {
 	struct SpriteDataInternal
 	{
 		spriteid_t* spriteLocation;
-		glm::vec2 size;
+		glm::vec2 pos;
+		glm::vec2 size{ 1.0f, 1.0f };
 	};
 
 	struct AnimatedSpriteDataInternal
 	{
 		AnimatedSprite* animSpriteLocation;
-		glm::vec2 size;
+		glm::vec2 pos;
 		int frameCount;
 	};
 
@@ -95,7 +99,7 @@ namespace Sprites {
 		SPRITES_MACRO(asteroid_small, 0, 14);
 		SPRITES_MACRO(drone_normal, 0, 13);
 		SPRITES_MACRO(drone_tank, 1, 13);
-		SPRITES_MACRO(two_wing, 0, 10);
+		SPRITES_MACRO_SIZE(two_wing, 0, 10, glm::vec2{2});
 
 		SPRITES_MACRO(borderBox, 0, 0);
 		SPRITES_MACRO(greenBox, 1, 0);
@@ -122,9 +126,8 @@ namespace Sprites {
 		for (SpriteDataInternal& spi : toInitSprites)
 		{
 			spriteid_t* spriteLoc = spi.spriteLocation;
-			glm::vec2 spriteSize = spi.size;
 			*spriteLoc = spriteCounter++;
-			spriteMap[*spriteLoc] = { spritesheet, spriteSize, Sprites::TileSize };
+			spriteMap[*spriteLoc] = { spritesheet, spi.pos, Sprites::TileSize, spi.size };
 		}
 
 		LOG_CORE_INFO("Number of animated sprites using new system:{}", toInitAnimSprites.size());
@@ -132,12 +135,11 @@ namespace Sprites {
 		for (AnimatedSpriteDataInternal& aspi : toInitAnimSprites)
 		{
 			AnimatedSprite* animSpriteLoc = aspi.animSpriteLocation;
-			glm::vec2 spriteSize = aspi.size;
 			animSpriteLoc->firstFrame = spriteCounter;
 			animSpriteLoc->frameCount = aspi.frameCount;
 			for (int i = 0; i < aspi.frameCount; ++i)
 			{
-				spriteMap[spriteCounter++] = { spritesheet, {spriteSize.x + i, spriteSize.y}, Sprites::TileSize};
+				spriteMap[spriteCounter++] = { spritesheet, {aspi.pos.x + i, aspi.pos.y}, Sprites::TileSize};
 			}
 		}
 
