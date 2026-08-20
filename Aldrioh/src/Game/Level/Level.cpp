@@ -28,7 +28,7 @@
 
 #include <ImGui/ImGuiEntityComponents.h>
 
-float zoomLevel = 10;
+float zoomLevel = 6.75f;
 
 struct ImGuiSettings
 {

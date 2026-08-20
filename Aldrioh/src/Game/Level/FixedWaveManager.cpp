@@ -15,7 +15,7 @@ void FixedWaveManager::InitWaveConfig()
 	SpawnerWaveConfig waveConfig;
 	waveConfig.cooldownMin = 1.3f;
 	waveConfig.cooldownMax = 2.5f;
-	waveConfig.maxEntities = 15.0f;
+	waveConfig.maxEntities = 100.0f;
 	waveQueue.emplace_back("Wave 1", 60,
 		std::vector<IWaveLogic*> {
 		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Normal),
@@ -23,22 +23,22 @@ void FixedWaveManager::InitWaveConfig()
 
 	waveConfig.enemyLevel = 2;
 	waveConfig.cooldownMin = 1.2f;
-	waveConfig.cooldownMax = 2.2f;
-	waveConfig.maxEntities = 25.0f;
+	waveConfig.cooldownMax = 2.0f;
+	waveConfig.maxEntities = 100.0f;
 	waveQueue.emplace_back("Wave 2", 60,
 		std::vector<IWaveLogic*> {
 		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_EnergyCore),
-		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Tank)
+		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Normal),
 	});
 
 	waveConfig.enemyLevel = 3;
 	waveConfig.cooldownMin = 1.2f;
-	waveConfig.cooldownMax = 2.2f;
-	waveConfig.maxEntities = 25.0f;
+	waveConfig.cooldownMax = 2.0f;
+	waveConfig.maxEntities = 100.0f;
 	waveQueue.emplace_back("Wave 3", 60,
 		std::vector<IWaveLogic*> {
 		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_EnergyCore),
-			new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Tank)
+		new SpawnerWave(level, waveConfig, EnemyEntityTypes::Drone_Tank)
 	});
 
 	waveQueue.emplace_back("Wave 4", 60);

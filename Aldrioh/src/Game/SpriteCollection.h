@@ -95,6 +95,7 @@ namespace Sprites {
 		SPRITES_MACRO(asteroid_small, 0, 14);
 		SPRITES_MACRO(drone_normal, 0, 13);
 		SPRITES_MACRO(drone_tank, 1, 13);
+		SPRITES_MACRO(two_wing, 0, 10);
 
 		SPRITES_MACRO(borderBox, 0, 0);
 		SPRITES_MACRO(greenBox, 1, 0);

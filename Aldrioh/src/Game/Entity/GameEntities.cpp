@@ -119,6 +119,7 @@ static Entity item_create(EntityType& type, Level& level, const glm::vec2& pos, 
 	glm::vec2 p0 = pos;
 	itemEntity.GetTransformComponent().UpdateBothPos(p0);
 	BezierPathComponent& bezier = itemEntity.AddComponent<BezierPathComponent>(p0, p0 + glm::vec2{ 0.0f, 1.5f }, level.GetPlayer().GetTransformComponent().position);
+	bezier.completionTime = 0.7f;
 	bezier.onCompletionCallback = [](Entity e) {
 		e.QueueDestroy();
 		GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);

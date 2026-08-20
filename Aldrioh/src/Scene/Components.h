@@ -118,6 +118,7 @@ struct MoveControllerComponent
 struct BezierPathComponent
 {
 	float t = 0;
+	float completionTime = 1.0f;
 	glm::vec2 p0{ 0 }, p1{ 0 }, p2{ 0 };
 	std::function<void(Entity e)> onCompletionCallback;
 	bool completionHandled = false;
