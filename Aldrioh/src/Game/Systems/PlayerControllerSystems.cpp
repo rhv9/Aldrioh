@@ -16,20 +16,26 @@
 #include <Game/GlobalLayers.h>
 #include <Game/Entity/GameEntities.h>
 
-ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
-	ParticleTemplate pt;
-	pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 1.0f);
-	pt.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
-	pt.beginSize = 0.2f;
-	pt.endSize = 0.2f;
-	pt.life = 1.0f;
-	pt.velocity = { 0.0f, 0.0f };
-	pt.velocityVariation = { 1.4f, 1.4f };
-	pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
-	return pt;
-	}();
+
 void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 {
+	static std::array<SubTexture*, 2> smokeSubTextures{ Sprites::get(Sprites::particle_smoke_1), Sprites::get(Sprites::particle_smoke_2) };
+	static ParticleTemplate playerExhaustParticle = []() -> ParticleTemplate {
+		ParticleTemplate pt;
+		pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 15.0f);
+		pt.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.0f);
+		pt.beginSize = 0.3f;
+		pt.endSize = 0.3f;
+		pt.life = 1.0f;
+		pt.velocity = { 0.0f, 0.0f };
+		pt.velocityVariation = { 1.4f, 1.4f };
+		pt.rotationRange = { Math::degreesToRad(-45), Math::degreesToRad(45) };
+		pt.renderFlag = RenderFlag::NORMAL;
+		pt.colourEasingFunc = Math::EasingFunction::easeInExpo;
+		pt.subTexturePool = smokeSubTextures;
+		return pt;
+		}();
+
 	// Update action component based on keyboard/mouse input
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent, ActionComponent>();

@@ -17,6 +17,7 @@ namespace Math {
 		float linearFloat(float min, float max);
 		float normalized();
 		int32_t randomSign();
+		int fiftyFifty();
 
 	}
 

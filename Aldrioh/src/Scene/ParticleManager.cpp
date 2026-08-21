@@ -30,8 +30,14 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 		p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
 		p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
 		p.colourEasingFunc = pt.colourEasingFunc;
-		p.subTexture = pt.subTexture ? pt.subTexture : squareDefault;
+		if (pt.subTexture)
+			p.subTexture = pt.subTexture;
+		else if (!pt.subTexturePool.empty())
+			p.subTexture = pt.subTexturePool[Math::Random::linearInt(0, pt.subTexturePool.size() - 1)];
+		else
+			p.subTexture = squareDefault;
 		p.renderLayer = pt.renderLayer;
+		p.renderFlag = pt.renderFlag;
 
 		p.active = true;
 		poolIndex = (poolIndex + 1) % MAX_PARTICLES;
@@ -94,6 +100,6 @@ void ParticleManager::OnRender(Timestep ts)
 		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 
 		//LOG_CORE_INFO("Particle colour {}", glm::to_string(colour));
-		RenderQueue::EnQueue(p.renderLayer, glm::vec3{ pos, 0.4f }, p.subTexture, colour, glm::vec2{ size, size }, p.rotation, RenderFlags::OVERWRITE_COLOUR);
+		RenderQueue::EnQueue(p.renderLayer, glm::vec3{ pos, 0.4f }, p.subTexture, colour, glm::vec2{ size, size }, p.rotation, p.renderFlag);
 	}
 }

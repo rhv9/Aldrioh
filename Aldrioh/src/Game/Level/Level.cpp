@@ -68,15 +68,15 @@ void spawnNumberParticles(Scene* scene, glm::vec2 pos, int num)
 		ParticleTemplate pt;
 		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		pt.endColour = glm::vec4(0.8f, 0.8f, 1.0f, 0.0f);
-		pt.beginSize = 0.45f;
+		pt.beginSize = 0.35f;
 		pt.endSize = 0.00f;
-		pt.life = 1.3f;
-		pt.velocity = { 0.0f, 7.0f };
+		pt.life = 1.7f;
+		pt.velocity = { 0.0f, 5.0f };
 		pt.velocityVariation = { 0.0f, 0.0f };
 		pt.rotationRange = { Math::degreesToRad(0), Math::degreesToRad(0) };
 		pt.count = 1;
 		pt.colourEasingFunc = Math::EasingFunction::easeInExpo;
-		pt.acceleration = { 0.0f, -18.0f };
+		pt.acceleration = { 0.0f, -13.0f };
 		return pt;
 		}();
 

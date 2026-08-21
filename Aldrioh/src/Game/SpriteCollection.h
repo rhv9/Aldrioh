@@ -86,6 +86,12 @@ namespace Sprites {
 		SPRITES_MACRO(bullet_white, 2, 1);
 		SPRITES_MACRO(bullet_rocket, 5, 1);
 
+		SPRITES_MACRO(particle_smoke_1, 6, 1);
+		SPRITES_MACRO(particle_smoke_2, 7, 1);
+		SPRITES_MACRO(particle_drone_broken_1, 8, 1);
+		SPRITES_MACRO(particle_drone_broken_2, 9, 1);
+		SPRITES_MACRO(particle_drone_broken_red, 10, 1);
+
 		SPRITES_MACRO(coin, 3, 1);
 		SPRITES_MACRO(jewel, 4, 1);
 

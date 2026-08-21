@@ -29,25 +29,30 @@
 //======================
 static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos, int lvl, void* data)
 {
+	static std::array<SubTexture*, 2> dronePiecesSubTexture{ Sprites::get(Sprites::particle_drone_broken_1), Sprites::get(Sprites::particle_drone_broken_2) };
+
 	static ParticleTemplate particleTemplate_droneDestroyed = []() {
 		ParticleTemplate pt;
-		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, 0.7f);
-		pt.beginSize = 0.25f;
-		pt.endSize = 0.25f;
+		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 200.0f);
+		pt.endColour = glm::vec4(1.0f, 1.0f, 1.0f, -1.0f);
+		pt.beginSize = 1.0f;
+		pt.endSize = 1.0f;
 		pt.life = 1.1f;
 		pt.velocity = { 0.0f, 0.0f };
 		pt.velocityVariation = { 2.0f, 2.0f };
 		pt.rotationRange = { Math::degreesToRad(-100), Math::degreesToRad(100) };
 		pt.count = 7;
+		pt.subTexturePool = dronePiecesSubTexture;
+		pt.renderFlag = RenderFlag::NORMAL;
+		pt.colourEasingFunc = Math::EasingFunction::easeInExpo;
 		return pt;
 		}();
 
 	static ParticleTemplate particleTemplate_droneDestroyedRed = []() {
 		ParticleTemplate pt = particleTemplate_droneDestroyed;
-		pt.beginColour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		pt.endColour = glm::vec4(0.4f, 0.0f, 0.0f, 1.0f);
 		pt.count = 1;
+		pt.subTexture = Sprites::get(Sprites::particle_drone_broken_red);
+		pt.subTexturePool = {};
 		return pt;
 		}();
 

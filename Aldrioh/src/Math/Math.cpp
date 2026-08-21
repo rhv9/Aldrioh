@@ -23,6 +23,11 @@ int32_t Math::Random::randomSign()
 	return Math::Random::linearInt(0, 1) * 2 - 1;
 }
 
+int Math::Random::fiftyFifty()
+{
+	return Math::Random::linearInt(0, 1);
+}
+
 
 // Easing functions
 

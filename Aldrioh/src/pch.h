@@ -8,6 +8,7 @@
 #include <functional>
 #include <algorithm>
 #include <queue>
+#include <span>
 
 // Mine
 #include <Core/Core.h>

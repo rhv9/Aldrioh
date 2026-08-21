@@ -2,6 +2,7 @@
 #include <Math/Math.h>
 #include <Game/RenderDepth.h>
 #include <Graphics/RenderLayer.h>
+#include <Graphics/RenderFlags.h>
 
 struct SubTexture;
 
@@ -17,6 +18,8 @@ struct ParticleTemplate
 	float (*colourEasingFunc)(float) = Math::EasingFunction::easeInQuint;
 	SubTexture* subTexture = nullptr;
 	RenderLayer renderLayer = GameRenderLayers::PARTICLES;
+	renderFlag_t renderFlag = RenderFlag::OVERWRITE_COLOUR;
+	std::span<SubTexture*> subTexturePool;
 
 	int count = 1;
 };
@@ -33,6 +36,7 @@ struct Particle
 	float (*colourEasingFunc)(float);
 	SubTexture* subTexture;
 	RenderLayer renderLayer;
+	renderFlag_t renderFlag;
 
 	float lifeRemaining = 1.0f;
 	bool active = false;
