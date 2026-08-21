@@ -26,6 +26,8 @@ struct SMData
 
 	constexpr static int PLAYING_SIZE = 200;
 	ma_sound playingSounds[PLAYING_SIZE];
+	uint16_t soundIds[PLAYING_SIZE];
+	uint16_t idCounter = 0;
 
 	std::array<ma_sound, 4> soundGroups;
 
@@ -45,7 +47,10 @@ void SoundManager::Init()
 	smdata->finishedSlots.reserve(SMData::PLAYING_SIZE);
 
 	for (int i = SMData::PLAYING_SIZE - 1; i > 0; --i)
+	{
 		smdata->availablePlayback.push_back(i);
+		smdata->soundIds[i] = -1;
+	}
 
 	smdata->engine = (ma_engine*)malloc(sizeof(*smdata->engine));
 
@@ -86,7 +91,7 @@ void SoundManager::LoadSound(SoundCategory soundCategory, const std::string& nam
 	++smdata->loadedCounter;
 }
 
-void SoundManager::Play(const std::string& soundName)
+SoundID SoundManager::Play(const std::string& soundName)
 {
 	if (smdata->soundNameMap.find(soundName) != smdata->soundNameMap.end())
 	{
@@ -97,7 +102,7 @@ void SoundManager::Play(const std::string& soundName)
 		if (!optionalval.has_value())
 		{
 			LOG_CORE_INFO("No available slot to play!");
-			return;
+			return SOUNDID_NULL;
 		}
 		int slot = optionalval.value();
 		ma_sound* sound = &smdata->playingSounds[slot];
@@ -105,13 +110,17 @@ void SoundManager::Play(const std::string& soundName)
 		if (result != MA_SUCCESS) // TODO fix
 			LOG_CORE_INFO("Failed to create sound");
 
+		smdata->soundIds[slot] = ++smdata->idCounter;
 
 		ma_sound_set_volume(sound, loadedSound.GetVolume());
 		ma_sound_set_end_callback(sound, SoundManager::maSoundEndCallback, NULL);
 		ma_sound_start(sound);
+		return { static_cast<uint16_t>(slot), smdata->soundIds[slot] };
 	}
 	else
 		LOG_CORE_INFO("Sound not added before");
+
+	return SOUNDID_NULL;
 }
 
 void SoundManager::RecycleFinishedSounds()
@@ -123,6 +132,7 @@ void SoundManager::RecycleFinishedSounds()
 		{
 			ma_sound_uninit(&smdata->playingSounds[slot]);
 			smdata->availablePlayback.push_back(slot);
+			smdata->soundIds[slot] = -1;
 		}
 		smdata->finishedSlots.clear();
 	}
@@ -157,10 +167,22 @@ void SoundManager::maSoundEndCallback(void* pUserData, ma_sound* pSound)
 	// Add to clear slot
 	std::lock_guard<std::mutex> lock{ smdata->availablePlayback_mutex };
 	smdata->finishedSlots.push_back(size);
-
 }
 
 void SoundManager::Test()
 {
 	ma_resource_manager* rm = ma_engine_get_resource_manager(smdata->engine);
+}
+
+SoundID SoundManager::PlayLooping(const std::string& soundName)
+{
+	SoundID soundId = Play(soundName);
+	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
+	return soundId;
+}
+
+void SoundManager::Stop(const SoundID soundId)
+{
+	if (smdata->soundIds[soundId.slot] == soundId.id && ma_sound_is_playing(&smdata->playingSounds[soundId.slot]))
+		maSoundEndCallback(nullptr, &smdata->playingSounds[soundId.slot]);
 }
