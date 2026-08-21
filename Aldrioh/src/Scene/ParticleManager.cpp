@@ -21,6 +21,7 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 
 		p.prevPosition = pt.startPos;
 		p.position = pt.startPos;
+		p.acceleration = pt.acceleration;
 		p.lifeRemaining = pt.life;
 		p.beginSize = pt.beginSize;
 		p.endSize = pt.endSize;
@@ -28,7 +29,7 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 		p.endColour = pt.endColour;
 		p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
 		p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
-		p.easingFunc = pt.easingFunc;
+		p.colourEasingFunc = pt.colourEasingFunc;
 		p.subTexture = pt.subTexture ? pt.subTexture : squareDefault;
 		p.renderLayer = pt.renderLayer;
 
@@ -56,7 +57,7 @@ void ParticleManager::OnUpdate(Timestep ts)
 
 		particle.prevPosition = particle.position;
 		particle.position += particle.velocity * (float)ts;
-		
+		particle.velocity += particle.acceleration * (float)ts;
 		particle.lifeRemaining -= ts;
 
 		if (particle.lifeRemaining <= 0.0f)
@@ -88,7 +89,7 @@ void ParticleManager::OnRender(Timestep ts)
 
 		float percentLife = p.lifeRemaining / p.life;
 		float size = glm::mix(p.endSize, p.beginSize, percentLife);
-		glm::vec4 colour = interpolateWithFunc(p.endColour, p.beginColour, p.easingFunc, percentLife);
+		glm::vec4 colour = interpolateWithFunc(p.endColour, p.beginColour, p.colourEasingFunc, percentLife);
 		p.rotation += p.rotation * Game::Instance().GetDelta();
 		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 

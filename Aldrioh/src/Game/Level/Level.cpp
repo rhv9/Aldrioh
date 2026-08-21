@@ -62,20 +62,21 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 	return pt;
 	}();
 
-void spawnNumberParticles(Scene* scene, const glm::vec2& pos, int num)
+void spawnNumberParticles(Scene* scene, glm::vec2 pos, int num)
 {
 	static ParticleTemplate particleTemplate_number = []() {
 		ParticleTemplate pt;
 		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		pt.endColour = glm::vec4(0.8f, 0.8f, 1.0f, 0.0f);
 		pt.beginSize = 0.45f;
-		pt.endSize = 0.35f;
+		pt.endSize = 0.00f;
 		pt.life = 1.3f;
-		pt.velocity = { 0.0f, 3.0f };
+		pt.velocity = { 0.0f, 7.0f };
 		pt.velocityVariation = { 0.0f, 0.0f };
 		pt.rotationRange = { Math::degreesToRad(0), Math::degreesToRad(0) };
 		pt.count = 1;
-		pt.easingFunc = Math::EasingFunction::easeInExpo;
+		pt.colourEasingFunc = Math::EasingFunction::easeInExpo;
+		pt.acceleration = { 0.0f, -18.0f };
 		return pt;
 		}();
 
@@ -83,7 +84,19 @@ void spawnNumberParticles(Scene* scene, const glm::vec2& pos, int num)
 	particleTemplate_number.startPos = pos;
 	particleTemplate_number.renderLayer = GameRenderLayers::NUMBER_PARTICLES;
 
-	scene->GetParticleManager().Emit(particleTemplate_number);
+	constexpr float charSpacing = 0.4f;
+	if (num > 99)
+		pos.x += charSpacing * 2.0f;
+
+	while (num > 0)
+	{
+		int digit = num % 10;
+		particleTemplate_number.subTexture = Font::DEFAULT->GetCharSubTexture('0' + digit);
+		particleTemplate_number.startPos = pos;
+		pos.x -= charSpacing;
+		num /= 10;
+		scene->GetParticleManager().Emit(particleTemplate_number);
+	}
 }
 
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
@@ -112,13 +125,14 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			playerBullet.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 			playerBullet.handled = true;
 
-			spawnNumberParticles(playerBullet.e.getScene(), enemy.e.GetTransformComponent().position, static_cast<int>(dmg));
+			spawnNumberParticles(playerBullet.e.getScene(), enemy.e.GetTransformComponent().position, dmg);
 		});
 
 	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::RocketHitbox, EntityCategory::Enemy, [](CollisionEvent& hitbox, CollisionEvent& enemy)
 		{
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
-			hc.health -= hitbox.e.GetComponent<DamageComponent>().dmg;
+			float dmg = hitbox.e.GetComponent<DamageComponent>().dmg;
+			hc.health -= dmg;
 			auto& cesc = enemy.e.GetComponent<CoreEnemyStateComponent>();
 			cesc.hitVisualTimer = 0.1f;
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
@@ -128,6 +142,8 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			auto enemyPos = enemy.e.GetTransformComponent().position;
 			auto diff = enemyPos - hitboxPos;
 			enemy.e.GetComponent<PhysicsMovementComponent>().resultantVelocity += diff * 2.0f;
+
+			spawnNumberParticles(enemy.e.getScene(), enemy.e.GetTransformComponent().position, dmg);
 		});
 
 	scene.GetCollisionDispatcher().AddCallback(EntityTypes::Fireball->entityId, EnemyEntityTypes::Asteroid->entityId, [](CollisionEvent& fireball, CollisionEvent& asteroid)
