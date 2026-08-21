@@ -20,6 +20,7 @@ struct EnemyEntityType : public EntityType
 	float speed = 1.0f;
 	CollectableType collectableDrop = CollectableType::NONE;
 	float dmg = 1.0f;
+	bool isStraight = false;
 	
 	spriteid_t spriteId = 0;
 	AnimatedSprite animSprite{ -1, 0 };
@@ -46,9 +47,12 @@ namespace EnemyEntityTypes {
 	// Enemy types
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Asteroid);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Enemy);
+	
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Normal);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_EnergyCore);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Tank);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Colourful);
+	
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(TwoWing_Small);
+	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Diamond_enemy);
 }

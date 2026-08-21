@@ -4,6 +4,7 @@
 #include <Scene/Entity.h>
 #include <Graphics/RenderQueue.h>
 #include <Collision/Collision.h>
+#include <Game/RenderDepth.h>
 
 class UIManager;
 struct UIManagerComponent
@@ -46,7 +47,7 @@ struct VisualComponent
 	glm::vec4 colour{ 1.0f };
 	float flags = 0;
 	bool flipX = false;
-	RenderLayer renderLayer = RenderLayer::TWO;
+	RenderLayer renderLayer = GameRenderLayers::ENTITIES;
 
 	VisualComponent(const spriteid_t spriteId, const glm::vec3& localTransform, const glm::vec2& scale) : spriteId(spriteId), localTransform(localTransform), scale(scale) {}
 	VisualComponent(const spriteid_t spriteId, const glm::vec3& localTransform) : VisualComponent(spriteId, localTransform, DEFAULT_SCALE) {}

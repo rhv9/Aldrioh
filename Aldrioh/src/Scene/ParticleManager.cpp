@@ -13,6 +13,8 @@
 
 void ParticleManager::Emit(const ParticleTemplate& pt)
 {
+	static SubTexture* squareDefault = Sprites::get(Sprites::square);
+
 	for (int i = 0; i < pt.count; ++i)
 	{
 		Particle& p = particlePool[poolIndex];
@@ -27,6 +29,8 @@ void ParticleManager::Emit(const ParticleTemplate& pt)
 		p.rotation = Math::Random::linearFloat(pt.rotationRange.first, pt.rotationRange.second);
 		p.velocity = pt.velocity + glm::vec2{ pt.velocityVariation.x * Math::Random::linearFloat(-1, 1), pt.velocityVariation.y * Math::Random::linearFloat(-1, 1) };
 		p.easingFunc = pt.easingFunc;
+		p.subTexture = pt.subTexture ? pt.subTexture : squareDefault;
+		p.renderLayer = pt.renderLayer;
 
 		p.active = true;
 		poolIndex = (poolIndex + 1) % MAX_PARTICLES;
@@ -89,6 +93,6 @@ void ParticleManager::OnRender(Timestep ts)
 		glm::vec2 pos = glm::mix(p.prevPosition, p.position, (float)ts) - size / 2.0f;
 
 		//LOG_CORE_INFO("Particle colour {}", glm::to_string(colour));
-		RenderQueue::EnQueue(RenderLayer::ONE, glm::vec3{ pos, 0.4f }, Sprites::square, colour, glm::vec2{ size, size }, p.rotation, RenderDepth::PARTICLE);
+		RenderQueue::EnQueue(p.renderLayer, glm::vec3{ pos, 0.4f }, p.subTexture, colour, glm::vec2{ size, size }, p.rotation, RenderFlags::OVERWRITE_COLOUR);
 	}
 }

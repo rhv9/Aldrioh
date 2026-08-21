@@ -1,5 +1,9 @@
 #pragma once
 #include <Math/Math.h>
+#include <Game/RenderDepth.h>
+#include <Graphics/RenderLayer.h>
+
+struct SubTexture;
 
 struct ParticleTemplate
 {
@@ -10,6 +14,8 @@ struct ParticleTemplate
 	float life = 1.0f;
 	std::pair<float, float> rotationRange{ 0.0f, 0.0f };
 	float (*easingFunc)(float) = Math::EasingFunction::easeInQuint;
+	SubTexture* subTexture = nullptr;
+	RenderLayer renderLayer = GameRenderLayers::PARTICLES;
 
 	int count = 1;
 };
@@ -23,6 +29,8 @@ struct Particle
 	float life = 1.0f;
 	float rotation = 0.0f;
 	float (*easingFunc)(float);
+	SubTexture* subTexture;
+	RenderLayer renderLayer;
 
 	float lifeRemaining = 1.0f;
 	bool active = false;

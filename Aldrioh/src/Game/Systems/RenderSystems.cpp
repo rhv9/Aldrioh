@@ -6,6 +6,7 @@
 
 #include <Game/Debug/GameDebugState.h>
 #include <Game.h>
+#include <Game/RenderDepth.h>
 
 void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 {
@@ -22,7 +23,7 @@ void EntitySystem::EntityRenderSystem(Timestep ts, Scene& scene)
 		drawTransform.x += visual.flipX ? -visual.localTransform.x : visual.localTransform.x;
 		drawTransform.y += visual.localTransform.y;
 
-		glm::vec2 scale{ visual.flipX ? -visual.scale.x : visual.scale.x, visual.scale.y };
+		glm::vec2 scale { visual.flipX ? -visual.scale.x : visual.scale.x, visual.scale.y };
 
 		RenderQueue::EnQueue(visual.renderLayer, drawTransform, visual.spriteId, visual.colour, scale, visual.rotation, visual.flags);
 	}

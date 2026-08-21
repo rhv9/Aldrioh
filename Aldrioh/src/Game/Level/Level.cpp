@@ -36,7 +36,8 @@ struct ImGuiSettings
 	bool shouldPathRecord = false;
 	bool pathStartStopHovered = false;
 
-	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful, EnemyEntityTypes::Drone_EnergyCore, EnemyEntityTypes::TwoWing_Small};
+	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful, 
+		EnemyEntityTypes::Drone_EnergyCore, EnemyEntityTypes::TwoWing_Small, EnemyEntityTypes::Diamond_enemy};
 	int option = 0;
 };
 struct LevelEditorData
@@ -61,10 +62,32 @@ ParticleTemplate particleTemplate_playerTakingDamage = []() {
 	return pt;
 	}();
 
+void spawnNumberParticles(Scene* scene, const glm::vec2& pos, int num)
+{
+	static ParticleTemplate particleTemplate_number = []() {
+		ParticleTemplate pt;
+		pt.beginColour = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		pt.endColour = glm::vec4(0.8f, 0.8f, 1.0f, 0.0f);
+		pt.beginSize = 0.45f;
+		pt.endSize = 0.35f;
+		pt.life = 1.3f;
+		pt.velocity = { 0.0f, 3.0f };
+		pt.velocityVariation = { 0.0f, 0.0f };
+		pt.rotationRange = { Math::degreesToRad(0), Math::degreesToRad(0) };
+		pt.count = 1;
+		pt.easingFunc = Math::EasingFunction::easeInExpo;
+		return pt;
+		}();
+
+	particleTemplate_number.subTexture = Font::DEFAULT->GetCharSubTexture('0');
+	particleTemplate_number.startPos = pos;
+	particleTemplate_number.renderLayer = GameRenderLayers::NUMBER_PARTICLES;
+
+	scene->GetParticleManager().Emit(particleTemplate_number);
+}
+
 Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(scene, *this)
 {
-	Math::EasingFunction::debug_test(Math::EasingFunction::easeInExpo);
-
 	// Debugging
 	imGuiSettings = std::make_unique<ImGuiSettings>();
 
@@ -77,7 +100,8 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 		{
 			playerBullet.e.QueueDestroy();
 			HealthComponent& hc = enemy.e.GetComponent<HealthComponent>();
-			hc.health -= playerBullet.e.GetComponent<DamageComponent>().dmg;
+			float dmg = playerBullet.e.GetComponent<DamageComponent>().dmg;
+			hc.health -= dmg;
 
 			glm::vec2 playerBulletMoveDir = playerBullet.e.GetComponent<PhysicsMovementComponent>().TotalVelocity();
 			if (playerBulletMoveDir != glm::vec2{ 0.0f })
@@ -87,6 +111,8 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 			cesc.hitVisualState = HitVisualState::JUST_HIT;
 			playerBullet.e.getScene()->CreateEntity("sound").AddComponent<SoundComponent>("bullet_impact");
 			playerBullet.handled = true;
+
+			spawnNumberParticles(playerBullet.e.getScene(), enemy.e.GetTransformComponent().position, static_cast<int>(dmg));
 		});
 
 	scene.GetCollisionDispatcher().AddCallbackCategory(EntityCategory::RocketHitbox, EntityCategory::Enemy, [](CollisionEvent& hitbox, CollisionEvent& enemy)

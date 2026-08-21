@@ -102,7 +102,7 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
 	enemy.AddComponent<HealthComponent>(typeCasted.maxHp);
 	enemy.AddComponent<CoreEnemyStateComponent>();
-	if (type.entityId == EnemyEntityTypes::TwoWing_Small->entityId)
+	if (typeCasted.isStraight)
 		enemy.AddComponent<FollowPlayerStraightAIComponent>();
 	else
 		enemy.AddComponent<FollowPlayerAIComponent>();
@@ -201,7 +201,17 @@ void EnemyInitGlobal()
 	TwoWing_Small->visualScale = { -2.0f, -2.0f };
 	TwoWing_Small->collectableDrop = CollectableType::JEWEL1;
 	TwoWing_Small->spriteId = Sprites::two_wing;
+	TwoWing_Small->isStraight = true;
 	TwoWing_Small->onCreateCallback = drone_create;
+
+	Diamond_enemy = new EnemyEntityType{ EntityCategory::Enemy, "Diamond_enemy" };
+	Diamond_enemy->maxHp = 15.0f;
+	Diamond_enemy->speed = 3.5f;
+	Diamond_enemy->visualScale = { -2.0f, -2.0f };
+	Diamond_enemy->collectableDrop = CollectableType::JEWEL1;
+	Diamond_enemy->spriteId = Sprites::diamond_enemy;
+	Diamond_enemy->isStraight = true;
+	Diamond_enemy->onCreateCallback = drone_create;
 }
 
 EnemyEntityType* EnemyEntityTypes::GetEnemyEntityType(entitytypeid_t id)
