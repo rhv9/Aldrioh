@@ -91,7 +91,12 @@ void SoundManager::LoadSound(SoundCategory soundCategory, const std::string& nam
 	++smdata->loadedCounter;
 }
 
-SoundID SoundManager::Play(const std::string& soundName)
+void SoundManager::LoadSound(SoundCategory soundCategory, const song_id_t uniqueId, const std::string& filePath, float volume)
+{
+	SoundManager::LoadSound(soundCategory, std::format("_{}", uniqueId).c_str(), filePath, volume);
+}
+
+PlayingSoundID SoundManager::Play(const std::string& soundName)
 {
 	if (smdata->soundNameMap.find(soundName) != smdata->soundNameMap.end())
 	{
@@ -121,6 +126,11 @@ SoundID SoundManager::Play(const std::string& soundName)
 		LOG_CORE_INFO("Sound not added before");
 
 	return SOUNDID_NULL;
+}
+
+PlayingSoundID SoundManager::Play(const song_id_t uniqueId)
+{
+	return SoundManager::Play(std::format("_{}", uniqueId).c_str());
 }
 
 void SoundManager::RecycleFinishedSounds()
@@ -174,14 +184,14 @@ void SoundManager::Test()
 	ma_resource_manager* rm = ma_engine_get_resource_manager(smdata->engine);
 }
 
-SoundID SoundManager::PlayLooping(const std::string& soundName)
+PlayingSoundID SoundManager::PlayLooping(const std::string& soundName)
 {
-	SoundID soundId = Play(soundName);
+	PlayingSoundID soundId = Play(soundName);
 	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
 	return soundId;
 }
 
-void SoundManager::Stop(const SoundID soundId)
+void SoundManager::Stop(const PlayingSoundID soundId)
 {
 	if (smdata->soundIds[soundId.slot] == soundId.id && ma_sound_is_playing(&smdata->playingSounds[soundId.slot]))
 		maSoundEndCallback(nullptr, &smdata->playingSounds[soundId.slot]);

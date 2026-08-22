@@ -23,6 +23,8 @@
 
 #include <Game/Level/CollectableChunk.h>
 
+#include <Game/GameSound.h>
+
 
 //======================
 // Entity factories
@@ -132,6 +134,7 @@ static Entity item_create(EntityType& type, Level& level, const glm::vec2& pos, 
 	bezier.onCompletionCallback = [](Entity e) {
 		e.QueueDestroy();
 		GlobalLayers::game->GetCurrentLevel()->GetPlayerStats().AddExp(5);
+		SoundManager::Play(GameSound::exp_gain);
 		};
 	itemEntity.AddComponent<ItemAnimationControllerComponent>();
 	return itemEntity;

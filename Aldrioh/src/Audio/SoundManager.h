@@ -13,13 +13,14 @@ enum class SoundCategory : uint8_t
 	OTHER,
 };
 
-struct SoundID
+struct PlayingSoundID
 {
 	uint16_t slot;
 	uint16_t id;
 };
 
-constexpr SoundID SOUNDID_NULL{ -1, -1 };
+constexpr PlayingSoundID SOUNDID_NULL{ -1, -1 };
+using song_id_t = uint32_t;
 
 class SoundManager
 {
@@ -29,15 +30,20 @@ public:
 	static void Destroy();
 
 	static void LoadSound(SoundCategory soundCategory, const std::string& name, const std::string& filePath, float volume = 1);
-	static SoundID Play(const std::string& soundName);
+	static void LoadSound(SoundCategory soundCategory, const song_id_t uniqueId, const std::string& filePath, float volume = 1);
+
+	static PlayingSoundID Play(const std::string& soundName);
+	// TODO: Optimize uniqueId Right now converting to string
+	static PlayingSoundID Play(const song_id_t uniqueId);
+
 	static void RecycleFinishedSounds();
 
 	static void SetVolume(SoundCategory soundCategory, float normalized);
 	static float GetVolume(SoundCategory soundCategory);
 	static void Test();
 
-	static SoundID PlayLooping(const std::string& soundName);
-	static void Stop(const SoundID soundId);
+	static PlayingSoundID PlayLooping(const std::string& soundName);
+	static void Stop(const PlayingSoundID soundId);
 
 private: 
 	static std::optional<int> TryGetNextPlaybackSlot();

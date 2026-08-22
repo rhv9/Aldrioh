@@ -36,6 +36,21 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 		return pt;
 		}();
 
+	static ParticleTemplate pt_collectableParticle = []() -> ParticleTemplate {
+		ParticleTemplate pt;
+		pt.beginColour = glm::vec4(1.0f * 0.8f, 0.5f * 0.8f, 0.0f, 15.0f);
+		pt.endColour = glm::vec4(0.5f, 0.5f, 0.5f, 0.0f);
+		pt.beginSize = 1.0f/16.0f;
+		pt.endSize = 1.0f / 16.0f;
+		pt.life = 0.4f;
+		pt.velocity = { 0.0f, 0.0f };
+		pt.acceleration = { 0.0f, 6.0f };
+		pt.velocityVariation = { 1.0f, 1.0f };
+		pt.renderFlag = RenderFlag::OVERWRITE_COLOUR;
+		pt.colourEasingFunc = Math::EasingFunction::lerp;
+		return pt;
+		}();
+
 	// Update action component based on keyboard/mouse input
 	{
 		auto view = scene.getRegistry().view<PlayerControllerComponent, ActionComponent>();
@@ -138,6 +153,16 @@ void EntitySystem::PlayerControllerSystem(Timestep ts, Scene& scene)
 							CollectableItem::RenderData itemRenderData = cellData.GetRenderData();
 
 							EntityTypes::FlyingCollectedItem->create(*level, cellData.GetFloatOffset() + chunkPos, 1, static_cast<void*>(&itemRenderData));
+
+							for (int i = 0; i < 7; ++i)
+							{
+								pt_collectableParticle.beginColour = Colour::Random();
+								pt_collectableParticle.beginColour.w = 3.0f;
+								pt_collectableParticle.endColour = pt_collectableParticle.beginColour;
+								pt_collectableParticle.endColour.w = 0.0f;
+								pt_collectableParticle.startPos = cellData.GetFloatOffset() + chunkPos;
+								scene.GetParticleManager().Emit(pt_collectableParticle);
+							}
 						}
 						cell.Clear();
 					}
