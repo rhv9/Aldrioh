@@ -25,7 +25,7 @@ void Settings::Save()
 void Settings::Apply()
 {
 	SoundManager::SetVolume(SoundCategory::MASTER, volumeMaster);
-	SoundManager::SetVolume(SoundCategory::MUSIC, volumeMusic);
+	SoundManager::SetVolume(SoundCategory::BACKGROUND, volumeMusic);
 	SoundManager::SetVolume(SoundCategory::SFX, volumeSfx);
 	SoundManager::SetVolume(SoundCategory::MENU, volumeMenu);
 }
@@ -37,7 +37,7 @@ float Settings::GetVolume(SoundCategory soundCategory) const
 		return volumeMaster;
 	case SoundCategory::MENU:
 		return volumeMenu;
-	case SoundCategory::MUSIC:
+	case SoundCategory::BACKGROUND:
 		return volumeMusic;
 	case SoundCategory::SFX:
 		return volumeSfx;
@@ -54,7 +54,7 @@ bool Settings::SetVolume(SoundCategory soundCategory, float volume)
 	case SoundCategory::MENU:
 		volumeMenu = volume;
 		return true;
-	case SoundCategory::MUSIC:
+	case SoundCategory::BACKGROUND:
 		volumeMusic = volume;
 		return true;
 	case SoundCategory::SFX:

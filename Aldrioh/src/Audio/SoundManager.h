@@ -8,9 +8,10 @@ enum class SoundCategory : uint8_t
 {
 	MASTER = 0,
 	SFX,
-	MUSIC,
+	BACKGROUND,
 	MENU,
 	OTHER,
+	DO_NOT_PUT_UNDER__FOR_COUNTING,
 };
 
 struct PlayingSoundID
@@ -43,6 +44,8 @@ public:
 	static void Test();
 
 	static PlayingSoundID PlayLooping(const std::string& soundName);
+	static PlayingSoundID PlayLooping(const song_id_t uniqueId);
+
 	static void Stop(const PlayingSoundID soundId);
 
 private: 

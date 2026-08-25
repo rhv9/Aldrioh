@@ -29,7 +29,7 @@ struct SMData
 	uint16_t soundIds[PLAYING_SIZE];
 	uint16_t idCounter = 0;
 
-	std::array<ma_sound, 4> soundGroups;
+	std::array<ma_sound, static_cast<uint8_t>(SoundCategory::DO_NOT_PUT_UNDER__FOR_COUNTING)-1> soundGroups;
 
 	std::vector<int> availablePlayback;
 	// Finished slots get cleared every update and added back to playback
@@ -187,6 +187,13 @@ void SoundManager::Test()
 PlayingSoundID SoundManager::PlayLooping(const std::string& soundName)
 {
 	PlayingSoundID soundId = Play(soundName);
+	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
+	return soundId;
+}
+
+PlayingSoundID SoundManager::PlayLooping(const song_id_t uniqueId)
+{
+	PlayingSoundID soundId = Play(uniqueId);
 	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
 	return soundId;
 }

@@ -9,6 +9,8 @@
 #include <UI/UIText.h>
 #include <UI/UIProgressBar.h>
 
+#include <Audio/SoundManager.h>
+
 class GameLayer : public Layer
 {
 public:
@@ -46,6 +48,7 @@ private:
 
 private:
 	bool playerDead = false;
+	PlayingSoundID backgroundSound;
 
 	std::unique_ptr<Scene> scene = nullptr;
 	std::unique_ptr<Level> currentLevel = nullptr;

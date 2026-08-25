@@ -40,16 +40,18 @@ void main()
 {
 	vec4 texColour = vec4(0.0);
 
+	vec2 texCoord = fTexCoord;
+
 	switch (int(fTextureSampler))
 	{
-		case 0: texColour = texture(uTextureSamplers[0], fTexCoord); break;
-		case 1: texColour = texture(uTextureSamplers[1], fTexCoord); break;
-		case 2: texColour = texture(uTextureSamplers[2], fTexCoord); break;
-		case 3: texColour = texture(uTextureSamplers[3], fTexCoord); break;
-		case 4: texColour = texture(uTextureSamplers[4], fTexCoord); break;
-		case 5: texColour = texture(uTextureSamplers[5], fTexCoord); break;
-		case 6: texColour = texture(uTextureSamplers[6], fTexCoord); break;
-		case 7: texColour = texture(uTextureSamplers[7], fTexCoord); break;
+		case 0: texColour = texture(uTextureSamplers[0], texCoord); break;
+		case 1: texColour = texture(uTextureSamplers[1], texCoord); break;
+		case 2: texColour = texture(uTextureSamplers[2], texCoord); break;
+		case 3: texColour = texture(uTextureSamplers[3], texCoord); break;
+		case 4: texColour = texture(uTextureSamplers[4], texCoord); break;
+		case 5: texColour = texture(uTextureSamplers[5], texCoord); break;
+		case 6: texColour = texture(uTextureSamplers[6], texCoord); break;
+		case 7: texColour = texture(uTextureSamplers[7], texCoord); break;
 	}
 
 	if (texColour.a == 0.0)

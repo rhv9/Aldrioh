@@ -49,6 +49,8 @@
 
 #include <Game/Entity/GameEntityPrefab.h>
 
+#include <Game/GameSound.h>
+
 
 static CameraController backgroundCameraController(1920 / 1080.0f, 50.0f);
 static glm::vec2 backgroundWindowSize{ 0 };
@@ -56,6 +58,7 @@ static uint32_t backgroundPixelHeight = 300;
 
 GameLayer::~GameLayer()
 {
+	SoundManager::Stop(backgroundSound);
 }
 
 void GameLayer::OnBegin()
@@ -128,6 +131,9 @@ void GameLayer::OnBegin()
 	scene->AddUIRenderSystem(&EntitySystem::UIManagerRenderSystem);
 
 	GameDebugState::showLvlUpUI = true;
+
+	backgroundSound = SoundManager::PlayLooping(GameSound::background_theme);
+
 }
 
 void GameLayer::OnUpdate(Timestep delta)

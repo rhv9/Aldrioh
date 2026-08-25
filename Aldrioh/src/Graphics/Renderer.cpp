@@ -156,6 +156,7 @@ void Renderer::StartScene(const Camera& camera)
 	// Batching
 	renderData.shaderBatchTexture->Use();
 	renderData.shaderBatchTexture->UniformMat4("u_ViewProjectionMatrix", camera.GetProjection());
+	renderData.shaderBatchTexture->UniformFloat("uTime", Platform::GetElapsedTime());
 
 	glEnable(GL_DEPTH_TEST);
 
