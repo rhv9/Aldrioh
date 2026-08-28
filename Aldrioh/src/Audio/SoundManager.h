@@ -18,6 +18,11 @@ struct PlayingSoundID
 {
 	uint16_t slot;
 	uint16_t id;
+
+	bool operator==(const PlayingSoundID& other) const
+	{
+		return slot == other.slot && id == other.id;
+	}
 };
 
 constexpr PlayingSoundID SOUNDID_NULL{ -1, -1 };

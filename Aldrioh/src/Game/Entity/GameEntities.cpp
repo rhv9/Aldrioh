@@ -60,6 +60,7 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 	
 	auto& cesc = enemy.AddComponent<CoreEnemyStateComponent>();
 	cesc.onKillCallback = typeCasted.onKillCallback;
+	cesc.lvl = lvl;
 
 	if (typeCasted.isStraight)
 		enemy.AddComponent<FollowPlayerStraightAIComponent>();
@@ -217,10 +218,11 @@ void EnemyInitGlobal()
 	Drone_Mother->spriteId = Sprites::drone_mother;
 	Drone_Mother->onKillCallback = [](Level* level, Entity e)
 		{
+			auto& cesc = e.GetComponent<CoreEnemyStateComponent>();
 			on_drone_killed(level, e);
 			glm::vec2 pos = e.GetTransformComponent().position;
-			for (int i = 0; i < 10; ++i)
-				Entity e = Drone_Colourful->create(*level, {pos.x + i * 0.01f, pos.y + i * 0.01f }, 1, nullptr);
+			for (int i = 0; i < 5 + cesc.lvl * 2; ++i)
+				Entity e = Drone_Colourful->create(*level, {pos.x, pos.y }, 1, nullptr);
 		};
 	Drone_Mother->onCreateCallback = drone_create;
 

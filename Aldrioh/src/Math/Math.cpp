@@ -30,7 +30,7 @@ int Math::Random::fiftyFifty()
 
 glm::vec2 Math::Random::normalizedDirection()
 {
-	return glm::vec2();
+	return Math::angleToNormalizedVector(Math::Random::linearFloat(0.0f, 2.0f * Math::PI));
 }
 
 

@@ -74,6 +74,7 @@ struct CoreEnemyStateComponent
 	glm::vec4 hitvisualOriginalColour{ 0.0f };
 	bool addScoreOnDeath = true;
 	void (*onKillCallback)(Level* level, Entity e) = nullptr;
+	int lvl = 1;
 	
 	CoreEnemyStateComponent() = default;
 	CoreEnemyStateComponent(const CoreEnemyStateComponent&) = default;

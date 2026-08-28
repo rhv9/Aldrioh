@@ -82,9 +82,12 @@ void SoundManager::LoadSound(SoundCategory soundCategory, const std::string& nam
 	ma_sound* sound = &smdata->loadedSoundArray[smdata->loadedCounter].sound;
 
 	ma_result result = ma_sound_init_from_file(smdata->engine, filePath.c_str(), 0, soundGroup, NULL, sound);
-	smdata->loadedSoundArray[smdata->loadedCounter].soundCategory = soundCategory;
 	if (result != MA_SUCCESS)
+	{
 		LOG_CORE_CRITICAL("Audio failed to load, filepath: {}", filePath);
+		return;
+	}
+	smdata->loadedSoundArray[smdata->loadedCounter].soundCategory = soundCategory;
 	ma_sound_set_volume(sound, volume);
 
 	smdata->soundNameMap.insert({ name, smdata->loadedCounter });
@@ -187,19 +190,21 @@ void SoundManager::Test()
 PlayingSoundID SoundManager::PlayLooping(const std::string& soundName)
 {
 	PlayingSoundID soundId = Play(soundName);
-	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
+	if (soundId != SOUNDID_NULL)
+		ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
 	return soundId;
 }
 
 PlayingSoundID SoundManager::PlayLooping(const song_id_t uniqueId)
 {
 	PlayingSoundID soundId = Play(uniqueId);
-	ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
+	if (soundId != SOUNDID_NULL)
+		ma_sound_set_looping(&smdata->playingSounds[soundId.slot], MA_TRUE);
 	return soundId;
 }
 
 void SoundManager::Stop(const PlayingSoundID soundId)
 {
-	if (smdata->soundIds[soundId.slot] == soundId.id && ma_sound_is_playing(&smdata->playingSounds[soundId.slot]))
+	if (soundId.slot >= 0 && soundId.slot < smdata->PLAYING_SIZE && smdata->soundIds[soundId.slot] == soundId.id && ma_sound_is_playing(&smdata->playingSounds[soundId.slot]))
 		maSoundEndCallback(nullptr, &smdata->playingSounds[soundId.slot]);
 }
