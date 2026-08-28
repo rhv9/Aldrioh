@@ -68,6 +68,7 @@ void EntitySystem::PhysicsMovementSystem(Timestep ts, Scene& scene)
 
 							float pushout = 0.25f;
 							glm::vec2 direction = cb1Offseted.GetMidpoint() - cb2Offseted.GetMidpoint();
+							
 							glm::vec2 normalizedDirection = glm::normalize(direction);
 
 							pmc1.resultantVelocity += glm::vec2{ normalizedDirection.x ,normalizedDirection.y } *pushout;

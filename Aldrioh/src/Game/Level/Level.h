@@ -76,5 +76,6 @@ protected:
 	EventCallbackID<PlayerStatsEventArg> lvlUpCallbackId;
 
 	float levelTimeElapsed = 0.0f;
+	float zoomLevel = 6.75f;
 };
 

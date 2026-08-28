@@ -28,6 +28,11 @@ int Math::Random::fiftyFifty()
 	return Math::Random::linearInt(0, 1);
 }
 
+glm::vec2 Math::Random::normalizedDirection()
+{
+	return glm::vec2();
+}
+
 
 // Easing functions
 

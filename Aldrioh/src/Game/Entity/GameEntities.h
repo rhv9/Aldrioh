@@ -25,6 +25,7 @@ struct EnemyEntityType : public EntityType
 	spriteid_t spriteId = 0;
 	AnimatedSprite animSprite{ -1, 0 };
 	glm::vec2 visualScale{ 1.0f };
+	void (*onKillCallback)(Level* level, Entity e) = nullptr;
 
 	EnemyEntityType(EntityCategory category, const std::string& name);
 };
@@ -52,6 +53,8 @@ namespace EnemyEntityTypes {
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_EnergyCore);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Tank);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Colourful);
+	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Drone_Mother);
+
 	
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(TwoWing_Small);
 	EXTERN_GAMEENTITIES EnemyEntityType* GE_GLOBAL_VARIABLE(Diamond_enemy);

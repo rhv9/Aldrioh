@@ -71,8 +71,14 @@ void Scene::OnUpdate(Timestep ts)
 
 void Scene::OnRender(Timestep ts)
 {
+	auto view = registry.view<CameraComponent>();
+	for (auto e : view)
+	{
+		CameraComponent& cc = view.get<CameraComponent>(e);
+		cc.cameraController->OnUpdate(ts);
+	}
+
 	auto& cameraController = GetPrimaryCameraEntity().GetComponent<CameraComponent>().cameraController;
-	cameraController->OnUpdate(ts);
 
 	Renderer::StartScene({ cameraController->GetCamera().GetViewProjection() });
 	Renderer::ClearDepthBuffer();
@@ -82,8 +88,6 @@ void Scene::OnRender(Timestep ts)
 		system(ts, *this);
 
 	particleManager.OnRender(ts);
-
-
 
 	RenderQueue::Flush();
 	Renderer::EndScene();
@@ -163,12 +167,18 @@ Entity Scene::GetPrimaryCameraEntity()
 {
 	auto view = registry.view<CameraComponent>();
 
+	if (primaryCamera->IsValid())
+		return *primaryCamera;
+
 	// TODO: Currently accepts only one camera as main camera, update to support more
 	for (entt::entity e : view)
 	{
 		CameraComponent& cc = view.get<CameraComponent>(e);
 		if (cc.primary)
-			return Entity(e, this);
+		{
+			*primaryCamera = WrapEntityHandle(e);
+			return *primaryCamera;
+		}
 	}
 
 	// If primary not set, then auto set the first camera
@@ -176,7 +186,8 @@ Entity Scene::GetPrimaryCameraEntity()
 	{
 		CameraComponent& cc = view.get<CameraComponent>(e);
 		cc.primary = true;
-		return Entity(e, this);
+		*primaryCamera = WrapEntityHandle(e);
+		return *primaryCamera;
 	}
 
 	LOG_CORE_CRITICAL("No camera added to scene!");
@@ -196,6 +207,7 @@ void Scene::SetPrimaryCameraEntity(Entity primaryEntity)
 		{
 			cc.primary = true;
 			found = true;
+			*primaryCamera = WrapEntityHandle(e);
 		}
 		else
 			cc.primary = false;

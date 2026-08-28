@@ -35,9 +35,14 @@ void GameImGuiWindows::ShowGameInfo()
 		audio = SoundManager::GetVolume(SoundCategory::SFX);
 		if (ImGui::SliderFloat("SFX", &audio, 0, 1))
 			SoundManager::SetVolume(SoundCategory::SFX, audio);
+
+		audio = SoundManager::GetVolume(SoundCategory::BACKGROUND);
+		if (ImGui::SliderFloat("Background", &audio, 0, 1))
+			SoundManager::SetVolume(SoundCategory::BACKGROUND, audio);
+
+
 		ImGui::PopItemWidth();
 	}
-
 }
 
 void GameImGuiWindows::ShowRendererInfo()

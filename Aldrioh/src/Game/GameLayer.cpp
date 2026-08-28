@@ -71,7 +71,7 @@ void GameLayer::OnBegin()
 	currentLevel = std::make_unique<Level>(*scene);
 	Entity levelEntity = scene->CreateEntityNoTransform("Level 1");
 	levelEntity.AddComponent<LevelComponent>(currentLevel.get());
-	currentLevel->UpdateLevelArea();
+
 
 	UpdateBackground( backgroundPixelHeight * (Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight()), backgroundPixelHeight);
 

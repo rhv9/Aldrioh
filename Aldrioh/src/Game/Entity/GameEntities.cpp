@@ -31,6 +31,50 @@
 //======================
 static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos, int lvl, void* data)
 {
+
+	static auto OnDestroy_DroneDeath = [](Entity e) -> void {
+		};
+
+	Scene& scene = level.GetScene();
+	EnemyEntityType& typeCasted = *((EnemyEntityType*)&type);
+
+	Entity enemy = scene.CreateEntity("Drone");
+	auto& tc = enemy.GetComponent<TransformComponent>();
+	tc.UpdateBothPos(pos);
+	VisualComponent& vc = enemy.AddComponent<VisualComponent>(typeCasted.spriteId);
+	vc.localTransform = { typeCasted.visualScale / -2.0f, 0.0f };
+	vc.scale = typeCasted.visualScale;
+	if (typeCasted.animSprite.GetFrameUnsafe(0) != -1)
+		enemy.AddComponent<AnimateVisualComponent>(Sprites::anim_energycore_drone);
+
+	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)
+	{
+		vc.colour = Colour::Random();
+	}
+	enemy.AddComponent<MoveControllerComponent>(typeCasted.speed);
+	enemy.AddComponent<PhysicsMovementComponent>();
+	enemy.AddComponent<EntityTypeComponent>(type.entityId);
+	glm::vec2 collisionSize{ 0.5f };
+	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
+	enemy.AddComponent<HealthComponent>(typeCasted.maxHp);
+	
+	auto& cesc = enemy.AddComponent<CoreEnemyStateComponent>();
+	cesc.onKillCallback = typeCasted.onKillCallback;
+
+	if (typeCasted.isStraight)
+		enemy.AddComponent<FollowPlayerStraightAIComponent>();
+	else
+		enemy.AddComponent<FollowPlayerAIComponent>();
+
+	//enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneDeath);
+
+
+
+	return enemy;
+}
+
+void on_drone_killed(Level* level, Entity e)
+{
 	static std::array<SubTexture*, 2> dronePiecesSubTexture{ Sprites::get(Sprites::particle_drone_broken_1), Sprites::get(Sprites::particle_drone_broken_2) };
 
 	static ParticleTemplate particleTemplate_droneDestroyed = []() {
@@ -58,64 +102,23 @@ static Entity drone_create(EntityType& type, Level& level, const glm::vec2& pos,
 		return pt;
 		}();
 
-	static auto OnDestroy_DroneDeath = [](Entity e) -> void {
-		if (e.GetComponent<HealthComponent>().health <= 0.0f)
-		{
-			glm::vec2 pos = e.GetTransformComponent().position;
-			if (std::isnan(pos.x))
-			{
-				auto& vc = e.GetComponent<VisualComponent>();
-				vc.flags;
-			}
-			ParticleTemplate pt = particleTemplate_droneDestroyed;
-			pt.startPos = pos;
-			e.getScene()->GetParticleManager().Emit(pt);
 
-			pt = particleTemplate_droneDestroyedRed;
-			pt.startPos = pos;
-			e.getScene()->GetParticleManager().Emit(pt);
+	glm::vec2 pos = e.GetTransformComponent().position;
+	ParticleTemplate pt = particleTemplate_droneDestroyed;
+	pt.startPos = pos;
+	e.getScene()->GetParticleManager().Emit(pt);
 
-			Level* level = e.getScene()->GetFirstEntity<LevelComponent>().GetComponent<LevelComponent>().level;
-			EntityID entityId = e.GetComponent<EntityTypeComponent>().typeId;
+	pt = particleTemplate_droneDestroyedRed;
+	pt.startPos = pos;
+	e.getScene()->GetParticleManager().Emit(pt);
 
-			// Add item
-			CollectableType collectableType = EnemyEntityTypes::GetEnemyEntityType(entityId.id)->collectableDrop;
-			level->GetCollectableManager().AddCollectable(pos, collectableType);
+	EntityID entityId = e.GetComponent<EntityTypeComponent>().typeId;
 
-			level->GetLevelStats().onEnemyKilled(entityId);
-		}
-		};
+	// Add item
+	CollectableType collectableType = EnemyEntityTypes::GetEnemyEntityType(entityId.id)->collectableDrop;
+	level->GetCollectableManager().AddCollectable(pos, collectableType);
 
-	Scene& scene = level.GetScene();
-	EnemyEntityType& typeCasted = *((EnemyEntityType*)&type);
-
-	Entity enemy = scene.CreateEntity("Drone");
-	auto& tc = enemy.GetComponent<TransformComponent>();
-	tc.UpdateBothPos(pos);
-	VisualComponent& vc = enemy.AddComponent<VisualComponent>(typeCasted.spriteId);
-	vc.localTransform = { typeCasted.visualScale / -2.0f, 0.0f };
-	vc.scale = typeCasted.visualScale;
-	if (typeCasted.animSprite.GetFrameUnsafe(0) != -1)
-		enemy.AddComponent<AnimateVisualComponent>(Sprites::anim_energycore_drone);
-
-	if (type.entityId == EnemyEntityTypes::Drone_Colourful->entityId)
-	{
-		vc.colour = Colour::Random();
-	}
-	enemy.AddComponent<MoveControllerComponent>(typeCasted.speed);
-	enemy.AddComponent<PhysicsMovementComponent>();
-	enemy.AddComponent<EntityTypeComponent>(type.entityId);
-	glm::vec2 collisionSize{ 0.5f };
-	enemy.AddComponent<CollisionComponent>(glm::vec3{ collisionSize / -2.0f, 0.0f }, collisionSize, true);
-	enemy.AddComponent<HealthComponent>(typeCasted.maxHp);
-	enemy.AddComponent<CoreEnemyStateComponent>();
-	if (typeCasted.isStraight)
-		enemy.AddComponent<FollowPlayerStraightAIComponent>();
-	else
-		enemy.AddComponent<FollowPlayerAIComponent>();
-	enemy.AddComponent<OnDestroyComponent>(OnDestroy_DroneDeath);
-
-	return enemy;
+	level->GetLevelStats().onEnemyKilled(entityId);
 }
 
 
@@ -179,6 +182,7 @@ void EnemyInitGlobal()
 	Drone_Normal->speed = 2.0f;
 	Drone_Normal->collectableDrop = CollectableType::JEWEL1;
 	Drone_Normal->spriteId = Sprites::drone_normal;
+	Drone_Normal->onKillCallback = on_drone_killed;
 	Drone_Normal->onCreateCallback = drone_create;
 
 	Drone_EnergyCore = new EnemyEntityType{ EntityCategory::Enemy, "Drone_EnergyCore" };
@@ -187,13 +191,15 @@ void EnemyInitGlobal()
 	Drone_EnergyCore->collectableDrop = CollectableType::JEWEL1;
 	Drone_EnergyCore->spriteId = Sprites::anim_energycore_drone.GetFrameUnsafe(0);
 	Drone_EnergyCore->animSprite = Sprites::anim_energycore_drone;
+	Drone_EnergyCore->onKillCallback = on_drone_killed;
 	Drone_EnergyCore->onCreateCallback = drone_create;
 
 	Drone_Tank = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Tank" };
-	Drone_Tank->maxHp = 10.0f;
+	Drone_Tank->maxHp = 40.0f;
 	Drone_Tank->speed = 1.0f;
 	Drone_Tank->collectableDrop = CollectableType::JEWEL2;
 	Drone_Tank->spriteId = Sprites::drone_tank;
+	Drone_Tank->onKillCallback = on_drone_killed;
 	Drone_Tank->onCreateCallback = drone_create;
 
 	Drone_Colourful = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Colourful" };
@@ -201,7 +207,22 @@ void EnemyInitGlobal()
 	Drone_Colourful->speed = 3.0f;
 	Drone_Colourful->collectableDrop = CollectableType::JEWEL1;
 	Drone_Colourful->spriteId = Sprites::drone_normal;
+	Drone_Colourful->onKillCallback = on_drone_killed;
 	Drone_Colourful->onCreateCallback = drone_create;
+
+	Drone_Mother = new EnemyEntityType{ EntityCategory::Enemy, "Drone_Mother" };
+	Drone_Mother->maxHp = 30.0f;
+	Drone_Mother->speed = 2.0f;
+	Drone_Mother->collectableDrop = CollectableType::JEWEL1;
+	Drone_Mother->spriteId = Sprites::drone_mother;
+	Drone_Mother->onKillCallback = [](Level* level, Entity e)
+		{
+			on_drone_killed(level, e);
+			glm::vec2 pos = e.GetTransformComponent().position;
+			for (int i = 0; i < 10; ++i)
+				Entity e = Drone_Colourful->create(*level, {pos.x + i * 0.01f, pos.y + i * 0.01f }, 1, nullptr);
+		};
+	Drone_Mother->onCreateCallback = drone_create;
 
 	TwoWing_Small = new EnemyEntityType{ EntityCategory::Enemy, "TwoWing_Small" };
 	TwoWing_Small->maxHp = 15.0f;
@@ -210,6 +231,7 @@ void EnemyInitGlobal()
 	TwoWing_Small->collectableDrop = CollectableType::JEWEL1;
 	TwoWing_Small->spriteId = Sprites::two_wing;
 	TwoWing_Small->isStraight = true;
+	TwoWing_Small->onKillCallback = on_drone_killed;
 	TwoWing_Small->onCreateCallback = drone_create;
 
 	Diamond_enemy = new EnemyEntityType{ EntityCategory::Enemy, "Diamond_enemy" };
@@ -219,6 +241,7 @@ void EnemyInitGlobal()
 	Diamond_enemy->collectableDrop = CollectableType::JEWEL1;
 	Diamond_enemy->spriteId = Sprites::diamond_enemy;
 	Diamond_enemy->isStraight = true;
+	Diamond_enemy->onKillCallback = on_drone_killed;
 	Diamond_enemy->onCreateCallback = drone_create;
 }
 

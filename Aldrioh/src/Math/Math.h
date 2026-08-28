@@ -19,6 +19,8 @@ namespace Math {
 		int32_t randomSign();
 		int fiftyFifty();
 
+		glm::vec2 normalizedDirection();
+
 	}
 
 	namespace EasingFunction {

@@ -85,6 +85,7 @@ private:
 	int entityCount = 0;
 	entt::registry registry;
 	Entity* player = nullptr;
+	std::unique_ptr<Entity> primaryCamera = std::make_unique<Entity>();
 	
 	CollisionDispatcher collisionDispatcher;
 	CollisionZone collisionZone;

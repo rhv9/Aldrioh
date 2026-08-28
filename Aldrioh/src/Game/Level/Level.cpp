@@ -28,7 +28,6 @@
 
 #include <ImGui/ImGuiEntityComponents.h>
 
-float zoomLevel = 6.75f;
 
 struct ImGuiSettings
 {
@@ -37,7 +36,7 @@ struct ImGuiSettings
 	bool pathStartStopHovered = false;
 
 	std::vector<EnemyEntityType*> entityTypes{ EnemyEntityTypes::Drone_Normal, EnemyEntityTypes::Drone_Tank, EnemyEntityTypes::Drone_Colourful, 
-		EnemyEntityTypes::Drone_EnergyCore, EnemyEntityTypes::TwoWing_Small, EnemyEntityTypes::Diamond_enemy};
+		EnemyEntityTypes::Drone_EnergyCore, EnemyEntityTypes::TwoWing_Small, EnemyEntityTypes::Diamond_enemy, EnemyEntityTypes::Drone_Mother};
 	int option = 0;
 };
 struct LevelEditorData
@@ -197,6 +196,7 @@ Level::Level(Scene& scene) : scene(scene), playerStats(*this), fixedWaveManager(
 	// Debugging
 	mouseButtonCallbackID = Game::Instance().GetWindow()->MouseButtonEventHandler.RegisterCallback(EVENT_BIND_MEMBER_FUNCTION(Level::Debug_OnMouseButtonForSpawningEnemies));
 	
+	UpdateLevelArea();
 }
 
 Level::~Level()
@@ -224,6 +224,8 @@ void Level::OnUpdate(Timestep ts)
 		entityType->create(*this, spawnPos, 1, nullptr);
 		LOG_INFO("Click to spawn: {}", EntityType::GetEntityType(entityType->entityId.id)->name);
 	}
+
+
 }
 
 glm::vec2 p0{ 0 }, p1{ 0, 1.0f }, p2{ 0 };

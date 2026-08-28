@@ -91,14 +91,23 @@ void EntitySystem::RotationSystem(Timestep ts, Scene& scene)
 void EntitySystem::HealthSystem(Timestep ts, Scene& scene)
 {
 	auto view = scene.getRegistry().view<HealthComponent>();
-
+	Level* level = scene.GetFirstComponent<LevelComponent>().level;
 	for (entt::entity e : view)
 	{
 		Entity entity = scene.WrapEntityHandle(e);
 		HealthComponent& hc = view.get<HealthComponent>(e);
 
 		if (hc.health <= 0.0f)
+		{
+			if (entity.HasComponent<CoreEnemyStateComponent>())
+			{
+				auto& cesc = entity.GetComponent<CoreEnemyStateComponent>();
+
+				if (cesc.onKillCallback)
+					cesc.onKillCallback(level, entity);
+			}
 			entity.QueueDestroy();
+		}
 	}
 }
 

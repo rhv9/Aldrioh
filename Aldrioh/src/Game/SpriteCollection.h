@@ -105,6 +105,8 @@ namespace Sprites {
 		SPRITES_MACRO(asteroid_small, 0, 14);
 		SPRITES_MACRO(drone_normal, 0, 13);
 		SPRITES_MACRO(drone_tank, 1, 13);
+		SPRITES_MACRO(drone_mother, 2, 13);
+
 		SPRITES_MACRO_SIZE(two_wing, 0, 10, glm::vec2{ 2 });
 		SPRITES_MACRO_SIZE(diamond_enemy, 2, 10, glm::vec2{ 2 });
 
