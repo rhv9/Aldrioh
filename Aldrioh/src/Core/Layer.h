@@ -17,7 +17,8 @@ public:
 	virtual void OnRemove() = 0;
 
 	// This can be overriden, if switching to another layer and you want to handle something before it is swapped.
-	virtual void QueueTransitionTo(Layer* layer);
+	void QueueTransitionTo(Layer* layer);
+	virtual void OnBeforeQueuedTransitionTo(Layer* layer) {};
 
 	virtual void OnTransitionOut() {};
 	virtual void OnTransitionIn() {};
@@ -42,6 +43,8 @@ public:
 	virtual void OnMouseMoveEvent(MouseMoveEventArg& arg) {}
 	virtual void OnWindowCloseEvent(WindowCloseEventArg& arg) {}
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& arg) {}
+
+	const std::string& GetName() const { return name; }
 
 private:
 	std::string name{""};

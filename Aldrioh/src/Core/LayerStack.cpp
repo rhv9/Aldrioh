@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "LayerStack.h"
 
+#include <imgui.h>
+
 LayerStack::LayerStack()
 {
 }
@@ -37,6 +39,7 @@ void LayerStack::PopLayer(Layer* layer)
 	if (it != layerVector.end())
 	{
 		layer->OnTransitionOut();
+		layer->OnRemove();
 		layerVector.erase(it);
 		if (layerVector.size() != 0)
 			layerVector[layerVector.size() - 1]->OnPoppedLayerIntoEvent();
@@ -76,6 +79,7 @@ void LayerStack::SwapLayers(Layer* first, Layer* second)
 		if (layerVector[i] == first)
 		{
 			first->OnTransitionOut();
+			first->OnRemove();
 			layerVector[i] = second;
 			if (!second->IsInitialized())
 				second->OnBegin();
@@ -121,6 +125,20 @@ bool LayerStack::HandleQueuedTasks()
 	}
 
 	return doneSwap;
+}
+
+void LayerStack::Debug_ShowLayersImGui()
+{
+	static bool open = true;
+	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_NoFocusOnAppearing);
+
+	ImGui::SeparatorText("Layers");
+	for (int i = 0; i < layerVector.size(); ++i)
+	{
+		ImGui::Text(std::format("Layer {}: {}", i, layerVector[i]->GetName()).c_str());
+	}
+
+	ImGui::End();
 }
 
 void LayerStack::OnKeyEvent(KeyEventArg& arg)

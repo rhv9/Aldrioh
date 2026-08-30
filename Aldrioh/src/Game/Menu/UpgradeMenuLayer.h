@@ -4,11 +4,11 @@
 
 #include <UI/UIManager.h>
 
-class MainMenuLayer : public Layer
+class UpgradeMenuLayer : public Layer
 {
 public:
-	MainMenuLayer(const std::string& name) : Layer(name) {}
-	virtual ~MainMenuLayer() override {}
+	UpgradeMenuLayer(const std::string& name) : Layer(name) {}
+	virtual ~UpgradeMenuLayer() override {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
@@ -28,5 +28,5 @@ public:
 private:
 	std::shared_ptr<Scene> scene;
 
-	std::unique_ptr<UIManager> uiManager = nullptr;
+	UIManager uiManager;
 };

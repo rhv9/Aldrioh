@@ -38,7 +38,7 @@ void MainMenuLayer::OnBegin()
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	Renderer::SetUIPixelHeight(100);
-	uiManager = new UIManager();
+	uiManager = std::make_unique<UIManager>();
 
 	UIText* title = new UIText("Title", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);
@@ -74,6 +74,20 @@ void MainMenuLayer::OnBegin()
 		});
 	uiManager->AddUIObject(exitButton);
 
+	UIButton* upgradeMenuButton = new UIButton("Upgrade Button", glm::vec2{ 0, -25 }, glm::vec2{ 30, 10 });
+	upgradeMenuButton->GetUIText()->SetText("Upgrade");
+	upgradeMenuButton->GetUIText()->SetFontSize(4);
+	upgradeMenuButton->GetUIText()->GetFontStyle().colour = Colour::WHITE;
+	upgradeMenuButton->SetAnchorPoint(AnchorPoint::RIGHT_CENTER);
+	upgradeMenuButton->SetButtonColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
+	upgradeMenuButton->SetHoverColour(0.15f);
+	upgradeMenuButton->SetOnClickCallback([](UIButton* button) {
+		LOG_INFO("MainMenu - switching to upgrade layer");
+		GlobalLayers::upgradeMenu = new UpgradeMenuLayer("Upgrade Layer");
+		GlobalLayers::mainMenu->QueueTransitionTo(GlobalLayers::upgradeMenu);
+		});
+	uiManager->AddUIObject(upgradeMenuButton);
+
 
 	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
 	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.5f);
@@ -105,13 +119,16 @@ void MainMenuLayer::OnImGuiRender(Timestep delta)
 
 void MainMenuLayer::OnRemove()
 {
-	delete uiManager;
 }
 
 void MainMenuLayer::OnTransitionIn()
 {
 	delete GlobalLayers::game;
+	GlobalLayers::game = nullptr;
+	delete GlobalLayers::upgradeMenu;
+	GlobalLayers::upgradeMenu = nullptr;
 	uiManager->OnTransitionIn();
+	LOG_CORE_INFO("Transitioned into main menu");
 }
 
 void MainMenuLayer::OnTransitionOut()

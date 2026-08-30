@@ -23,7 +23,7 @@ public:
 	virtual void OnImGuiRender(Timestep delta) override;
 	virtual void OnRemove() {}
 
-	virtual void QueueTransitionTo(Layer* layer) override;
+	virtual void OnBeforeQueuedTransitionTo(Layer* layer) override;
 	virtual void OnTransitionIn() override;
 	virtual void OnTransitionOut() override;
 	virtual void OnPushedLayerAboveEvent() override;

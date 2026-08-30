@@ -26,6 +26,8 @@ public:
 	// Does the queued swap layers, if it does do one, will return true
 	bool HandleQueuedTasks();
 
+	void Debug_ShowLayersImGui();
+
 	void OnKeyEvent(KeyEventArg& arg);
 	void OnMouseButtonEvent(MouseButtonEventArg& arg);
 	void OnMouseScrolledEvent(MouseScrolledEventArg& arg);

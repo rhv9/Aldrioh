@@ -264,7 +264,6 @@ void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 void GameLayer::OnPlayerDeath()
 {
 	playerDead = true;
-	Game::Instance().GetLayerStack().QueuePopLayer(uiLayer.get());
 	QueueTransitionTo(GlobalLayers::gameOver);
 }
 
@@ -285,11 +284,10 @@ void GameLayer::UpdateBackground(int width, int height)
 	Renderer::ResizeBackgroundPass(width, height);
 }
 
-void GameLayer::QueueTransitionTo(Layer* layer)
+void GameLayer::OnBeforeQueuedTransitionTo(Layer* layer)
 {
 	// Pop uiLayer as usually this means game is going to be deleted.
 	Game::Instance().GetLayerStack().QueuePopLayer(uiLayer.get());
-	Layer::QueueTransitionTo(layer);
 }
 
 void GameLayer::OnTransitionIn()

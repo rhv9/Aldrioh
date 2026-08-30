@@ -5,6 +5,7 @@
 
 void Layer::QueueTransitionTo(Layer* layer)
 {
+	OnBeforeQueuedTransitionTo(layer);
 	Game::Instance().GetLayerStack().QueueSwapLayers(this, layer);
 }
 
