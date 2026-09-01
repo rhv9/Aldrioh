@@ -65,7 +65,11 @@ void PauseMenuLayer::OnBegin()
 	exitButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_CORE_INFO("Pause menu - Switching to main menu");
 		Game::Instance().GetLayerStack().QueuePopLayer(this);
-		GlobalLayers::game->QueueTransitionTo(GlobalLayers::mainMenu);
+
+		GlobalLayers::game->QueuePopGameLayer();
+		
+		Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::menuBackground);
+		Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::mainMenu);
 		});
 	uiManager->AddUIObject(exitButton);
 

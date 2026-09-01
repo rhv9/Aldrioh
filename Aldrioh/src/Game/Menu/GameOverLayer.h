@@ -26,6 +26,8 @@ public:
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 	virtual void OnKeyEvent(KeyEventArg& e) override;
 
+	void TransitionToMainMenu();
+
 private:
 	std::unique_ptr<Scene> scene;
 	float timeElapsed = 0.0f;

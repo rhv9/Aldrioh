@@ -19,7 +19,7 @@ void CoreGameEntryLayer::OnBegin()
 {
 	Game& game = Game::Instance();
 	game.GetLayerStack().QueuePopLayer(this);
-	//game.GetLayerStack().QueuePushLayer(GlobalLayers::menuBackground);
+	game.GetLayerStack().QueuePushLayer(GlobalLayers::menuBackground);
 	game.GetLayerStack().QueuePushLayer(GlobalLayers::mainMenu);
 
 	LoadSounds();

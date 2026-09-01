@@ -26,9 +26,6 @@ public:
 	virtual void OnKeyEvent(KeyEventArg& e);
 
 private:
-	void UpdateBackground(int width, int height);
-
-private:
 	std::shared_ptr<Scene> scene;
 
 	std::unique_ptr<UIManager> uiManager = nullptr;

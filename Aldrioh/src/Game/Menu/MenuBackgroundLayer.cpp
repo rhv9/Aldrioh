@@ -5,30 +5,34 @@
 
 #include <Input/Input.h>
 #include <Game/GlobalLayers.h>
+#include <Scene/EntityCameraController.h>
+
+#include <Game.h>
+#include <Scene/Components.h>
+
+static CameraController backgroundCameraController(1920 / 1080.0f, 50.0f);
+static glm::vec2 backgroundWindowSize{ 0 };
+static uint32_t backgroundPixelHeight = 300;
 
 void MenuBackgroundLayer::OnBegin()
 {
-	UIText* uiText = new UIText("Test", { 0.0f, 0.0f }, { 0, 0 });
-	uiText->SetAnchorPoint(AnchorPoint::CENTER);
-	uiText->SetText("Why Hello There!");
-	uiText->SetFontSize(8);
-	uiText->GetFontStyle().colour = Colour::WHITE;
-
-	uiManager.AddUIObject(uiText);
+	UpdateBackground(backgroundPixelHeight * (Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight()), backgroundPixelHeight);
 }
 
 void MenuBackgroundLayer::OnUpdate(Timestep delta)
 {
-	uiManager.OnUpdate(delta);
+	xOffsetCamera += 0.01f;
 }
 
 void MenuBackgroundLayer::OnRender(Timestep delta)
 {
 	Renderer::SetClearColour(Colour::BLACK);
 
-	Renderer::StartUIScene();
-	uiManager.OnRender(delta);
-	Renderer::EndUIScene();
+	Renderer::DrawBackgroundPass({ xOffsetCamera, 0 });
+	Renderer::StartScene({ backgroundCameraController.GetCamera().GetViewProjection() });
+	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
+	Renderer::DrawQuad(glm::vec3{ 0, 0, 0.5f }, &subTexture, backgroundWindowSize);
+	Renderer::EndScene();
 }
 
 void MenuBackgroundLayer::OnImGuiRender(Timestep delta)
@@ -41,7 +45,6 @@ void MenuBackgroundLayer::OnRemove()
 
 void MenuBackgroundLayer::OnTransitionIn()
 {
-	uiManager.OnTransitionIn();
 }
 
 void MenuBackgroundLayer::OnTransitionOut()
@@ -51,24 +54,31 @@ void MenuBackgroundLayer::OnTransitionOut()
 
 void MenuBackgroundLayer::OnMouseButtonEvent(MouseButtonEventArg& e)
 {
-	uiManager.OnMouseButton(e);
 }
 
 void MenuBackgroundLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
 {
-	uiManager.OnMouseMove(e);
 }
 
 void MenuBackgroundLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
-	uiManager.OnWindowResize(e);
+	UpdateBackground(backgroundPixelHeight * (e.Width / (float)e.Height), backgroundPixelHeight);
 }
 
 void MenuBackgroundLayer::OnKeyEvent(KeyEventArg& e)
 {
-	if (e.IsPressed(Input::KEY_ESCAPE))
-	{
-		this->QueueTransitionTo(GlobalLayers::mainMenu);
-	}
 }
+
+void MenuBackgroundLayer::UpdateBackground(int width, int height)
+{
+	backgroundCameraController.OnResize(width, height);
+	backgroundCameraController.SetZoomLevel(height / 2.0f);
+	float x = backgroundCameraController.GetAspectRatio() * backgroundCameraController.GetZoomLevel();
+	float y = backgroundCameraController.GetZoomLevel();
+	backgroundCameraController.SetPosition({ x, y });
+	backgroundWindowSize = { width, height };
+
+	Renderer::ResizeBackgroundPass(width, height);
+}
+
 

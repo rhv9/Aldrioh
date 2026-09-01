@@ -35,6 +35,8 @@ public:
 	virtual void OnMouseScrolledEvent(MouseScrolledEventArg& e) override;
 	virtual void OnWindowResizeEvent(WindowResizeEventArg& e) override;
 
+	void QueuePopGameLayer();
+
 	void OnPlayerDeath();
 	bool IsPlayerDead() const { return playerDead; }
 

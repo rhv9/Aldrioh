@@ -53,7 +53,7 @@ void GameOverLayer::OnBegin()
 	mainMenuButton->SetBackgroundColour(glm::vec4{ 0.1f, 0.1f, 0.1f, 1.0f });
 	mainMenuButton->SetOnClickCallback([this](UIButton* button) {
 		LOG_INFO("MainMenu - switching to main menu layer");
-		this->QueueTransitionTo(GlobalLayers::mainMenu);
+		TransitionToMainMenu();
 		});
 
 	uiManager->AddUIObject(mainMenuButton);
@@ -107,8 +107,13 @@ void GameOverLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 void GameOverLayer::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.IsPressed(Input::KEY_ESCAPE))
-	{
-		LOG_INFO("MainMenu - switching to main menu layer");
-		QueueTransitionTo(GlobalLayers::mainMenu);
-	}
+		TransitionToMainMenu();
+}
+
+void GameOverLayer::TransitionToMainMenu()
+{
+	LOG_INFO("MainMenu - switching to main menu layer");
+	Game::Instance().GetLayerStack().QueuePopLayer(this);
+	Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::menuBackground);
+	Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::mainMenu);
 }

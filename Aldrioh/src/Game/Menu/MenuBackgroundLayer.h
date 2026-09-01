@@ -26,7 +26,9 @@ public:
 	virtual void OnKeyEvent(KeyEventArg& e);
 
 private:
-	std::shared_ptr<Scene> scene;
+	void UpdateBackground(int width, int height);
 
-	UIManager uiManager;
+private:
+	std::shared_ptr<Scene> scene;
+	float xOffsetCamera = 0.0f;
 };

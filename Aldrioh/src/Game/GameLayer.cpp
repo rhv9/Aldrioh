@@ -260,10 +260,17 @@ void GameLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 	currentLevel->UpdateLevelArea();
 }
 
+void GameLayer::QueuePopGameLayer()
+{
+	Game::Instance().GetLayerStack().QueuePopLayer(uiLayer.get());
+	Game::Instance().GetLayerStack().QueuePopLayer(this);
+}
+
 void GameLayer::OnPlayerDeath()
 {
 	playerDead = true;
-	QueueTransitionTo(GlobalLayers::gameOver);
+	QueuePopGameLayer();
+	Game::Instance().GetLayerStack().QueuePushLayer(GlobalLayers::gameOver);
 }
 
 GameUILayer* GameLayer::GetUILayer()
