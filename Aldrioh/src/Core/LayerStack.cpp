@@ -127,6 +127,21 @@ bool LayerStack::HandleQueuedTasks()
 	return doneSwap;
 }
 
+Layer* LayerStack::GetLayerAbove(const Layer* layer)
+{
+	for (int i = 0; i < layerVector.size(); ++i)
+	{
+		if (layerVector[i] == layer)
+		{
+			if (i == 0)
+				return nullptr;
+			else
+				return layerVector[i - 1];
+		}
+	}
+	return nullptr;
+}
+
 void LayerStack::Debug_ShowLayersImGui()
 {
 	static bool open = true;

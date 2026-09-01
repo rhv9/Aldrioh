@@ -25,6 +25,8 @@ public:
 	void QueuePopLayer(Layer* layer);
 	// Does the queued swap layers, if it does do one, will return true
 	bool HandleQueuedTasks();
+	// can return nullptr
+	Layer* GetLayerAbove(const Layer* layer);
 
 	void Debug_ShowLayersImGui();
 

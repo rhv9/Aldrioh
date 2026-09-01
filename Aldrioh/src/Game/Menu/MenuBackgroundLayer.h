@@ -4,11 +4,11 @@
 
 #include <UI/UIManager.h>
 
-class MainMenuLayer : public Layer
+class MenuBackgroundLayer : public Layer
 {
 public:
-	MainMenuLayer(const std::string& name) : Layer(name) {}
-	virtual ~MainMenuLayer() override {}
+	MenuBackgroundLayer(const std::string& name) : Layer(name) {}
+	virtual ~MenuBackgroundLayer() override {}
 
 	virtual void OnBegin() override;
 	virtual void OnUpdate(Timestep delta) override;
@@ -26,10 +26,7 @@ public:
 	virtual void OnKeyEvent(KeyEventArg& e);
 
 private:
-	void UpdateBackground(int width, int height);
-
-private:
 	std::shared_ptr<Scene> scene;
 
-	std::unique_ptr<UIManager> uiManager = nullptr;
+	UIManager uiManager;
 };

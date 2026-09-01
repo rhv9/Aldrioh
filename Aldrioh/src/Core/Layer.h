@@ -8,13 +8,13 @@ public:
 	Layer(const std::string& name) : name(name) {}
 	virtual ~Layer() {}
 
-	virtual void OnBegin() = 0;
+	virtual void OnBegin() {}
 
-	virtual void OnUpdate(Timestep delta) = 0;
-	virtual void OnRender(Timestep delta) = 0;
+	virtual void OnUpdate(Timestep delta) {}
+	virtual void OnRender(Timestep delta) {}
 	virtual void OnImGuiRender(Timestep delta) {}
 
-	virtual void OnRemove() = 0;
+	virtual void OnRemove() {}
 
 	// This can be overriden, if switching to another layer and you want to handle something before it is swapped.
 	void QueueTransitionTo(Layer* layer);

@@ -22,9 +22,12 @@
 
 #include <Game/Entity/GameEntities.h>
 
+static CameraController backgroundCameraController(1920 / 1080.0f, 50.0f);
+static glm::vec2 backgroundWindowSize{ 0 };
+static uint32_t backgroundPixelHeight = 300;
+
 void MainMenuLayer::OnBegin()
 {
-	EntityTypes::InitGlobal(); //TODO: What if I am destroying main menu and reinitializing? It should only run once!
 	scene = std::make_shared<Scene>();
 
 	// Camera
@@ -88,13 +91,7 @@ void MainMenuLayer::OnBegin()
 		});
 	uiManager->AddUIObject(upgradeMenuButton);
 
-
-	SoundManager::LoadSound(SoundCategory::SFX, "sfx", "assets/audio/sfx_exp_long4.wav");
-	SoundManager::LoadSound(SoundCategory::SFX, "player_shoot", "assets/audio/General\ Sounds/High\ Pitched\ Sounds/sfx_sounds_high3.wav", 0.5f);
-	SoundManager::LoadSound(SoundCategory::SFX, "bullet_impact", "assets/audio/General\ Sounds/Impacts/sfx_sounds_impact1.wav", 0.5f);
-	SoundManager::LoadSound(SoundCategory::SFX, GameSound::exp_gain, "assets/audio/General\ Sounds/Coins/sfx_coin_double5.wav", 0.5f);
-
-	SoundManager::LoadSound(SoundCategory::BACKGROUND, GameSound::background_theme, "assets/audio/background/first_background.wav");
+	UpdateBackground(backgroundPixelHeight * (Game::Instance().GetWindow()->GetWidth() / (float)Game::Instance().GetWindow()->GetHeight()), backgroundPixelHeight);
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
@@ -105,8 +102,15 @@ void MainMenuLayer::OnUpdate(Timestep delta)
 
 void MainMenuLayer::OnRender(Timestep delta)
 {
+	static float x = 0.0f;
 	Renderer::SetClearColour(Colour::BLACK);
 	scene->OnRender(delta);
+	x += float(delta) * 0.01f;
+	Renderer::DrawBackgroundPass({x, 0});
+	Renderer::StartScene({ backgroundCameraController.GetCamera().GetViewProjection() });
+	SubTexture subTexture = Renderer::GetBackgroundPassTexture()->GetAsSubTexture();
+	Renderer::DrawQuad(glm::vec3{ 0, 0, 0.5f }, &subTexture, backgroundWindowSize);
+	Renderer::EndScene();
 	
 	Renderer::StartUIScene();
 	uiManager->OnRender(delta);
@@ -148,6 +152,8 @@ void MainMenuLayer::OnMouseMoveEvent(MouseMoveEventArg& e)
 
 void MainMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 {
+	UpdateBackground(backgroundPixelHeight * (e.Width / (float)e.Height), backgroundPixelHeight);
+
 	uiManager->OnWindowResize(e);
 }
 
@@ -158,4 +164,16 @@ void MainMenuLayer::OnKeyEvent(KeyEventArg& e)
 		LOG_CORE_INFO("Shutdown");
 		Game::Instance().Shutdown();
 	}
+}
+
+void MainMenuLayer::UpdateBackground(int width, int height)
+{
+	backgroundCameraController.OnResize(width, height);
+	backgroundCameraController.SetZoomLevel(height / 2.0f);
+	float x = backgroundCameraController.GetAspectRatio() * backgroundCameraController.GetZoomLevel();
+	float y = backgroundCameraController.GetZoomLevel();
+	backgroundCameraController.SetPosition({ x, y });
+	backgroundWindowSize = { width, height };
+
+	Renderer::ResizeBackgroundPass(width, height);
 }
