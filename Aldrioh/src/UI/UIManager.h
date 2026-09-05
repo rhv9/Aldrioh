@@ -25,9 +25,14 @@ public:
 	void OnMouseMove(MouseMoveEventArg& e);
 	void OnMouseButton(MouseButtonEventArg& e);
 
+	void OnImGuiRender(Timestep delta);
+	void SetEditorModeActive(bool active) { editorModeActive = active; }
+
 private:
 	void PollAndUpdateWindowSize();
 
 	std::vector<UIObject*> uiObjects;
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
+
+	bool editorModeActive = false;
 };

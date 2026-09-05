@@ -158,7 +158,7 @@ bool Game::Iterate()
 
 #ifdef DISPLAY_IMGUI_DEBUG
     imGuiLayer->BeginRender();
-    layerStack.Debug_ShowLayersImGui();
+    //layerStack.Debug_ShowLayersImGui();
     layerStack.ImGuiRender(delta);
     imGuiLayer->EndRender();
 #endif

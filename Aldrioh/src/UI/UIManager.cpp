@@ -6,6 +6,8 @@
 
 #include <Input/Input.h>
 
+#include <imgui.h>
+
 UIManager::UIManager()
 {
 	PollAndUpdateWindowSize();
@@ -79,7 +81,6 @@ void UIManager::OnMouseMove(MouseMoveEventArg& e)
 
 void UIManager::OnMouseButton(MouseButtonEventArg& e)
 {
-
 	for (UIObject* obj : uiObjects)
 	{
 		if (obj->IsEnabled())
@@ -98,5 +99,29 @@ void UIManager::PollAndUpdateWindowSize()
 	for (UIObject* obj : uiObjects)
 		obj->RecalculateInternalState();
 }
+
+void UIManager::OnImGuiRender(Timestep delta)
+{
+	if (!editorModeActive)
+		return;
+	static bool open = true;
+
+	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+
+	ImGui::Begin("UI Editing window", &open);
+	
+	for (int i = 0; i < uiObjects.size(); ++i)
+	{
+		UIObject* obj = uiObjects[i];
+		ImGui::PushID(i);
+		if (ImGui::CollapsingHeader(std::format("{}", obj->GetName()).c_str(), ImGuiTreeNodeFlags_None))
+		{
+
+		}
+		ImGui::PopID();
+	}
+	ImGui::End();
+}
+
 
 

@@ -15,6 +15,7 @@ void UpgradeMenuLayer::OnBegin()
 	uiText->GetFontStyle().colour = Colour::WHITE;
 
 	uiManager.AddUIObject(uiText);
+	uiManager.SetEditorModeActive(true);
 }
 
 void UpgradeMenuLayer::OnUpdate(Timestep delta)
@@ -33,6 +34,7 @@ void UpgradeMenuLayer::OnRender(Timestep delta)
 
 void UpgradeMenuLayer::OnImGuiRender(Timestep delta)
 {
+	uiManager.OnImGuiRender(delta);
 }
 
 void UpgradeMenuLayer::OnRemove()

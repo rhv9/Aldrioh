@@ -46,6 +46,7 @@ public:
 	void Enable() { enabled = true; }
 	bool IsEnabled() const { return enabled; }
 
+	const std::string& GetName() const { return name; }
 	float GetWidth() const { return size.x; }
 	float GetHeight() const { return size.y; }
 	const glm::vec2& GetSize() const { return size; }
