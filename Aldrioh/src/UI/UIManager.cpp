@@ -116,7 +116,6 @@ void UIManager::OnImGuiRender(Timestep delta)
 		ImGui::PushID(i);
 		if (ImGui::CollapsingHeader(std::format("{}", obj->GetName()).c_str(), ImGuiTreeNodeFlags_None))
 		{
-
 		}
 		ImGui::PopID();
 	}

@@ -215,7 +215,7 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	}
 
 	ImGui::End();
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 }
 
 void GameLayer::OnKeyEvent(KeyEventArg& e)
