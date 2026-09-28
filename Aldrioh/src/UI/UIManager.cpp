@@ -3,6 +3,7 @@
 #include <Core/Window.h>
 #include <Graphics/Renderer.h>
 #include <Game.h>
+#include <Math/Math.h>
 
 #include <Input/Input.h>
 
@@ -109,17 +110,69 @@ void UIManager::OnImGuiRender(Timestep delta)
 	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	ImGui::Begin("UI Editing window", &open);
-	
+
+	selectedFound = false;
+	int id = 0;
 	for (int i = 0; i < uiObjects.size(); ++i)
 	{
 		UIObject* obj = uiObjects[i];
-		ImGui::PushID(i);
-		if (ImGui::CollapsingHeader(std::format("{}", obj->GetName()).c_str(), ImGuiTreeNodeFlags_None))
-		{
-		}
-		ImGui::PopID();
+		ImGuiDrawTreeUIObject(obj, id);
 	}
+
+	if (!selectedFound)
+		selectedObject = nullptr;
+
 	ImGui::End();
+	
+	ImGui::Begin("UIObject editor", &open);
+
+	if (selectedObject)
+	{
+		const int BUFFER_SIZE = 100;
+		char bufferName[BUFFER_SIZE + 1];
+		const std::string& name = selectedObject->GetName();
+		for (int i = 0; i < Math::min(BUFFER_SIZE, name.size()); ++i)
+			bufferName[i] = name[i];
+
+		bufferName[Math::min(BUFFER_SIZE, name.size())] = '\0';
+
+		ImGui::InputText("Name", bufferName, BUFFER_SIZE);
+	}
+
+	ImGui::End();
+}
+
+void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
+{
+	ImGui::PushID(++id);
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+
+	if (obj == selectedObject)
+	{
+		selectedFound = true;
+		flags |= ImGuiTreeNodeFlags_Selected;
+	}
+
+	if (obj->HasChildren())
+		flags |= ImGuiTreeNodeFlags_OpenOnArrow;
+	else
+		flags |= ImGuiTreeNodeFlags_Leaf;
+
+	bool open = ImGui::TreeNodeEx(obj->GetName().c_str(), flags);
+
+	if (ImGui::IsItemClicked())
+	{
+		selectedObject = obj;
+		selectedFound = true;
+	}
+	if (open)
+	{
+		for (UIObject* childObj : obj->children)
+			ImGuiDrawTreeUIObject(childObj, id);
+
+		ImGui::TreePop();
+	}
+	ImGui::PopID();
 }
 
 

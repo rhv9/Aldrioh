@@ -69,6 +69,7 @@ public:
 	void SetParent(UIObject* parent) { this->parent = parent; }
 	// Returns first matching child obj of type type, otherwise returns nullptr
 	UIObject* GetFirstChild(UIType type);
+	bool HasChildren() const { return children.size() != 0; }
 
 	AnchorPoint GetAnchorPoint() const { return anchorPoint; }
 	void SetAnchorPoint(AnchorPoint anchorPoint) { this->anchorPoint = anchorPoint; RecalculateInternalState(); }

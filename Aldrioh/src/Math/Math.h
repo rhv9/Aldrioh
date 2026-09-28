@@ -44,7 +44,10 @@ namespace Math {
 
 
 	float min(float x, float y);
+	int min(int x, int y);
 	float max(float x, float y);
+	int max(int x, int y);
+
 	float minAndMax(float lhs, float val, float rhs);
 
 	float sinRad(float val);

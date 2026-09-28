@@ -201,7 +201,17 @@ float Math::min(float x, float y)
 	return x < y ? x : y;
 }
 
+int Math::min(int x, int y)
+{
+	return x < y ? x : y;
+}
+
 float Math::max(float x, float y)
+{
+	return x > y ? x : y;
+}
+
+int Math::max(int x, int y)
 {
 	return x > y ? x : y;
 }

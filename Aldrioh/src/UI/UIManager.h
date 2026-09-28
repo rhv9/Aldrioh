@@ -27,6 +27,8 @@ public:
 
 	void OnImGuiRender(Timestep delta);
 	void SetEditorModeActive(bool active) { editorModeActive = active; }
+	void ImGuiDrawTreeUIObject(UIObject* obj, int& id);
+
 
 private:
 	void PollAndUpdateWindowSize();
@@ -35,4 +37,6 @@ private:
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
 
 	bool editorModeActive = false;
+	UIObject* selectedObject = nullptr;
+	bool selectedFound = false;
 };

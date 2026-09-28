@@ -1,6 +1,7 @@
 #include <pch.h>
 #include "UpgradeMenuLayer.h"
 #include <UI/UIText.h>
+#include <UI/UIButton.h>
 #include <Graphics/Renderer.h>
 
 #include <Input/Input.h>
@@ -8,13 +9,30 @@
 
 void UpgradeMenuLayer::OnBegin()
 {
-	UIText* uiText = new UIText("Test", {0.0f, 0.0f}, {0, 0});
-	uiText->SetAnchorPoint(AnchorPoint::CENTER);
-	uiText->SetText("Why Hello There!");
-	uiText->SetFontSize(8);
-	uiText->GetFontStyle().colour = Colour::WHITE;
+	UIText* uiTitle = new UIText("Title", {0.0f, 0.0f}, {0, 0});
+	uiTitle->SetAnchorPoint(AnchorPoint::CENTER);
+	uiTitle->SetText("Laboratory");
+	uiTitle->SetFontSize(8);
+	uiTitle->GetFontStyle().colour = Colour::WHITE;
+	uiManager.AddUIObject(uiTitle);
 
-	uiManager.AddUIObject(uiText);
+	UIText* uiName = new UIText("Name", { 0.0f, -3.0f }, { 0, 0 });
+	uiName->SetAnchorPoint(AnchorPoint::CENTER);
+	uiName->SetText("Schnitzen!");
+	uiName->SetFontSize(2);
+	uiName->GetFontStyle().colour = Colour::RED;
+	uiManager.AddUIObject(uiName);
+
+	UIButton* uiBackButton = new UIButton("Back_Button", { 1.0f, 1.0f }, {12.0f, 4.0f});
+	uiBackButton->SetAnchorPoint(AnchorPoint::RIGHT_BOTTOM);
+	uiBackButton->SetButtonColour(Colour::BLUE);
+	uiBackButton->GetUIText()->GetFontStyle().WithColour(Colour::WHITE).WithSize(3);
+	uiBackButton->GetUIText()->SetText("Back");
+	uiBackButton->SetOnClickCallback([](UIButton* button) {
+		LOG_INFO("Going back now!");
+		});
+	uiManager.AddUIObject(uiBackButton);
+
 	uiManager.SetEditorModeActive(true);
 }
 
