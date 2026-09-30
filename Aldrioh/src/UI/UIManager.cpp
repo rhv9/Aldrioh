@@ -107,10 +107,12 @@ void UIManager::OnImGuiRender(Timestep delta)
 		return;
 	static bool open = true;
 
-	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::Begin("UI Editor");
+	ImGuiID dockspaceID = ImGui::GetID("UIEditorDockspace");
+	ImGui::DockSpace(dockspaceID, ImVec2(0,0), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::End();
 
-	ImGui::Begin("UI Editing window", &open);
-
+	ImGui::Begin("UI Hierarchy", &open);
 	selectedFound = false;
 	int id = 0;
 	for (int i = 0; i < uiObjects.size(); ++i)
@@ -118,13 +120,13 @@ void UIManager::OnImGuiRender(Timestep delta)
 		UIObject* obj = uiObjects[i];
 		ImGuiDrawTreeUIObject(obj, id);
 	}
-
 	if (!selectedFound)
 		selectedObject = nullptr;
-
 	ImGui::End();
 	
-	ImGui::Begin("UIObject editor", &open);
+
+	// UI Inspector
+	ImGui::Begin("UI Inspector", &open);
 
 	if (selectedObject)
 	{
@@ -133,14 +135,29 @@ void UIManager::OnImGuiRender(Timestep delta)
 		const std::string& name = selectedObject->GetName();
 		for (int i = 0; i < Math::min(BUFFER_SIZE, name.size()); ++i)
 			bufferName[i] = name[i];
-
 		bufferName[Math::min(BUFFER_SIZE, name.size())] = '\0';
 
-		ImGui::InputText("Name", bufferName, BUFFER_SIZE);
+		if (ImGui::InputText("Name", bufferName, BUFFER_SIZE, ImGuiInputTextFlags_EnterReturnsTrue))
+			selectedObject->SetName(bufferName);
+
+		AnchorPoint anchorPoint = selectedObject->GetAnchorPoint();
+		ImGui::Text("AnchorPoint");
+		ImGui::SameLine();
+		if (ImGui::Button(anchorPoint.ToString().c_str()))
+			ImGui::OpenPopup("anchorpoint_popup");
+		if (ImGui::BeginPopup("anchorpoint_popup"))
+		{
+			ImGui::SeparatorText("AnchorPoint");
+			for (int i = 0; i < AnchorPoint::MAX_NUMBER; i++)
+				if (ImGui::Selectable(AnchorPoint(i).ToString().c_str()))
+					selectedObject->SetAnchorPoint(AnchorPoint(i));
+			ImGui::EndPopup();
+		}
 	}
 
 	ImGui::End();
 }
+
 
 void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
 {
@@ -174,6 +191,12 @@ void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
 	}
 	ImGui::PopID();
 }
+
+void UIManager::SetEditorModeActive(bool active)
+{
+	editorModeActive = true;
+}
+
 
 
 

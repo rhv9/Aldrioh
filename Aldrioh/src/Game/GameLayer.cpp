@@ -160,8 +160,6 @@ void GameLayer::OnImGuiRender(Timestep delta)
 	if (!GameDebugState::enabledImGui)
 		return;
 
-	ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
-
 	ImGui::Begin("Main Window", &open, ImGuiWindowFlags_NoFocusOnAppearing);
 
 	if (ImGui::BeginTabBar("##Tabs", ImGuiTabBarFlags_None))

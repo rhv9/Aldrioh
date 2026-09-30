@@ -47,6 +47,7 @@ public:
 	bool IsEnabled() const { return enabled; }
 
 	const std::string& GetName() const { return name; }
+	void SetName(const std::string& name) { this->name = name; }
 	float GetWidth() const { return size.x; }
 	float GetHeight() const { return size.y; }
 	const glm::vec2& GetSize() const { return size; }

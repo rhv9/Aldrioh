@@ -26,7 +26,7 @@ public:
 	void OnMouseButton(MouseButtonEventArg& e);
 
 	void OnImGuiRender(Timestep delta);
-	void SetEditorModeActive(bool active) { editorModeActive = active; }
+	void SetEditorModeActive(bool active);
 	void ImGuiDrawTreeUIObject(UIObject* obj, int& id);
 
 

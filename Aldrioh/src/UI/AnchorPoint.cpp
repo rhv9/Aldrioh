@@ -45,3 +45,21 @@ glm::vec2 AnchorPoint::ConvertPos(const glm::vec2& pos, const glm::vec2& size, c
 
 	return result;
 }
+
+
+const std::string& AnchorPoint::ToString() const
+{
+	static std::string anchorToStringMap[]
+	{
+		"LEFT_BOTTOM ",
+		"LEFT_CENTER",
+		"LEFT_TOP",
+		"CENTER_BOTTOM",
+		"CENTER",
+		"CENTER_TOP",
+		"RIGHT_BOTTOM",
+		"RIGHT_CENTER",
+		"RIGHT_TOP",
+	};
+	return anchorToStringMap[static_cast<uint8_t>(value)];
+}
