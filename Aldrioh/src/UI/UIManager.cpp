@@ -39,6 +39,16 @@ void UIManager::OnRender(Timestep ts)
 			obj->RenderChildren(ts);
 		}
 	}
+
+	if (editorModeActive && selectedObject)
+	{
+		glm::vec2 offset = selectedObject->GetParent() ? selectedObject->GetParent()->GetRenderPos() : glm::vec2(0);
+		glm::vec2 containerSize = selectedObject->GetParent() ? selectedObject->GetParent()->size : this->GetUIArea() ;
+
+		glm::vec2 anchorPos = selectedObject->GetAnchorPoint().ConvertPos(glm::vec2(0), glm::vec2(1.0f), containerSize);
+		glm::vec2 renderPos = offset + anchorPos;
+		Renderer::UIDrawRectangle({ UIData::PIXEL, renderPos }, { UIData::PIXEL, glm::vec2(1.0f)}, Colour::RED);
+	}
 }
 
 void UIManager::AddUIObject(UIObject* object)
@@ -130,6 +140,8 @@ void UIManager::OnImGuiRender(Timestep delta)
 
 	if (selectedObject)
 	{
+		ImGui::SeparatorText("UIObject");
+
 		const int BUFFER_SIZE = 100;
 		char bufferName[BUFFER_SIZE + 1];
 		const std::string& name = selectedObject->GetName();
@@ -153,6 +165,22 @@ void UIManager::OnImGuiRender(Timestep delta)
 					selectedObject->SetAnchorPoint(AnchorPoint(i));
 			ImGui::EndPopup();
 		}
+		glm::vec2 relativePos = selectedObject->GetRelativePos();
+		if (ImGui::DragFloat2("Relative Position", (float*)(&relativePos)))
+			selectedObject->SetRelativePos(relativePos);
+
+		glm::vec2 renderPos = selectedObject->GetRenderPos();
+		ImGui::InputFloat2("Render Position", (float*)(&renderPos), "%.2f", ImGuiInputTextFlags_ReadOnly);
+
+		glm::vec4 backgroundCol = selectedObject->backgroundColour;
+		if (ImGui::ColorEdit4("Background", (float*)(&backgroundCol)))
+			selectedObject->SetBackgroundColour(backgroundCol);
+
+		glm::vec2 size = selectedObject->GetSize();
+		if (ImGui::DragFloat2("Size", (float*)(&size)))
+			selectedObject->SetSize(size);
+
+		ImGui::SeparatorText("UIObject");
 	}
 
 	ImGui::End();
