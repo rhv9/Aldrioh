@@ -37,6 +37,8 @@ private:
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
 
 	bool editorModeActive = false;
-	UIObject* selectedObject = nullptr;
-	bool selectedFound = false;
+	glm::vec2 editorHeldPos{ 0.0f }, editorSelectedOriginalPos{ 0.0f };
+	bool editorMouseHeld;
+	UIObject* editorSelectedObject = nullptr;
+	bool editorSelectedFound = false;
 };

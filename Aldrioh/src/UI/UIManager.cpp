@@ -40,14 +40,15 @@ void UIManager::OnRender(Timestep ts)
 		}
 	}
 
-	if (editorModeActive && selectedObject)
+	if (editorModeActive && editorSelectedObject)
 	{
-		glm::vec2 offset = selectedObject->GetParent() ? selectedObject->GetParent()->GetRenderPos() : glm::vec2(0);
-		glm::vec2 containerSize = selectedObject->GetParent() ? selectedObject->GetParent()->size : this->GetUIArea() ;
+		glm::vec2 offset = editorSelectedObject->GetParent() ? editorSelectedObject->GetParent()->GetRenderPos() : glm::vec2(0);
+		glm::vec2 containerSize = editorSelectedObject->GetParent() ? editorSelectedObject->GetParent()->size : this->GetUIArea() ;
 
-		glm::vec2 anchorPos = selectedObject->GetAnchorPoint().ConvertPos(glm::vec2(0), glm::vec2(1.0f), containerSize);
+		glm::vec2 anchorPos = editorSelectedObject->GetAnchorPoint().ConvertPos(glm::vec2(0), glm::vec2(1.0f), containerSize);
 		glm::vec2 renderPos = offset + anchorPos;
 		Renderer::UIDrawRectangle({ UIData::PIXEL, renderPos }, { UIData::PIXEL, glm::vec2(1.0f)}, Colour::RED);
+
 	}
 }
 
@@ -88,6 +89,15 @@ void UIManager::OnMouseMove(MouseMoveEventArg& e)
 			obj->OnMouseMoveEventChildren(relative);
 		}
 	}
+
+	if (editorModeActive && editorSelectedObject)
+	{
+		if (editorMouseHeld)
+		{
+			glm::vec2 diff = editorHeldPos - GetMousePos();
+			editorSelectedObject->SetRelativePos(editorSelectedOriginalPos - diff);
+		}
+	}
 }
 
 void UIManager::OnMouseButton(MouseButtonEventArg& e)
@@ -98,6 +108,21 @@ void UIManager::OnMouseButton(MouseButtonEventArg& e)
 		{
 			obj->OnMouseButtonEvent(e);
 			obj->OnMouseButtonEventChildren(e);
+		}
+	}
+
+	if (editorModeActive && editorSelectedObject)
+	{
+		glm::vec2 mousePos = Input::GetMousePosition();
+		if (e.IsPressed(Input::MOUSE_BUTTON_1) && editorSelectedObject->IsMouseHovering())
+		{
+			editorHeldPos = GetMousePos();
+			editorSelectedOriginalPos = editorSelectedObject->GetRelativePos();
+			editorMouseHeld = true;
+		}
+		else if (e.IsReleased(Input::MOUSE_BUTTON_1))
+		{
+			editorMouseHeld = false;
 		}
 	}
 }
@@ -123,36 +148,36 @@ void UIManager::OnImGuiRender(Timestep delta)
 	ImGui::End();
 
 	ImGui::Begin("UI Hierarchy", &open);
-	selectedFound = false;
+	editorSelectedFound = false;
 	int id = 0;
 	for (int i = 0; i < uiObjects.size(); ++i)
 	{
 		UIObject* obj = uiObjects[i];
 		ImGuiDrawTreeUIObject(obj, id);
 	}
-	if (!selectedFound)
-		selectedObject = nullptr;
+	if (!editorSelectedFound)
+		editorSelectedObject = nullptr;
 	ImGui::End();
 	
 
 	// UI Inspector
 	ImGui::Begin("UI Inspector", &open);
 
-	if (selectedObject)
+	if (editorSelectedObject)
 	{
 		ImGui::SeparatorText("UIObject");
 
 		const int BUFFER_SIZE = 100;
 		char bufferName[BUFFER_SIZE + 1];
-		const std::string& name = selectedObject->GetName();
+		const std::string& name = editorSelectedObject->GetName();
 		for (int i = 0; i < Math::min(BUFFER_SIZE, name.size()); ++i)
 			bufferName[i] = name[i];
 		bufferName[Math::min(BUFFER_SIZE, name.size())] = '\0';
 
 		if (ImGui::InputText("Name", bufferName, BUFFER_SIZE, ImGuiInputTextFlags_EnterReturnsTrue))
-			selectedObject->SetName(bufferName);
+			editorSelectedObject->SetName(bufferName);
 
-		AnchorPoint anchorPoint = selectedObject->GetAnchorPoint();
+		AnchorPoint anchorPoint = editorSelectedObject->GetAnchorPoint();
 		ImGui::Text("AnchorPoint");
 		ImGui::SameLine();
 		if (ImGui::Button(anchorPoint.ToString().c_str()))
@@ -162,23 +187,23 @@ void UIManager::OnImGuiRender(Timestep delta)
 			ImGui::SeparatorText("AnchorPoint");
 			for (int i = 0; i < AnchorPoint::MAX_NUMBER; i++)
 				if (ImGui::Selectable(AnchorPoint(i).ToString().c_str()))
-					selectedObject->SetAnchorPoint(AnchorPoint(i));
+					editorSelectedObject->SetAnchorPoint(AnchorPoint(i));
 			ImGui::EndPopup();
 		}
-		glm::vec2 relativePos = selectedObject->GetRelativePos();
+		glm::vec2 relativePos = editorSelectedObject->GetRelativePos();
 		if (ImGui::DragFloat2("Relative Position", (float*)(&relativePos)))
-			selectedObject->SetRelativePos(relativePos);
+			editorSelectedObject->SetRelativePos(relativePos);
 
-		glm::vec2 renderPos = selectedObject->GetRenderPos();
+		glm::vec2 renderPos = editorSelectedObject->GetRenderPos();
 		ImGui::InputFloat2("Render Position", (float*)(&renderPos), "%.2f", ImGuiInputTextFlags_ReadOnly);
 
-		glm::vec4 backgroundCol = selectedObject->backgroundColour;
+		glm::vec4 backgroundCol = editorSelectedObject->backgroundColour;
 		if (ImGui::ColorEdit4("Background", (float*)(&backgroundCol)))
-			selectedObject->SetBackgroundColour(backgroundCol);
+			editorSelectedObject->SetBackgroundColour(backgroundCol);
 
-		glm::vec2 size = selectedObject->GetSize();
+		glm::vec2 size = editorSelectedObject->GetSize();
 		if (ImGui::DragFloat2("Size", (float*)(&size)))
-			selectedObject->SetSize(size);
+			editorSelectedObject->SetSize(size);
 
 		ImGui::SeparatorText("UIObject");
 	}
@@ -192,9 +217,9 @@ void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
 	ImGui::PushID(++id);
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
 
-	if (obj == selectedObject)
+	if (obj == editorSelectedObject)
 	{
-		selectedFound = true;
+		editorSelectedFound = true;
 		flags |= ImGuiTreeNodeFlags_Selected;
 	}
 
@@ -207,8 +232,8 @@ void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
 
 	if (ImGui::IsItemClicked())
 	{
-		selectedObject = obj;
-		selectedFound = true;
+		editorSelectedObject = obj;
+		editorSelectedFound = true;
 	}
 	if (open)
 	{
