@@ -94,7 +94,14 @@ void UIManager::OnMouseMove(MouseMoveEventArg& e)
 	{
 		if (editorMouseHeld)
 		{
+			AnchorPoint ap = editorSelectedObject->GetAnchorPoint();
+
+			float yMult = (ap == AnchorPoint::LEFT_TOP || ap == AnchorPoint::CENTER_TOP || ap == AnchorPoint::RIGHT_TOP) ? -1 : 1;
+			float xMult = (ap == AnchorPoint::RIGHT_BOTTOM || ap == AnchorPoint::RIGHT_CENTER || ap == AnchorPoint::RIGHT_TOP) ? -1 : 1;
+			
 			glm::vec2 diff = editorHeldPos - GetMousePos();
+			diff.x *= xMult;
+			diff.y *= yMult;
 			editorSelectedObject->SetRelativePos(editorSelectedOriginalPos - diff);
 		}
 	}

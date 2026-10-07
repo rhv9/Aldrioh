@@ -26,7 +26,9 @@ public:
 
 	explicit operator bool() const = delete;
 	constexpr bool operator==(AnchorPoint a) const { return value == a.value; }
+	constexpr bool operator==(Value anchorValue) const { return value == anchorValue; }
 	constexpr bool operator!=(AnchorPoint a) const { return value != a.value; }
+	constexpr bool operator!=(Value anchorValue) const { return value != anchorValue; }
 
 	glm::vec2 ConvertPos(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& containerSize);
 	
