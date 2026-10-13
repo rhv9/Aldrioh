@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Graphics/SubTexture.h"
 
-static std::shared_ptr<Texture> spritesheet;
+static std::shared_ptr<Texture> spritesheet, labsheet;
 static std::shared_ptr<Texture> squareBox;
 
 static SubTexture* spriteMap;
@@ -34,6 +34,7 @@ void Sprites::Init()
 	
 	spriteMap = new SubTexture[size];
 	spritesheet = std::make_shared<Texture>("assets/textures/shooter_spritesheet.png");
+	labsheet = std::make_shared<Texture>("assets/textures/lab.png");
 
 	RunMonsterCodeThatInitialisesSpritesFromHeaderFileUsingVeryReadableMacros();
 

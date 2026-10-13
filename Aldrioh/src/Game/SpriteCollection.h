@@ -9,14 +9,14 @@
 
 // In the cpp file, this header file is included twice with different defines, so that we have both declaration of global variable and initialisation of it.
 #ifdef SPRITES_CPP
-#define SPRITES_MACRO(name, x, y) toInitSprites.push_back(SpriteDataInternal{&name, glm::vec2{x, y}});
-#define SPRITES_MACRO_SIZE(name, x, y, size) toInitSprites.push_back(SpriteDataInternal{&name, glm::vec2{x, y}, size});
+#define SPRITES_MACRO(sh, name, x, y) toInitSprites.push_back(SpriteDataInternal{sh, &name, glm::vec2{x, y}});
+#define SPRITES_MACRO_SIZE(sh, name, x, y, size) toInitSprites.push_back(SpriteDataInternal{sh, &name, glm::vec2{x, y}, size});
 #elif defined(SPRITES_DECLARATION)
-#define SPRITES_MACRO(name, x, y) spriteid_t name = -1;
-#define SPRITES_MACRO_SIZE(name, x, y, size) spriteid_t name = -1;
+#define SPRITES_MACRO(sh, name, x, y) spriteid_t name = -1;
+#define SPRITES_MACRO_SIZE(sh, name, x, y, size) spriteid_t name = -1;
 #else
-#define SPRITES_MACRO(name, x, y) extern spriteid_t name;
-#define SPRITES_MACRO_SIZE(name, x, y, size) extern spriteid_t name;
+#define SPRITES_MACRO(sh, name, x, y) extern spriteid_t name;
+#define SPRITES_MACRO_SIZE(sh, name, x, y, size) extern spriteid_t name;
 #endif
 
 #ifdef SPRITES_CPP
@@ -57,6 +57,7 @@ namespace Sprites {
 #ifdef SPRITES_CPP
 	struct SpriteDataInternal
 	{
+		std::shared_ptr<Texture> spritesheet;
 		spriteid_t* spriteLocation;
 		glm::vec2 pos;
 		glm::vec2 size{ 1.0f, 1.0f };
@@ -76,54 +77,56 @@ namespace Sprites {
 #endif
 
 		// Subtextures
-		SPRITES_MACRO(null, 1, 1);
-		SPRITES_MACRO(shadow, 0, 3);
-		SPRITES_MACRO(sand_1, 0, 0);
-		SPRITES_MACRO(sand_rock, 1, 0);
-		SPRITES_MACRO(sand_cactus, 2, 0);
-		SPRITES_MACRO(bullet_fire, 0, 1);
-		SPRITES_MACRO(bullet_red, 1, 1);
-		SPRITES_MACRO(bullet_white, 2, 1);
-		SPRITES_MACRO(bullet_rocket, 5, 1);
+		SPRITES_MACRO(spritesheet, null, 1, 1);
+		SPRITES_MACRO(spritesheet, shadow, 0, 3);
+		SPRITES_MACRO(spritesheet, sand_1, 0, 0);
+		SPRITES_MACRO(spritesheet, sand_rock, 1, 0);
+		SPRITES_MACRO(spritesheet, sand_cactus, 2, 0);
+		SPRITES_MACRO(spritesheet, bullet_fire, 0, 1);
+		SPRITES_MACRO(spritesheet, bullet_red, 1, 1);
+		SPRITES_MACRO(spritesheet, bullet_white, 2, 1);
+		SPRITES_MACRO(spritesheet, bullet_rocket, 5, 1);
 
-		SPRITES_MACRO(particle_smoke_1, 6, 1);
-		SPRITES_MACRO(particle_smoke_2, 7, 1);
-		SPRITES_MACRO(particle_drone_broken_1, 8, 1);
-		SPRITES_MACRO(particle_drone_broken_2, 9, 1);
-		SPRITES_MACRO(particle_drone_broken_red, 10, 1);
+		SPRITES_MACRO(spritesheet, particle_smoke_1, 6, 1);
+		SPRITES_MACRO(spritesheet, particle_smoke_2, 7, 1);
+		SPRITES_MACRO(spritesheet, particle_drone_broken_1, 8, 1);
+		SPRITES_MACRO(spritesheet, particle_drone_broken_2, 9, 1);
+		SPRITES_MACRO(spritesheet, particle_drone_broken_red, 10, 1);
 
-		SPRITES_MACRO(coin, 3, 1);
-		SPRITES_MACRO(jewel, 4, 1);
+		SPRITES_MACRO(spritesheet, coin, 3, 1);
+		SPRITES_MACRO(spritesheet, jewel, 4, 1);
 
-		SPRITES_MACRO(player_head, 0, 2);
-		SPRITES_MACRO(slime, 1, 2);
-		SPRITES_MACRO(target, 2, 2);
-		SPRITES_MACRO(spawner, 3, 2);
+		SPRITES_MACRO(spritesheet, player_head, 0, 2);
+		SPRITES_MACRO(spritesheet, slime, 1, 2);
+		SPRITES_MACRO(spritesheet, target, 2, 2);
+		SPRITES_MACRO(spritesheet, spawner, 3, 2);
 
-		SPRITES_MACRO(player_ship, 0, 15);
+		SPRITES_MACRO(spritesheet, player_ship, 0, 15);
 
-		SPRITES_MACRO(asteroid_small, 0, 14);
-		SPRITES_MACRO(drone_normal, 0, 13);
-		SPRITES_MACRO(drone_tank, 1, 13);
-		SPRITES_MACRO(drone_mother, 2, 13);
+		SPRITES_MACRO(spritesheet, asteroid_small, 0, 14);
+		SPRITES_MACRO(spritesheet, drone_normal, 0, 13);
+		SPRITES_MACRO(spritesheet, drone_tank, 1, 13);
+		SPRITES_MACRO(spritesheet, drone_mother, 2, 13);
 
-		SPRITES_MACRO_SIZE(two_wing, 0, 10, glm::vec2{ 2 });
-		SPRITES_MACRO_SIZE(diamond_enemy, 2, 10, glm::vec2{ 2 });
+		SPRITES_MACRO_SIZE(spritesheet, two_wing, 0, 10, glm::vec2{ 2 });
+		SPRITES_MACRO_SIZE(spritesheet, diamond_enemy, 2, 10, glm::vec2{ 2 });
+		SPRITES_MACRO_SIZE(labsheet, lab_glass, 0, 0, glm::vec2( 2, 4 ));
 
-		SPRITES_MACRO(borderBox, 0, 0);
-		SPRITES_MACRO(greenBox, 1, 0);
-		SPRITES_MACRO(square, 2, 0);
+		SPRITES_MACRO(spritesheet, borderBox, 0, 0);
+		SPRITES_MACRO(spritesheet, greenBox, 1, 0);
+		SPRITES_MACRO(spritesheet, square, 2, 0);
 
 		// Items
-		SPRITES_MACRO(item_fireball,		15, 15);
-		SPRITES_MACRO(item_health,			15, 14);
-		SPRITES_MACRO(item_floatyfast,		15, 13);
-		SPRITES_MACRO(item_dmg_increase,	15, 12);
-		SPRITES_MACRO(item_crit_dmg,		15, 11);
-		SPRITES_MACRO(item_crit_chance,		15, 10);
-		SPRITES_MACRO(item_clover,			15,	 9);
-		SPRITES_MACRO(item_machinegun,		15,  8);
-		SPRITES_MACRO(item_rocketshooter,	15,  7);
+		SPRITES_MACRO(spritesheet, item_fireball,		15, 15);
+		SPRITES_MACRO(spritesheet, item_health,			15, 14);
+		SPRITES_MACRO(spritesheet, item_floatyfast,		15, 13);
+		SPRITES_MACRO(spritesheet, item_dmg_increase,	15, 12);
+		SPRITES_MACRO(spritesheet, item_crit_dmg,		15, 11);
+		SPRITES_MACRO(spritesheet, item_crit_chance,	15, 10);
+		SPRITES_MACRO(spritesheet, item_clover,			15,	 9);
+		SPRITES_MACRO(spritesheet, item_machinegun,		15,  8);
+		SPRITES_MACRO(spritesheet, item_rocketshooter,	15,  7);
+
 
 		SPRITES_ANIMATED_MACRO(anim_energycore_drone, 0, 12, 4);
 
@@ -136,7 +139,7 @@ namespace Sprites {
 		{
 			spriteid_t* spriteLoc = spi.spriteLocation;
 			*spriteLoc = spriteCounter++;
-			spriteMap[*spriteLoc] = { spritesheet, spi.pos, Sprites::TileSize, spi.size };
+			spriteMap[*spriteLoc] = { spi.spritesheet, spi.pos, Sprites::TileSize, spi.size };
 		}
 
 		LOG_CORE_INFO("Number of animated sprites using new system:{}", toInitAnimSprites.size());

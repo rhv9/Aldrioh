@@ -2,6 +2,7 @@
 #include "UpgradeMenuLayer.h"
 #include <UI/UIText.h>
 #include <UI/UIButton.h>
+#include <UI/UIImage.h>
 #include <Graphics/Renderer.h>
 
 #include <Input/Input.h>
@@ -32,6 +33,11 @@ void UpgradeMenuLayer::OnBegin()
 		LOG_INFO("Going back now!");
 		});
 	uiManager.AddUIObject(uiBackButton);
+
+	UIImage* uiImage = new UIImage("lab glass", { 0, 0 }, { 2, 2 });
+	uiImage->SetSubTexture(Sprites::get(Sprites::lab_glass));
+	uiImage->SetAnchorPoint(AnchorPoint::CENTER);
+	uiManager.AddUIObject(uiImage);
 
 	uiManager.SetEditorModeActive(true);
 }
