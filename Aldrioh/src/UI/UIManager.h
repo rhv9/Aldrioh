@@ -24,6 +24,7 @@ public:
 	void OnWindowResize(WindowResizeEventArg& e);
 	void OnMouseMove(MouseMoveEventArg& e);
 	void OnMouseButton(MouseButtonEventArg& e);
+	void OnKeyEvent(KeyEventArg& e);
 
 	void OnImGuiRender(Timestep delta);
 	void SetEditorModeActive(bool active);

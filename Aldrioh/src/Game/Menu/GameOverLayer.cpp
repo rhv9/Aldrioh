@@ -106,6 +106,7 @@ void GameOverLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 
 void GameOverLayer::OnKeyEvent(KeyEventArg& e)
 {
+	uiManager->OnKeyEvent(e);
 	if (e.IsPressed(Input::KEY_ESCAPE))
 		TransitionToMainMenu();
 }

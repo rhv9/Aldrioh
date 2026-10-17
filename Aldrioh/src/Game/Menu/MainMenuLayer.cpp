@@ -22,6 +22,8 @@
 
 #include <Game/Entity/GameEntities.h>
 
+#include <File/SimpleStorage/SimpleStorage.h>
+
 
 void MainMenuLayer::OnBegin()
 {
@@ -89,6 +91,13 @@ void MainMenuLayer::OnBegin()
 		});
 	uiManager->AddUIObject(upgradeMenuButton);
 
+
+	// Testing
+	LOG_CORE_INFO("=======Testing SimpleStorage======");
+	SimpleStorage simpleStorage("ui/simplestoragetest.ss");
+
+	//simpleStorage.WriteString("BestGamer", "Ohnepixel");
+	simpleStorage.GetSection("Yeet");
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
@@ -146,6 +155,7 @@ void MainMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 
 void MainMenuLayer::OnKeyEvent(KeyEventArg& e)
 {
+	uiManager->OnKeyEvent(e);
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		LOG_CORE_INFO("Shutdown");

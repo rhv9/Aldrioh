@@ -92,6 +92,7 @@ void UpgradeMenuLayer::OnWindowResizeEvent(WindowResizeEventArg& e)
 
 void UpgradeMenuLayer::OnKeyEvent(KeyEventArg& e)
 {
+	uiManager.OnKeyEvent(e);
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		this->QueueTransitionTo(GlobalLayers::mainMenu);

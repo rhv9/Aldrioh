@@ -146,6 +146,7 @@ void PauseMenuLayer::OnTransitionOut()
 
 void PauseMenuLayer::OnKeyEvent(KeyEventArg& e)
 {
+	uiManager->OnKeyEvent(e);
 	if (e.IsPressed(Input::KEY_ESCAPE))
 	{
 		ExitPauseMenuToGame();

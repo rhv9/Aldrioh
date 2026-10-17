@@ -134,6 +134,13 @@ void UIManager::OnMouseButton(MouseButtonEventArg& e)
 	}
 }
 
+void UIManager::OnKeyEvent(KeyEventArg& e)
+{
+	if (e.Mods == Input::KEY_MOD_CONTROL && e.IsPressed(Input::KEY_S))
+	{
+	}
+}
+
 void UIManager::PollAndUpdateWindowSize()
 {
 	uiArea = Renderer::UIGetWindowSize();
