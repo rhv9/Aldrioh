@@ -7,7 +7,7 @@
 class UpgradeMenuLayer : public Layer
 {
 public:
-	UpgradeMenuLayer(const std::string& name) : Layer(name) {}
+	UpgradeMenuLayer(const std::string& name) : Layer(name), uiManager("UpgradeMenuUI"){}
 	virtual ~UpgradeMenuLayer() override {}
 
 	virtual void OnBegin() override;

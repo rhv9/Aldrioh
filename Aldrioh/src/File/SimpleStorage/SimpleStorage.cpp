@@ -2,7 +2,7 @@
 #include "SimpleStorage.h"
 #include <fstream>
 
-SimpleStorage::SimpleStorage(std::string_view newFilePath)
+SimpleStorage::SimpleStorage(const std::string_view newFilePath)
 {
 	filePath = newFilePath;
 }
@@ -14,6 +14,12 @@ bool SimpleStorage::HasSection(const std::string& sectionName)
 
 void SimpleStorage::WriteToSection()
 {
+}
+
+bool SimpleStorage::WriteSection(const Section& section) const
+{
+
+	return false;
 }
 
 void SimpleStorage::WriteString(std::string_view property, std::string_view msg)

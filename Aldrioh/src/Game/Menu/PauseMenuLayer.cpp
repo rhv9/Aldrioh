@@ -29,7 +29,7 @@ void PauseMenuLayer::OnBegin()
 	Renderer::SetClearColour(Colour::BLACK);
 
 	Renderer::SetUIPixelHeight(100);
-	uiManager = std::make_unique<UIManager>();
+	uiManager = std::make_unique<UIManager>("PauseMenuUI");
 
 	UIObject* uiBackground = new UIObject("Background", { 0,0 }, Renderer::UIGetWindowSize());
 	uiBackground->SetBackgroundColour(glm::vec4{ 0.3f, 0.3f, 0.3f, 0.5f });

@@ -22,7 +22,7 @@ GameUILayer::GameUILayer(const std::string& name, Level& level) : Layer(name), l
 	expGainCallbackId = level.GetPlayerStats().expGainEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnExpGainEvent);
 	lvlUpCallbackId = level.GetPlayerStats().lvlUpEventHandler += EVENT_BIND_MEMBER_FUNCTION(GameUILayer::OnLevelUpEvent);
 
-	uiManager = std::make_unique<UIManager>();
+	uiManager = std::make_unique<UIManager>("GameUI");
 	// Active UI for game
 	{
 		uiLevelCountText = new UIText("Level Count", { 2, 4 }, glm::vec2{ 0 });

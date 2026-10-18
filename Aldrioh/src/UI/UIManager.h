@@ -8,7 +8,7 @@
 class UIManager
 {
 public:
-	UIManager();
+	UIManager(const std::string_view newName);
 	~UIManager();
 
 	void OnUpdate(Timestep ts);
@@ -30,10 +30,14 @@ public:
 	void SetEditorModeActive(bool active);
 	void ImGuiDrawTreeUIObject(UIObject* obj, int& id);
 
+	void SaveToFile();
+
 
 private:
 	void PollAndUpdateWindowSize();
 
+
+	std::string name;
 	std::vector<UIObject*> uiObjects;
 	glm::vec2 uiArea{ 0 }, windowSizeCached{ 0 };
 
@@ -42,4 +46,5 @@ private:
 	bool editorMouseHeld;
 	UIObject* editorSelectedObject = nullptr;
 	bool editorSelectedFound = false;
+	
 };

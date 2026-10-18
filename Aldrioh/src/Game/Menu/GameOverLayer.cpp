@@ -35,7 +35,7 @@ void GameOverLayer::OnBegin()
 	cameraEntity.RemoveComponent<TransformComponent>(); // TODO: Need to consider this pls
 
 	Renderer::SetUIPixelHeight(100);
-	uiManager = std::make_unique<UIManager>();
+	uiManager = std::make_unique<UIManager>("GameOverUI");
 
 	title = new UIText("Game Over", glm::vec2{ 0, 25 }, glm::vec2{ 3 });
 	title->SetAnchorPoint(AnchorPoint::CENTER);

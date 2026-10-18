@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <queue>
 #include <span>
+#include <variant>
 
 // Mine
 #include <Core/Core.h>

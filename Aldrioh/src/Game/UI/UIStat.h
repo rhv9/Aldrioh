@@ -1,7 +1,7 @@
 #pragma once
 #include <UI/UIObject.h>
 
-class SubTexture;
+struct SubTexture;
 class UIImage;
 class UIText;
 

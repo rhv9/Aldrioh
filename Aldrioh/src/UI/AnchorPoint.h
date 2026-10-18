@@ -33,6 +33,7 @@ public:
 	glm::vec2 ConvertPos(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& containerSize);
 	
 	const std::string& ToString() const;
+	uint8_t serialize() const { return static_cast<uint8_t>(value); }
 
 private:
 	Value value;

@@ -9,8 +9,11 @@
 
 #include <imgui.h>
 
-UIManager::UIManager()
+#include <File/SimpleStorage/SimpleStorage.h>
+
+UIManager::UIManager(std::string_view newName)
 {
+	name = newName;
 	PollAndUpdateWindowSize();
 }
 
@@ -257,6 +260,26 @@ void UIManager::ImGuiDrawTreeUIObject(UIObject* obj, int& id)
 		ImGui::TreePop();
 	}
 	ImGui::PopID();
+}
+
+void UIManager::SaveToFile()
+{
+	SimpleStorage ss("ui/uiconfig.ss");
+
+	for (UIObject* obj : uiObjects)
+	{
+		std::string sectionName = std::format("{}-{}", name, obj->GetName());
+		std::vector<std::pair<std::string, SectionData>> datas;
+
+		datas.emplace_back("Position", obj->GetRelativePos());
+		datas.emplace_back("Size", obj->GetSize());
+		datas.emplace_back("AnchorPoint", obj->GetAnchorPoint().serialize());
+
+		Section section{ sectionName, std::move(datas) };
+		
+		ss.WriteSection(section);
+
+	}
 }
 
 void UIManager::SetEditorModeActive(bool active)
