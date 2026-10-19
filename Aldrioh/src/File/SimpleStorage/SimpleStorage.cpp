@@ -2,9 +2,8 @@
 #include "SimpleStorage.h"
 #include <fstream>
 
-SimpleStorage::SimpleStorage(const std::string_view newFilePath)
+SimpleStorage::SimpleStorage(const std::string_view newFilePath) : filePath(newFilePath), tempPath(filePath + "_temp")
 {
-	filePath = newFilePath;
 }
 
 bool SimpleStorage::HasSection(const std::string& sectionName)
@@ -16,8 +15,50 @@ void SimpleStorage::WriteToSection()
 {
 }
 
+std::string extractSectionName(const std::string& line)
+{
+	if (line.length() != 0 && line[0] != '[')
+	{
+		int pos = line.find_first_of(']', 1);
+		if (pos != -1)
+			return line.substr(1, pos - 1);
+	}
+	return "";
+}
+
 bool SimpleStorage::WriteSection(const Section& section) const
 {
+	std::ifstream inputStream(filePath);
+	std::ofstream tempStream(tempPath);
+	
+	std::string line;
+
+	if (inputStream.is_open() && tempStream.is_open())
+	{
+		bool foundSection = false;
+		while (std::getline(inputStream, line))
+		{
+			std::string extractedSectionName = extractSectionName(line);
+
+			if (extractedSectionName == section.sectionName)
+			{
+				foundSection = true;
+				break;
+			}
+			else
+				tempStream << line << '\n';
+		}
+
+		if (foundSection)
+		{
+			for (auto [property, sectionData] : section.datas)
+			{
+				tempStream << property;
+
+				
+			}
+		}
+	}
 
 	return false;
 }
@@ -42,21 +83,15 @@ std::vector<std::pair<std::string, std::string>> SimpleStorage::GetSection(const
 	{
 		while (std::getline(ifs, line))
 		{
-			if (line.length() == 0 || line[0] != '[')
-				continue;
-
-			int pos = line.find_first_of(']', 1);
-			if (pos == -1)
-				continue;
-
+			std::string lineSectionName = extractSectionName(line);
 			// Found section
-			if (line.substr(1, pos - 1) == sectionName)
+			if (lineSectionName == sectionName)
 			{
 				done = true;
 				
 				while (std::getline(ifs, line))
 				{
-					pos = line.find_first_of('=');
+					int pos = line.find_first_of('=');
 					if (pos == -1)
 						continue;
 					std::string left = line.substr(0, pos);

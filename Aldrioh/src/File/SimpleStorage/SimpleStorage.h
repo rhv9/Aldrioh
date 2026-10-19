@@ -13,5 +13,6 @@ public:
 	void WriteString(std::string_view property, std::string_view msg);
 	std::vector<std::pair<std::string, std::string>> GetSection(const std::string& sectionName);
 private:
-	std::string filePath;
+	const std::string filePath;
+	const std::string tempPath;
 };
