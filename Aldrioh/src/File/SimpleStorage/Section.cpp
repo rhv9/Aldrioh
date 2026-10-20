@@ -18,3 +18,11 @@ std::string SectionDataToString(const SectionData& sectionData)
 
 	return "";
 }
+
+bool Section::HasProperty(const std::string& other) const
+{
+	for (auto [property, data] : datas)
+		if (property == other)
+			return true;
+	return false;
+}

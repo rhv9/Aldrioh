@@ -17,6 +17,8 @@ std::string SectionDataToString(const SectionData& sectionData);
 
 struct Section
 {
-	std::string sectionName;
+	std::string name;
 	std::vector<std::pair<std::string, SectionData>> datas;
+
+	bool HasProperty(const std::string& other) const;
 };

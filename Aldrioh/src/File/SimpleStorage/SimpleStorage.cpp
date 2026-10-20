@@ -11,10 +11,6 @@ bool SimpleStorage::HasSection(const std::string& sectionName)
 	return false;
 }
 
-void SimpleStorage::WriteToSection()
-{
-}
-
 std::string extractSectionName(const std::string& line)
 {
 	if (!line.empty() && line[0] == '[')
@@ -43,27 +39,35 @@ bool SimpleStorage::WriteSection(const Section& section) const
 	if (inputStream.is_open() && tempStream.is_open())
 	{
 		bool foundSection = false;
+		bool previousLineEmpty = false;
+
 		while (std::getline(inputStream, line))
 		{
-			std::string extractedSectionName = extractSectionName(line);
-			if (extractedSectionName == section.sectionName)
+			previousLineEmpty = line.empty();
+			// Found section
+			if (extractSectionName(line) == section.name)
 			{
 				foundSection = true;
 				tempStream << line << '\n';
 
+				for (auto [property, sectionData] : section.datas)
+					tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
+
+				// Go through original properties already saved and add only unmodified ones
 				while (std::getline(inputStream, line))
 				{
 					leftTrim(line);
-					if (line.empty())
+					if (line.empty() || line[0] == '[')
 						break;
+
+					if (!section.HasProperty(line.substr(0, line.find_first_of('='))))
+						tempStream << line << '\n';
 				}
 
-				for (auto [property, sectionData] : section.datas)
-					tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
-				
-				tempStream << '\n';
-
-				while (std::getline(inputStream, line))
+				// The else if allows sections to not have a gap between them
+				if (line.empty())
+					tempStream << '\n';
+				else if (line[0] == '[')
 					tempStream << line << '\n';
 			}
 			else
@@ -72,24 +76,16 @@ bool SimpleStorage::WriteSection(const Section& section) const
 
 		if (!foundSection)
 		{
-			tempStream << std::format("[{}]\n", section.sectionName);
+			if (!previousLineEmpty)
+				tempStream << '\n';
+
+			tempStream << std::format("[{}]\n", section.name);
 			for (auto [property, sectionData] : section.datas)
 				tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
 		}
-
 	}
 
 	return true;
-}
-
-void SimpleStorage::WriteString(std::string_view property, std::string_view msg)
-{
-	std::ofstream ofs(filePath);
-	
-	ofs << property;
-	ofs << '=';
-	ofs << msg;
-	ofs << '\n';
 }
 
 std::vector<std::pair<std::string, std::string>> SimpleStorage::GetSection(const std::string& sectionName)

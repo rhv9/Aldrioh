@@ -97,13 +97,16 @@ void MainMenuLayer::OnBegin()
 	SimpleStorage simpleStorage("ui/simplestoragetest.ss");
 
 	Section sectionTest;
-	sectionTest.sectionName = "Yeet";
+	sectionTest.name = "Yeet";
 	sectionTest.datas.emplace_back("Position", glm::vec2{ 1.21f, 2.0f });
 	sectionTest.datas.emplace_back("Name", "Yeetusmagickus!");
 	sectionTest.datas.emplace_back("NumberCheck", 21);
 	sectionTest.datas.emplace_back("FloatCheck", 21.69f);
 	
 	simpleStorage.WriteSection(sectionTest);
+
+	//sectionTest.sectionName = "NopTwo";
+	//simpleStorage.WriteSection(sectionTest);
 
 	//simpleStorage.WriteString("BestGamer", "Ohnepixel");
 	simpleStorage.GetSection("Yeet");
