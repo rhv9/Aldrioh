@@ -88,7 +88,7 @@ bool SimpleStorage::WriteSection(const Section& section) const
 	return true;
 }
 
-std::vector<std::pair<std::string, SectionData>> SimpleStorage::GetSection(const std::string& sectionName)
+Section SimpleStorage::GetSection(const std::string& sectionName)
 {
 	std::ifstream ifs(filePath);
 	std::string line;
@@ -105,14 +105,16 @@ std::vector<std::pair<std::string, SectionData>> SimpleStorage::GetSection(const
 				while (std::getline(ifs, line))
 				{
 					leftTrim(line);
+					if (line.empty())
+						break;
+
 					int pos = line.find_first_of('=');
 					if (pos == -1)
 						continue;
 					std::string left = line.substr(0, pos);
 					std::string right = line.substr(pos + 1, line.length());
 					
-
-					keyValues.emplace_back(left, right);
+					keyValues.emplace_back(left, StringToSectionData(right));
 				}
 			}
 
@@ -123,5 +125,5 @@ std::vector<std::pair<std::string, SectionData>> SimpleStorage::GetSection(const
 	else
 		LOG_CORE_ERROR("Could not load section in file: {}: {}", filePath, sectionName);
 
-	return keyValues;
+	return { sectionName, keyValues };
 }

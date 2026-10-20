@@ -23,4 +23,5 @@ struct Section
 	std::vector<std::pair<std::string, SectionData>> datas;
 
 	bool HasProperty(const std::string& other) const;
+	void Debug_Print() const;
 };

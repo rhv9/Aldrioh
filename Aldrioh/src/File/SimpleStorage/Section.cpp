@@ -1,6 +1,8 @@
 #include <pch.h>
 #include "Section.h"
 
+#include <charconv>
+
 static void leftTrim(std::string& s)
 {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
@@ -44,7 +46,7 @@ SectionData StringToSectionData(std::string line)
 	// Potentially vector
 	if (line[0] == '[' && line[line.size() - 1] == ']')
 	{
-		std::string view = line.substr(1, view.size() - 2);
+		std::string view = line.substr(1, line.size() - 2);
 		std::stringstream ss(view);
 		float values[4];
 		int count = 0;
@@ -59,11 +61,10 @@ SectionData StringToSectionData(std::string line)
 			if (count >= 4 || token.empty())
 				return line;
 
-			std::size_t pos = 0;
-			values[count] = std::stof(token, &pos);
-
-			if (pos != token.size())
+			auto [ptr, erc] = std::from_chars(token.data(), token.data() + token.size(), values[count]);
+			if (erc != std::errc() || ptr != (token.data() + token.size()))
 				return line;
+			++count;
 		}
 
 		if (count == 1)
@@ -76,15 +77,14 @@ SectionData StringToSectionData(std::string line)
 			return glm::vec4{ values[0], values[1], values[2], values[3] };
 	}
 
-	std::size_t pos = 0;
-	int num = std::stoi(line, &pos);
-
-	if (pos == line.size())
+	int num = 0;
+	auto [ptr, erc] = std::from_chars(line.data(), line.data() + line.size(), num);
+	if (erc == std::errc() && ptr == (line.data() + line.size()))
 		return num;
 
-	pos = 0;
-	float floatNum = std::stof(line, &pos);
-	if (pos == line.size())
+	float floatNum = 0;
+	auto [ptr2, erc2] = std::from_chars(line.data(), line.data() + line.size(), floatNum);
+	if (erc2 == std::errc() && ptr2 == (line.data() + line.size()))
 		return floatNum;
 
 	return line;
@@ -114,4 +114,11 @@ bool Section::HasProperty(const std::string& other) const
 		if (property == other)
 			return true;
 	return false;
+}
+
+void Section::Debug_Print() const
+{
+	LOG_CORE_INFO("[{}]", name);
+	for (auto [property, data] : datas)
+		LOG_CORE_INFO("{}={}", property, SectionDataToStringWithType(data));
 }

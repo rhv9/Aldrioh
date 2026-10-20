@@ -105,14 +105,8 @@ void MainMenuLayer::OnBegin()
 	
 	simpleStorage.WriteSection(sectionTest);
 
-	SectionData test = 1;
-	LOG_CORE_INFO("TESTING IMPORTANT: {}", SectionDataToStringWithType(StringToSectionData("[1.2,2.3,4.1]")));
-
-	//sectionTest.sectionName = "NopTwo";
-	//simpleStorage.WriteSection(sectionTest);
-
-	//simpleStorage.WriteString("BestGamer", "Ohnepixel");
-	simpleStorage.GetSection("Yeet");
+	Section fetchedSection = simpleStorage.GetSection("That is so cool");
+	fetchedSection.Debug_Print();
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
