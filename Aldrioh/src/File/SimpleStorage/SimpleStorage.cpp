@@ -1,14 +1,10 @@
 #include <pch.h>
 #include "SimpleStorage.h"
 #include <fstream>
+#include <filesystem>
 
 SimpleStorage::SimpleStorage(const std::string_view newFilePath) : filePath(newFilePath), tempPath(filePath + "temp")
 {
-}
-
-bool SimpleStorage::HasSection(const std::string& sectionName)
-{
-	return false;
 }
 
 std::string extractSectionName(const std::string& line)
@@ -35,6 +31,14 @@ bool SimpleStorage::WriteSection(const Section& section) const
 	std::ofstream tempStream(tempPath);
 	
 	std::string line;
+
+	if (!inputStream.is_open())
+	{
+		std::ofstream createInputStream(filePath);
+		createInputStream << std::format("[{}]\n", section.name);
+		createInputStream.close();
+		inputStream.open(filePath);
+	}
 
 	if (inputStream.is_open() && tempStream.is_open())
 	{
@@ -84,6 +88,19 @@ bool SimpleStorage::WriteSection(const Section& section) const
 				tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
 		}
 	}
+	else
+	{
+		LOG_CORE_ERROR("SimpleStorage: Failed to create file to write Section({})", section.name);
+		return false;
+	}
+
+	inputStream.close();
+	tempStream.close();
+
+	// Swap the files
+	if (!std::filesystem::remove(filePath))
+		LOG_CORE_ERROR("SimpleStorage: Failed to remove {}", filePath);
+	std::filesystem::rename(tempPath, filePath);
 
 	return true;
 }
