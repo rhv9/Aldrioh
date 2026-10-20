@@ -2,7 +2,7 @@
 #include "SimpleStorage.h"
 #include <fstream>
 
-SimpleStorage::SimpleStorage(const std::string_view newFilePath) : filePath(newFilePath), tempPath(filePath + "_temp")
+SimpleStorage::SimpleStorage(const std::string_view newFilePath) : filePath(newFilePath), tempPath(filePath + "temp")
 {
 }
 
@@ -17,13 +17,20 @@ void SimpleStorage::WriteToSection()
 
 std::string extractSectionName(const std::string& line)
 {
-	if (line.length() != 0 && line[0] != '[')
+	if (!line.empty() && line[0] == '[')
 	{
 		int pos = line.find_first_of(']', 1);
 		if (pos != -1)
 			return line.substr(1, pos - 1);
 	}
 	return "";
+}
+
+void leftTrim(std::string& s)
+{
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+		return !std::isspace(ch);
+		}));
 }
 
 bool SimpleStorage::WriteSection(const Section& section) const
@@ -39,28 +46,40 @@ bool SimpleStorage::WriteSection(const Section& section) const
 		while (std::getline(inputStream, line))
 		{
 			std::string extractedSectionName = extractSectionName(line);
-
 			if (extractedSectionName == section.sectionName)
 			{
 				foundSection = true;
-				break;
+				tempStream << line << '\n';
+
+				while (std::getline(inputStream, line))
+				{
+					leftTrim(line);
+					if (line.empty())
+						break;
+				}
+
+				for (auto [property, sectionData] : section.datas)
+					tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
+				
+				tempStream << '\n';
+
+				while (std::getline(inputStream, line))
+					tempStream << line << '\n';
 			}
 			else
 				tempStream << line << '\n';
 		}
 
-		if (foundSection)
+		if (!foundSection)
 		{
+			tempStream << std::format("[{}]\n", section.sectionName);
 			for (auto [property, sectionData] : section.datas)
-			{
-				tempStream << property;
-
-				
-			}
+				tempStream << std::format("{}={}\n", property, SectionDataToString(sectionData));
 		}
+
 	}
 
-	return false;
+	return true;
 }
 
 void SimpleStorage::WriteString(std::string_view property, std::string_view msg)

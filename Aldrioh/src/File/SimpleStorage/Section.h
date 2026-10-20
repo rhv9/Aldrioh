@@ -13,10 +13,7 @@ enum class PropertyType : uint8_t
 
 using SectionData = std::variant<int, float, std::string, glm::vec2, glm::vec3, glm::vec4>;
 
-std::string SectionDataToString(const SectionData& sectionData)
-{
-
-}
+std::string SectionDataToString(const SectionData& sectionData);
 
 struct Section
 {
