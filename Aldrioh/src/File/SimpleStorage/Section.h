@@ -24,4 +24,5 @@ struct Section
 
 	bool HasProperty(const std::string& other) const;
 	void Debug_Print() const;
+	bool HasProperties() const { return datas.size(); }
 };

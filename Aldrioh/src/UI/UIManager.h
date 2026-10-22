@@ -31,11 +31,12 @@ public:
 	void ImGuiDrawTreeUIObject(UIObject* obj, int& id);
 
 	void SaveToFile();
-
+	void LoadFromFile();
 
 private:
 	void PollAndUpdateWindowSize();
 
+	bool firstRender = true;
 
 	std::string name;
 	std::vector<UIObject*> uiObjects;

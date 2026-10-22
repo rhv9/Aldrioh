@@ -34,6 +34,12 @@ void UIManager::OnUpdate(Timestep ts)
 
 void UIManager::OnRender(Timestep ts)
 {
+	if (firstRender)
+	{
+		firstRender = false;
+		LoadFromFile();
+	}
+
 	for (UIObject* obj : uiObjects)
 	{
 		if (obj->IsEnabled())
@@ -165,6 +171,10 @@ void UIManager::OnImGuiRender(Timestep delta)
 	ImGui::End();
 
 	ImGui::Begin("UI Hierarchy", &open);
+
+	if (ImGui::Button("Save UI"))
+		SaveToFile();
+
 	editorSelectedFound = false;
 	int id = 0;
 	for (int i = 0; i < uiObjects.size(); ++i)
@@ -278,6 +288,43 @@ void UIManager::SaveToFile()
 		Section section{ sectionName, std::move(datas) };
 		
 		ss.WriteSection(section);
+	}
+}
+
+void UIManager::LoadFromFile()
+{
+	SimpleStorage ss("ui/uiconfig.ss");
+
+	if (!ss.fileExists())
+		return;
+
+	for (UIObject* obj : uiObjects)
+	{
+		std::string sectionName = std::format("{}-{}", name, obj->GetName());
+
+		Section section = ss.GetSection(sectionName);
+
+		if (section.HasProperties())
+		{
+			for (auto [property, data] : section.datas)
+			{
+				if (property == "Position")
+				{
+					if (glm::vec2* vecTwo = std::get_if<glm::vec2>(&data))
+						obj->SetRelativePos(*vecTwo);
+				}
+				else if (property == "Size")
+				{
+					if (glm::vec2* vecTwo = std::get_if<glm::vec2>(&data))
+						obj->SetSize(*vecTwo);
+				}
+				else if (property == "AnchorPoint")
+				{
+					if (int* num = std::get_if<int>(&data))
+						obj->SetAnchorPoint(*num);
+				}
+			}
+		}
 
 	}
 }

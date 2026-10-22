@@ -144,3 +144,9 @@ Section SimpleStorage::GetSection(const std::string& sectionName)
 
 	return { sectionName, keyValues };
 }
+
+bool SimpleStorage::fileExists() const
+{
+	std::ifstream ifs(filePath);
+	return ifs.is_open();
+}
