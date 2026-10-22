@@ -234,7 +234,7 @@ void UIManager::OnImGuiRender(Timestep delta)
 		if (ImGui::DragFloat2("Size", (float*)(&size)))
 			editorSelectedObject->SetSize(size);
 
-		ImGui::SeparatorText("UIObject");
+		editorSelectedObject->ImGuiDraw();
 	}
 
 	ImGui::End();

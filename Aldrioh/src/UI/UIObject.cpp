@@ -2,7 +2,9 @@
 #include "UIObject.h"
 
 #include <Graphics/Renderer.h>
-#include "UIManager.h"	
+#include "UIManager.h"
+#include <imgui.h>
+#include <Math/Math.h>
 
 UIObject::UIObject(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size)
 	: name(name), relativePos(relativePos), size(size)
@@ -103,15 +105,22 @@ void UIObject::SaveSectionData(SimpleStorage& ss, Section& section)
 	{
 		Section childSection;
 		childSection.name = std::format("{}-{}", section.name, obj->GetName());
-		
 		obj->SaveSectionData(ss, childSection);
 	}
 
 	section.datas.emplace_back("Position", GetRelativePos());
 	section.datas.emplace_back("Size", GetSize());
 	section.datas.emplace_back("AnchorPoint", GetAnchorPoint().serialize());
+	if (backgroundColour != DEFAULT_BACKGROUNDCOL)
+		section.datas.emplace_back("BackgroundCol", backgroundColour);
+	if (!enabled)
+		section.datas.emplace_back("Enabled", false);
 
 	ss.WriteSection(section);
+}
+
+void UIObject::ImGuiDraw()
+{
 }
 
 

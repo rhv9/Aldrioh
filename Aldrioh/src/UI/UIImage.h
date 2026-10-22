@@ -14,6 +14,8 @@ public:
 
 	void SetSubTexture(SubTexture* subTexture) { this->subTexture = subTexture; }
 
+	virtual void ImGuiDraw() override;
+
 private:
 	SubTexture* subTexture = Sprites::get(Sprites::null);
 };

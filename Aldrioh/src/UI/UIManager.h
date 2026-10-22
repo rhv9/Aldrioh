@@ -47,5 +47,7 @@ private:
 	bool editorMouseHeld;
 	UIObject* editorSelectedObject = nullptr;
 	bool editorSelectedFound = false;
+	bool editorLockSizeAspectRatio = false;
+	bool editorLockSpriteAspectRatio = false;
 	
 };

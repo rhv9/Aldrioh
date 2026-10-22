@@ -39,6 +39,10 @@ void UpgradeMenuLayer::OnBegin()
 	uiImage->SetAnchorPoint(AnchorPoint::CENTER);
 	uiManager.AddUIObject(uiImage);
 
+	UIImage* testImage = new UIImage("lab glass 2", { 0, 0 }, { 0, 0 });
+	testImage->SetSubTexture(Sprites::get(Sprites::lab_glass));
+	uiManager.AddUIObject(testImage);
+
 	uiManager.SetEditorModeActive(true);
 }
 

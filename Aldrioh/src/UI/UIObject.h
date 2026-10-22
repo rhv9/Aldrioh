@@ -81,6 +81,8 @@ public:
 	virtual void LoadSectionData(SimpleStorage& ss, const Section& section);
 	virtual void SaveSectionData(SimpleStorage& ss, Section& section);
 
+	virtual void ImGuiDraw();
+
 	bool IsMouseHovering();
 	bool IsPosWithin(const glm::vec2& pos) const;
 
@@ -95,14 +97,16 @@ protected:
 	void SetUIManager(UIManager* uiManager);
 
 protected:
-	std::string name = "unnamed";
+	constexpr static glm::vec4  DEFAULT_BACKGROUNDCOL = glm::vec4(0.0f);
 
+	std::string name = "unnamed";
+	
 	glm::vec2 relativePos{ 0 }, renderPos{ 0 };
 	glm::vec2 size{ 0 };
 	// When set as minimum, it means scaling based size is disabled
 	glm::vec2 scalingSize{ std::numeric_limits<float>::min(), std::numeric_limits<float>::min() };
 	AnchorPoint anchorPoint = AnchorPoint::LEFT_BOTTOM;
-	glm::vec4 backgroundColour{ 0 };
+	glm::vec4 backgroundColour = DEFAULT_BACKGROUNDCOL;
 
 	std::vector<UIObject*> children;
 	UIObject* parent = nullptr;

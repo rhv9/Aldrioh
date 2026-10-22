@@ -90,24 +90,6 @@ void MainMenuLayer::OnBegin()
 		GlobalLayers::mainMenu->QueueTransitionTo(GlobalLayers::upgradeMenu);
 		});
 	uiManager->AddUIObject(upgradeMenuButton);
-
-
-	// Testing
-	LOG_CORE_INFO("=======Testing SimpleStorage======");
-	SimpleStorage simpleStorage("ui/simplestoragetest.ss");
-
-	Section sectionTest;
-	sectionTest.name = "Yeet";
-	sectionTest.datas.emplace_back("Position", glm::vec2{ 1.21232f, 21.0f });
-	sectionTest.datas.emplace_back("Name", "Yeetusmagickus!");
-	sectionTest.datas.emplace_back("NumberCheck", 21);
-	sectionTest.datas.emplace_back("FloatCheck", 21.69f);
-	sectionTest.datas.emplace_back("Colour", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	
-	simpleStorage.WriteSection(sectionTest);
-
-	Section fetchedSection = simpleStorage.GetSection("That is so cool");
-	fetchedSection.Debug_Print();
 }
 
 void MainMenuLayer::OnUpdate(Timestep delta)
