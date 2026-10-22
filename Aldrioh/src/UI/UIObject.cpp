@@ -68,6 +68,52 @@ UIManager* UIObject::GetUIManager()
 	return uiManager;
 }
 
+void UIObject::LoadSectionData(SimpleStorage& ss, const Section& section)
+{
+	for (UIObject* obj : children)
+	{
+		std::string sectionName = std::format("{}-{}", section.name, obj->GetName());
+		Section sectionChild = ss.GetSection(sectionName);
+		obj->LoadSectionData(ss, sectionChild);
+	}
+
+	if (section.HasProperties())
+	{
+		for (auto data : section.datas)
+		{
+			if (glm::vec2* vecTwo = Section::GetPropertyIf<glm::vec2>("Position", data))
+			{
+				this->SetRelativePos(*vecTwo);
+			}
+			else if (glm::vec2* vecTwo = Section::GetPropertyIf<glm::vec2>("Size", data))
+			{
+				this->SetSize(*vecTwo);
+			}
+			else if (int* num = Section::GetPropertyIf<int>("AnchorPoint", data))
+			{
+				this->SetAnchorPoint(*num);
+			}
+		}
+	}
+}
+
+void UIObject::SaveSectionData(SimpleStorage& ss, Section& section)
+{
+	for (UIObject* obj : children)
+	{
+		Section childSection;
+		childSection.name = std::format("{}-{}", section.name, obj->GetName());
+		
+		obj->SaveSectionData(ss, childSection);
+	}
+
+	section.datas.emplace_back("Position", GetRelativePos());
+	section.datas.emplace_back("Size", GetSize());
+	section.datas.emplace_back("AnchorPoint", GetAnchorPoint().serialize());
+
+	ss.WriteSection(section);
+}
+
 
 void UIObject::RenderChildren(Timestep ts)
 {

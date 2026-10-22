@@ -2,6 +2,7 @@
 #include "AnchorPoint.h"
 
 #include <Events/Events.h>
+#include <File/SimpleStorage/SimpleStorage.h>
 
 enum UIType
 {
@@ -77,6 +78,8 @@ public:
 
 	UIManager* GetUIManager();
 
+	virtual void LoadSectionData(SimpleStorage& ss, const Section& section);
+	virtual void SaveSectionData(SimpleStorage& ss, Section& section);
 
 	bool IsMouseHovering();
 	bool IsPosWithin(const glm::vec2& pos) const;
@@ -90,7 +93,6 @@ protected:
 
 	void RecalculateInternalState();
 	void SetUIManager(UIManager* uiManager);
-
 
 protected:
 	std::string name = "unnamed";

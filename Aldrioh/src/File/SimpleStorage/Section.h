@@ -25,4 +25,14 @@ struct Section
 	bool HasProperty(const std::string& other) const;
 	void Debug_Print() const;
 	bool HasProperties() const { return datas.size(); }
+
+	template<typename T>
+	static T* GetPropertyIf(const std::string_view property, std::pair<std::string, SectionData>& data)
+	{
+		if (property == data.first)
+			if (T* t = std::get_if<T>(&data.second))
+				return t;
+
+		return nullptr;
+	}
 };

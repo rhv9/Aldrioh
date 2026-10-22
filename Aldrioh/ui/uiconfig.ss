@@ -1,5 +1,5 @@
 [UpgradeMenuUI-Title]
-Position=[-0.099113464,35.084244]
+Position=[-0.099113464,10.109024]
 Size=[72.799995,8]
 AnchorPoint=4
 
@@ -14,7 +14,12 @@ Size=[12,4]
 AnchorPoint=6
 
 [UpgradeMenuUI-lab glass]
-Position=[-15.163528,-3.5678864]
-Size=[20,40]
+Position=[8.424184,-27.353811]
+Size=[15,25]
+AnchorPoint=1
+
+[UpgradeMenuUI-Back_Button-Back_Button_text]
+Position=[0,0]
+Size=[11.099999,3]
 AnchorPoint=4
 

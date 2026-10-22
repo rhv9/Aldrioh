@@ -147,6 +147,8 @@ void UIManager::OnKeyEvent(KeyEventArg& e)
 {
 	if (e.Mods == Input::KEY_MOD_CONTROL && e.IsPressed(Input::KEY_S))
 	{
+		if (editorModeActive)
+			SaveToFile();
 	}
 }
 
@@ -278,16 +280,10 @@ void UIManager::SaveToFile()
 
 	for (UIObject* obj : uiObjects)
 	{
-		std::string sectionName = std::format("{}-{}", name, obj->GetName());
-		std::vector<std::pair<std::string, SectionData>> datas;
-
-		datas.emplace_back("Position", obj->GetRelativePos());
-		datas.emplace_back("Size", obj->GetSize());
-		datas.emplace_back("AnchorPoint", obj->GetAnchorPoint().serialize());
-
-		Section section{ sectionName, std::move(datas) };
+		Section section;
+		section.name = std::format("{}-{}", name, obj->GetName());
 		
-		ss.WriteSection(section);
+		obj->SaveSectionData(ss, section);
 	}
 }
 
@@ -301,31 +297,8 @@ void UIManager::LoadFromFile()
 	for (UIObject* obj : uiObjects)
 	{
 		std::string sectionName = std::format("{}-{}", name, obj->GetName());
-
 		Section section = ss.GetSection(sectionName);
-
-		if (section.HasProperties())
-		{
-			for (auto [property, data] : section.datas)
-			{
-				if (property == "Position")
-				{
-					if (glm::vec2* vecTwo = std::get_if<glm::vec2>(&data))
-						obj->SetRelativePos(*vecTwo);
-				}
-				else if (property == "Size")
-				{
-					if (glm::vec2* vecTwo = std::get_if<glm::vec2>(&data))
-						obj->SetSize(*vecTwo);
-				}
-				else if (property == "AnchorPoint")
-				{
-					if (int* num = std::get_if<int>(&data))
-						obj->SetAnchorPoint(*num);
-				}
-			}
-		}
-
+		obj->LoadSectionData(ss, section);
 	}
 }
 
