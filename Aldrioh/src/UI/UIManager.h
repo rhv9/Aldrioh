@@ -33,6 +33,9 @@ public:
 	void SaveToFile();
 	void LoadFromFile();
 
+	void SetEditorGridSize(float val) { editorMouseGridSize = val; }
+	void DisableEditorGridSize() { editorMouseGridSize = -1.0f; }
+
 private:
 	void PollAndUpdateWindowSize();
 
@@ -47,4 +50,5 @@ private:
 	bool editorMouseHeld;
 	UIObject* editorSelectedObject = nullptr;
 	bool editorSelectedFound = false;
+	float editorMouseGridSize = -1.0f;
 };

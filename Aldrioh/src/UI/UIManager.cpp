@@ -111,7 +111,14 @@ void UIManager::OnMouseMove(MouseMoveEventArg& e)
 			glm::vec2 diff = editorHeldPos - GetMousePos();
 			diff.x *= xMult;
 			diff.y *= yMult;
-			editorSelectedObject->SetRelativePos(editorSelectedOriginalPos - diff);
+			glm::vec2 newPos = editorSelectedOriginalPos - diff;
+			
+			if (editorMouseGridSize != -1.0f)
+			{
+				newPos.x = std::round(newPos.x / editorMouseGridSize) * editorMouseGridSize;
+				newPos.y = std::round(newPos.y / editorMouseGridSize) * editorMouseGridSize;
+			}
+			editorSelectedObject->SetRelativePos(newPos);
 		}
 	}
 }
@@ -222,7 +229,8 @@ void UIManager::OnImGuiRender(Timestep delta)
 
 
 		glm::vec2 relativePos = editorSelectedObject->GetRelativePos();
-		if (ImGui::DragFloat2("Relative Position", (float*)(&relativePos)))
+		float posChange = editorMouseGridSize != -1.0f ? editorMouseGridSize : 1.0f;
+		if (ImGui::DragFloat2("Relative Position", (float*)(&relativePos), posChange))
 			editorSelectedObject->SetRelativePos(relativePos);
 
 		glm::vec2 renderPos = editorSelectedObject->GetRenderPos();

@@ -3,6 +3,7 @@
 
 #include <Graphics/Renderer.h>
 #include <imgui.h>
+#include "UIManager.h"
 
 UIImage::UIImage(const std::string& name, const glm::vec2& relativePos, const glm::vec2& size)
 	: UIObject(name, relativePos, size)
@@ -28,7 +29,14 @@ void UIImage::ImGuiDraw()
 	ImGui::Checkbox("Lock Aspect Ratio", &editorLockSpriteAspectRatio);
 
 	ImGui::SameLine();
-	ImGui::Checkbox("Pixel movement", &editorLockPixelMovement);
+	
+	if (ImGui::Checkbox("Pixel movement", &editorLockPixelMovement))
+	{
+		if (editorLockPixelMovement)
+			this->GetUIManager()->SetEditorGridSize((float)GetWidth() / subTexture->width);
+		else 
+			this->GetUIManager()->DisableEditorGridSize();
+	}
 
 	glm::vec2 size = GetSize();
 	if (ImGui::DragFloat2("Size##2", (float*)(&size)))
@@ -42,12 +50,9 @@ void UIImage::ImGuiDraw()
 				size.x = ((float)subTexture->width / subTexture->height) * size.y;
 		}
 		SetSize(size);
+
+		if (editorLockPixelMovement)
+			this->GetUIManager()->SetEditorGridSize((float)GetWidth() / subTexture->width);
 	}
 
-	glm::vec2 relativePos = GetRelativePos();
-	float posChange = editorLockPixelMovement ? ((float)GetWidth() / subTexture->width) : 1.0f;
-	if (ImGui::DragFloat2("Relative Position##2", (float*)(&relativePos), posChange))
-	{
-		SetRelativePos(relativePos);
-	}
 }
