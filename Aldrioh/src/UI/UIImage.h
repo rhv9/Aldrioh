@@ -18,4 +18,7 @@ public:
 
 private:
 	SubTexture* subTexture = Sprites::get(Sprites::null);
+
+	bool editorLockPixelMovement = false;
+	bool editorLockSpriteAspectRatio = false;
 };

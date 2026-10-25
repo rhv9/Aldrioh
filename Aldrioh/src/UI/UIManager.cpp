@@ -219,6 +219,8 @@ void UIManager::OnImGuiRender(Timestep delta)
 					editorSelectedObject->SetAnchorPoint(AnchorPoint(i));
 			ImGui::EndPopup();
 		}
+
+
 		glm::vec2 relativePos = editorSelectedObject->GetRelativePos();
 		if (ImGui::DragFloat2("Relative Position", (float*)(&relativePos)))
 			editorSelectedObject->SetRelativePos(relativePos);
