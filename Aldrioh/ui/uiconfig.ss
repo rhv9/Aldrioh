@@ -15,8 +15,8 @@ AnchorPoint=6
 BackgroundCol=[0,0,1,1]
 
 [UpgradeMenuUI-lab glass]
-Position=[0,0]
-Size=[32,64]
+Position=[-8,0.5]
+Size=[16,32]
 AnchorPoint=4
 
 [UpgradeMenuUI-Back_Button-Back_Button_text]
@@ -24,3 +24,12 @@ Position=[0,0]
 Size=[11.099999,3]
 AnchorPoint=4
 
+[UpgradeMenuUI-test_machine]
+Position=[-5,16]
+Size=[80,80]
+AnchorPoint=4
+
+[UpgradeMenuUI-test_machine_floor]
+Position=[-2.5,-13.5]
+Size=[88,64]
+AnchorPoint=4

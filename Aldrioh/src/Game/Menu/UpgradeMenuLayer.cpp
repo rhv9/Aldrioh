@@ -34,14 +34,18 @@ void UpgradeMenuLayer::OnBegin()
 		});
 	uiManager.AddUIObject(uiBackButton);
 
+	UIImage* testFloorImage = new UIImage("test_machine_floor", { 0, 0 }, { 0, 0 });
+	testFloorImage->SetSubTexture(Sprites::get(Sprites::test_machine_floor));
+	uiManager.AddUIObject(testFloorImage);
+
+	UIImage* testImage = new UIImage("test_machine", { 0, 0 }, { 0, 0 });
+	testImage->SetSubTexture(Sprites::get(Sprites::test_machine));
+	uiManager.AddUIObject(testImage);
+
 	UIImage* uiImage = new UIImage("lab glass", { 0, 0 }, { 2, 2 });
 	uiImage->SetSubTexture(Sprites::get(Sprites::lab_glass));
 	uiImage->SetAnchorPoint(AnchorPoint::CENTER);
 	uiManager.AddUIObject(uiImage);
-
-	UIImage* testImage = new UIImage("lab glass 2", { 0, 0 }, { 0, 0 });
-	testImage->SetSubTexture(Sprites::get(Sprites::lab_glass));
-	uiManager.AddUIObject(testImage);
 
 	uiManager.SetEditorModeActive(true);
 }

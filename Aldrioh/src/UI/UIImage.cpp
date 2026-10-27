@@ -55,4 +55,24 @@ void UIImage::ImGuiDraw()
 			this->GetUIManager()->SetEditorGridSize((float)GetWidth() / subTexture->width);
 	}
 
+	glm::vec2 sizeMultiplier{ (float)size.x / subTexture->width, (float)size.y / subTexture->height };
+	glm::vec2 oldSizeMultiplier = sizeMultiplier;
+	if (ImGui::DragFloat2("Size Multiplier##2", (float*)(&sizeMultiplier), 0.01f))
+	{
+		if (editorLockSpriteAspectRatio)
+		{
+			if (oldSizeMultiplier.x != sizeMultiplier.x)
+				sizeMultiplier.y = sizeMultiplier.x;
+			else
+				sizeMultiplier.x = sizeMultiplier.y;
+		}
+		size.y = (float)subTexture->height * sizeMultiplier.y;
+		size.x = (float)subTexture->width * sizeMultiplier.x;
+
+		SetSize(size);
+
+		if (editorLockPixelMovement)
+			this->GetUIManager()->SetEditorGridSize((float)GetWidth() / subTexture->width);
+	}
+
 }

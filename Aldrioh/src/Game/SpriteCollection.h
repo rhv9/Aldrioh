@@ -110,7 +110,6 @@ namespace Sprites {
 
 		SPRITES_MACRO_SIZE(spritesheet, two_wing, 0, 10, glm::vec2{ 2 });
 		SPRITES_MACRO_SIZE(spritesheet, diamond_enemy, 2, 10, glm::vec2{ 2 });
-		SPRITES_MACRO_SIZE(labsheet, lab_glass, 0, 0, glm::vec2( 2, 4 ));
 
 		SPRITES_MACRO(spritesheet, borderBox, 0, 0);
 		SPRITES_MACRO(spritesheet, greenBox, 1, 0);
@@ -129,6 +128,10 @@ namespace Sprites {
 
 
 		SPRITES_ANIMATED_MACRO(anim_energycore_drone, 0, 12, 4);
+
+		SPRITES_MACRO_SIZE(labsheet, lab_glass, 0, 0, glm::vec2(2, 4));
+		SPRITES_MACRO_SIZE(labsheet, test_machine, 2, 0, glm::vec2(10, 10));
+		SPRITES_MACRO_SIZE(labsheet, test_machine_floor, 2, 10, glm::vec2(11, 8));
 
 
 // It iterates through the list so that we can add it in.
